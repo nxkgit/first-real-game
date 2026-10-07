@@ -78,10 +78,10 @@ function mutate(rng: Rng, root: Json): Json {
       default: return typeof node === 'object' && node ? Object.fromEntries(Object.entries(node).slice(1)) : true;
     }
   })();
-  if (!parent) return damaged;
+  if (!parent) return damaged === undefined ? null : JSON.parse(JSON.stringify(damaged) ?? "null");
   if (damaged === undefined) delete (parent as Record<string, unknown>)[key];
   else (parent as Record<string, unknown>)[key] = damaged;
-  return tree;
+  return JSON.parse(JSON.stringify(tree)); // saves reach the game as JSON text: no holes, no NaN
 }
 
 /** Whatever restore returned, using it must not blow up either: that's what "discard rather than crash" has to mean. */
@@ -144,7 +144,7 @@ describe('parseSavedRun / restoreRun never throw', () => {
       try {
         useRun(run);
       } catch (e) {
-        crashes.set((e as Error).message.slice(0, 80), JSON.stringify(bad).slice(0, 200));
+        crashes.set(((e as Error).stack ?? '').split('\n').slice(0, 3).join(' | '), JSON.stringify(bad).slice(0, 200));
       }
     }
     // mutations that happen to be harmless (changing a notice string, say) are accepted; most are not
@@ -188,6 +188,33 @@ describe('parseSavedRun / restoreRun never throw', () => {
     expect(restoreSavedRun(manyNodes)).toBeNull();
     const hist = { ...save, history: Array.from({ length: 200_000 }, () => 1) };
     expect(() => restoreSavedRun(hist)).not.toThrow();
+  });
+});
+
+// FINDINGS: saves that pass parseSavedRun but crash once played. Marked it.fails so verify stays
+// green; when the validator is fixed these start passing and vitest will flag them: then drop `.fails`.
+describe('FINDINGS: saves that validate but cannot be played', () => {
+  const base = (): Record<string, any> => validSaves(1)[0] as Record<string, any>;
+
+  it.fails('phase "reward" with no pendingReward should be refused (taking the reward throws "no reward is pending")', () => {
+    const run = restoreSavedRun({ ...base(), phase: 'reward', pendingReward: null, position: base().map.nodes[0].id });
+    expect(run).toBeNull();
+  });
+
+  it.fails('eventFight.after entries are not validated (a null outcome crashes finishCombat in applyOutcome)', () => {
+    const s = { ...base(), eventFight: { enemies: ['enemy-a'], after: [null] }, position: base().map.nodes[0].id, phase: 'inNode' };
+    const run = restoreSavedRun(s);
+    expect(run).toBeNull();
+  });
+
+  it.fails('every mutated save that is accepted can be played a few steps without throwing', () => {
+    const saves = validSaves(60);
+    const rng = new Rng(77);
+    for (let i = 0; i < 6000; i++) {
+      const run = restoreSavedRun(mutate(rng, pickOne(rng, saves)));
+      if (!run) continue;
+      for (let k = 0; k < 6 && !isRunOver(run); k++) stepRun(run, k + 1);
+    }
   });
 });
 
