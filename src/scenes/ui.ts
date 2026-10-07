@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { CardDefinition } from '../game/types';
+import { cardText } from '../game/describe';
 import type { RunNode, RunState } from '../game/RunState';
 
 // Small UI pieces shared by the run's scenes. Placeholder look, like the rest of the visuals.
@@ -39,7 +40,7 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
   for (let size = 13; nameText.width > CARD_WIDTH - 12 && size >= 10; size--) nameText.setFontSize(size);
   const typeText = scene.add.text(0, -19, card.type.toUpperCase(), { fontSize: '10px', color: '#9a9aae' }).setOrigin(0.5);
   const descText = scene.add
-    .text(0, 28, card.description, {
+    .text(0, 28, cardText(card), {
       fontSize: '11px',
       color: '#d8d8e4',
       wordWrap: { width: CARD_WIDTH - 16 },

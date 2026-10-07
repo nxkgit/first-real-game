@@ -9,7 +9,7 @@ import {
 } from '../data/tunables';
 
 /** One stop on the run's linear path. */
-export type RunNode = { kind: 'combat'; enemy: EnemyDefinition } | { kind: 'rest' } | { kind: 'shop' };
+export type RunNode = { kind: 'combat'; enemies: EnemyDefinition[] } | { kind: 'rest' } | { kind: 'shop' };
 
 /** One card on a shop shelf. */
 export interface ShopItem {

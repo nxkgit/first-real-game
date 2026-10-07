@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
-import type { CardDefinition, CardInstance, EnemyDefinition } from './types';
+import type { CardDefinition, CardInstance, EnemyDefinition, EnemyMove } from './types';
 
 // Test-only content, independent of the placeholder data in src/data so balance tweaks there
 // don't break these rule checks.
@@ -11,7 +11,8 @@ const HIT: CardDefinition = {
   type: 'attack',
   target: 'enemy',
   cost: 1,
-  description: '',
+  owner: 'test',
+  inRewardPool: false,
   effects: [{ kind: 'damage', value: 6 }],
 };
 const BIG_HIT: CardDefinition = { ...HIT, id: 'big-hit', name: 'Big Hit', cost: 5, effects: [{ kind: 'damage', value: 50 }] };
@@ -20,7 +21,8 @@ const GUARD: CardDefinition = {
   name: 'Guard',
   type: 'skill',
   cost: 1,
-  description: '',
+  owner: 'test',
+  inRewardPool: false,
   effects: [{ kind: 'block', value: 5 }],
 };
 const INSIGHT: CardDefinition = {
@@ -28,22 +30,26 @@ const INSIGHT: CardDefinition = {
   name: 'Insight',
   type: 'power',
   cost: 1,
-  description: '',
+  owner: 'test',
+  inRewardPool: false,
   onTurnStartEffect: { kind: 'draw', value: 1 },
 };
+
+const hit = (value: number, name = 'Attack'): EnemyMove => ({ name, effects: [{ kind: 'damage', value }] });
+const gainBlock = (value: number, name = 'Defend'): EnemyMove => ({ name, effects: [{ kind: 'block', value }] });
 
 function enemy(overrides: Partial<EnemyDefinition> = {}): EnemyDefinition {
   return {
     id: 'dummy',
     name: 'Dummy',
     maxHp: 30,
-    movePattern: [{ kind: 'attack', value: 8, name: 'Attack' }],
+    movePattern: [hit(8)],
     ...overrides,
   };
 }
 
 function started(deck: CardDefinition[], foe = enemy()): CombatState {
-  const combat = new CombatState(deck, foe);
+  const combat = new CombatState(deck, [foe]);
   combat.start();
   return combat;
 }
@@ -69,13 +75,13 @@ describe('CombatState', () => {
       expect(combat.playCard(card.instanceId)).toBe(false);
       expect(combat.deck.hand).toContain(card);
       expect(combat.energy).toBe(combat.maxEnergy);
-      expect(combat.enemyHp).toBe(30);
+      expect(combat.enemies[0].hp).toBe(30);
     });
 
     it('plays an enemy-targeted card onto the enemy', () => {
       const combat = started(Array(5).fill(HIT));
-      expect(combat.playCard(combat.deck.hand[0].instanceId, 'enemy')).toBe(true);
-      expect(combat.enemyHp).toBe(24);
+      expect(combat.playCard(combat.deck.hand[0].instanceId, 'enemy-0')).toBe(true);
+      expect(combat.enemies[0].hp).toBe(24);
       expect(combat.energy).toBe(combat.maxEnergy - 1);
       expect(combat.deck.hand).toHaveLength(4);
       expect(combat.deck.discardPile).toHaveLength(1);
@@ -84,14 +90,14 @@ describe('CombatState', () => {
     it('plays untargeted cards without a target', () => {
       const combat = started(Array(5).fill(GUARD));
       expect(combat.playCard(combat.deck.hand[0].instanceId)).toBe(true);
-      expect(combat.playerBlock).toBe(5);
+      expect(combat.player.block).toBe(5);
     });
   });
 
   it('refuses a card that costs more energy than is left', () => {
     const combat = started([BIG_HIT, GUARD, GUARD, GUARD, GUARD]);
     expect(combat.canPlay(inHand(combat, 'big-hit'))).toBe(false);
-    expect(combat.playCard(inHand(combat, 'big-hit').instanceId, 'enemy')).toBe(false);
+    expect(combat.playCard(inHand(combat, 'big-hit').instanceId, 'enemy-0')).toBe(false);
   });
 
   it('runs out of energy after spending it all', () => {
@@ -107,8 +113,8 @@ describe('CombatState', () => {
     const combat = started(Array(10).fill(GUARD));
     combat.playCard(combat.deck.hand[0].instanceId); // 5 block
     combat.endPlayerTurn(); // enemy attacks for 8
-    expect(combat.playerHp).toBe(combat.playerMaxHp - 3);
-    expect(combat.playerBlock).toBe(0);
+    expect(combat.player.hp).toBe(combat.player.maxHp - 3);
+    expect(combat.player.block).toBe(0);
     expect(combat.phase).toBe('playerTurn');
   });
 
@@ -117,29 +123,29 @@ describe('CombatState', () => {
       Array(10).fill(HIT),
       enemy({
         movePattern: [
-          { kind: 'defend', value: 10, name: 'Defend' },
-          { kind: 'attack', value: 1, name: 'Poke' },
+          gainBlock(10),
+          hit(1, 'Poke'),
         ],
       })
     );
     combat.endPlayerTurn(); // enemy defends for 10
-    expect(combat.enemyBlock).toBe(10);
-    combat.playCard(combat.deck.hand[0].instanceId, 'enemy'); // 6 into 10 block
-    expect(combat.enemyBlock).toBe(4);
-    expect(combat.enemyHp).toBe(30);
-    combat.playCard(combat.deck.hand[0].instanceId, 'enemy'); // 4 absorbed, 2 through
-    expect(combat.enemyBlock).toBe(0);
-    expect(combat.enemyHp).toBe(28);
+    expect(combat.enemies[0].block).toBe(10);
+    combat.playCard(combat.deck.hand[0].instanceId, 'enemy-0'); // 6 into 10 block
+    expect(combat.enemies[0].block).toBe(4);
+    expect(combat.enemies[0].hp).toBe(30);
+    combat.playCard(combat.deck.hand[0].instanceId, 'enemy-0'); // 4 absorbed, 2 through
+    expect(combat.enemies[0].block).toBe(0);
+    expect(combat.enemies[0].hp).toBe(28);
   });
 
   it('ending the turn runs discard, then the enemy move, then the draw, each with its own hand snapshot', () => {
-    const combat = new CombatState(Array(12).fill(GUARD), enemy());
+    const combat = new CombatState(Array(12).fill(GUARD), [enemy()]);
     const events: string[] = [];
     combat.on('handChanged', ({ hand, drawPile, discardPile }) =>
       events.push(`hand:${hand.length} draw:${drawPile} discard:${discardPile}`)
     );
     combat.on('enemyTurnStarted', () => events.push('enemyTurn'));
-    combat.on('enemyMoveResolved', ({ move }) => events.push(`enemy:${move.kind}`));
+    combat.on('enemyMoveResolved', ({ move }) => events.push(`enemy:${move.name}`));
     combat.on('turnStarted', () => events.push('yourTurn'));
     combat.start();
     events.length = 0;
@@ -148,14 +154,14 @@ describe('CombatState', () => {
     expect(events).toEqual([
       'hand:0 draw:7 discard:5', // your hand is discarded first
       'enemyTurn',
-      'enemy:attack',
+      'enemy:Attack',
       'hand:5 draw:2 discard:5', // only then is the next hand drawn
       'yourTurn',
     ]);
   });
 
   it('hand snapshots are copies, unaffected by later changes to the live hand', () => {
-    const combat = new CombatState(Array(12).fill(GUARD), enemy());
+    const combat = new CombatState(Array(12).fill(GUARD), [enemy()]);
     const snapshots: CardInstance[][] = [];
     combat.on('handChanged', ({ hand }) => snapshots.push(hand));
     combat.start();
@@ -168,16 +174,16 @@ describe('CombatState', () => {
       Array(10).fill(GUARD),
       enemy({
         movePattern: [
-          { kind: 'attack', value: 1, name: 'A' },
-          { kind: 'defend', value: 2, name: 'B' },
+          hit(1, 'A'),
+          gainBlock(2, 'B'),
         ],
       })
     );
-    expect(combat.currentEnemyMove.name).toBe('A');
+    expect(combat.nextMove(combat.enemies[0]).name).toBe('A');
     combat.endPlayerTurn();
-    expect(combat.currentEnemyMove.name).toBe('B');
+    expect(combat.nextMove(combat.enemies[0]).name).toBe('B');
     combat.endPlayerTurn();
-    expect(combat.currentEnemyMove.name).toBe('A');
+    expect(combat.nextMove(combat.enemies[0]).name).toBe('A');
   });
 
   it('a power card applies its effect at the start of each later turn', () => {
@@ -192,25 +198,25 @@ describe('CombatState', () => {
   });
 
   it('wins when the enemy reaches 0 HP and emits combatEnded', () => {
-    const combat = new CombatState(Array(10).fill(HIT), enemy({ maxHp: 12 }));
+    const combat = new CombatState(Array(10).fill(HIT), [enemy({ maxHp: 12 })]);
     const results: string[] = [];
     combat.on('combatEnded', ({ result }) => results.push(result));
     combat.start();
-    combat.playCard(combat.deck.hand[0].instanceId, 'enemy');
-    combat.playCard(combat.deck.hand[0].instanceId, 'enemy');
-    expect(combat.enemyHp).toBe(0);
+    combat.playCard(combat.deck.hand[0].instanceId, 'enemy-0');
+    combat.playCard(combat.deck.hand[0].instanceId, 'enemy-0');
+    expect(combat.enemies[0].hp).toBe(0);
     expect(combat.phase).toBe('won');
     expect(results).toEqual(['won']);
-    expect(combat.playCard(combat.deck.hand[0].instanceId, 'enemy')).toBe(false); // no plays after the fight
+    expect(combat.playCard(combat.deck.hand[0].instanceId, 'enemy-0')).toBe(false); // no plays after the fight
   });
 
   it('loses when the player reaches 0 HP', () => {
     const combat = started(
       Array(10).fill(GUARD),
-      enemy({ movePattern: [{ kind: 'attack', value: 1000, name: 'Crush' }] })
+      enemy({ movePattern: [hit(1000, 'Crush')] })
     );
     combat.endPlayerTurn();
-    expect(combat.playerHp).toBe(0);
+    expect(combat.player.hp).toBe(0);
     expect(combat.phase).toBe('lost');
   });
 });

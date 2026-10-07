@@ -11,11 +11,11 @@ import {
 } from '../data/tunables';
 
 function card(id: string): CardDefinition {
-  return { id, name: id, type: 'skill', cost: 1, description: '' };
+  return { id, name: id, type: 'skill', cost: 1, owner: 'test', inRewardPool: true };
 }
 
-const FOE: EnemyDefinition = { id: 'foe', name: 'Foe', maxHp: 10, movePattern: [{ kind: 'attack', value: 1, name: 'A' }] };
-const fight: RunNode = { kind: 'combat', enemy: FOE };
+const FOE: EnemyDefinition = { id: 'foe', name: 'Foe', maxHp: 10, movePattern: [{ name: 'A', effects: [{ kind: 'damage', value: 1 }] }] };
+const fight: RunNode = { kind: 'combat', enemies: [FOE] };
 const rest: RunNode = { kind: 'rest' };
 
 const STARTER = [card('s1'), card('s2')];

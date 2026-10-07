@@ -3,7 +3,7 @@ import { Deck } from './Deck';
 import type { CardDefinition } from './types';
 
 function card(id: string): CardDefinition {
-  return { id, name: id, type: 'skill', cost: 1, description: '' };
+  return { id, name: id, type: 'skill', cost: 1, owner: 'test', inRewardPool: false };
 }
 
 function cards(count: number): CardDefinition[] {

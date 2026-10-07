@@ -38,7 +38,9 @@ A short linear sequence of a few fights plus non-combat nodes, deployed somewher
 - **Starting/MVP 1 numbers kept as provisional placeholders** (user's call, 2026-10-06): enemy HP/damage/patterns, starter deck, Block as the only status effect.
 - **Deployment:** GitHub Actions workflow publishes to GitHub Pages on every push to `main` (needs Pages source set to "GitHub Actions" in repo settings).
 
-**Still open for MVP 2:** shop (and with it, gold's value), non-combat events beyond the rest stop, Weak/Vulnerable/Strength, and whether the path should become a branching map.
+**Built since (2026-10-07):** Weak, Vulnerable and Strength (StS rules; see DESIGN_LOG.md); fights with several enemies (fight 2 is two placeholder enemies); enemy moves made of the same effects as cards, with StS-style generic buff/debuff intent icons; card text generated from effects; a card registry with hero ownership. A rough shop screen exists on its own branch as a visual draft only.
+
+**Still open for MVP 2:** shop contents and gold's value (a draft screen exists, nothing decided), non-combat events beyond the rest stop, and whether the path should become a branching map.
 
 ## Architecture Principles
 

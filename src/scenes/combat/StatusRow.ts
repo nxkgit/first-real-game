@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
-import type { StatusId, Statuses } from '../game/types';
-import { STATUSES, STATUS_ORDER } from '../data/statuses';
+import type { StatusId, Statuses } from '../../game/types';
+import { STATUSES, STATUS_ORDER } from '../../data/statuses';
 
 /** Horizontal distance between badge centers. Tooltip zones are laid out from this too. */
 export const STATUS_SLOT_WIDTH = 38;
