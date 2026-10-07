@@ -13,6 +13,8 @@ export interface CardDefinition {
   type: CardType;
   cost: number;
   description: string;
+  /** 'enemy' cards must be played onto an enemy (drag/click to target); others play on click. */
+  target?: 'enemy';
   /** Applied immediately when the card is played. */
   effects?: CardEffect[];
   /** Power cards only: applied at the start of every subsequent player turn for the rest of combat. */

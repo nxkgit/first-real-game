@@ -76,9 +76,11 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return this.phase === 'playerTurn' && card.definition.cost <= this.energy;
   }
 
-  playCard(instanceId: string): boolean {
+  /** Enemy-targeted cards (definition.target === 'enemy') are rejected unless a target is given. */
+  playCard(instanceId: string, target?: 'enemy'): boolean {
     const handCard = this.deck.hand.find((c) => c.instanceId === instanceId);
     if (!handCard || !this.canPlay(handCard)) return false;
+    if (handCard.definition.target === 'enemy' && target !== 'enemy') return false;
 
     this.energy -= handCard.definition.cost;
     this.deck.playCard(instanceId);

@@ -24,6 +24,10 @@ const PLAYER_X = 170;
 const PLAYER_Y = 250;
 const ENEMY_X = 630;
 const ENEMY_Y = 250;
+/** Where a targeted card can be dropped/clicked onto the enemy (also where the reticle is drawn). */
+const ENEMY_TARGET_AREA = new Phaser.Geom.Rectangle(ENEMY_X - 65, ENEMY_Y - 80, 130, 155);
+/** Pointer travel (px) after picking up a targeted card that turns it into a drag rather than a click. */
+const DRAG_THRESHOLD = 12;
 
 const TYPE_COLOR: Record<string, number> = {
   attack: 0xd9534f,
@@ -36,6 +40,15 @@ interface TrackedCard {
 }
 
 type AnimStep = () => Promise<void>;
+
+interface TargetingState {
+  card: CardInstance;
+  container: Phaser.GameObjects.Container;
+  /** downTime of the press that picked the card up, so the scene-wide handler can ignore that same press. */
+  downTime: number;
+  startX: number;
+  startY: number;
+}
 
 export class CombatScene extends Phaser.Scene {
   private combat!: CombatState;
@@ -53,10 +66,17 @@ export class CombatScene extends Phaser.Scene {
   private enemyNameText!: Phaser.GameObjects.Text;
   private enemyHpText!: Phaser.GameObjects.Text;
   private enemyHpBarFill!: Phaser.GameObjects.Rectangle;
+  private enemyBlockIcon!: Phaser.GameObjects.Graphics;
   private enemyBlockText!: Phaser.GameObjects.Text;
-  private enemyIntentText!: Phaser.GameObjects.Text;
-  private attackIntentIcon!: Phaser.GameObjects.Triangle;
-  private defendIntentIcon!: Phaser.GameObjects.Rectangle;
+  private intentContainer!: Phaser.GameObjects.Container;
+  private intentSword!: Phaser.GameObjects.Graphics;
+  private intentShield!: Phaser.GameObjects.Graphics;
+  private intentValueText!: Phaser.GameObjects.Text;
+
+  /** Non-null while an enemy-targeted card is picked up and the targeting arrow is showing. */
+  private targeting: TargetingState | null = null;
+  private targetArrow!: Phaser.GameObjects.Graphics;
+  private targetReticle!: Phaser.GameObjects.Graphics;
 
   private playerHpText!: Phaser.GameObjects.Text;
   private playerBlockIcon!: Phaser.GameObjects.Polygon;
@@ -94,11 +114,16 @@ export class CombatScene extends Phaser.Scene {
     this.buildEnemyStatusArea();
     this.buildPlayerStatusArea();
     this.buildHandArea();
+    this.buildTargetingUi();
     this.buildOverlays();
 
     this.combat = new CombatState(buildStarterDeck(), MVP1_ENEMY);
     this.wireCombatEvents();
     this.combat.start();
+  }
+
+  update(): void {
+    if (this.targeting) this.drawTargeting(this.input.activePointer);
   }
 
   // ---------- static scene construction ----------
@@ -267,18 +292,55 @@ export class CombatScene extends Phaser.Scene {
     this.enemyNameText = this.add
       .text(ENEMY_X, 130, '', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' })
       .setOrigin(0.5);
-    this.attackIntentIcon = this.add
-      .triangle(ENEMY_X - 55, 95, 0, 12, 12, -12, -12, -12, 0xff8f6b)
-      .setVisible(false);
-    this.defendIntentIcon = this.add.rectangle(ENEMY_X - 55, 95, 18, 18, 0x9fd3ff).setVisible(false);
-    this.enemyIntentText = this.add.text(ENEMY_X + 5, 95, '', { fontSize: '16px', color: '#ffcc66' }).setOrigin(0, 0.5);
+    // Intent readout: a sword (attack) or shield (defend) icon plus the move's number, no words.
+    this.intentSword = this.add.graphics({ x: -12, y: 0 });
+    this.drawSword(this.intentSword);
+    this.intentSword.setRotation(Math.PI / 4);
+    this.intentShield = this.add.graphics({ x: -12, y: 0 });
+    this.drawShield(this.intentShield, 1.25);
+    this.intentValueText = this.add
+      .text(4, 1, '', { fontSize: '20px', color: '#ffffff', fontStyle: 'bold', stroke: '#14141c', strokeThickness: 4 })
+      .setOrigin(0, 0.5);
+    this.intentContainer = this.add.container(ENEMY_X, 92, [this.intentSword, this.intentShield, this.intentValueText]);
 
     const barX = ENEMY_X - HP_BAR_WIDTH / 2;
     const barY = 345;
     this.add.rectangle(barX, barY, HP_BAR_WIDTH, 14, 0x2a2a3a).setOrigin(0, 0.5).setStrokeStyle(1, 0x45455a);
     this.enemyHpBarFill = this.add.rectangle(barX, barY, HP_BAR_WIDTH, 14, 0xc9544f).setOrigin(0, 0.5);
     this.enemyHpText = this.add.text(ENEMY_X, 363, '', { fontSize: '14px', color: '#ffffff' }).setOrigin(0.5);
-    this.enemyBlockText = this.add.text(ENEMY_X, 380, '', { fontSize: '13px', color: '#9fd3ff' }).setOrigin(0.5);
+
+    // Block readout matches the player's: shield icon + number, shown only when block > 0.
+    this.enemyBlockIcon = this.add.graphics({ x: ENEMY_X - 12, y: 383 }).setVisible(false);
+    this.drawShield(this.enemyBlockIcon);
+    this.enemyBlockText = this.add
+      .text(ENEMY_X + 3, 386, '', { fontSize: '14px', color: '#9fd3ff', fontStyle: 'bold' })
+      .setOrigin(0, 0.5);
+  }
+
+  /** Kite-shield icon centered on the graphic's origin. Same shape as the player's block icon. */
+  private drawShield(g: Phaser.GameObjects.Graphics, scale = 1): void {
+    const outline = [0, -10, 9, -6, 9, 4, 0, 11, -9, 4, -9, -6];
+    const points: Phaser.Math.Vector2[] = [];
+    for (let i = 0; i < outline.length; i += 2) {
+      points.push(new Phaser.Math.Vector2(outline[i] * scale, outline[i + 1] * scale));
+    }
+    g.fillStyle(0x6fa8d9, 1);
+    g.fillPoints(points, true);
+    g.lineStyle(2, 0xbfe0ff, 1);
+    g.strokePoints(points, true);
+  }
+
+  /** Upright sword icon centered on the graphic's origin (rotate the graphic to tilt it). */
+  private drawSword(g: Phaser.GameObjects.Graphics): void {
+    g.fillStyle(0xdfe6ee, 1);
+    g.fillRect(-3, -14, 6, 18); // blade
+    g.fillTriangle(-3, -14, 3, -14, 0, -21); // tip
+    g.fillStyle(0xc9a23c, 1);
+    g.fillRect(-9, 4, 18, 4); // crossguard
+    g.fillStyle(0x6b4a2a, 1);
+    g.fillRect(-2, 8, 4, 8); // grip
+    g.fillStyle(0xc9a23c, 1);
+    g.fillCircle(0, 18, 3); // pommel
   }
 
   /** StS-style player readout: a heart (HP number, no bar), a shield (block, shown only when > 0), and an energy orb. */
@@ -335,6 +397,29 @@ export class CombatScene extends Phaser.Scene {
     this.endTurnButton.on('pointerout', () => {
       this.tweens.add({ targets: [this.endTurnButton, this.endTurnText], scale: 1, duration: 100 });
     });
+  }
+
+  private buildTargetingUi(): void {
+    this.targetArrow = this.add.graphics().setDepth(30);
+
+    // corner brackets around the enemy: faint while aiming, bright when the pointer is on it
+    const { left, right, top, bottom } = ENEMY_TARGET_AREA;
+    const len = 16;
+    this.targetReticle = this.add.graphics().setDepth(5).setVisible(false);
+    this.targetReticle.lineStyle(3, 0xff6b6b, 1);
+    for (const [x, y, dx, dy] of [
+      [left, top, 1, 1],
+      [right, top, -1, 1],
+      [left, bottom, 1, -1],
+      [right, bottom, -1, -1],
+    ]) {
+      this.targetReticle.lineBetween(x, y, x + dx * len, y);
+      this.targetReticle.lineBetween(x, y, x, y + dy * len);
+    }
+
+    // Scene-wide handlers run after the per-object ones (e.g. a card's own pointerdown).
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => this.onScenePointerDown(pointer));
+    this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => this.onScenePointerUp(pointer));
   }
 
   private buildOverlays(): void {
@@ -403,6 +488,7 @@ export class CombatScene extends Phaser.Scene {
   }
 
   private lockInput(locked: boolean): void {
+    if (locked) this.cancelTargeting();
     this.setHandInteractive(!locked);
     if (locked) {
       this.endTurnButton.disableInteractive().setAlpha(0.4);
@@ -568,19 +654,128 @@ export class CombatScene extends Phaser.Scene {
     container.setData('hitZone', hitZone);
 
     hitZone.on('pointerover', () => {
+      if (this.targeting?.container === container) return;
       this.handContainer.bringToTop(container);
       this.tweens.add({ targets: container, y: HAND_Y - 22, scale: 1.06, duration: 120, ease: 'Sine.easeOut' });
     });
     hitZone.on('pointerout', () => {
+      if (this.targeting?.container === container) return;
       this.tweens.add({ targets: container, y: HAND_Y, scale: 1, duration: 120, ease: 'Sine.easeOut' });
     });
-    hitZone.on('pointerdown', () => {
-      if (this.combat.phase !== 'playerTurn') return;
-      this.combat.playCard(card.instanceId);
+    hitZone.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (this.combat.phase !== 'playerTurn' || pointer.rightButtonDown()) return;
+      if (card.definition.target === 'enemy') {
+        // clicking the card that's already picked up puts it back
+        if (this.targeting?.card === card) this.cancelTargeting();
+        else this.beginTargeting(card, container, pointer);
+      } else {
+        this.cancelTargeting();
+        this.combat.playCard(card.instanceId);
+      }
     });
 
     this.setCardPlayable(container, canPlay);
     return container;
+  }
+
+  // ---------- targeting (enemy-targeted cards) ----------
+  //
+  // StS-style: pressing an attack card picks it up and shows an arrow to the pointer. Either drag
+  // and release on the enemy, or click the card then click the enemy. Right-click, clicking
+  // elsewhere, or releasing a drag off the enemy puts the card back.
+
+  private beginTargeting(card: CardInstance, container: Phaser.GameObjects.Container, pointer: Phaser.Input.Pointer): void {
+    this.cancelTargeting();
+    this.targeting = { card, container, downTime: pointer.downTime, startX: pointer.worldX, startY: pointer.worldY };
+    this.handContainer.bringToTop(container);
+    this.tweens.add({ targets: container, y: HAND_Y - 40, scale: 1.1, duration: 120, ease: 'Sine.easeOut' });
+    this.targetReticle.setVisible(true);
+    this.drawTargeting(pointer);
+  }
+
+  private cancelTargeting(): void {
+    const t = this.targeting;
+    if (!t) return;
+    this.clearTargetingUi();
+    if (t.container.active) {
+      this.tweens.add({ targets: t.container, y: HAND_Y, scale: 1, duration: 120, ease: 'Sine.easeOut' });
+    }
+  }
+
+  private playTargetedCard(): void {
+    const t = this.targeting;
+    if (!t) return;
+    this.clearTargetingUi();
+    if (!this.combat.playCard(t.card.instanceId, 'enemy')) {
+      this.tweens.add({ targets: t.container, y: HAND_Y, scale: 1, duration: 120, ease: 'Sine.easeOut' });
+    }
+  }
+
+  private clearTargetingUi(): void {
+    this.targeting = null;
+    this.targetArrow.clear();
+    this.targetReticle.setVisible(false);
+  }
+
+  private onScenePointerDown(pointer: Phaser.Input.Pointer): void {
+    const t = this.targeting;
+    if (!t || pointer.downTime === t.downTime) return; // ignore the press that picked the card up
+    if (!pointer.rightButtonDown() && this.isOverEnemy(pointer)) this.playTargetedCard();
+    else this.cancelTargeting();
+  }
+
+  private onScenePointerUp(pointer: Phaser.Input.Pointer): void {
+    const t = this.targeting;
+    if (!t) return;
+    const dragged =
+      Phaser.Math.Distance.Between(t.startX, t.startY, pointer.worldX, pointer.worldY) > DRAG_THRESHOLD;
+    if (!dragged) return; // a plain click on the card: stay picked up, wait for a click on the enemy
+    if (this.isOverEnemy(pointer)) this.playTargetedCard();
+    else this.cancelTargeting();
+  }
+
+  private isOverEnemy(pointer: Phaser.Input.Pointer): boolean {
+    return ENEMY_TARGET_AREA.contains(pointer.worldX, pointer.worldY);
+  }
+
+  /** Redraws the dotted arrow from the picked-up card to the pointer; it turns red over the enemy. */
+  private drawTargeting(pointer: Phaser.Input.Pointer): void {
+    const t = this.targeting;
+    if (!t) return;
+    const onTarget = this.isOverEnemy(pointer);
+    this.targetReticle.setAlpha(onTarget ? 1 : 0.35);
+
+    const sx = t.container.x;
+    const sy = t.container.y - (CARD_HEIGHT / 2) * t.container.scaleY;
+    const ex = pointer.worldX;
+    const ey = pointer.worldY;
+    // control point above both ends gives the arrow an arc
+    const cx = sx + (ex - sx) * 0.15;
+    const cy = Math.min(sy, ey) - 80;
+    const color = onTarget ? 0xff6b6b : 0xe8e8f0;
+
+    const g = this.targetArrow;
+    g.clear();
+    g.fillStyle(color, 1);
+    const dots = 14;
+    for (let i = 1; i < dots; i++) {
+      const s = i / dots;
+      const x = (1 - s) * (1 - s) * sx + 2 * (1 - s) * s * cx + s * s * ex;
+      const y = (1 - s) * (1 - s) * sy + 2 * (1 - s) * s * cy + s * s * ey;
+      g.fillCircle(x, y, 2 + 3 * s);
+    }
+
+    // arrowhead, pointing along the curve's direction at its end
+    const angle = Math.atan2(ey - cy, ex - cx);
+    const size = 16;
+    g.fillTriangle(
+      ex + Math.cos(angle) * size * 0.5,
+      ey + Math.sin(angle) * size * 0.5,
+      ex + Math.cos(angle + 2.5) * size,
+      ey + Math.sin(angle + 2.5) * size,
+      ex + Math.cos(angle - 2.5) * size,
+      ey + Math.sin(angle - 2.5) * size
+    );
   }
 
   private setCardPlayable(container: Phaser.GameObjects.Container, canPlay: boolean): void {
@@ -629,7 +824,7 @@ export class CombatScene extends Phaser.Scene {
       this.flashCharacter(ENEMY_X, ENEMY_Y, 0x6fc3ff);
       this.blockParticles.explode(10, ENEMY_X, ENEMY_Y);
       Sfx.block();
-      if (blockGained) this.spawnFloatingText(ENEMY_X, ENEMY_Y - 100, `+${blockGained} Block`, '#9fd3ff');
+      if (blockGained) this.spawnFloatingText(ENEMY_X, ENEMY_Y - 100, `+${blockGained}`, '#9fd3ff');
       await this.tweenPromise({ targets: this.enemyContainer, scale: 1, duration: 160, ease: 'Sine.easeIn' });
     }
 
@@ -638,13 +833,12 @@ export class CombatScene extends Phaser.Scene {
   }
 
   private pulseIntent(move: EnemyMove): void {
-    this.attackIntentIcon.setVisible(move.kind === 'attack');
-    this.defendIntentIcon.setVisible(move.kind === 'defend');
-    this.enemyIntentText.setText(move.kind === 'attack' ? `Attack ${move.value}` : `Defend ${move.value}`);
-    this.enemyIntentText.setColor(move.kind === 'attack' ? '#ff8f6b' : '#9fd3ff');
-    const icon = move.kind === 'attack' ? this.attackIntentIcon : this.defendIntentIcon;
+    const isAttack = move.kind === 'attack';
+    this.intentSword.setVisible(isAttack);
+    this.intentShield.setVisible(!isAttack);
+    this.intentValueText.setText(`${move.value}`).setColor(isAttack ? '#ff8f6b' : '#9fd3ff');
     this.tweens.add({
-      targets: [this.enemyIntentText, icon],
+      targets: this.intentContainer,
       scale: { from: 1.4, to: 1 },
       duration: 220,
       ease: 'Back.Out',
@@ -732,7 +926,8 @@ export class CombatScene extends Phaser.Scene {
     const c = this.combat;
     this.enemyNameText.setText(c.enemy.name);
     this.enemyHpText.setText(`HP ${c.enemyHp}/${c.enemy.maxHp}`);
-    this.enemyBlockText.setText(c.enemyBlock > 0 ? `Block ${c.enemyBlock}` : '');
+    this.enemyBlockIcon.setVisible(c.enemyBlock > 0);
+    this.enemyBlockText.setText(c.enemyBlock > 0 ? `${c.enemyBlock}` : '');
 
     this.playerHpText.setText(`${c.playerHp}/${c.playerMaxHp}`);
     this.playerBlockIcon.setVisible(c.playerBlock > 0);
@@ -742,7 +937,7 @@ export class CombatScene extends Phaser.Scene {
 
     this.statusText.setText(c.log.slice(-2).map((e) => e.message).join('\n'));
 
-    if (!this.enemyIntentText.text) {
+    if (!this.intentValueText.text) {
       this.pulseIntent(c.currentEnemyMove);
     }
   }

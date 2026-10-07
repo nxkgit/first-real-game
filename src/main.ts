@@ -9,5 +9,6 @@ new Phaser.Game({
   zoom: 1 / DPR,
   parent: 'app',
   backgroundColor: '#1b1b24',
+  disableContextMenu: true, // right-click cancels card targeting
   scene: [CombatScene],
 });
