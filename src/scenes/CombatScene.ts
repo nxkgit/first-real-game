@@ -28,7 +28,7 @@ import { EnemyView } from './combat/EnemyView';
 import { PlayerView } from './combat/PlayerView';
 import { Targeting } from './combat/Targeting';
 import { Tooltips } from './combat/Tooltips';
-import { DISCARD_PILE_POS, DRAW_PILE_POS, HAND_Y, PLAYER_X, PLAYER_Y, enemySlots } from './combat/layout';
+import { HAND_AREA_WIDTH, DISCARD_PILE_POS, DRAW_PILE_POS, HAND_Y, PLAYER_X, PLAYER_Y, enemySlots } from './combat/layout';
 
 interface TrackedCard {
   container: Phaser.GameObjects.Container;
@@ -64,6 +64,11 @@ export class CombatScene extends Phaser.Scene {
   private statusText!: Phaser.GameObjects.Text;
   private drawCountText!: Phaser.GameObjects.Text;
   private discardCountText!: Phaser.GameObjects.Text;
+  /** Small readouts that appear once a power has been played / a card exhausted; click to see which. */
+  private powersText!: Phaser.GameObjects.Text;
+  private exhaustText!: Phaser.GameObjects.Text;
+  /** Powers played this fight, counted from play events (not live state; see the replay rule). */
+  private powersPlayed = 0;
 
   private endTurnButton!: Phaser.GameObjects.Rectangle;
   private endTurnText!: Phaser.GameObjects.Text;
@@ -85,6 +90,7 @@ export class CombatScene extends Phaser.Scene {
     this.enemyDefinitions = node.enemies;
     this.tier = node.tier;
     this.handCards = new Map();
+    this.powersPlayed = 0;
     this.enemyViews = [];
     this.sequencer = null;
     this.inputLocked = false;
@@ -192,6 +198,16 @@ export class CombatScene extends Phaser.Scene {
       .text(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, '', { fontSize: '20px', color: '#c8c8d8', fontStyle: 'bold' })
       .setOrigin(0.5);
 
+    const sideLabel = (x: number, which: 'powers' | 'exhaust'): Phaser.GameObjects.Text =>
+      this.add
+        .text(x, 462, '', { fontSize: '12px', color: '#a99bd6' })
+        .setOrigin(0.5)
+        .setVisible(false)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerdown', () => this.openPile(which));
+    this.powersText = sideLabel(DRAW_PILE_POS.x + 20, 'powers');
+    this.exhaustText = sideLabel(DISCARD_PILE_POS.x - 20, 'exhaust');
+
     // the last couple of log lines, in the gap between the run readout and the End Turn button
     this.statusText = this.add
       .text(495, 28, '', { fontSize: '12px', color: '#9a9aae', align: 'center', wordWrap: { width: 300 } })
@@ -199,16 +215,19 @@ export class CombatScene extends Phaser.Scene {
   }
 
   /** Shows what is in a pile, in name order (not draw order). Only between animations, so it matches the counts. */
-  private openPile(which: 'draw' | 'discard'): void {
+  private openPile(which: 'draw' | 'discard' | 'powers' | 'exhaust'): void {
     if (this.inputLocked && !isDeckViewOpen(this)) return;
     this.targeting?.cancel();
-    const pile = which === 'draw' ? this.combat.deck.drawPile : this.combat.deck.discardPile;
+    const deck = this.combat.deck;
+    const pile = { draw: deck.drawPile, discard: deck.discardPile, powers: deck.powerPile, exhaust: deck.exhaustPile }[which];
     const cards = pile.map((c) => c.definition).sort((a, b) => a.name.localeCompare(b.name));
-    const name = which === 'draw' ? 'Draw pile' : 'Discard pile';
+    const name = { draw: 'Draw pile', discard: 'Discard pile', powers: 'Powers in play', exhaust: 'Exhausted' }[which];
     toggleCardView(this, `${name} (${cards.length} cards${which === 'draw' ? ', not in draw order' : ''})`, cards);
   }
 
   private buildPileTooltips(): void {
+    this.tooltips.add(DRAW_PILE_POS.x + 20, 462, 80, 16, () => (this.powersPlayed > 0 ? 'Powers you have played. They stay in play for the rest of the fight. Click to see them.' : null));
+    this.tooltips.add(DISCARD_PILE_POS.x - 20, 462, 90, 16, () => (this.exhaustText.visible ? 'Cards exhausted this fight. They are gone until the next fight. Click to see them.' : null));
     this.tooltips.add(DRAW_PILE_POS.x, DRAW_PILE_POS.y, 54, 76, () =>
       `Draw pile: ${this.drawCountText.text} cards. When it runs out, the discard pile is shuffled back in.`
     );
@@ -268,8 +287,8 @@ export class CombatScene extends Phaser.Scene {
         this.onEndTurn();
         return;
       }
-      const slot = Number(key);
-      if (Number.isInteger(slot) && slot >= 1 && slot <= 9) {
+      const slot = key === '0' ? 10 : Number(key); // 1-9 are the first nine cards, 0 the tenth
+      if (Number.isInteger(slot) && slot >= 1 && slot <= 10) {
         const card = this.combat.deck.hand[slot - 1];
         if (!card || !this.combat.canPlay(card)) return;
         this.targeting.cancel();
@@ -367,6 +386,10 @@ export class CombatScene extends Phaser.Scene {
     const tracked = this.handCards.get(card.instanceId);
     if (!tracked) return;
     this.handCards.delete(card.instanceId);
+    if (card.definition.type === 'power') {
+      this.powersPlayed += 1;
+      this.powersText.setText(`Powers: ${this.powersPlayed}`).setVisible(true);
+    }
 
     this.lockInput(true);
     const impactSteps: AnimStep[] = [];
@@ -413,16 +436,18 @@ export class CombatScene extends Phaser.Scene {
   private syncHand(snapshot: CombatEventMap['handChanged']): Promise<void> {
     this.drawCountText.setText(`${snapshot.drawPile}`);
     this.discardCountText.setText(`${snapshot.discardPile}`);
+    this.exhaustText.setText(`Exhausted: ${snapshot.exhaustPile}`).setVisible(snapshot.exhaustPile > 0);
     const hand = snapshot.hand;
-    const totalWidth = hand.length * (CARD_WIDTH + 10);
-    const startX = 400 - totalWidth / 2 + CARD_WIDTH / 2;
+    // cards overlap when the hand is too wide for the screen (up to MAX_HAND_SIZE cards)
+    const step = hand.length > 1 ? Math.min(CARD_WIDTH + 10, (HAND_AREA_WIDTH - CARD_WIDTH) / (hand.length - 1)) : 0;
+    const startX = 400 - (step * (hand.length - 1)) / 2;
 
     const seenIds = new Set<string>();
     const animations: Promise<void>[] = [];
 
     hand.forEach((card, i) => {
       seenIds.add(card.instanceId);
-      const slotX = startX + i * (CARD_WIDTH + 10);
+      const slotX = startX + i * step;
       const existing = this.handCards.get(card.instanceId);
       const canPlay = this.combat.canPlay(card);
 

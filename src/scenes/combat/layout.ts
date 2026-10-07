@@ -1,4 +1,6 @@
 export const HAND_Y = 515;
+/** Width the hand may spread across before the cards start to overlap. */
+export const HAND_AREA_WIDTH = 640;
 export const DRAW_PILE_POS = { x: 40, y: 515 };
 export const DISCARD_PILE_POS = { x: 760, y: 515 };
 
