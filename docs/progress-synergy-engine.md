@@ -1,10 +1,11 @@
 # Progress: synergy engine (auto/synergy-engine)
 
 ## Done
-- Types (scaling, triggers, tags, exhaust, new effects), Deck exhaust pile, CombatState engine, describe.ts text, 20 placeholder cards (src/data/synergyCards.ts), 2 relics, content browser columns, scene wiring for energy/HP events. Existing 132 tests pass.
+- Engine (types, Deck exhaust pile, CombatState, describe.ts), 20 placeholder cards, 2 relics, content browser columns, scene wiring for energy/HP events.
+- Tests: src/game/synergy.test.ts (all mechanics, registry-wide text/upgrade checks, save restore).
+- docs/SYNERGY_ENGINE.md, DESIGN_LOG.md, HANDOFF.md, implementationplan.md updated.
+- `npm run verify` passes.
 
-## In progress / next
-- Tests for every mechanic (src/game/synergy.test.ts) and registry-wide card tests
-- docs/SYNERGY_ENGINE.md (how to add a synergy card)
-- DESIGN_LOG.md (Session 3 entry), HANDOFF.md, implementationplan.md updates
-- `npm run verify`, then mark PR ready with report
+## Next
+- Nothing required. `gh` CLI was not available in the session, so the PR must be opened by a human (link: https://github.com/nxkgit/first-real-game/pull/new/auto/synergy-engine).
+- Follow-ups: exhaust pile viewer, tags on card faces, play in a browser.

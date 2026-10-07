@@ -69,3 +69,16 @@ The user decided to stop deferring the run's shape and build essentially one Sla
 
 **Direction: build the card-synergy engine now, with placeholder cards, and set up unattended (cloud) work to build it and the balance process around it.**
 The user wants to automate as much non-creative work as possible and to get the balance process (simulations plus documentation) working before real content exists. Their reasoning: balance tooling is only worth building against the kinds of interaction real cards will have, and they know every build will rest on card-to-card synergy as in Slay the Spire (one card multiplying another, effects triggered by other cards being played). So the engine for those interactions is built now, exercised by clearly-placeholder cards that are not in the reward pool (so the live game is unchanged), and the simulator and balance docs are built to work on whatever the card registry contains. This partly lifts the plan's "Full status-effect roster" deferral for the mechanics needed to support synergies; it does not touch the "Magic-school/tribe synergy system" deferral (hero-level identity is still the user's). The user authorised making any gameplay-adjacent calls in these sessions without asking, choosing whatever best fits the repo's documents; each such call is recorded in the session's PR and in this log. Unattended-session rules are in `docs/AUTOMATION.md`; a CI workflow now checks every branch and PR.
+
+**Synergy engine built (branch `auto/synergy-engine`, unattended).** Built the card-to-card machinery: scaling values, Empowered and a status-multiplying effect, triggers on power cards and relics, tags, exhaust, and gainEnergy / loseHp effects. 20 placeholder cards (`src/data/synergyCards.ts`, `inRewardPool: false`) and two relics (registered, not in `RELIC_POOL`) exercise it; the live game is unchanged. Rules and the how-to are in `docs/SYNERGY_ENGINE.md`. Decisions made without asking (all provisional, each reversible):
+- Damage order stays add, then multiply, then defender multiplier; scaled values are part of the base.
+- Empowered is a status (stacks = attacks doubled), spent by attack cards only, lasts until used (no end-of-turn expiry), and only applies to attack-card damage (skill and trigger damage is not doubled). Multiplier 2 is in tunables.
+- Triggered effects target the first living enemy (no random targeting, no aim UI) and are not card plays.
+- A power does not trigger on its own play; trigger order is relics, then powers in play order.
+- Recursion guard: nested trigger depth capped at `MAX_TRIGGER_DEPTH = 3`, deeper events ignored, rather than forbidding nesting.
+- `hpLost` includes enemy hits that get past block, not only self-damage; `loseHp` ignores block and can kill (as StS).
+- Once-per-turn resets as each player turn starts.
+- Exhaust: exhaustRandom uses the combat's seeded stream (shared with shuffles, so only fights that use it change); a played exhaust card exhausts after its effects, so it never counts itself.
+- Placeholder cards are `owner: 'neutral'`; `allDraftableCards()` is the helper for the simulator.
+- Effect kinds reached 8, the plan's threshold for an effect registry; not refactored (noted in the PR).
+- Tags are not shown on card faces yet, and the exhaust pile has no on-screen display yet (UI follow-ups).
