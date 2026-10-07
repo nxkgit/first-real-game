@@ -1,11 +1,7 @@
 import { Deck } from './Deck';
 import { EventEmitter } from './EventEmitter';
 import type { CardDefinition, CardEffect, CardInstance, EnemyDefinition, EnemyMove } from './types';
-
-// MVP 1 tunables. Placeholder values, expected to change once playtesting starts.
-const MAX_ENERGY = 4;
-const HAND_SIZE = 5;
-const PLAYER_MAX_HP = 60;
+import { HAND_SIZE, MAX_ENERGY, PLAYER_MAX_HP } from '../data/tunables';
 
 export type CombatPhase = 'playerTurn' | 'enemyTurn' | 'won' | 'lost';
 
@@ -40,7 +36,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   deck: Deck;
 
   playerHp: number;
-  playerMaxHp = PLAYER_MAX_HP;
+  playerMaxHp: number;
   playerBlock = 0;
   energy = 0;
   maxEnergy = MAX_ENERGY;
@@ -56,10 +52,16 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** Power cards played so far this combat; their onTurnStartEffect fires every subsequent turn. */
   private activePowers: CardDefinition[] = [];
 
-  constructor(starterDeck: CardDefinition[], enemy: EnemyDefinition) {
+  /** `player` carries HP between fights in a run; a standalone fight starts at full HP. */
+  constructor(
+    deckCards: CardDefinition[],
+    enemy: EnemyDefinition,
+    player: { hp: number; maxHp: number } = { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP }
+  ) {
     super();
-    this.deck = new Deck(starterDeck);
-    this.playerHp = PLAYER_MAX_HP;
+    this.deck = new Deck(deckCards);
+    this.playerHp = player.hp;
+    this.playerMaxHp = player.maxHp;
     this.enemy = enemy;
     this.enemyHp = enemy.maxHp;
   }

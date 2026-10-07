@@ -1,14 +1,18 @@
 import Phaser from 'phaser';
 import { CombatScene } from './scenes/CombatScene';
-import { DPR, GAME_HEIGHT, GAME_WIDTH } from './display';
+import { CANVAS_ZOOM, fitGameToWindow, fittedCanvasSize } from './display';
 
-new Phaser.Game({
+const { width, height } = fittedCanvasSize();
+
+const game = new Phaser.Game({
   type: Phaser.AUTO,
-  width: Math.round(GAME_WIDTH * DPR),
-  height: Math.round(GAME_HEIGHT * DPR),
-  zoom: 1 / DPR,
+  width,
+  height,
+  zoom: CANVAS_ZOOM,
   parent: 'app',
   backgroundColor: '#1b1b24',
   disableContextMenu: true, // right-click cancels card targeting
   scene: [CombatScene],
 });
+
+fitGameToWindow(game);

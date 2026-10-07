@@ -5,7 +5,7 @@ import { buildStarterDeck } from '../data/cards';
 import { MVP1_ENEMY } from '../data/enemies';
 import type { CardInstance, EnemyMove } from '../game/types';
 import { Sfx } from '../audio/Sfx';
-import { DPR, GAME_HEIGHT, GAME_WIDTH } from '../display';
+import { useLayoutCamera } from '../display';
 
 // Visuals here are built entirely from Phaser's drawing primitives (no art
 // assets / image generation available) — simple vector/geometric character
@@ -97,12 +97,7 @@ export class CombatScene extends Phaser.Scene {
   }
 
   create(): void {
-    // Render at device-pixel resolution while keeping the 800x600 layout (see display.ts).
-    this.cameras.main.setZoom(DPR).centerOn(GAME_WIDTH / 2, GAME_HEIGHT / 2);
-    this.events.on(Phaser.Scenes.Events.ADDED_TO_SCENE, (obj: Phaser.GameObjects.GameObject) => {
-      if (obj instanceof Phaser.GameObjects.Text) obj.setResolution(DPR);
-    });
-
+    useLayoutCamera(this);
     this.createParticleEmitters();
     this.buildBackground();
     this.playerContainer = this.buildMageCharacter();
