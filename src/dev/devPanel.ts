@@ -1,11 +1,12 @@
 import type Phaser from 'phaser';
 import { buildRunReport, formatRunReport } from '../game/runReport';
+import { captureScenario, formatScenario, parseScenarioText } from '../game/scenario';
 import { CARDS, getCard } from '../data/cards';
 import { ENEMIES, getEnemy } from '../data/enemies';
 import { RELICS, getRelic } from '../data/relics';
 import { newRun } from '../data/run';
 import { enterCurrentNode } from '../scenes/ui';
-import { getCurrentCombat, getCurrentRun } from '../session';
+import { getCurrentCombat, getCurrentRun, setPendingScenario } from '../session';
 import { copyToClipboard, loadReportHistory } from '../storage';
 
 /**
@@ -110,6 +111,39 @@ export function installDevPanel(game: Phaser.Game): void {
   seedInput.placeholder = 'seed (blank = random)';
   seedInput.style.cssText = 'font:inherit;width:130px;background:#1b1b24;color:#fff;border:1px solid #5a5a72;';
 
+  // a scenario is an exact fight state as JSON (docs/SCENARIOS.md)
+  const scenarioBox = document.createElement('textarea');
+  scenarioBox.placeholder = 'scenario JSON (see docs/SCENARIOS.md)';
+  scenarioBox.rows = 5;
+  scenarioBox.spellcheck = false;
+  scenarioBox.setAttribute('data-dev', 'scenario');
+  scenarioBox.style.cssText = 'font:10px/1.3 monospace;width:100%;box-sizing:border-box;background:#1b1b24;color:#fff;border:1px solid #5a5a72;';
+  const captureScenarioNow = (): void => {
+    const combat = getCurrentCombat();
+    if (!combat) return say('Only during a fight.');
+    try {
+      const text = formatScenario(captureScenario(combat));
+      scenarioBox.value = text;
+      void copyToClipboard(text).then((ok) => say(ok ? 'Captured and copied.' : 'Captured (copy failed: it is in the box).'));
+    } catch (error) {
+      say(error instanceof Error ? error.message : String(error));
+    }
+  };
+  /** Starts a fight exactly as the scenario describes. The run is only a stand-in (like "Fight these here"): the scenario's relics, HP and piles are used for the fight, and the fight ends without a reward. */
+  const loadScenarioNow = (): void => {
+    const parsed = parseScenarioText(scenarioBox.value);
+    if (!parsed.ok) return say(`Scenario not loaded: ${parsed.error}`);
+    const { scenario } = parsed;
+    setPendingScenario(scenario);
+    let started = false;
+    withRun((run) => {
+      run.startFight(scenario.enemies.map((e) => e.id));
+      started = true;
+    });
+    if (started) say(`Loaded${scenario.name ? `: ${scenario.name}` : ''}.`);
+    else setPendingScenario(null); // no run, or the fight could not start: don't leave it waiting for some later fight
+  };
+
   body.append(
     info,
     row(jump, button('Go to stop', () => withRun((run) => run.jumpTo(jump.value)))),
@@ -153,6 +187,8 @@ export function installDevPanel(game: Phaser.Game): void {
         refresh();
       })
     ),
+    row(button('Capture this fight', captureScenarioNow), button('Load scenario', loadScenarioNow)),
+    scenarioBox,
     row(
       button('Copy this run', () =>
         withRun((run) => void copyToClipboard(formatRunReport(buildRunReport(run))).then((ok) => say(ok ? 'Copied.' : 'Copy failed.')), false)

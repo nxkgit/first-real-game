@@ -1,5 +1,6 @@
 ﻿import { Deck } from './Deck';
 import { EventEmitter } from './EventEmitter';
+import { Rng } from './rng';
 import { PLAYER_ID } from './types';
 import { intentBlockOf, intentDamageOf, previewEffectValue, resolveEnemyEffect, resolvePlayerEffect } from './effects';
 import type { EffectHost, EnemyMoveOutcome } from './effects';
@@ -45,6 +46,34 @@ export interface CombatOptions {
   random?: () => number;
   /** Relics the player has: their combat-start and turn-start effects apply. */
   relics?: RelicDefinition[];
+  /** A seeded stream to draw the fight's randomness from (instead of `random`). Needed to capture
+   *  the fight exactly (see `exportState`). */
+  rng?: Rng;
+  /** Start from this exact state instead of a fresh shuffle (see `exportState`; scenario.ts turns
+   *  JSON into one). `deckCards` is ignored and `start()` does not draw or run combat-start effects. */
+  restore?: CombatSnapshot;
+}
+
+/**
+ * Everything about a fight, between two of the player's plays, that can change what happens next,
+ * as plain data. Built by `CombatState.exportState`, applied through `CombatOptions.restore`.
+ * (Not captured, on purpose: the message log, the instance ids of cards, and the "just applied"
+ * markers for statuses, which only matter during an enemy turn.)
+ */
+export interface CombatSnapshot {
+  /** The fight's random stream: its seed and where it is now. */
+  rng: { seed: number; position: number };
+  turn: number;
+  energy: number;
+  maxEnergy: number;
+  player: { hp: number; maxHp: number; block: number; statuses: Statuses };
+  enemies: { definition: EnemyDefinition; hp: number; block: number; statuses: Statuses; moveIndex: number }[];
+  relics: RelicDefinition[];
+  /** Cards by pile. `draw` is in drawing order (index 0 is drawn next). */
+  piles: { draw: CardDefinition[]; hand: CardDefinition[]; discard: CardDefinition[]; exhaust: CardDefinition[]; powers: CardDefinition[] };
+  stats: CombatStats;
+  /** Whether each reactive ability has already fired this turn, in firing order (relics, then powers in the order played). */
+  triggersFired: boolean[];
 }
 
 export type CombatPhase = 'playerTurn' | 'enemyTurn' | 'won' | 'lost';
@@ -108,6 +137,11 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** Synergy counters (see CombatStats). */
   readonly stats: CombatStats = { cardsPlayedThisTurn: 0, attacksPlayedThisTurn: 0, taggedPlayedThisTurn: {}, exhaustedThisCombat: 0 };
 
+  /** The stream the fight's randomness comes from, if it was given one (see CombatOptions.rng). */
+  readonly rng: Rng | null;
+  /** True when this fight began from a snapshot rather than a fresh shuffle. */
+  private readonly restored: boolean;
+
   private readonly relics: RelicDefinition[];
   /** Power cards played so far this combat; their onTurnStartEffect fires every subsequent turn. */
   private activePowers: CardDefinition[] = [];
@@ -125,11 +159,16 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
   constructor(deckCards: CardDefinition[], enemies: EnemyDefinition[], options: CombatOptions = {}) {
     super();
+    const snapshot = options.restore;
+    if (snapshot) enemies = snapshot.enemies.map((e) => e.definition);
     if (enemies.length === 0) throw new Error('a fight needs at least one enemy');
-    const player = options.player ?? { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP };
-    this.relics = options.relics ?? [];
+    const player = snapshot ? snapshot.player : (options.player ?? { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP });
+    this.relics = snapshot ? snapshot.relics : (options.relics ?? []);
+    this.rng = snapshot ? Rng.restore(snapshot.rng.seed, snapshot.rng.position) : (options.rng ?? null);
+    const stream = this.rng;
+    const random = stream ? () => stream.next() : (options.random ?? Math.random);
     for (const relic of this.relics) this.addTriggers(relic.triggers);
-    this.deck = new Deck(deckCards, options.random ?? Math.random);
+    this.deck = new Deck(snapshot ? [] : deckCards, random);
     this.player = { id: PLAYER_ID, name: 'Hero', hp: player.hp, maxHp: player.maxHp, block: 0, statuses: {} };
     this.enemies = enemies.map((definition, i) => ({
       id: `enemy-${i}`,
@@ -141,6 +180,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       definition,
       moveIndex: 0,
     }));
+    this.restored = snapshot !== undefined;
+    if (snapshot) this.applySnapshot(snapshot);
     this.host = {
       player: this.player,
       deck: this.deck,
@@ -157,7 +198,78 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     };
   }
 
+  /** Puts a snapshot's state in place. The constructor has already built the relic triggers, in order. */
+  private applySnapshot(s: CombatSnapshot): void {
+    this.deck.loadPiles(s.piles);
+    this.turnNumber = s.turn;
+    this.energy = s.energy;
+    this.maxEnergy = s.maxEnergy;
+    this.player.block = s.player.block;
+    this.player.statuses = { ...s.player.statuses };
+    this.enemies.forEach((enemy, i) => {
+      const from = s.enemies[i];
+      enemy.hp = from.hp;
+      enemy.block = from.block;
+      enemy.statuses = { ...from.statuses };
+      enemy.moveIndex = from.moveIndex;
+    });
+    this.stats.cardsPlayedThisTurn = s.stats.cardsPlayedThisTurn;
+    this.stats.attacksPlayedThisTurn = s.stats.attacksPlayedThisTurn;
+    this.stats.taggedPlayedThisTurn = { ...s.stats.taggedPlayedThisTurn };
+    this.stats.exhaustedThisCombat = s.stats.exhaustedThisCombat;
+    // powers already in play: their reactive abilities follow the relics', in the order they were played
+    for (const power of s.piles.powers) {
+      this.activePowers.push(power);
+      this.addTriggers(power.triggers);
+    }
+    this.triggers.forEach((t, i) => (t.firedThisTurn = s.triggersFired[i] ?? false));
+  }
+
+  /**
+   * The fight as plain data, to be restored later with `CombatOptions.restore`. Only possible on the
+   * player's turn (between plays) and only for a fight built with a seeded `rng`; otherwise the
+   * random stream could not be put back and a replay would differ.
+   */
+  exportState(): CombatSnapshot {
+    if (!this.rng) throw new Error('this fight was not given a seeded Rng, so it cannot be captured exactly');
+    if (this.phase !== 'playerTurn') throw new Error(`a fight can only be captured on the player's turn (it is "${this.phase}")`);
+    const definitions = (pile: CardInstance[]): CardDefinition[] => pile.map((c) => c.definition);
+    return {
+      rng: { seed: this.rng.seed, position: this.rng.position },
+      turn: this.turnNumber,
+      energy: this.energy,
+      maxEnergy: this.maxEnergy,
+      player: { hp: this.player.hp, maxHp: this.player.maxHp, block: this.player.block, statuses: { ...this.player.statuses } },
+      enemies: this.enemies.map((e) => ({
+        definition: e.definition,
+        hp: e.hp,
+        block: e.block,
+        statuses: { ...e.statuses },
+        moveIndex: e.moveIndex,
+      })),
+      relics: [...this.relics],
+      piles: {
+        draw: definitions(this.deck.drawPile).reverse(),
+        hand: definitions(this.deck.hand),
+        discard: definitions(this.deck.discardPile),
+        exhaust: definitions(this.deck.exhaustPile),
+        powers: definitions(this.deck.powerPile),
+      },
+      stats: { ...this.stats, taggedPlayedThisTurn: { ...this.stats.taggedPlayedThisTurn } },
+      triggersFired: this.triggers.map((t) => t.firedThisTurn),
+    };
+  }
+
   start(): void {
+    if (this.restored) {
+      // a fight picked up mid-way: nothing is drawn and no combat-start effect runs, but the scene
+      // still needs the hand and the turn announced so it can lay itself out
+      this.pushLog('Scenario loaded.');
+      this.emitHandChanged();
+      this.emit('turnStarted', { isFirstTurn: false });
+      this.checkWinLoss();
+      return;
+    }
     // relics that act as a fight begins, before the first hand is drawn
     for (const relic of this.relics) {
       for (const effect of relic.onCombatStart ?? []) this.applyCardEffect(effect, undefined);

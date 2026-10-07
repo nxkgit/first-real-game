@@ -76,6 +76,27 @@ export class Deck {
     return this.exhaustCard(pick.instanceId);
   }
 
+  /**
+   * Replaces every pile with exactly these cards (new instances, so instance ids are not the ones
+   * a captured fight had). `draw` is listed in the order the cards will be drawn (index 0 comes
+   * out first); `discard`, `exhaust` and `powers` in the order they got there. Draws nothing and
+   * shuffles nothing, so it uses no randomness.
+   */
+  loadPiles(piles: {
+    draw: CardDefinition[];
+    hand: CardDefinition[];
+    discard: CardDefinition[];
+    exhaust: CardDefinition[];
+    powers: CardDefinition[];
+  }): void {
+    const make = (list: CardDefinition[]): CardInstance[] => list.map((definition) => ({ instanceId: nextInstanceId(), definition }));
+    this.drawPile = make(piles.draw).reverse(); // the top of the pile is the end of the array
+    this.hand = make(piles.hand);
+    this.discardPile = make(piles.discard);
+    this.exhaustPile = make(piles.exhaust);
+    this.powerPile = make(piles.powers);
+  }
+
   discardHand(): void {
     this.discardPile.push(...this.hand);
     this.hand = [];

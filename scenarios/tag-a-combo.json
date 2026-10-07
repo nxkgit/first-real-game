@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "name": "Tag A combo turn",
+  "note": "Tag A Echo is already in play (and has not fired yet this turn). Play both Prime A, then Power Up, then Tag A Payoff: the payoff scales with the tagged cards played earlier, doubled by Empowered, and Echo draws one card the first time a tagged card is played.",
+  "rng": { "seed": 777 },
+  "player": { "hp": 50, "maxHp": 60 },
+  "enemies": [{ "id": "elite-a" }],
+  "piles": {
+    "hand": ["prime-a", "prime-a", "power-up", "tag-a-payoff", "strike"],
+    "draw": ["defend", "strike", "defend", "bolt", "defend"],
+    "discard": ["strike", "defend"],
+    "powers": ["tag-a-echo"]
+  },
+  "triggersFired": [false]
+}
