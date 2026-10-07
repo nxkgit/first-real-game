@@ -475,7 +475,7 @@ function checkEvents(world: ContentWorld, out: Collector): void {
       labels.add(label);
       let costs = false;
       for (const o of choice.outcomes) {
-        if (safeText(() => describeOutcome(o)) === undefined) out.add('error', 'event', id, 'text-throws', `Choice "${label}": an outcome cannot be described (unknown card or enemy id?).`, 'Fix the id below.');
+        if (safeText(() => describeOutcome(o)) === undefined) out.add('error', 'event', id, 'text-throws', `Choice "${label}": an outcome cannot be described (unknown card or enemy id?).`, 'See the unknown-card / unknown-enemy message for this event.');
         if (o.kind === 'card' && !world.registry[o.cardId]) out.add('error', 'event', id, 'unknown-card', `Choice "${label}" gives card "${o.cardId}", which does not exist.`, 'Use a real card id from src/data/cards.ts.');
         if (o.kind === 'fight') {
           if (o.enemies.length === 0) out.add('error', 'event', id, 'empty-fight', `Choice "${label}" starts a fight with no enemies.`, 'List at least one enemy id.');
