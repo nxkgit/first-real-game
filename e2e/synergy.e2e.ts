@@ -106,3 +106,52 @@ test('(e) self-damage: Blood Strike costs HP, and Pain Engine reacts to it', asy
   // the loss comes first, so the strength is already there for the 14 damage
   expect(t.enemies[0].hp).toBe(40 - 15);
 });
+
+// ---- the cards the first batch of tests left out (2026-10-07 follow-up) ----
+
+test('(e) Opportunist scales with the target\'s Vulnerable; Hand Strike with the cards still in hand', async ({ game }) => {
+  await fight(game, ['expose', 'opportunist', 'hand-strike', 'defend']);
+  let t = await play(game, 'Expose'); // Vulnerable 2 on the enemy
+  t = await play(game, 'Opportunist'); // (4 + 4 x 2) = 12, x1.5 Vulnerable = 18
+  expect(t.enemies[0].hp).toBe(40 - 18);
+  // Hand Strike: 2 + 2 per card left in hand once it has left it (Defend only = 1) = 4, x1.5 = 6
+  t = await play(game, 'Hand Strike');
+  expect(t.enemies[0].hp).toBe(40 - 18 - 6);
+});
+
+test('(e) Double Strength doubles Strength and exhausts', async ({ game }) => {
+  await fight(game, ['pain-engine', 'blood-strike', 'double-strength']);
+  await play(game, 'Pain Engine');
+  await play(game, 'Blood Strike'); // loses 3 HP: Strength 1
+  const t = await play(game, 'Double Strength');
+  expect(await playerStatus(game, 'strength')).toBe(2);
+  expect(t.exhaust).toBe(1);
+});
+
+test('(e) Block Spark hits once per turn when block is gained; Opening Spark hits at each turn start', async ({ game }) => {
+  await fight(game, ['block-spark', 'opening-spark', 'defend', 'defend']);
+  await play(game, 'Block Spark');
+  await play(game, 'Opening Spark');
+  let t = await play(game, 'Defend'); // block gained: 3 damage
+  expect(t.enemies[0].hp).toBe(40 - 3);
+  t = await play(game, 'Defend'); // once per turn: no second hit
+  expect(t.enemies[0].hp).toBe(40 - 3);
+  expect(t.energy).toBe(0);
+  await game.endTurn(); // enemy turn, then turn 2 starts: Opening Spark hits for 3
+  t = await game.expectReadoutsMatchTruth();
+  expect(t.turn).toBe(2);
+  expect(t.enemies[0].hp).toBe(40 - 3 - 3);
+  game.check();
+});
+
+test('(e) Exhaust Engine draws a card whenever one is exhausted', async ({ game }) => {
+  // seven cards, so there is a draw pile (the helper above wants the whole deck in hand)
+  await game.open('seed=123');
+  await game.waitForScene('MapScene');
+  await game.startFightWith(['exhaust-engine', 'single-use-strike', 'defend', 'defend', 'defend', 'strike', 'strike'], ['enemy-a']);
+  const before = await game.combatTruth();
+  await play(game, 'Exhaust Engine');
+  const t = await play(game, 'Single Use Strike'); // exhausts, so draws 1
+  expect(t.exhaust).toBe(1);
+  expect(t.hand.length, 'started with 5, played 2, drew 1').toBe(before.hand.length - 2 + 1);
+});
