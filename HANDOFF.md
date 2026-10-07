@@ -94,7 +94,7 @@ These are gameplay and creative calls. Per `CLAUDE.md`, ask rather than pick. Ev
 
 ## Next steps that don't need decisions
 
-- **Faster first load:** split Phaser into its own bundle chunk (the build warns about one 1.4 MB file). The user skipped this for now, along with the phone check.
+- **Faster first load:** Phaser is now its own chunk (`vite.config.ts`, `rolldownOptions.output.codeSplitting`), so game updates don't bust its cache. First-load size is unchanged (~357 KB gzip for Phaser); the build still warns because Phaser alone is over 500 KB. Note: Vite 8 ignores `rollupOptions` when `rolldownOptions` is set, so the two-page `input` lives in `rolldownOptions` too. Only build-, test- and curl-checked (chunks and `content.html` serve), not played in a browser.
 - **Test on a real phone.** Touch was only tested with simulated events, and not at all since the act, map and settings were added.
 - **Use the simulator** (below) when numbers change, to see what they did.
 - **Deferred on purpose (do when needed, not before):** an effect registry (once there are ~8 effect kinds), a `HeroDefinition` record (when the second hero starts).
