@@ -1,11 +1,19 @@
 # Browser end-to-end smoke tests (Playwright, headless Chromium). See docs/E2E.md.
-# Blocking: first green on GitHub's Linux runner 2026-10-07 (auto/e2e-smoke), then promoted.
+#
+# Two jobs from one setup:
+#  - e2e (pull requests, and pushes to auto/** and integration/**): everything except the roughly
+#    5-minute whole-seeded-act test, so a PR gets its answer sooner. Blocking, as before.
+#  - e2e-full (nightly at 03:17 UTC on the default branch, and by hand through "Run workflow"):
+#    the whole suite including the whole-act test.
 name: E2E
 
 on:
   pull_request:
   push:
     branches: ['auto/**', 'integration/**']
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,6 +24,7 @@ concurrency:
 
 jobs:
   e2e:
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -28,12 +37,37 @@ jobs:
       - run: npx playwright install --with-deps chromium
       # the suite itself runs against the dev server; the build catches bundling problems first
       - run: npm run build
-      - run: npm run e2e
+      # everything except the whole-act test (e2e/act.e2e.ts); the nightly job runs that one
+      - run: npx playwright test --grep-invert "whole seeded act"
       - name: Upload Playwright traces and report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-traces
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14
+
+  e2e-full:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run e2e
+      - name: Upload Playwright traces and report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-full
           path: |
             test-results/
             playwright-report/

@@ -1,6 +1,6 @@
 # Browser end-to-end tests
 
-Headless-Chromium smoke tests (Playwright) that play the real game: scenes, buttons, the card-aiming mouse flow and the animation queue. They catch scene and UI breakage that unit tests cannot see. They are **not** part of `npm run verify` (which stays fast and browser-free), and the CI job is **non-blocking** for now (see below).
+Headless-Chromium smoke tests (Playwright) that play the real game: scenes, buttons, the card-aiming mouse flow and the animation queue. They catch scene and UI breakage that unit tests cannot see. They are **not** part of `npm run verify` (which stays fast and browser-free), and the pull-request CI job is **blocking** (see "CI" below).
 
 They do not replace a human playing for *feel*; they check that the screens come up, stay wired to the game state, and that nothing throws.
 
@@ -9,6 +9,7 @@ They do not replace a human playing for *feel*; they check that the screens come
 ```
 npm run e2e:install   # once: downloads Chromium (with OS deps on Linux)
 npm run e2e           # whole suite; starts `vite` on port 5199 itself (E2E_PORT to change)
+npx playwright test --grep-invert "whole seeded act"   # the fast subset CI runs on pull requests (19 of 20 tests, about 2 minutes)
 npx playwright test devpanel          # one file
 npx playwright test -g "Cull"         # one test by name
 npm run e2e:typecheck # type-checks e2e/ (verify only checks src/)
@@ -17,7 +18,7 @@ npx playwright show-trace test-results/<test>/trace.zip   # after a failure (tra
 
 The suite runs against the Vite **dev** server, not a build, because tests reach into game modules with `import('/src/...')` (same module instances the page uses). `npm run build` in CI separately proves the bundle builds.
 
-Takes about 5 minutes: six of the tests are quick (5 to 15 s each, run in parallel), the whole-act test (g) is the long pole at roughly 3 to 5 minutes.
+The whole suite takes about 5 minutes: the other 19 tests are quick (5 to 15 s each, run in parallel, about 2 minutes in all) and the whole-act test (g) is the long pole at roughly 3 to 5 minutes. That is why CI runs the fast subset on pull requests and the whole suite nightly (see "CI").
 
 ## The `?e2e` hook and the frame stepper
 
@@ -36,7 +37,7 @@ Input is real: `page.mouse` moves and clicks and `page.keyboard` presses go to t
 
 | Helper | What it does |
 | --- | --- |
-| `open(query)` / `reload()` | load `/?query&e2e`, wait for boot, stop the loop |
+| `open(query)` / `reload()` | load `/?query&e2e`, wait for boot, **wait for the art to load** (the files download in real time, which stepped frames cannot speed up; `afterLoad` in `e2e/harness.ts` waits for the `ui-border` texture; note `preloadArt` queues the backdrops after it, so a screen could in principle draw its fallback instead of a backdrop if they are still arriving; waiting for every key would close that), stop the loop |
 | `step(n, dt)` | run frames; fails if the active scene's clock did not advance ("scene stopped advancing"), and on any browser error |
 | `waitForScene(key)` | step until that scene is running; fails (naming the scene it is stuck in) after a frame budget |
 | `settle()` | step until the fight's animation queue has drained: enemy turn over, input unlocked, no finite tween or timer pending |
@@ -102,6 +103,15 @@ The act policy is deliberately dumb (it only has to keep the game moving) and, b
 
 ## CI
 
-`.github/workflows/e2e.yml` runs on pull requests and on pushes to `auto/**` and `integration/**`: install Chromium, `npm run build`, `npm run e2e`, and on failure upload `test-results/` (traces) and `playwright-report/` as the `playwright-traces` artifact (download it and open a trace with `npx playwright show-trace`).
+`.github/workflows/e2e.yml` has two jobs that share their setup (install Chromium, `npm run build`):
 
-It is **blocking** for pull requests and for pushes to `auto/**` and `integration/**` (it passed on GitHub's Linux runner on 2026-10-07 before being promoted). To make it a required check, mark "E2E" required in the repository's branch protection.
+| Job | Runs on | Runs | Failure artifact |
+|---|---|---|---|
+| `e2e` | pull requests, and pushes to `auto/**` and `integration/**` | `npx playwright test --grep-invert "whole seeded act"`: everything except `act.e2e.ts` (about 2 minutes) | `playwright-traces` |
+| `e2e-full` | nightly at 03:17 UTC (`schedule`, on the default branch) and by hand (**Actions > E2E > Run workflow**) | `npm run e2e`: the whole suite including the whole-act test (about 5 minutes) | `playwright-traces-full` |
+
+On failure each job uploads `test-results/` (traces) and `playwright-report/` for 14 days (download it and open a trace with `npx playwright show-trace`).
+
+The `e2e` job is **blocking** for pull requests and for pushes to `auto/**` and `integration/**` (the whole suite passed on GitHub's Linux runner on 2026-10-07 before being promoted). To make it a required check, mark "e2e" required in the repository's branch protection. The whole-act test is therefore **not** part of the pull-request gate: a change that breaks only the full-act path is caught by the next nightly run, or run `npm run e2e` yourself before merging anything that touches the map, rewards, rests, events or run flow. If the nightly run fails, the commit that broke it is among those since the last green nightly.
+
+Notes on the schedule: GitHub runs scheduled workflows only from the default branch, and switches them off after 60 days without repository activity (re-enable it under Actions). The split was written without being able to run GitHub Actions (`gh` is not installed here): the YAML was parsed and the fast command run locally, but the workflow itself had not yet run on GitHub when this was written.

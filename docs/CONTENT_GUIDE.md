@@ -16,11 +16,12 @@ The lists marked `names:` are checked by a test (`src/content/guide.test.ts`) ag
 | What | File | Note |
 |---|---|---|
 | Cards, upgrades, starter deck | `src/data/cards.ts` | Define the card, then add it to `ALL_CARDS` at the bottom. Upgrades are generated from the card's `upgrade` block. |
-| Engine test cards (not in rewards) | `src/data/synergyCards.ts` | Placeholders that exercise the engine. Real cards go in `cards.ts`. |
+| Engine test cards | `src/data/synergyCards.ts` | 20 placeholders that exercise the engine. **They are in the reward pool** (as of 2026-10-07 the user wants every placeholder offered to testers); flip `inRewardPool` in the file's `base` object to take them out. Real cards go in `cards.ts`. |
 | Enemies | `src/data/enemies.ts` | Add to `ALL_ENEMIES`. |
-| Which fights fill the act | `src/data/run.ts` (`ACT_CONTENT`) | Lists of enemy ids per fight: easy, normal, elite, boss. An enemy that is in no list never appears. |
+| Which fights fill the act | `src/data/run.ts` (`ACT_CONTENT`) | Lists of enemy ids per fight: `earlyEncounters` (floors 1-3), `encounters` (the middle), `lateEncounters` (floor 9 up), `elites`, `bosses`. An enemy that is in no list never appears. |
 | Relics | `src/data/relics.ts` | Add to `ALL_RELICS` (then it is in the relic pool and elites can drop it). |
 | Events | `src/data/events.ts` | Add to `ALL_EVENTS`. All events are automatically in the act. |
+| Art: which picture stands in for which enemy, relic, stop or screen | `src/data/art.ts` | Placeholder pairings. How pictures get into the game: `docs/ART.md`. |
 | Statuses | `src/data/statuses.ts` and the `StatusId` type in `src/game/types.ts` | New statuses with new behaviour need code. |
 | **Every balance number that is not one card/enemy value** | `src/data/tunables.ts` | Energy, hand size, player HP, Weak/Vulnerable/Empowered multipliers, rest heal, reward counts and gold, shop, map shape. |
 | Numbers on a specific card, enemy, relic, event | with that item | Damage, block, cost, HP, move values, gold in an event. |
@@ -228,7 +229,7 @@ export const EXAMPLE_ENEMY: EnemyDefinition = {
 - Enemies can only use `damage`, `block` and `applyStatus` (see the effect table). Anything else is ignored in a fight, and the check says so.
 - In a move, `to: 'target'` means **the player** and `to: 'self'` means the enemy.
 - The intent shown above the enemy is derived from the effects: damage shows a sword and the damage, block a shield, `applyStatus` to self a buff arrow, to target a debuff arrow. It never says which status. A move none of whose effects produce an icon is an error ("intent shows nothing").
-- To make an enemy appear: add it to `ALL_ENEMIES`, then put its id in a fight in `ACT_CONTENT` (`src/data/run.ts`): `earlyEncounters`, `encounters`, `elites`, `bosses`. A fight is a list of ids (up to 3). Test one alone first: `npm run balance -- ladder --fights your-enemy+enemy-d`.
+- To make an enemy appear: add it to `ALL_ENEMIES`, then put its id in a fight in `ACT_CONTENT` (`src/data/run.ts`): `earlyEncounters`, `encounters`, `elites`, `bosses`. (`lateEncounters` is used from floor 9 up: `MAP_LATE_FLOORS_FROM`.) A fight is a list of ids (up to 3). Test one alone first: `npm run balance -- ladder --fights your-enemy+enemy-d`.
 - Checklist: `npm run content:check`, look at it in the browser, `npm run balance -- ladder --skills all`, compare to the tier bands in `docs/BALANCE.md`.
 
 ## Relics
@@ -339,6 +340,23 @@ The existing statuses (a status id must be one of these; adding one needs a code
 | `empowered` | Intensity. The next attack card(s) deal a damage multiple; one stack per attack card. |
 <!-- /names -->
 
+## The act's map
+
+The map is generated from the run's seed (`src/game/actMap.ts`); its dials are in `src/data/tunables.ts` (all provisional). Authoring content does not require touching the generator, but these rules decide where your fights, elites, events and shops can appear.
+
+- **Shape:** `MAP_FLOORS` floors plus the boss, `MAP_LANES` columns, `MAP_PATHS` climbs from the bottom that share stops where they overlap. Floor 1 is all fights, the floor before the boss is all rests. `MAP_FIRST_FLOOR` says from which floor events, shops, elites and rests may appear (elites and rests from the fifth floor). Rests and shops never come twice in a row on a path.
+- **Stop-kind mix:** `MAP_KIND_WEIGHTS` is the base chance of each kind.
+- **Route themes (`MAP_ROUTE_THEMES`):** each climb gets one theme (`risky`, `events`, `safe`, `fights`), shuffled by the seed, which multiplies the chance of each kind of stop on that climb, so choosing a path is choosing an experience. A stop shared by several climbs takes one of their themes at random. The theme is not stored on the saved map (the saved shape did not change) and is not shown on screen: the player sees it only through the stops. Adding a theme is one entry in `MAP_ROUTE_THEMES`; the multipliers are map-feel dials, not balance.
+- **Elites:** `MAP_MIN_ELITES` (3) elites always exist, and **every route from a first-floor stop to the boss crosses at least one elite**: while some route avoids them, the generator turns a stop on it into an elite (a fight first, then a shop or event; never a rest, never before the first elite floor; the risky route preferred). If every legal stop on a route already sits beside an elite it accepts two elites in a row (about 4 maps in 3000). The result is roughly 4.6 elites per map. A test checks all of this across 3000 seeds (`src/game/actMap.invariants.test.ts`); if you change the rules, update the test on purpose. Elites and the boss need at least one entry in `elites` / `bosses` in `ACT_CONTENT`.
+- **Events:** every event in `ALL_EVENTS` is in the act; with fewer events than event stops the same event repeats (a bag shuffled by the seed). Events are placeholders; reuse is expected.
+- **Randomness:** the map uses the run's seeded stream in a fixed order. Changing how many random numbers the generator draws changes every seed's map (saved runs keep theirs, because a save stores the whole map).
+
+## What the player sees on a card
+
+- **Text is generated** from the effects (`describeEffect`, `cardText` in `src/game/describe.ts`).
+- **In a fight, a damage effect shows its live number**, not the printed one: Strength, Weak, Vulnerable, scaling and Empowered are included, computed by `CombatState.previewCardDamage` (the same formula as playing the card), against the first living enemy. The card text turns green when the card's total damage is above its printed total and red when below. Cards with a hand-written `description` keep their printed text, which is one more reason not to write one. Other screens (rewards, shop, deck viewer) show printed numbers.
+- **Pictures** (hero, enemies, icons, backdrops, borders) are separate from content data: `docs/ART.md`.
+
 ## What `npm run content:check` looks at
 
 Errors (the command exits non-zero) mean broken or inert content. Warnings mean "probably a mistake". Notes (`--info`) are facts that are often intended.
@@ -350,7 +368,7 @@ Errors (the command exits non-zero) mean broken or inert content. Warnings mean 
 - **Reachability:** a card in no reward pool, starter deck or event; a relic outside the pool; an enemy or event in no fight list; empty act lists.
 - **Duplicates and extremes:** duplicate names, shared status badges; a damage or block per energy more than 3x (or under 1/3 of) the middle card's, an enemy HP or hit far from the others. These are typo catchers, not balance verdicts.
 
-`--strict` also fails on warnings. The engine test cards in `synergyCards.ts` and the two synergy relics are known and show up only as notes.
+`--strict` also fails on warnings. The two synergy test relics (`exhaust-token`, `kill-token`) are known to be outside the relic pool and show up only as notes; the synergy cards are in the reward pool and need no exemption.
 
 ## Common mistakes
 
