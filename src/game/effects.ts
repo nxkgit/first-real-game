@@ -15,7 +15,10 @@ import { STATUSES } from '../data/statuses';
  *    (an enemy move containing it does nothing for that effect, and shows no intent icon);
  *  - `describe`: its card text;
  *  - `intent`: how the enemy-intent readout treats it (icon, and the numbers the preview sums);
- *  - `scales`: which scaling sources its `scaling` field accepts (empty: it can't scale).
+ *  - `scales`: which scaling sources its `scaling` field accepts (empty: it can't scale);
+ *  - `preview`: the number it would produce if played right now, for the live numbers on card faces
+ *    (leave it out and the card face shows the printed text); `lowerIsBetter` marks numbers that hurt
+ *    the player (self-damage), so the card face colours a bigger one red.
  *
  * CombatState supplies the `EffectHost` (the few things an effect may do to the fight) and does the
  * dispatch; the entries here own the rules.
@@ -53,6 +56,12 @@ export interface EnemyMoveOutcome {
   hpLosses: number[];
 }
 
+/** The slice of the fight a preview may read (a subset of EffectHost, so previews cannot change anything). */
+export interface PreviewHost extends Pick<EffectHost, 'player' | 'calcDamage' | 'scaledValue'> {
+  /** How many of `count` cards a draw would really put into the hand right now (hand cap and pile sizes included). */
+  previewDraw(count: number): number;
+}
+
 export interface DescribeOpts {
   /** For powers and relics that act at turn start, where a draw is on top of the normal hand. */
   atTurnStart?: boolean;
@@ -74,7 +83,16 @@ export interface EffectDefinition<E extends Effect> {
     block?(effect: E): number;
   };
   scales: readonly ScaleSource[];
+  /** What this effect would really produce for `target` if played now (scaling, statuses and all),
+   *  or undefined if it has no single number to show. Must not change anything. */
+  preview?(effect: E, host: PreviewHost, target: EnemyState | undefined, fromAttackCard: boolean): number | undefined;
+  /** True if a bigger previewed number is worse for the player (e.g. losing HP). */
+  lowerIsBetter?: boolean;
 }
+
+/** The previewed number of a plain scaled value (everything except damage, which also meets statuses). */
+const scaledPreview = (effect: { value: number; scaling?: Scaling }, host: PreviewHost, target: EnemyState | undefined): number =>
+  host.scaledValue(effect, target);
 
 /** Every scaling source (the Record keeps this list in step with the ScaleSource union). */
 const SCALE_SOURCE_SET: Record<ScaleSource, true> = {
@@ -114,6 +132,8 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     describe: (_e, n) => `Deal ${n} damage.`,
     intent: { icon: () => 'attack', damage: (e) => e.value },
     scales: ALL_SCALE_SOURCES,
+    preview: (e, h, target, fromAttackCard) =>
+      target ? h.calcDamage(h.scaledValue(e, target), h.player, target, fromAttackCard) : undefined,
   },
 
   block: {
@@ -130,6 +150,7 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     describe: (_e, n) => `Gain ${n} block.`,
     intent: { icon: () => 'defend', block: (e) => e.value },
     scales: ALL_SCALE_SOURCES,
+    preview: scaledPreview,
   },
 
   draw: {
@@ -139,6 +160,7 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     },
     describe: (_e, n, opts) => (opts.atTurnStart ? `Draw ${n} additional ${n === 1 ? 'card' : 'cards'}.` : `Draw ${plural(n, 'card')}.`),
     scales: ALL_SCALE_SOURCES,
+    preview: (e, h, target) => h.previewDraw(h.scaledValue(e, target)),
   },
 
   applyStatus: {
@@ -159,6 +181,7 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     },
     intent: { icon: (e) => (e.to === 'self' ? 'buff' : 'debuff') },
     scales: ALL_SCALE_SOURCES,
+    preview: scaledPreview,
   },
 
   gainEnergy: {
@@ -168,6 +191,7 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     },
     describe: (_e, n) => `Gain ${n} energy.`,
     scales: ALL_SCALE_SOURCES,
+    preview: scaledPreview,
   },
 
   loseHp: {
@@ -180,6 +204,8 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     },
     describe: (_e, n) => `Lose ${n} HP.`,
     scales: ALL_SCALE_SOURCES,
+    preview: scaledPreview,
+    lowerIsBetter: true,
   },
 
   multiplyStatus: {
@@ -241,6 +267,16 @@ export function describeEffectWith(effect: Effect, n: number, opts: DescribeOpts
 /** True if the effect can carry `scaling` (its kind accepts at least one source). */
 export function acceptsScaling(effect: Effect): boolean {
   return (entry(effect)?.scales.length ?? 0) > 0;
+}
+
+/** The number `effect` would produce if played now, or undefined if the kind shows none (see `preview`). */
+export function previewEffectValue(effect: Effect, host: PreviewHost, target: EnemyState | undefined, fromAttackCard: boolean): number | undefined {
+  return entry(effect)?.preview?.(effect, host, target, fromAttackCard);
+}
+
+/** True if a bigger previewed number is worse for the player (see `lowerIsBetter`). */
+export function lowerIsBetterFor(effect: Effect): boolean {
+  return entry(effect)?.lowerIsBetter ?? false;
 }
 
 export function intentIconOf(effect: Effect): IntentIcon | undefined {

@@ -69,12 +69,12 @@ export function describeTrigger(trigger: Trigger): string {
 }
 
 /** The text on a card's face: its `description` if it has one, otherwise generated from its effects. */
-export function cardText(card: CardDefinition, liveDamage?: (effect: Effect) => number | undefined): string {
+export function cardText(card: CardDefinition, liveValue?: (effect: Effect) => number | undefined): string {
   if (card.description !== undefined) return card.description;
-  // With `liveDamage`, a damage effect shows what it would really deal right now ("Deal 9 damage.")
-  // instead of the printed number and its scaling note.
+  // With `liveValue`, an effect shows what it would really do right now ("Deal 9 damage.", "Gain 7
+  // block.") instead of the printed number and its scaling note.
   const parts = (card.effects ?? []).map((effect) => {
-    const live = effect.kind === 'damage' ? liveDamage?.(effect) : undefined;
+    const live = liveValue?.(effect);
     return live === undefined ? describeEffect(effect) : plainEffect(effect, live, {});
   });
   if (card.onTurnStartEffect) {
@@ -84,6 +84,11 @@ export function cardText(card: CardDefinition, liveDamage?: (effect: Effect) => 
   for (const trigger of card.triggers ?? []) parts.push(describeTrigger(trigger));
   if (card.exhaust) parts.push('Exhaust.');
   return parts.join(' ');
+}
+
+/** A card's tags as the small line on its face, e.g. "#tag-a #tag-b"; empty if it has none. */
+export function cardTagsText(card: CardDefinition): string {
+  return (card.tags ?? []).map((tag) => `#${tag}`).join(' ');
 }
 
 // ---- relics and events ----

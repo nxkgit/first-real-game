@@ -300,13 +300,13 @@ describe('damage maths: Strength, Weak, Vulnerable', () => {
     expect(s.calcDamage(6, s.player, s.enemies[0])).toBe(6);
   });
 
-  it('previewCardDamage matches what playing the card deals (Weak hero vs Vulnerable enemy)', () => {
+  it('previewCardEffect matches what playing the card deals (Weak hero vs Vulnerable enemy)', () => {
     const s = c();
     s.player.statuses.weak = 1;
     s.enemies[0].statuses.vulnerable = 1;
     const strike = { type: 'attack' } as CardDefinition;
-    expect(s.previewCardDamage(strike, { value: 6 }, s.enemies[0])).toBe(s.calcDamage(6, s.player, s.enemies[0], true));
-    expect(s.previewCardDamage(strike, { value: 6 }, s.enemies[0])).toBe(Math.floor(6 * WEAK_DAMAGE_MULT * VULNERABLE_DAMAGE_MULT));
+    expect(s.previewCardEffect(strike, { kind: 'damage', value: 6 }, s.enemies[0])).toBe(s.calcDamage(6, s.player, s.enemies[0], true));
+    expect(s.previewCardEffect(strike, { kind: 'damage', value: 6 }, s.enemies[0])).toBe(Math.floor(6 * WEAK_DAMAGE_MULT * VULNERABLE_DAMAGE_MULT));
   });
 
   it('Weak multiplies by WEAK_DAMAGE_MULT and rounds down; stack count does not deepen it', () => {

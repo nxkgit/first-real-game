@@ -1,7 +1,7 @@
 ﻿import { Deck } from './Deck';
 import { EventEmitter } from './EventEmitter';
 import { PLAYER_ID } from './types';
-import { intentBlockOf, intentDamageOf, resolveEnemyEffect, resolvePlayerEffect } from './effects';
+import { intentBlockOf, intentDamageOf, previewEffectValue, resolveEnemyEffect, resolvePlayerEffect } from './effects';
 import type { EffectHost, EnemyMoveOutcome } from './effects';
 import type {
   CardDefinition,
@@ -20,7 +20,7 @@ import type {
   TriggerOn,
 } from './types';
 import { STATUSES } from '../data/statuses';
-import { HAND_SIZE, MAX_ENERGY, MAX_TRIGGER_DEPTH, PLAYER_MAX_HP } from '../data/tunables';
+import { HAND_SIZE, MAX_ENERGY, MAX_HAND_SIZE, MAX_TRIGGER_DEPTH, PLAYER_MAX_HP } from '../data/tunables';
 
 /** Counters that scaling and the dev tools read. Per-turn ones reset as each player turn starts. */
 export interface CombatStats {
@@ -120,6 +120,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   private freshStatuses = new Set<string>();
   /** The few things effects (see effects.ts) may do to this fight. */
   private readonly host: EffectHost;
+  /** 1 while previewing a card that is still in the hand (see previewCardEffect), else 0. */
+  private previewHandOffset = 0;
 
   constructor(deckCards: CardDefinition[], enemies: EnemyDefinition[], options: CombatOptions = {}) {
     super();
@@ -200,11 +202,43 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return Math.max(0, Math.floor(amount));
   }
 
-  /** What one damage effect of `card` would really deal to `target` right now (Strength, Weak,
-   *  Vulnerable, scaling, Empowered). Uses the same formula as playing the card. For the live
-   *  number on card faces. */
-  previewCardDamage(card: CardDefinition, effect: { value: number; scaling?: Scaling }, target: EnemyState): number {
-    return this.calcDamage(this.scaledValue(effect, target), this.player, target, card.type === 'attack');
+  /** The number one effect of `card` would really produce right now if the card were played on
+   *  `target` (Strength, Weak, Vulnerable, Empowered, scaling), or undefined if the effect shows no
+   *  number. Goes through the effect registry, so it uses the same rules as playing the card; it
+   *  changes nothing. For the live numbers on card faces. */
+  previewCardEffect(card: CardDefinition, effect: Effect, target: EnemyState | undefined): number | undefined {
+    // a played card has already left the hand when its effects resolve, so don't count it in "hand size"
+    this.previewHandOffset = this.deck.hand.some((c) => c.definition === card) ? 1 : 0;
+    try {
+      const host = { ...this.host, previewDraw: (count: number) => this.previewDraw(count, card) };
+      return previewEffectValue(effect, host, target, card.type === 'attack');
+    } finally {
+      this.previewHandOffset = 0;
+    }
+  }
+
+  /** How many of `count` drawn cards would land in the hand: replays `Deck.draw` on pile sizes only
+   *  (a full hand sends the card to the discard pile; an empty draw pile reshuffles the discard pile). */
+  private previewDraw(count: number, playing: CardDefinition): number {
+    let hand = this.deck.hand.length - this.previewHandOffset;
+    let pile = this.deck.drawPile.length;
+    // the played card is in the discard pile by the time its effects resolve (a power is kept in play instead)
+    let discard = this.deck.discardPile.length + (this.previewHandOffset === 1 && playing.type !== 'power' ? 1 : 0);
+    let drawn = 0;
+    for (let i = 0; i < Math.min(count, 200); i++) {
+      if (pile === 0) {
+        if (discard === 0) break;
+        pile = discard;
+        discard = 0;
+      }
+      pile -= 1;
+      if (hand >= MAX_HAND_SIZE) discard += 1;
+      else {
+        hand += 1;
+        drawn += 1;
+      }
+    }
+    return drawn;
   }
 
   /** Total damage the enemy's next move will deal the player right now (statuses included), or
@@ -383,7 +417,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       case 'strength':
         return this.player.statuses.strength ?? 0;
       case 'handSize':
-        return this.deck.hand.length;
+        return this.deck.hand.length - this.previewHandOffset;
       case 'exhaustedThisCombat':
         return this.stats.exhaustedThisCombat;
       case 'targetVulnerable':
