@@ -89,6 +89,97 @@
         margin-left: 8px;
         align-self: center;
       }
+      .tools {
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .count {
+        color: var(--dim);
+        align-self: center;
+        margin-left: 8px;
+      }
+      input[type='search'],
+      select {
+        font: inherit;
+        color: var(--text);
+        background: #22222e;
+        border: 1px solid #5a5a72;
+        border-radius: 4px;
+        padding: 3px 6px;
+      }
+      label.filter {
+        color: var(--dim);
+      }
+      th.sortable {
+        cursor: pointer;
+        user-select: none;
+      }
+      th.sorted-asc::after {
+        content: ' \25B2';
+        color: var(--accent);
+      }
+      th.sorted-desc::after {
+        content: ' \25BC';
+        color: var(--accent);
+      }
+      tr.selectable {
+        cursor: pointer;
+      }
+      tr.selectable:hover,
+      tr.selected {
+        background: #2a2a3a;
+      }
+      .detail {
+        background: var(--panel);
+        border: 1px solid var(--accent);
+        border-radius: 4px;
+        padding: 8px 14px;
+        margin: 8px 0;
+      }
+      .detail[hidden] {
+        display: none;
+      }
+      .detail-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .detail h3,
+      .detail h4 {
+        margin: 6px 0;
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .card-col {
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 4px 10px;
+      }
+      .card-col p {
+        margin: 4px 0;
+      }
+      .changed {
+        color: #8fd18a;
+      }
+      table.inner {
+        width: auto;
+      }
+      ul.issues {
+        margin: 4px 0;
+        padding-left: 20px;
+      }
+      li.error {
+        color: #ff8a8a;
+      }
+      li.warning {
+        color: var(--accent);
+      }
+      li.info {
+        color: var(--dim);
+      }
     </style>
   </head>
   <body>
@@ -96,7 +187,7 @@
       <h1>Content browser</h1>
       <p class="note">
         Everything in the game as it is right now, with card and relic text generated from the real data. All names and numbers
-        are placeholders. <a href="./">Back to the game</a>
+        are placeholders. <a href="./">Back to the game</a>. Click a column header to sort, a card row for details. <span id="check-summary"></span>
       </p>
       <nav id="nav"></nav>
       <div id="sections"></div>
