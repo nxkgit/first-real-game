@@ -1,8 +1,22 @@
 import type { CardDefinition, EnemyDefinition } from './types';
-import { PLAYER_MAX_HP, REST_HEAL_FRACTION, REWARD_CARD_CHOICES, REWARD_GOLD } from '../data/tunables';
+import {
+  PLAYER_MAX_HP,
+  REST_HEAL_FRACTION,
+  REWARD_CARD_CHOICES,
+  REWARD_GOLD,
+  SHOP_CARD_COUNT,
+  SHOP_CARD_PRICE,
+} from '../data/tunables';
 
 /** One stop on the run's linear path. */
-export type RunNode = { kind: 'combat'; enemy: EnemyDefinition } | { kind: 'rest' };
+export type RunNode = { kind: 'combat'; enemy: EnemyDefinition } | { kind: 'rest' } | { kind: 'shop' };
+
+/** One card on a shop shelf. */
+export interface ShopItem {
+  card: CardDefinition;
+  price: number;
+  sold: boolean;
+}
 
 /** Offered after winning a fight: take one of `cards` into the deck, or take `gold` instead. */
 export interface RewardOffer {
@@ -30,6 +44,8 @@ export class RunState {
   nodeIndex = 0;
   phase: RunPhase = 'inNode';
   pendingReward: RewardOffer | null = null;
+  /** Stock of the shop at the current node; rolled the first time it is looked at. */
+  private shopStock: ShopItem[] | null = null;
 
   readonly nodes: RunNode[];
   private readonly rewardPool: CardDefinition[];
@@ -102,20 +118,49 @@ export class RunState {
     return healed;
   }
 
+  /** What the current shop node has for sale (DRAFT). */
+  get shopItems(): ShopItem[] {
+    this.requireNode('shop');
+    if (!this.shopStock) {
+      this.shopStock = this.rollCards(SHOP_CARD_COUNT).map((card) => ({ card, price: SHOP_CARD_PRICE, sold: false }));
+    }
+    return this.shopStock;
+  }
+
+  /** Buys the shelf item if it is unsold and affordable. Returns whether the purchase happened. */
+  buyShopItem(index: number): boolean {
+    const item = this.shopItems[index];
+    if (!item || item.sold || item.price > this.gold) return false;
+    this.gold -= item.price;
+    item.sold = true;
+    this.deck.push(item.card);
+    return true;
+  }
+
+  leaveShop(): void {
+    this.requireNode('shop');
+    this.advance();
+  }
+
   private advance(): void {
     this.pendingReward = null;
+    this.shopStock = null;
     this.nodeIndex += 1;
     this.phase = this.nodeIndex >= this.nodes.length ? 'won' : 'inNode';
   }
 
-  /** Up to REWARD_CARD_CHOICES distinct cards from the reward pool, in random order. */
   private rollRewardCards(): CardDefinition[] {
+    return this.rollCards(REWARD_CARD_CHOICES);
+  }
+
+  /** Up to `count` distinct cards from the reward pool, in random order. */
+  private rollCards(count: number): CardDefinition[] {
     const pool = [...new Set(this.rewardPool)];
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(this.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    return pool.slice(0, REWARD_CARD_CHOICES);
+    return pool.slice(0, count);
   }
 
   private requireNode(kind: RunNode['kind']): void {

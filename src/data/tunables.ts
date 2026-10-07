@@ -23,3 +23,9 @@ export const REWARD_CARD_CHOICES = 3;
  * must end up a genuine toss-up against the card, which can't be tuned until a shop exists.
  */
 export const REWARD_GOLD = 25;
+
+// ---- shop (DRAFT: visual placeholder, nothing here is a decision) ----
+/** Cards for sale at a shop stop. */
+export const SHOP_CARD_COUNT = 4;
+/** Flat placeholder price per card. Real pricing (by cost? by rarity?) is the user's call. */
+export const SHOP_CARD_PRICE = 40;

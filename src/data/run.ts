@@ -11,6 +11,7 @@ export function buildRunPath(): RunNode[] {
   return [
     { kind: 'combat', enemy: ENEMY_A },
     { kind: 'combat', enemy: ENEMY_B },
+    { kind: 'shop' }, // DRAFT stop, added for a visual
     { kind: 'rest' },
     { kind: 'combat', enemy: ENEMY_C },
   ];

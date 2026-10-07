@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { RunState, type RunNode } from './RunState';
 import type { CardDefinition, EnemyDefinition } from './types';
-import { PLAYER_MAX_HP, REST_HEAL_FRACTION, REWARD_CARD_CHOICES, REWARD_GOLD } from '../data/tunables';
+import {
+  PLAYER_MAX_HP,
+  REST_HEAL_FRACTION,
+  REWARD_CARD_CHOICES,
+  REWARD_GOLD,
+  SHOP_CARD_COUNT,
+  SHOP_CARD_PRICE,
+} from '../data/tunables';
 
 function card(id: string): CardDefinition {
   return { id, name: id, type: 'skill', cost: 1, description: '' };
@@ -130,5 +137,49 @@ describe('RunState', () => {
     r.finishCombat('won', 10);
     expect(r.phase).toBe('won');
     expect(r.deck).toHaveLength(STARTER.length + 1);
+  });
+});
+
+describe('RunState shop (draft)', () => {
+  const shop: RunNode = { kind: 'shop' };
+
+  it('stocks distinct cards at the flat price, and keeps the same stock until you leave', () => {
+    const r = run([shop, fight]);
+    const items = r.shopItems;
+    expect(items).toHaveLength(SHOP_CARD_COUNT);
+    expect(new Set(items.map((i) => i.card)).size).toBe(SHOP_CARD_COUNT);
+    expect(items.every((i) => i.price === SHOP_CARD_PRICE && !i.sold)).toBe(true);
+    expect(r.shopItems).toBe(items);
+  });
+
+  it('refuses a purchase you cannot afford', () => {
+    const r = run([shop, fight]);
+    expect(r.buyShopItem(0)).toBe(false);
+    expect(r.deck).toEqual(STARTER);
+  });
+
+  it('spends gold, adds the card, and sells each item once', () => {
+    const r = run([shop, fight]);
+    r.gold = SHOP_CARD_PRICE * 2;
+    const bought = r.shopItems[1].card;
+    expect(r.buyShopItem(1)).toBe(true);
+    expect(r.gold).toBe(SHOP_CARD_PRICE);
+    expect(r.deck).toContain(bought);
+    expect(r.buyShopItem(1)).toBe(false);
+    expect(r.gold).toBe(SHOP_CARD_PRICE);
+  });
+
+  it('leaving moves on and the next shop restocks', () => {
+    const r = run([shop, shop, fight]);
+    const first = r.shopItems;
+    r.leaveShop();
+    expect(r.currentNode).toBe(shop);
+    expect(r.shopItems).not.toBe(first);
+  });
+
+  it('is only usable while at a shop node', () => {
+    const r = run([fight, shop]);
+    expect(() => r.shopItems).toThrow();
+    expect(() => r.leaveShop()).toThrow();
   });
 });

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { CardDefinition } from '../game/types';
-import type { RunState } from '../game/RunState';
+import type { RunNode, RunState } from '../game/RunState';
 
 // Small UI pieces shared by the run's scenes. Placeholder look, like the rest of the visuals.
 
@@ -163,6 +163,8 @@ export function addRunHud(scene: Phaser.Scene, run: RunState, opts: { showHp?: b
   return scene.add.text(20, 22, parts.join('    '), { fontSize: '14px', color: '#c8c8d8' }).setOrigin(0, 0.5);
 }
 
+const NODE_SCENE: Record<RunNode['kind'], string> = { combat: 'CombatScene', rest: 'RestScene', shop: 'ShopScene' };
+
 /** Starts whichever scene matches where the run is now. Every scene transition goes through here. */
 export function enterCurrentNode(scene: Phaser.Scene, run: RunState): void {
   if (run.phase === 'won' || run.phase === 'lost') {
@@ -170,6 +172,6 @@ export function enterCurrentNode(scene: Phaser.Scene, run: RunState): void {
   } else if (run.phase === 'reward') {
     scene.scene.start('RewardScene', { run });
   } else {
-    scene.scene.start(run.currentNode.kind === 'combat' ? 'CombatScene' : 'RestScene', { run });
+    scene.scene.start(NODE_SCENE[run.currentNode.kind], { run });
   }
 }
