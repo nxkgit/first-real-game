@@ -5,6 +5,8 @@ import type { DraftPolicy } from './drafts';
 import { comboUniverse, combosExperiment, deckExperiment } from './combos';
 import { loopsExperiment } from './loops';
 import { dominanceExperiment } from './dominance';
+import { ablateExperiment } from './ablate';
+import { applyAssignments, parseAssignments, tweakExperiment } from './tweak';
 import type { ComboGoal } from './combos';
 import { cardsExperiment, ladderExperiment, lengthsExperiment, outlierExperiment, pairsExperiment } from './experiments';
 import { DEFAULT_OPTIONS } from './simulate';
@@ -20,7 +22,7 @@ import type { Snapshot } from './snapshot';
 import { heading, table } from './report';
 import { actFights, deckFromSpec, parseFights, referenceDeckSets } from './suites';
 import type { DeckSet } from './suites';
-import { buildStarterDeck } from '../data/cards';
+import { buildStarterDeck, getCard } from '../data/cards';
 import type { CardDefinition } from '../game/types';
 import type { CardSet } from './experiments';
 
@@ -42,7 +44,7 @@ export interface CommandResult {
   defaultOut?: string;
 }
 
-export const COMMANDS = ['cards', 'pairs', 'ladder', 'deck', 'combos', 'loops', 'dominance', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench'] as const;
+export const COMMANDS = ['cards', 'pairs', 'ladder', 'deck', 'combos', 'loops', 'dominance', 'tweak', 'ablate', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench'] as const;
 export type Command = (typeof COMMANDS)[number];
 
 export const BASELINE_PATH = 'balance/baselines/baseline.json';
@@ -57,6 +59,8 @@ Commands
   drafts     whole-run comparison of draft / rest / path policies
   outliers   cards and fights far outside their cohort
   deck       run one exact deck (--cards a,b*2 | --set name) against the fights, plus raw output vs a Dummy
+  ablate     each card's contribution inside a built deck (deck minus one copy vs full deck, --sets synergy|name,...)
+  tweak      what-if: change a card's numbers in memory and measure the change (--card id --set path=value)
   dominance  strictly dominated cards (static arithmetic on the card data)
   loops      exhaustive search of tiny decks for free-play loops (minimal loop cores)
   combos     adversarial random search for decks that kill fastest / deal most damage (--goal damage|speed|stall)
@@ -83,6 +87,7 @@ Common flags
   --runs N         whole runs per policy (drafts; default 100)
   --reward card|gold|best --rest heal|smart --path random|smart   custom draft policy vs the default
   --note text      baseline: replace the note stored in the baseline (state date, commit and what the content is)
+  --tweak spec     run any command with in-memory card changes: card:path=value,path=value;card2:path=value (nothing on disk changes)
   --out base       write base.md and base.json   (baseline: the JSON path; check: the Markdown path)
   --json           print JSON instead of Markdown`;
 
@@ -177,6 +182,20 @@ function bench(flags: Record<string, string>): CommandResult {
 
 /** Runs one subcommand. `today` is the date stamped into reports (yyyy-mm-dd). */
 export function runCommand(command: string, flags: Record<string, string>, io: CommandIO, today: string): CommandResult {
+  // --tweak "card:path=value,path=value;card2:path=value" runs ANY command with those card changes applied in memory
+  const restores = (flags.tweak && flags.tweak !== 'true' ? flags.tweak.split(';') : []).map((part) => {
+    const colon = part.indexOf(':');
+    if (colon < 1) throw new Error(`bad --tweak "${part}" (use card:path=value, e.g. tag-a-echo:triggers.0.oncePerTurn=true)`);
+    return applyAssignments(getCard(part.slice(0, colon).trim()), parseAssignments(part.slice(colon + 1)));
+  });
+  try {
+    return runCommandInner(command, flags, io, today);
+  } finally {
+    for (const r of restores.reverse()) r();
+  }
+}
+
+function runCommandInner(command: string, flags: Record<string, string>, io: CommandIO, today: string): CommandResult {
   const skills = parseSkills(flags.skills);
   switch (command) {
     case 'cards': {
@@ -223,6 +242,23 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
         top: num(flags, 'top', 5),
         maxCopies: num(flags, 'max-copies', 3),
         minAttackers: num(flags, 'min-attackers', 4),
+      });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'ablate': {
+      const r = ablateExperiment(evaluatorFor(flags, 100), { sets: setsOf({ ...flags, sets: flags.sets ?? 'synergy' }), skills, headline: headlineOf(flags) });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'tweak': {
+      if (!flags.card || !flags.set) throw new Error('tweak needs --card <id> --set path=value[,path=value]  (e.g. --card blood-strike --set effects.0.value=2)');
+      const r = tweakExperiment({
+        card: flags.card,
+        sets: parseAssignments(flags.set),
+        context: flags.context ?? 'mid',
+        skills,
+        config: { fights: parseFights(flags.fights), seeds: num(flags, 'seeds', 100), baseSeed: num(flags, 'seed', 1) },
+        headline: headlineOf(flags),
+        pool: poolOf(flags),
       });
       return { markdown: r.markdown, json: r.json };
     }

@@ -46,7 +46,7 @@ export function inCardSet(card: CardDefinition, set: CardSet | undefined): boole
   return SYNERGY_CARDS.some((c) => c.id === card.id);
 }
 
-function contextDeck(name: string, pool: 'reward' | 'all'): CardDefinition[] {
+export function contextDeck(name: string, pool: 'reward' | 'all'): CardDefinition[] {
   const set = referenceDeckSets({ pool, synergy: true }).find((s) => s.name === name);
   if (!set) throw new Error(`unknown deck context "${name}" (starter, mid, late, syn-tag, syn-exhaust, syn-trigger, syn-mult, syn-combo, syn-mixed)`);
   return set.decks[0];
@@ -181,6 +181,8 @@ export interface PairRow {
   /** Benefit of the pair together minus the sum of each alone (positive = they help each other), per metric. */
   synergy: Record<MetricId, { mean: number; lo: number; hi: number }>;
   verdict: Verdict;
+  /** The same verdict after subtracting the typical pair's score (see pairsExperiment). */
+  vsTypical: Verdict;
 }
 
 export function pairsExperiment(ev: Evaluator, opts: PairsOptions): ExperimentResult & { rows: PairRow[]; totalPairs: number } {
@@ -240,39 +242,45 @@ export function pairsExperiment(ev: Evaluator, opts: PairsOptions): ExperimentRe
       synergy[m] = ciRow(ci);
       if (m === headline) headCI = ci;
     }
-    return { a: a.id, b: b.id, synergy, verdict: verdict(headCI as Interval, METRICS[headline].margin, true) };
+    return { a: a.id, b: b.id, synergy, verdict: verdict(headCI as Interval, METRICS[headline].margin, true), vsTypical: 'negligible' as Verdict };
   });
+  // The synergy score has a non-zero centre: benefits are not additive even for cards that do not interact (each added card dilutes the deck, and HP lost is bounded and lumpy), so with many pairs the whole cloud sits above or below zero. With 20+ pairs, judge each pair against the MEDIAN pair; with fewer there is no meaningful centre and it stays 0.
+  const centre = rows.length >= 20 ? median(rows.map((r) => r.synergy[headline].mean)) : 0;
+  for (const r of rows) {
+    const h = r.synergy[headline];
+    r.vsTypical = verdict({ lo: h.lo - centre, hi: h.hi - centre }, METRICS[headline].margin, true);
+  }
 
   const byScore = [...rows].sort((x, y) => y.synergy[headline].mean - x.synergy[headline].mean);
   const top = opts.top ?? 10;
-  const strong = byScore.filter((r) => r.synergy[headline].lo > 0).slice(0, top);
-  const negative = byScore.filter((r) => r.synergy[headline].hi < 0).slice(-top).reverse();
+  const strong = byScore.filter((r) => r.synergy[headline].lo - centre > 0).slice(0, top);
+  const negative = byScore.filter((r) => r.synergy[headline].hi - centre < 0).slice(-top).reverse();
   const unit = METRICS[headline].id === 'win' ? 'win-rate points' : METRICS[headline].label;
   const scale = METRICS[headline].id === 'win' ? 100 : 1;
   const fmtRow = (r: PairRow): (string | number)[] => [
     `${r.a} + ${r.b}`,
     fmtDiff({ mean: r.synergy[headline].mean * scale, lo: r.synergy[headline].lo * scale, hi: r.synergy[headline].hi * scale }, METRICS[headline].id === 'win' ? 1 : 2),
-    VERDICT_TEXT[r.verdict],
+    VERDICT_TEXT[r.vsTypical],
   ];
   const counts = { better: 0, worse: 0, negligible: 0, inconclusive: 0 };
-  for (const r of rows) counts[r.verdict]++;
+  for (const r of rows) counts[r.vsTypical]++;
   const markdown = [
     heading(2, 'Pair synergy'),
     '',
     `Synergy score = (benefit of A and B together) minus (benefit of A alone + benefit of B alone), all measured against the ${context} deck on identical seeds, in ${unit}${METRICS[headline].higherIsBetter ? '' : ' (benefit = HP/turns saved, so positive is good)'}. Positive means the cards help each other more than the sum of their parts; negative means they overlap or fight for the same energy and draws. Brackets are 95% CIs. Skill: ${opts.skill}. ${describeSetup(ev)}`,
     `${rows.length} of ${all.length} possible pairs evaluated${sampled ? ` (a deterministic random sample, --max-pairs ${maxPairs}); a strong pair outside the sample is not seen` : ''}. Candidate cards: ${cards.map((c) => c.id).join(', ')}.`,
-    `Of ${rows.length} pairs: ${counts.better} clearly synergistic, ${counts.worse} clearly anti-synergistic, ${counts.negligible} negligible, ${counts.inconclusive} inconclusive. Each pair is a 4-way difference, so its interval is wide: with 100+ pairs tested, expect about 5% to look significant by chance. Treat single hits as leads and confirm a lead by re-running just that pair with more seeds (--pairs a+b --seeds 200).`,
+    `Of ${rows.length} pairs: ${counts.better} clearly synergistic, ${counts.worse} clearly anti-synergistic, ${counts.negligible} negligible, ${counts.inconclusive} inconclusive. Each pair is a 4-way difference, so its interval is wide: with 100+ pairs tested, expect about 5% to look significant by chance. Verdicts compare each pair with the TYPICAL pair (the median score, ${fix(centre * scale, 2)} ${unit}): cards that do not interact still score off zero because benefits are not additive, so zero is not the right reference when many pairs are tested (with fewer than 20 pairs the reference is zero). Treat single hits as leads and confirm a lead by re-running just that pair with more seeds (--pairs a+b --seeds 200).`,
     '',
     heading(3, 'Strongest synergies'),
-    strong.length ? table(['pair', 'synergy score', 'verdict'], strong.map(fmtRow)) : '_None clearly above zero._',
+    strong.length ? table(['pair', 'synergy score', 'vs typical pair'], strong.map(fmtRow)) : '_None clearly above the typical pair._',
     '',
     heading(3, 'Negative (anti-synergistic) pairs'),
-    negative.length ? table(['pair', 'synergy score', 'verdict'], negative.map(fmtRow)) : '_None clearly below zero._',
+    negative.length ? table(['pair', 'synergy score', 'vs typical pair'], negative.map(fmtRow)) : '_None clearly below the typical pair._',
     '',
   ].join('\n');
   return {
     name: 'pairs',
-    json: { skill: opts.skill, context, headline, setup: setupJson(ev), totalPairs: all.length, evaluated: rows.length, sampled, rows: byScore },
+    json: { skill: opts.skill, context, headline, setup: setupJson(ev), totalPairs: all.length, evaluated: rows.length, sampled, centre: r6(centre), rows: byScore },
     markdown,
     rows: byScore,
     totalPairs: all.length,
