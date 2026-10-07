@@ -1,6 +1,6 @@
 # Unattended work (cloud sessions)
 
-How to hand a block of work to an autonomous Claude Code session and get back something reviewable. Written 2026-10-07, when the process was first set up; refine it as it proves itself.
+How to hand a block of work to an autonomous Claude Code session and get back something reviewable. Written 2026-10-07, when the process was first set up; refined after the first wave (five sessions: all finished, all mergeable, the main friction was generic tests written against yesterday's effect shapes).
 
 `CLAUDE.md` still applies in full. This file adds the rules for sessions that run with **nobody to ask**.
 
@@ -12,7 +12,8 @@ Poor fits: anything judged by feel (needs a human playing it), hero/card/enemy/a
 
 ## Rules for an unattended session
 
-1. **Work on a branch named `auto/<topic>`.** Never push to `main` (a push to `main` deploys the live site). Open a pull request into `main` if you can (`gh pr create`); if you can't, pushing the branch is enough.
+1. **Work on a branch named `auto/<topic>`.** Never push to `main` (a push to `main` deploys the live site). `gh` is not installed in cloud sessions: don't try to open a PR. Push the branch, and put what would have been the PR description in `docs/progress-<topic>.md` on the branch (kept up to date as you go). The orchestrating session merges branches itself.
+   Commit and push **often** (after each working piece), so an interrupted session loses little. Branch from the latest `main`.
 2. **No questions: decide, and write the decision down.** Where `implementationplan.md`, `DESIGN_LOG.md`, `HANDOFF.md` and `CLAUDE.md` don't settle something, pick the option most consistent with them and the existing code, then record it in the PR description under **Decisions I made** (what, why, and how to reverse it). Prefer the smaller, more reversible choice.
 3. **Placeholders stay placeholders.** Numbers are provisional and live in `src/data/tunables.ts` (or the data file they belong to). Card/enemy/relic names are plain and descriptive ("Jab", "Heavy Hit", "Enemy A"), never flavorful or lore-bearing. No hero identity, story, art or aesthetic decisions.
 4. **Stay in scope.** Do the brief, not the neighbouring things. If you notice something worth doing outside it, list it under **Follow-ups** in the PR instead of doing it.
@@ -37,4 +38,6 @@ Decide-for-yourself guidance: <the likely forks and which way to lean>
 
 ## Merging
 
-A human reviews each PR. Sessions that touch disjoint files merge independently; if two PRs conflict, merge the engine/data change first and rebase the other. After merging, update `HANDOFF.md` (what's built, new open decisions).
+The orchestrating (interactive) session merges finished branches through an integration branch (`integration/<wave>`), runs `npm run verify` on the combination, fixes interaction breakage (typically generic tests that assume old effect shapes), plays the changed behaviour in a real browser when it touches combat or scenes, and only then merges to `main`. Findings and open questions from a session's report are decided by the orchestrator using the project documents; only security, the user's computer health, or their data come back to the user.
+
+Before the orchestrator existed, the rule was: a human reviews each PR. Sessions that touch disjoint files merge independently; if two PRs conflict, merge the engine/data change first and rebase the other. After merging, update `HANDOFF.md` (what's built, new open decisions).
