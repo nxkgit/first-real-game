@@ -1,3 +1,4 @@
+import { intentIconOf } from './effects';
 import type { EnemyMove } from './types';
 
 /**
@@ -8,13 +9,13 @@ export type IntentIcon = 'attack' | 'defend' | 'buff' | 'debuff';
 
 const ORDER: IntentIcon[] = ['attack', 'defend', 'buff', 'debuff'];
 
-/** The icons for a move, derived from its effects, in a fixed display order. */
+/** The icons for a move, derived from its effects (each kind says what it shows, in the effect
+ *  registry), in a fixed display order. */
 export function intentIcons(move: EnemyMove): IntentIcon[] {
   const found = new Set<IntentIcon>();
   for (const effect of move.effects) {
-    if (effect.kind === 'damage') found.add('attack');
-    else if (effect.kind === 'block') found.add('defend');
-    else if (effect.kind === 'applyStatus') found.add(effect.to === 'self' ? 'buff' : 'debuff');
+    const icon = intentIconOf(effect);
+    if (icon) found.add(icon);
   }
   return ORDER.filter((icon) => found.has(icon));
 }

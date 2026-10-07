@@ -1,17 +1,16 @@
 import type { CardDefinition, Effect, EventOutcome, RelicDefinition, RunEffect, ScaleSource, Trigger } from './types';
-import { STATUSES } from '../data/statuses';
+import { acceptsScaling, describeEffectWith } from './effects';
+import type { DescribeOpts } from './effects';
 import { getCard } from '../data/cards';
 import { getEnemy } from '../data/enemies';
-
-const plural = (n: number, word: string): string => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 /**
  * One effect as a short sentence, e.g. "Deal 6 damage." Card text is generated from the effects so
  * the numbers can never drift from what the card really does. `atTurnStart` is for powers, where
  * a draw is on top of the normal hand.
  */
-export function describeEffect(effect: Effect, opts: { atTurnStart?: boolean } = {}): string {
-  const scaling = 'scaling' in effect ? effect.scaling : undefined;
+export function describeEffect(effect: Effect, opts: DescribeOpts = {}): string {
+  const scaling = acceptsScaling(effect) && 'scaling' in effect ? effect.scaling : undefined;
   if (!scaling || !('value' in effect)) return plainEffect(effect, 'value' in effect ? effect.value : 0, opts);
   const unit = SCALE_UNIT[scaling.per](scaling.tag);
   // "Deal 4 damage. +3 for each card played earlier this turn." / "Deal 1 damage for each point of your block."
@@ -31,32 +30,9 @@ const SCALE_UNIT: Record<ScaleSource, (tag?: string) => string> = {
   targetVulnerable: () => 'stack of Vulnerable on the target',
 };
 
-/** One effect with its number filled in as `n` (the scaling is described separately). */
-function plainEffect(effect: Effect, n: number, opts: { atTurnStart?: boolean }): string {
-  switch (effect.kind) {
-    case 'damage':
-      return `Deal ${n} damage.`;
-    case 'block':
-      return `Gain ${n} block.`;
-    case 'draw':
-      return opts.atTurnStart ? `Draw ${n} additional ${n === 1 ? 'card' : 'cards'}.` : `Draw ${plural(n, 'card')}.`;
-    case 'applyStatus': {
-      const name = STATUSES[effect.status].name;
-      return effect.to === 'self' ? `Gain ${n} ${name}.` : `Apply ${n} ${name}.`;
-    }
-    case 'gainEnergy':
-      return `Gain ${n} energy.`;
-    case 'loseHp':
-      return `Lose ${n} HP.`;
-    case 'multiplyStatus': {
-      const name = STATUSES[effect.status].name;
-      const whose = effect.to === 'self' ? 'your' : "the target's";
-      return effect.factor === 2 ? `Double ${whose} ${name}.` : `Multiply ${whose} ${name} by ${effect.factor}.`;
-    }
-    case 'exhaustRandom':
-      return `Exhaust ${plural(effect.value, 'random card')} from your hand.`;
-  }
-}
+/** One effect with its number filled in as `n` (the scaling is described separately). The wording
+ *  of each kind lives in its registry entry (effects.ts). */
+const plainEffect = describeEffectWith;
 
 const lowerFirst = (text: string): string => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
 

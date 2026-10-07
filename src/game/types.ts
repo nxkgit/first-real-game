@@ -58,7 +58,9 @@ export interface Scaling {
 
 /**
  * One thing that happens. Cards and enemy moves are both lists of these, so a new kind of effect
- * works for both (enemies only perform damage, block and applyStatus). "target" is whoever the card
+ * works for both (enemies only perform the kinds whose registry entry has `resolveEnemy`: damage,
+ * block and applyStatus). Each kind's rules, text, intent and scaling live in one entry of the
+ * effect registry (effects.ts). "target" is whoever the card
  * was aimed at (an enemy), or for an enemy move, the player; "self" is whoever is playing the card
  * or making the move. For effects fired by a trigger, "target" is the first living enemy.
  * Effects with a numeric `value` can also carry `scaling`.
@@ -77,6 +79,9 @@ export type Effect =
   | { kind: 'multiplyStatus'; status: StatusId; factor: number; to: 'target' | 'self' }
   /** Player cards only. Exhausts `value` random cards from the hand (fewer if the hand is smaller). */
   | { kind: 'exhaustRandom'; value: number };
+
+/** Every effect kind. Each one has exactly one entry in the effect registry (effects.ts). */
+export type EffectKind = Effect['kind'];
 
 /** Things a trigger can react to. */
 export type TriggerOn =
