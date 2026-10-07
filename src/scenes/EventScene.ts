@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { describeOutcome } from '../game/describe';
 import { Sfx } from '../audio/Sfx';
+import { addScreenBackdrop } from './art';
 import { useLayoutCamera } from '../display';
 import { saveRun } from '../storage';
 import {
@@ -34,6 +35,7 @@ export class EventScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addScreenBackdrop(this, 'event');
     this.hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, this.hud.x + this.hud.width + 70);
     addSettingsButton(this);

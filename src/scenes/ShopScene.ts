@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
+import { addScreenBackdrop } from './art';
 import { useLayoutCamera } from '../display';
 import { saveRun } from '../storage';
 import {
@@ -38,6 +39,7 @@ export class ShopScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addScreenBackdrop(this, 'shop');
     // a counter for the wares to sit on
     this.add.rectangle(400, 345, 640, 10, 0x4a3a2a);
     this.add.rectangle(400, 362, 640, 24, 0x2e2418);

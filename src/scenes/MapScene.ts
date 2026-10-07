@@ -3,7 +3,7 @@ import type { MapNode, MapNodeKind } from '../game/actMap';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
-import { addMapIcon } from './art';
+import { addMapIcon, addScreenBackdrop } from './art';
 import { mapLayout } from './mapLayout';
 import {
   addDeckButton,
@@ -45,6 +45,7 @@ export class MapScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addScreenBackdrop(this, 'map');
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
     addSettingsButton(this);

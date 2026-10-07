@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { relicText } from '../game/describe';
 import { Sfx } from '../audio/Sfx';
+import { addScreenBackdrop } from './art';
 import { useLayoutCamera } from '../display';
 import {
   CARD_HEIGHT,
@@ -36,6 +37,7 @@ export class RewardScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addScreenBackdrop(this, 'reward');
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
     addSettingsButton(this);

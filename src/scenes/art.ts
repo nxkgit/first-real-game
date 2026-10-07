@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BACKGROUNDS, ENEMY_ART, ENEMY_DISPLAY_HEIGHT, ENEMY_PICTURES, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
+import { BACKGROUNDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, ENEMY_PICTURES, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
 import type { BackgroundName } from '../data/art';
 import type { EnemyDefinition } from '../game/types';
 import { buildGoblinCharacter } from './combat/drawings';
@@ -122,4 +122,11 @@ export function addBackdrop(
   image.setScale(scale).setCrop(0, top, source, bandHeight).setY(rect.y - top * scale);
   scene.add.rectangle(rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width, rect.height, 0x0c0a14, dim);
   return true;
+}
+
+/** The backdrop for a full-screen stop (map, rest, shop, event, reward), drawn over the plain
+ *  dark background; does nothing if the picture did not load. */
+export function addScreenBackdrop(scene: Phaser.Scene, screen: keyof typeof SCREEN_BACKDROPS): void {
+  const { name, dim } = SCREEN_BACKDROPS[screen];
+  addBackdrop(scene, name, { x: 0, y: 0, width: 800, height: 600 }, dim);
 }

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
+import { addScreenBackdrop } from './art';
 import { useLayoutCamera } from '../display';
 import { REST_HEAL_FRACTION } from '../data/tunables';
 import {
@@ -36,6 +37,7 @@ export class RestScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addScreenBackdrop(this, 'rest');
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
     addSettingsButton(this);
