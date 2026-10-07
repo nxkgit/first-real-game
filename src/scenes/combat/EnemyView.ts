@@ -7,7 +7,7 @@ import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { ENEMY_Y } from './layout';
-import { buildEnemySprite } from '../art';
+import { buildEnemySprite, isPixelEnemy, playEnemyAttack, playEnemyDeath } from '../art';
 import { addIdleBob, drawArrow, drawShield, drawSword } from './drawings';
 
 const INTENT_Y = 92;
@@ -57,7 +57,7 @@ export class EnemyView {
     this.container = buildEnemySprite(scene, state.definition);
     this.baseScale = state.definition.placeholderScale ?? 1;
     this.container.setPosition(x, ENEMY_Y).setScale(this.baseScale);
-    addIdleBob(scene, this.container, ENEMY_Y);
+    if (!isPixelEnemy(this.container)) addIdleBob(scene, this.container, ENEMY_Y); // animated sheets idle on their own
 
     this.nameText = scene.add
       .text(x, NAME_Y, state.name, { fontSize: crowded ? '16px' : '18px', color: '#ffffff', fontStyle: 'bold' })
@@ -102,6 +102,11 @@ export class EnemyView {
     }
 
     this.syncFrom();
+  }
+
+  /** Plays the enemy's own attack animation, if its art has one. */
+  playAttack(): void {
+    playEnemyAttack(this.container);
   }
 
   get alive(): boolean {
@@ -184,11 +189,13 @@ export class EnemyView {
       duration: 400,
     });
     this.statusRow.set({});
+    const deathMs = playEnemyDeath(this.container); // an animated enemy plays its fall before fading
     return new Promise((resolve) => {
       this.scene.tweens.add({
         targets: this.container,
         alpha: 0,
         y: ENEMY_Y + 30,
+        delay: deathMs,
         duration: 500,
         ease: 'Cubic.easeIn',
         onComplete: () => resolve(),

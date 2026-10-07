@@ -45,17 +45,19 @@ export function toggleCredits(scene: Phaser.Scene): void {
       .setOrigin(0.5)
   );
 
-  const rowHeight = Math.min(66, 470 / CREDITS.length);
+  const rowHeight = Math.min(66, 460 / CREDITS.length); // the longest row wraps to one more line
   CREDITS.forEach((credit, i) => {
     const y = 100 + i * rowHeight;
+    const detail = scene.add.text(60, y + 18, `${credit.source}, by ${credit.author} (${credit.licence})`, {
+      fontSize: '11px',
+      color: '#c8c8d8',
+      wordWrap: { width: 680 },
+    });
     parts.push(
       scene.add.text(60, y, credit.usedFor, { fontSize: '14px', color: '#e8e8f0', fontStyle: 'bold' }),
-      scene.add.text(60, y + 18, `${credit.source}, by ${credit.author} (${credit.licence})`, {
-        fontSize: '11px',
-        color: '#c8c8d8',
-        wordWrap: { width: 680 },
-      }),
-      scene.add.text(60, y + 34, credit.url, { fontSize: '10px', color: '#6f8fb8' })
+      detail,
+      // the link goes under however many lines the author list took
+      scene.add.text(60, y + 18 + detail.height + 2, credit.url, { fontSize: '10px', color: '#6f8fb8' })
     );
   });
 

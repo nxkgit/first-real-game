@@ -38,7 +38,7 @@ export class BootScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
     this.add
-      .text(400, 235, 'A fight in progress restarts from its beginning.', { fontSize: '12px', color: '#777788' })
+      .text(400, 235, 'A fight in progress restarts from its beginning.', { fontSize: '12px', color: '#b4b4c4' })
       .setOrigin(0.5);
 
     addButton(this, 400, 320, 'Continue', () => enterCurrentNode(this, saved));

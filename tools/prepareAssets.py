@@ -1,6 +1,7 @@
 """Builds the game's art files in public/assets from the raw packs in assets/ (git-ignored).
 
 Run once after changing which pack files the game uses:  python tools/prepareAssets.py
+(set ASSETS_RAW to the folder holding the raw packs if it is not ./assets)
 Needs Pillow (pip install pillow). Sources and licences are listed in public/assets/CREDITS.md.
 """
 import io
@@ -10,13 +11,16 @@ import zipfile
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = os.path.join(ROOT, 'assets')
+# the raw packs are git-ignored; ASSETS_RAW points at them from another checkout (e.g. a git worktree)
+RAW = os.environ.get('ASSETS_RAW', os.path.join(ROOT, 'assets'))
 OUT = os.path.join(ROOT, 'public', 'assets')
 
 # which pack file stands in for what (placeholder choices; change freely)
 MAP_ICONS = {'combat': 'flag', 'elite': 'skull', 'rest': 'campfire', 'shop': 'houseChimney', 'event': 'runis', 'boss': 'castle'}
 ICONS = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger', 'coin', 'tome', 'wand']
 BACKGROUNDS = {'grass': 'backgroundColorGrass', 'forest': 'backgroundColorForest', 'fall': 'backgroundColorFall', 'desert': 'backgroundColorDesert', 'castles': 'backgroundCastles'}
+# animated pixel enemies: spritesheets.zip files, kept as they are (frame size is in the file name)
+PIXEL_SHEETS = {'gnu': 'gnu-120x100', 'disciple': 'disciple-45x51', 'minion': 'minion-45x66'}
 # painted characters sheet: quadrants, in reading order
 ENEMIES = ['skeleton', 'goblin', 'fighter', 'brute']
 ENEMY_MAX_HEIGHT = 200
@@ -45,6 +49,9 @@ def main() -> None:
 
     for name, file in BACKGROUNDS.items():
         save(zip_image('kenney_background-elements-remastered.zip', f'Backgrounds/{file}.png').convert('RGB'), 'backgrounds', f'{name}.png')
+
+    for name, file in PIXEL_SHEETS.items():
+        save(zip_image('spritesheets.zip', f'/{file}.png'), 'pixel', f'{name}.png')
 
     sheet = Image.open(os.path.join(RAW, 'characters.png')).convert('RGBA')
     w, h = sheet.size

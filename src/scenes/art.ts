@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BACKGROUNDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, ENEMY_PICTURES, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
+import { BACKGROUNDS, ENEMY_ART, ENEMY_SHEETS, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, ENEMY_PICTURES, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
 import type { BackgroundName } from '../data/art';
 import type { EnemyDefinition } from '../game/types';
 import { buildGoblinCharacter } from './combat/drawings';
@@ -12,6 +12,9 @@ export function preloadArt(scene: Phaser.Scene): void {
   scene.load.setPath(`${import.meta.env.BASE_URL}assets/`);
   scene.load.spritesheet('hero', 'hero/hero.png', { frameWidth: HERO_SHEET.frameWidth, frameHeight: HERO_SHEET.frameHeight });
   for (const name of ENEMY_PICTURES) scene.load.image(`enemy-${name}`, `enemies/${name}.png`);
+  for (const [name, sheet] of Object.entries(ENEMY_SHEETS)) {
+    scene.load.spritesheet(`pixel-${name}`, `pixel/${name}.png`, { frameWidth: sheet.frameWidth, frameHeight: sheet.frameHeight });
+  }
   for (const kind of MAP_ICON_KINDS) scene.load.image(`map-${kind}`, `map/${kind}.png`);
   for (const name of ICON_FILES) scene.load.image(`icon-${name}`, `icons/${name}.png`);
   scene.load.image('ui-border', 'ui/border.png');
@@ -67,14 +70,80 @@ export function buildHeroSprite(scene: Phaser.Scene): HeroSprite | null {
   };
 }
 
-/** An enemy's picture (or the drawn goblin if it has none), centered on the container's origin. */
+/** What an animated enemy keeps on its container, so the fight screen can trigger its animations. */
+interface PixelEnemy {
+  sprite: Phaser.GameObjects.Sprite;
+  name: string;
+}
+
+/** Creates (once) the idle, attack and death animations of a pixel sheet. */
+function createSheetAnimations(scene: Phaser.Scene, name: string): void {
+  const sheet = ENEMY_SHEETS[name];
+  const key = `pixel-${name}`;
+  const make = (kind: 'idle' | 'attack' | 'death'): void => {
+    const def = sheet[kind];
+    if (!def || scene.anims.exists(`${key}-${kind}`)) return;
+    scene.anims.create({
+      key: `${key}-${kind}`,
+      frames: scene.anims.generateFrameNumbers(key, { frames: [...def.frames] }),
+      frameRate: def.frameRate,
+      repeat: kind === 'idle' ? -1 : 0,
+      yoyo: kind === 'idle' && 'yoyo' in def && def.yoyo === true,
+    });
+  };
+  make('idle');
+  make('attack');
+  make('death');
+}
+
+/** An enemy's picture (a still, an animated pixel sheet, or the drawn goblin if it has none),
+ *  centered on the container's origin: feet near y = 75. */
 export function buildEnemySprite(scene: Phaser.Scene, definition: EnemyDefinition): Phaser.GameObjects.Container {
   const picture = ENEMY_ART[definition.id];
+  const sheet = picture ? ENEMY_SHEETS[picture] : undefined;
+  if (picture && sheet && scene.textures.exists(`pixel-${picture}`)) {
+    const key = `pixel-${picture}`;
+    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST); // crisp pixels, only for this texture
+    createSheetAnimations(scene, picture);
+    const sprite = scene.add.sprite(0, 75 + sheet.feetPad * sheet.scale, key, sheet.idle.frames[0]).setOrigin(0.5, 1).setScale(sheet.scale);
+    sprite.play(`${key}-idle`);
+    const container = scene.add.container(0, 0, [sprite]);
+    container.setData('pixel', { sprite, name: picture } satisfies PixelEnemy);
+    return container;
+  }
   const key = picture ? `enemy-${picture}` : '';
   if (!key || !scene.textures.exists(key)) return buildGoblinCharacter(scene, definition.placeholderColor ?? 0x5c8143);
   const image = scene.add.image(0, 0, key);
   image.setScale(ENEMY_DISPLAY_HEIGHT / image.height);
   return scene.add.container(0, 0, [image]);
+}
+
+const pixelOf = (container: Phaser.GameObjects.Container): PixelEnemy | undefined => container.getData('pixel') as PixelEnemy | undefined;
+
+/** True for an enemy that animates itself (so the fight screen skips the idle bob). */
+export function isPixelEnemy(container: Phaser.GameObjects.Container): boolean {
+  return pixelOf(container) !== undefined;
+}
+
+/** Plays the enemy's attack animation (if its sheet has one), then back to idle. */
+export function playEnemyAttack(container: Phaser.GameObjects.Container): void {
+  const pixel = pixelOf(container);
+  if (!pixel || !ENEMY_SHEETS[pixel.name].attack) return;
+  const key = `pixel-${pixel.name}`;
+  pixel.sprite.play(`${key}-attack`);
+  pixel.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+    if (pixel.sprite.anims.currentAnim?.key === `${key}-attack`) pixel.sprite.play(`${key}-idle`);
+  });
+}
+
+/** Starts the enemy's death animation (if its sheet has one) and returns how long it lasts in ms
+ *  (0 if there is none), so the caller can wait before fading it. Holds on the last frame. */
+export function playEnemyDeath(container: Phaser.GameObjects.Container): number {
+  const pixel = pixelOf(container);
+  const death = pixel ? ENEMY_SHEETS[pixel.name].death : undefined;
+  if (!pixel || !death) return 0;
+  pixel.sprite.play(`pixel-${pixel.name}-death`);
+  return Math.round((death.frames.length / death.frameRate) * 1000);
 }
 
 /** A white-filled copy of a line-art icon (the map icons are black, which vanishes on the dark map). */
