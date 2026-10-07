@@ -52,8 +52,9 @@ function checkMap(map: ActMap, params: MapParams, content: MapContent, label: st
       if (!m) return fail(`${n.id} links to missing ${id}`);
       if (m.floor !== n.floor + 1) fail(`${n.id} -> ${id} doesn't go up exactly one floor`);
       if (m.floor < top && Math.abs(m.lane - n.lane) > 1) fail(`${n.id} -> ${id} jumps more than one lane`);
-      // no back-to-back elite/rest/shop on a path
-      if (REPEATED.includes(n.kind) && n.kind === m.kind) fail(`back-to-back ${n.kind}: ${n.id} -> ${id}`);
+      // no back-to-back rest/shop on a path (two elites in a row are allowed only where the
+      // every-route-has-an-elite guarantee needs them: see the test on how rare that is)
+      if (REPEATED.includes(n.kind) && n.kind === m.kind && n.kind !== 'elite') fail(`back-to-back ${n.kind}: ${n.id} -> ${id}`);
     }
     // content
     if (n.kind === 'combat' || n.kind === 'elite' || n.kind === 'boss') {
@@ -142,6 +143,33 @@ describe('map generator invariants', () => {
       }
     }
     expect(elites / SEEDS, 'average elite stops per map').toBeGreaterThan(2.5);
+  });
+
+  it('every route from a first-floor stop to the boss crosses at least one elite', () => {
+    for (let seed = 0; seed < SEEDS; seed++) {
+      const map = generateActMap(new Rng(seed), ACT_CONTENT);
+      const byId = new Map(map.nodes.map((n) => [n.id, n]));
+      const memo = new Map<string, boolean>();
+      // can this stop reach the boss without meeting an elite?
+      const avoids = (n: MapNode): boolean => {
+        if (n.kind === 'elite') return false;
+        if (n.kind === 'boss') return true;
+        if (!memo.has(n.id)) memo.set(n.id, n.next.some((id) => avoids(byId.get(id)!)));
+        return memo.get(n.id)!;
+      };
+      const starts = map.nodes.filter((n) => n.floor === 0);
+      expect(starts.filter(avoids).map((n) => n.id), `seed ${seed}: first stops with an elite-free route`).toEqual([]);
+    }
+  });
+
+  it('two elites in a row happen only rarely (the every-route-has-an-elite guarantee can force one)', () => {
+    let maps = 0;
+    for (let seed = 0; seed < SEEDS; seed++) {
+      const map = generateActMap(new Rng(seed), ACT_CONTENT);
+      const byId = new Map(map.nodes.map((n) => [n.id, n]));
+      if (map.nodes.some((n) => n.kind === 'elite' && n.next.some((id) => byId.get(id)!.kind === 'elite'))) maps++;
+    }
+    expect(maps / SEEDS, 'share of maps with two elites in a row').toBeLessThan(0.01);
   });
 
   it('routes differ: across seeds, maps have a spread of stop-kind mixes (not every map the same shape)', () => {

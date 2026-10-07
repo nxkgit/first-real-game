@@ -204,15 +204,67 @@ export function generateActMap(rng: Rng, content: MapContent, params: MapParams 
   };
   const eliteCount = (): number => [...nodes.values()].filter((n) => n.kind === 'elite').length;
   const elitesEnabled = (params.weights.elite ?? 0) > 0 && eliteFloor < floors - 1; // an experiment that turns elites off stays off
-  while (elitesEnabled && eliteCount() < params.minElites && content.elites.length > 0) {
-    const candidates = [...nodes.values()].filter(
-      (n) => n.kind === 'combat' && n.floor >= eliteFloor && n.floor < floors - 1 && !neighbours(n).some((m) => m.kind === 'elite')
-    );
-    if (candidates.length === 0) break;
-    const risky = candidates.filter((n) => themesAt.get(n.id)?.has('risky'));
-    const chosen = pick(rng, risky.length > 0 ? risky : candidates);
+  const topUpElites = (): void => {
+    while (elitesEnabled && eliteCount() < params.minElites && content.elites.length > 0) {
+      const candidates = [...nodes.values()].filter(
+        (n) => n.kind === 'combat' && n.floor >= eliteFloor && n.floor < floors - 1 && !neighbours(n).some((m) => m.kind === 'elite')
+      );
+      if (candidates.length === 0) break;
+      const risky = candidates.filter((n) => themesAt.get(n.id)?.has('risky'));
+      const chosen = pick(rng, risky.length > 0 ? risky : candidates);
+      chosen.kind = 'elite';
+      chosen.enemies = pick(rng, content.elites);
+    }
+  };
+  topUpElites();
+
+  // every route from a first-floor stop up to the boss must cross at least one elite: while some
+  // route avoids them all, turn a stop on it into an elite (a fight first, else a shop or event),
+  // prefering the risky route; floor rules still hold (no elite next to another on a path)
+  const stopsOf = (floor: number): MapNode[] => [...nodes.values()].filter((n) => n.floor === floor);
+  const avoidingRoute = (): MapNode[] | null => {
+    const memo = new Map<string, MapNode[] | null>();
+    const climb = (n: MapNode): MapNode[] | null => {
+      if (n.kind === 'elite') return null;
+      if (n.floor === floors - 1) return [n];
+      if (memo.has(n.id)) return memo.get(n.id)!;
+      let found: MapNode[] | null = null;
+      for (const [a, b] of edges[n.floor]) {
+        if (a !== n.lane) continue;
+        const rest = climb(nodes.get(id(n.floor + 1, b))!);
+        if (rest) {
+          found = [n, ...rest];
+          break;
+        }
+      }
+      memo.set(n.id, found);
+      return found;
+    };
+    for (const first of stopsOf(0)) {
+      const route = climb(first);
+      if (route) return route;
+    }
+    return null;
+  };
+  const eliteNeighbours = (n: MapNode): MapNode[] => neighbours(n).filter((m) => m.kind === 'elite');
+  for (let guard = 0; elitesEnabled && content.elites.length > 0 && guard < 200; guard++) {
+    const route = avoidingRoute();
+    if (!route) break;
+    const eligible = route.filter((n) => n.floor >= eliteFloor && n.floor < floors - 1 && n.kind !== 'rest');
+    if (eligible.length === 0) break; // nothing on this route may become an elite
+    // a stop with no elite beside it is best (a fight before a shop or event); only if every stop on
+    // the route has an elite beside it, take the one with fewest, accepting two elites in a row
+    // (moving the other elite aside just opens a different elite-free route)
+    const clear = eligible.filter((n) => eliteNeighbours(n).length === 0);
+    const fewest = Math.min(...eligible.map((m) => eliteNeighbours(m).length));
+    const pickFrom = clear.length > 0 ? clear : eligible.filter((n) => eliteNeighbours(n).length === fewest);
+    const fights = pickFrom.filter((n) => n.kind === 'combat');
+    const pool = fights.length > 0 ? fights : pickFrom;
+    const risky = pool.filter((n) => themesAt.get(n.id)?.has('risky'));
+    const chosen = pick(rng, risky.length > 0 ? risky : pool);
     chosen.kind = 'elite';
     chosen.enemies = pick(rng, content.elites);
+    delete chosen.eventId;
   }
 
   // wire the steps up, then the boss on top

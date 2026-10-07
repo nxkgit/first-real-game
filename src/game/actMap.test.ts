@@ -72,8 +72,9 @@ describe('act map generation', () => {
         if (node.kind === 'rest' && node.floor !== lastBeforeBoss) {
           expect(node.floor).toBeGreaterThanOrEqual(DEFAULT_MAP_PARAMS.firstFloor.rest!);
         }
-        // elites, rests and shops never come twice in a row along a path
-        if (node.kind === 'elite' || node.kind === 'rest' || node.kind === 'shop') {
+        // rests and shops never come twice in a row along a path (elites can, rarely: the
+        // every-route-has-an-elite guarantee may force it; actMap.invariants.test.ts bounds how often)
+        if (node.kind === 'rest' || node.kind === 'shop') {
           for (const id of node.next) {
             const next = byId.get(id)!;
             if (next.kind !== 'boss') expect(next.kind).not.toBe(node.kind);
