@@ -1,5 +1,7 @@
 # Design evidence for the open decisions
 
+> **STALE, read as history (noted 2026-10-07).** Every measurement below was taken **before** these changes: the route themes (`MAP_ROUTE_THEMES`), the late-floor fights (`lateEncounters`), the guaranteed 3+ elite stops, the rule that **every route crosses an elite** (about 4.6 elites per map, it was about 1.45), and the **20 synergy cards joining the reward pool** (31 cards, it was 11). So the map statistics, win rates, deck-size and pick numbers describe the old map and the 11-card pool; the *method* and the *questions* are still valid. The owner said on 2026-10-07 that balance is not a concern until they design the class, builds, enemies and abilities, so these reports were deliberately **not** regenerated. To refresh one, run the command in its section (`npm run balance:evidence` for all) and compare against `balance/reports/design-evidence/`.
+
 Written 2026-10-07 by an unattended session (branch `auto/design-evidence`). **This is measurement, not a decision.** Everything in the game is placeholder (cards, enemies, relics, events, every number), the simulator's bots are not players, and nothing here was played in a browser. The owner decides; this document says what each choice would *do* mechanically, and how sure the numbers are. No file in `src/game`, `src/data` or `src/scenes` was changed: every "what if" is an in-memory parameter of the simulator (`src/sim/runsim.ts`, `docs/BALANCE.md` section "Design-evidence commands").
 
 How to read it:

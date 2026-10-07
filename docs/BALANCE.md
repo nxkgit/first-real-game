@@ -1,5 +1,7 @@
 # Balance process
 
+> **What is current and what is not (noted 2026-10-07).** `balance/baselines/baseline.json` and `balance/reports/sample.*` are per-fight measurements and **were regenerated for the 31-card reward pool** (the 20 synergy cards joined the pool that day); `npm run balance:check` reports nothing moved. The **whole-act and map numbers are old**: everything under `balance/reports/design-evidence/` and `docs/design/EVIDENCE.md` was measured on the earlier map and the 11-card pool, before route themes, late-floor fights and the every-route-has-an-elite rule (the simulator's acts now meet more elites). They were deliberately not regenerated: the owner said balance is not a concern until real content exists. The target bands below are still provisional.
+
 How to find out whether a number, a card or an enemy is balanced, with simulation, and how to read the answer. Written 2026-10-07 while all content was placeholder: this is the **method**, not a tuning of the numbers. The tooling reads whatever the registries contain (`CARDS` via `baseCards()`, `ENEMIES`, the act lists in `src/data/run.ts`), so new content is picked up without code changes.
 
 The simulator **measures; it does not decide**. Every threshold below is a provisional placeholder (see "Target bands") for the designer to replace.
