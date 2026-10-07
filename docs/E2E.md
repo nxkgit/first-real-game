@@ -104,4 +104,4 @@ The act policy is deliberately dumb (it only has to keep the game moving) and, b
 
 `.github/workflows/e2e.yml` runs on pull requests and on pushes to `auto/**` and `integration/**`: install Chromium, `npm run build`, `npm run e2e`, and on failure upload `test-results/` (traces) and `playwright-report/` as the `playwright-traces` artifact (download it and open a trace with `npx playwright show-trace`).
 
-It is **non-blocking**: the job has `continue-on-error: true`, so a red run does not fail the PR's checks. To promote it, delete that line (and optionally mark the "E2E" check as required in the repository's branch protection) once the suite has proven stable on CI.
+It is **blocking** for pull requests and for pushes to `auto/**` and `integration/**` (it passed on GitHub's Linux runner on 2026-10-07 before being promoted). To make it a required check, mark "E2E" required in the repository's branch protection.
