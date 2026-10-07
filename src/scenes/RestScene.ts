@@ -3,7 +3,7 @@ import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
 import { REST_HEAL_FRACTION } from '../data/tunables';
-import { addButton, addRunHud, enterCurrentNode } from './ui';
+import { addButton, addDeckButton, addRunHud, closeDeckView, enterCurrentNode, onKeyPress, toggleDeckView } from './ui';
 
 /** A rest stop between fights: heal a fraction of max HP, then move on. */
 export class RestScene extends Phaser.Scene {
@@ -20,7 +20,12 @@ export class RestScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
-    addRunHud(this, this.run, { showHp: true });
+    const hud = addRunHud(this, this.run, { showHp: true });
+    addDeckButton(this, this.run, hud.x + hud.width + 70);
+    onKeyPress(this, (key) => {
+      if (key === 'd') toggleDeckView(this, this.run);
+      else if (key === 'escape') closeDeckView(this);
+    });
 
     this.add.text(400, 110, 'Rest stop', { fontSize: '28px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     this.buildPlaceholderFire(400, 250);

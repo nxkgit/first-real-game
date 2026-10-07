@@ -57,21 +57,103 @@ export function addButton(
   y: number,
   label: string,
   onClick: () => void,
-  opts: { width?: number; fill?: number; stroke?: number } = {}
+  opts: { width?: number; height?: number; fontSize?: number; fill?: number; stroke?: number; once?: boolean } = {}
 ): Phaser.GameObjects.Container {
-  const { width = 180, fill = 0x2b6b3d, stroke = 0x4fae6f } = opts;
-  const bg = scene.add.rectangle(0, 0, width, 46, fill).setStrokeStyle(2, stroke);
-  const text = scene.add.text(0, 0, label, { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
+  const { width = 180, height = 46, fontSize = 16, fill = 0x2b6b3d, stroke = 0x4fae6f, once = true } = opts;
+  const bg = scene.add.rectangle(0, 0, width, height, fill).setStrokeStyle(2, stroke);
+  const text = scene.add.text(0, 0, label, { fontSize: `${fontSize}px`, color: '#ffffff' }).setOrigin(0.5);
   const button = scene.add.container(x, y, [bg, text]);
 
   bg.setInteractive({ useHandCursor: true });
   bg.on('pointerover', () => scene.tweens.add({ targets: button, scale: 1.05, duration: 100 }));
   bg.on('pointerout', () => scene.tweens.add({ targets: button, scale: 1, duration: 100 }));
   bg.on('pointerdown', () => {
-    bg.disableInteractive(); // one click per button; the scene changes right after
+    // scene-changing buttons take one click only; the switch happens on the next frame
+    if (once) bg.disableInteractive();
     onClick();
   });
   return button;
+}
+
+/**
+ * Calls `handler` with the lowercased key for each key press while the scene is running.
+ * Listens to the DOM directly rather than Phaser's keyboard plugin: the plugin re-dispatches
+ * every key still in its per-frame queue whenever another key event arrives in the same frame,
+ * so two quick presses (or a press and release) could fire a handler twice. Held keys are ignored.
+ */
+export function onKeyPress(scene: Phaser.Scene, handler: (key: string) => void): void {
+  const listener = (event: KeyboardEvent): void => {
+    if (!event.repeat) handler(event.key.toLowerCase());
+  };
+  window.addEventListener('keydown', listener);
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => window.removeEventListener('keydown', listener));
+}
+
+// ---- deck viewer ----
+
+const openDeckViews = new WeakMap<Phaser.Scene, Phaser.GameObjects.Container>();
+
+export function isDeckViewOpen(scene: Phaser.Scene): boolean {
+  return openDeckViews.has(scene);
+}
+
+export function closeDeckView(scene: Phaser.Scene): void {
+  openDeckViews.get(scene)?.destroy();
+  openDeckViews.delete(scene);
+}
+
+/** Opens (or closes, if open) a full-screen view of every card in the run's deck. */
+export function toggleDeckView(scene: Phaser.Scene, run: RunState): void {
+  if (isDeckViewOpen(scene)) {
+    closeDeckView(scene);
+    return;
+  }
+
+  // the backdrop is interactive and on top, so nothing underneath can be clicked while it's open
+  const backdrop = scene.add.rectangle(400, 300, 800, 600, 0x08080c, 0.92).setInteractive();
+  backdrop.on('pointerdown', () => closeDeckView(scene));
+  const title = scene.add
+    .text(400, 36, `Deck (${run.deck.length} cards)`, { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' })
+    .setOrigin(0.5);
+  const hint = scene.add
+    .text(400, 62, 'Click anywhere to close', { fontSize: '12px', color: '#777788' })
+    .setOrigin(0.5);
+  const view = scene.add.container(0, 0, [backdrop, title, hint]).setDepth(100);
+
+  // lay cards out in a grid that always fits below the title, shrinking if the deck gets big
+  const cols = 6;
+  const rows = Math.max(1, Math.ceil(run.deck.length / cols));
+  const scale = Math.min(0.9, (600 - 100) / (rows * (CARD_HEIGHT + 16)));
+  const stepX = (CARD_WIDTH + 14) * scale;
+  const stepY = (CARD_HEIGHT + 16) * scale;
+  run.deck.forEach((card, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const inRow = Math.min(cols, run.deck.length - row * cols);
+    const x = 400 + (col - (inRow - 1) / 2) * stepX;
+    const y = 90 + stepY / 2 + row * stepY;
+    view.add(buildCardFace(scene, card).setPosition(x, y).setScale(scale));
+  });
+
+  openDeckViews.set(scene, view);
+  // scenes are reused across restarts, so never let a stale entry outlive the view
+  view.once(Phaser.GameObjects.Events.DESTROY, () => openDeckViews.delete(scene));
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => openDeckViews.delete(scene));
+}
+
+/** Small top-bar "Deck (N)" button that toggles the deck viewer. */
+export function addDeckButton(scene: Phaser.Scene, run: RunState, x: number, beforeOpen?: () => void): void {
+  addButton(
+    scene,
+    x,
+    22,
+    `Deck (${run.deck.length})`,
+    () => {
+      beforeOpen?.();
+      toggleDeckView(scene, run);
+    },
+    { width: 104, height: 28, fontSize: 13, fill: 0x2a2a3a, stroke: 0x5a5a72, once: false }
+  );
 }
 
 /** Top-left run status line: floor, gold, and (outside combat, where HP isn't otherwise shown) HP. */

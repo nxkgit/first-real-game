@@ -5,7 +5,19 @@ import type { RunState } from '../game/RunState';
 import type { CardInstance, EnemyDefinition, EnemyMove } from '../game/types';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
-import { CARD_HEIGHT, CARD_WIDTH, addButton, addRunHud, buildCardFace, enterCurrentNode } from './ui';
+import {
+  CARD_HEIGHT,
+  CARD_WIDTH,
+  addButton,
+  addDeckButton,
+  addRunHud,
+  buildCardFace,
+  closeDeckView,
+  enterCurrentNode,
+  isDeckViewOpen,
+  onKeyPress,
+  toggleDeckView,
+} from './ui';
 
 // Visuals here are built entirely from Phaser's drawing primitives (no art
 // assets / image generation available) — simple vector/geometric character
@@ -65,6 +77,9 @@ export class CombatScene extends Phaser.Scene {
   private intentShield!: Phaser.GameObjects.Graphics;
   private intentValueText!: Phaser.GameObjects.Text;
 
+  /** True while an animation sequence is playing and the player can't act. */
+  private inputLocked = false;
+
   /** Non-null while an enemy-targeted card is picked up and the targeting arrow is showing. */
   private targeting: TargetingState | null = null;
   private targetArrow!: Phaser.GameObjects.Graphics;
@@ -102,13 +117,15 @@ export class CombatScene extends Phaser.Scene {
     this.handCards = new Map();
     this.sequencer = null;
     this.targeting = null;
+    this.inputLocked = false;
   }
 
   create(): void {
     useLayoutCamera(this);
     this.createParticleEmitters();
     this.buildBackground();
-    addRunHud(this, this.run);
+    const hud = addRunHud(this, this.run);
+    addDeckButton(this, this.run, hud.x + hud.width + 70, () => this.cancelTargeting());
     this.playerContainer = this.buildMageCharacter();
     this.playerContainer.setPosition(PLAYER_X, PLAYER_Y);
     this.enemyContainer = this.buildGoblinCharacter(this.enemy.placeholderColor ?? 0x5c8143);
@@ -124,6 +141,7 @@ export class CombatScene extends Phaser.Scene {
 
     this.combat = new CombatState(this.run.deck, this.enemy, { hp: this.run.hp, maxHp: this.run.maxHp });
     this.wireCombatEvents();
+    this.bindKeys();
     this.combat.start();
   }
 
@@ -510,6 +528,35 @@ export class CombatScene extends Phaser.Scene {
 
   // ---------- event wiring ----------
 
+  /** Keyboard shortcuts: 1-9 play that card from the hand (attacks go straight at the enemy, as
+   *  there's only one), E ends the turn, D toggles the deck view, Esc cancels aiming or closes it. */
+  private bindKeys(): void {
+    onKeyPress(this, (key) => {
+      if (key === 'escape') {
+        if (isDeckViewOpen(this)) closeDeckView(this);
+        else this.cancelTargeting();
+        return;
+      }
+      if (key === 'd') {
+        this.cancelTargeting();
+        toggleDeckView(this, this.run);
+        return;
+      }
+      if (isDeckViewOpen(this) || this.inputLocked || this.combat.phase !== 'playerTurn') return;
+      if (key === 'e') {
+        this.onEndTurn();
+        return;
+      }
+      const slot = Number(key);
+      if (Number.isInteger(slot) && slot >= 1 && slot <= 9) {
+        const card = this.combat.deck.hand[slot - 1];
+        if (!card || !this.combat.canPlay(card)) return;
+        this.cancelTargeting();
+        this.combat.playCard(card.instanceId, card.definition.target);
+      }
+    });
+  }
+
   private wireCombatEvents(): void {
     this.combat.on('cardPlayed', ({ card }) => this.handleCardPlayed(card));
     this.combat.on('handChanged', () => this.queue(() => this.syncHand()));
@@ -560,6 +607,7 @@ export class CombatScene extends Phaser.Scene {
   }
 
   private lockInput(locked: boolean): void {
+    this.inputLocked = locked;
     if (locked) this.cancelTargeting();
     this.setHandInteractive(!locked);
     if (locked) {

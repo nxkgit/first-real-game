@@ -2,7 +2,19 @@ import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
-import { CARD_HEIGHT, CARD_WIDTH, addButton, addRunHud, buildCardFace, enterCurrentNode } from './ui';
+import {
+  CARD_HEIGHT,
+  CARD_WIDTH,
+  addButton,
+  addDeckButton,
+  addRunHud,
+  buildCardFace,
+  closeDeckView,
+  enterCurrentNode,
+  isDeckViewOpen,
+  onKeyPress,
+  toggleDeckView,
+} from './ui';
 
 /** After a won fight: pick one of the offered cards, or take gold instead (see DESIGN_LOG.md). */
 export class RewardScene extends Phaser.Scene {
@@ -22,7 +34,8 @@ export class RewardScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
-    addRunHud(this, this.run, { showHp: true });
+    const hud = addRunHud(this, this.run, { showHp: true });
+    addDeckButton(this, this.run, hud.x + hud.width + 70);
 
     const offer = this.run.pendingReward;
     if (!offer) throw new Error('RewardScene started with no pending reward');
@@ -57,6 +70,18 @@ export class RewardScene extends Phaser.Scene {
         color: '#777788',
       })
       .setOrigin(0.5);
+
+    // keys: 1-3 pick that card, G takes the gold, D / Esc for the deck view
+    onKeyPress(this, (key) => {
+      if (key === 'd') return toggleDeckView(this, this.run);
+      if (key === 'escape') return closeDeckView(this);
+      if (isDeckViewOpen(this)) return;
+      if (key === 'g') return this.choose(() => this.run.takeRewardGold());
+      const slot = Number(key);
+      if (Number.isInteger(slot) && slot >= 1 && slot <= offer.cards.length) {
+        this.choose(() => this.run.takeRewardCard(slot - 1));
+      }
+    });
   }
 
   private choose(apply: () => void): void {

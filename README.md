@@ -74,7 +74,11 @@ npm test         # unit tests for the game-logic layer (src/game), via Vitest
 
 ## How to play
 
-Click a skill or power card to play it. Attack cards are aimed: drag one onto the enemy, or click it and then click the enemy. Right-click (or click anywhere else) to put a picked-up card back. The icon above the enemy shows its next move — a sword is an attack for that much damage, a shield is that much block. Hover the icons, energy orb, or card piles for a short explanation.
+Click a skill or power card to play it. Attack cards are aimed: drag one onto the enemy, or click it and then click the enemy. Right-click (or click anywhere else) to put a picked-up card back. The icon above the enemy shows its next move — a sword is an attack for that much damage, a shield is that much block. Hover the icons, energy orb, or card piles for a short explanation (on a phone, tap them). The **Deck** button in the top bar shows every card in your deck.
+
+Keyboard: `1`–`9` play that card from your hand (attacks go straight at the enemy), `E` ends your turn, `D` opens the deck view, `Esc` cancels aiming or closes the deck view. On the reward screen, `1`–`3` pick a card and `G` takes the gold.
+
+On a phone, play with it held sideways — the layout is too small to read upright.
 
 Win a fight and you choose a reward: add one of three cards to your deck, or take gold (saved for a shop that isn't built yet). The rest stop heals you before the final fight. Lose any fight and the run is over.
 
