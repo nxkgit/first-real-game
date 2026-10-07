@@ -9,8 +9,8 @@ Running status so another session can pick this up. Updated with each push.
 - balance/baselines/baseline.json and balance/reports/sample.{md,json} generated
 - tests: src/sim/balance.test.ts (npm run verify passes)
 
-## In progress
-- docs/BALANCE.md
+## In progress (nothing)
+- docs/BALANCE.md written
 
 ## Next
 - final report in the PR description (gh CLI is not installed in this environment, so the PR may need opening by hand)
