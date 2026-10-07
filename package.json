@@ -15,9 +15,14 @@
     "balance:baseline": "npm run balance -- baseline",
     "balance:check": "npm run balance -- check",
     "balance:report": "npm run balance -- report --out balance/reports/sample",
-    "content:check": "vite build --ssr src/content/checkCli.ts --outDir .sim/content --emptyOutDir --logLevel warn && node .sim/content/checkCli.js"
+    "content:check": "vite build --ssr src/content/checkCli.ts --outDir .sim/content --emptyOutDir --logLevel warn && node .sim/content/checkCli.js",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install --with-deps chromium",
+    "e2e:typecheck": "tsc -p e2e/tsconfig.json"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.4",
     "@vitest/coverage-v8": "^5.0.3",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
