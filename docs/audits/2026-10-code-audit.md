@@ -82,3 +82,120 @@ Synergy-engine conflict: **yes** (CombatState/Deck).
 - `sim/cli.ts:111-112`: `--runs abc` or `--seed abc` becomes `NaN` and silently produces an empty/NaN summary; validate with `Number.isInteger`.
 
 ---
+
+## 2. Violations of HANDOFF "Patterns to keep"
+
+Overall the patterns are followed well. Verified clean: no `this.input.keyboard` (all scenes use `onKeyPress`, which removes its listener on SHUTDOWN); no constructor parameter properties; every scene resets its per-run/per-fight fields in `init()` (CombatScene, MapScene, RewardScene, RestScene, ShopScene, EventScene); every scene calls `useLayoutCamera` first in `create()`; `Math.random` is not used for gameplay. Violations:
+
+### P1. [low, by reading only] Animations read live combat state
+The rule is "animations use the event's own data". Three places still read live state:
+- `src/scenes/CombatScene.ts:576` `animateEnemyImpact` sets the enemy's block from `this.combat.combatant(target).block`. For a card with two damage effects (or any future multi-hit), the first impact replays after both hits resolved and shows the final block. `damageDealt` has `absorbed` but no resulting block. Fix: add `blockAfter` to `DamageResult`/`damageDealt` and use it.
+- `src/scenes/CombatScene.ts:420` `syncHand` calls `this.combat.canPlay(card)` for each card of an *old* snapshot, using live energy and phase. Harmless today (energy changes only on card play and turn start, and each action's snapshots share the energy at replay time), but an "add energy" or "cost reduction" effect would grey out or enable cards wrongly. Fix: put `energy` in the `handChanged` snapshot.
+- `src/scenes/CombatScene.ts:565` `animateEnemyMove` ends with `this.combat.phase === 'playerTurn'` (live) and `showIntent` reads the live next move. Correct by accident today.
+Synergy-engine conflict: **yes** (events and CombatState shape).
+
+### P2. [low, by reading only] `ShopScene` bypasses `enterCurrentNode`
+`src/scenes/ShopScene.ts:111-114`: after a purchase it calls `saveRun` then `this.scene.restart(...)` directly. It is the same scene and it does save, so no bug, but it is the one transition outside the "every screen change goes through `enterCurrentNode()`" rule. Cleaner: redraw in place, or route through `enterCurrentNode`.
+
+### P3. [low, by reading only] Ctrl/Alt/Cmd plus a letter or digit triggers game keys
+`src/scenes/ui.ts:89-98` `onKeyPress` ignores typing in form fields and held keys but not modifier chords. Ctrl+1..9 (switch browser tab) also plays that card; Ctrl+D (bookmark) opens the deck; Ctrl+E ends the turn. Fix: `if (event.ctrlKey || event.metaKey || event.altKey) return;`.
+
+---
+
+## 3. Scene-layer robustness
+
+Checked: listener and timer cleanup on restart. `onKeyPress`, `useLayoutCamera`, the settings listener and `setCurrentCombat` all remove themselves on SHUTDOWN. Scene `input.on(...)` handlers (Targeting, Tooltips, relic bar) are not removed by hand; Phaser's input plugin clears its listeners on shutdown, so I found no leak (by reading, not by running a browser). Pending tween/delay promises from a shut-down scene never resolve, so nothing keeps running in a dead scene.
+
+### R1. [medium, by reading only] Player damage and non-enemy events are silently dropped by the scene
+`src/scenes/CombatScene.ts:294-296`, `:298-300`.
+`damageDealt` is ignored when `target === PLAYER_ID`, and `blockGained` is ignored for enemies. Today the player is only hurt via `enemyMoveResolved`, so nothing is missed. Synergy work is likely to add self-damage, retaliation, or damage to the player from a card. Those will change HP with no animation, sound or floating number until the next `refreshStatusBars`. Fix sketch: handle the player branch (flash, shake, `-N` text) and make event handling exhaustive so a new event cannot be forgotten.
+Synergy-engine conflict: **yes**.
+
+### R2. [medium, by reading only] Status badges are limited to three and must be updated by hand
+`src/data/statuses.ts:37`, `src/scenes/combat/EnemyView.ts:98`, `src/scenes/combat/PlayerView.ts:64`.
+`STATUS_ORDER` is a hand-maintained list; a status added to `STATUSES` and the `StatusId` union but not to `STATUS_ORDER` is applied by the rules but never drawn. The tooltip zones are hard-coded to 3 slots, so a fourth badge draws with no tooltip and the row can overlap the neighbouring enemy. Fix sketch: derive the order from `Object.keys(STATUSES)` (or add a test that every id is in the order), and size the tooltip zones from the number of visible badges.
+Synergy-engine conflict: **yes** (statuses).
+
+### R3. [low, by reading only] An exception in an animation step leaves input locked forever
+`src/scenes/CombatScene.ts:326-332`, `:370-402`. `runSteps` and `resolveCardPlay` have no try/finally, so a throw (for example `viewFor` for an unknown id) leaves `inputLocked` true and End Turn disabled until reload. Fix sketch: try/finally that unlocks, and log the error.
+
+### R4. [low, by reading only] Hover-tween vs sync race on the enemy HP bar
+`src/scenes/combat/EnemyView.ts:110-135`. `setHp` starts a 300 ms width tween; `syncFrom` (end of each batch) sets `hpFill.width` directly while it may still run, so the tween can overwrite the correct value briefly. Cosmetic; kill the tween in `syncFrom`.
+
+### R5. [low, by reading only] Touch
+Tooltips and the relic bar handle Phaser's over-on-touch quirk. Not verified on a device (HANDOFF already says so). `Targeting.onPointerDown` identifies the picking-up press by `pointer.downTime` (`Targeting.ts:432-438`); two presses in the same millisecond would be confused. Theoretical.
+
+### R6. [nit] `New Run` on the end screen ignores `?seed`
+`src/scenes/RunEndScene.ts:50` calls `newRun()` (random seed) while `BootScene` calls `newRun(seedFromUrl())`. They should agree.
+
+---
+
+## 4. Architecture drift against CLAUDE.md
+
+### A1. [low, confirmed by execution] The `game/` layer imports from `data/` registries
+`src/game/describe.ts:2-4` imports `getCard` and `getEnemy` from the data files, and `CombatState.ts:17-18` imports `STATUSES` and tunables. `describeOutcome({kind:'card', cardId})` therefore only works for ids in the global registry: a test-world card id throws `unknown card id` (confirmed). Passing a lookup (`describeOutcome(outcome, world)`) would keep it testable. Importing statuses/tunables is acceptable. Synergy-engine conflict: **yes** (describe.ts).
+
+### A2. [low] Numeric literals that arguably belong in tunables
+Game-rule numbers are in `tunables.ts`, `cards.ts`, `enemies.ts` and `relics.ts` as their header comments say. Remaining literals:
+- `src/scenes/MapScene.ts:26-27`: `FLOOR_Y = 548 - floor * 35` and `LANE_X = 200 + lane * 100`. This is the one literal that breaks when a tunable changes: with `MAP_FLOORS` above about 15 the top floors leave the screen. Derive spacing from `map.floors` and `map.lanes`.
+- `src/game/save.ts:12-60`: validation bounds (lanes 50, floors 100, 2000 nodes, hp/gold ranges). Fine, but they silently invalidate every save if the map tunables ever exceed them; derive them from the tunables with headroom.
+- `src/sim/simulate.ts` and `bot.ts` thresholds and scores: bot-only; leave.
+- `CombatScene.ts` / `layout.ts` pixel positions are layout, not balance.
+- Stale text: `src/data/enemies.ts` "Final fight of the run" on ENEMY_C; `README.md:3` still says the project is building MVP 2 with "three fights and a rest stop"; `index.html` title "Deckbuilder MVP".
+
+### A3. [nit] Naming overlap in ids
+Combatant ids are `enemy-0`, `enemy-1` (position in the fight) while enemy definition ids are `enemy-a`...; they look alike in logs. A different prefix for positions (`slot-0`) would avoid confusion.
+
+---
+
+## 5. Simplification, dead code, duplication (all optional)
+
+- `src/scenes/RestScene.ts:88-116` and `src/scenes/ui.ts:119-156` build almost the same card grid (cols/rows/scale/step math duplicated). One `layoutCardGrid` helper would remove it.
+- Every non-combat scene repeats the same preamble (`useLayoutCamera`, background rect, `addRunHud`, `addDeckButton`, `addSettingsButton`, deck/escape keys). A `buildRunScreen(scene, run)` helper in `ui.ts` would remove about 40 lines across five scenes and make "forgot the keys in one scene" impossible.
+- `src/scenes/EventScene.ts:389-392` saves, then `enterCurrentNode` saves again on the fight path (double write).
+- `ShopScene` prints the `[n]` key hint for sold items too (`:266`).
+- `describe.ts` repeats `charAt(0).toLowerCase()` inline at `:251` although `lowerFirst` exists below it.
+- `RunState.node()` / `mapNode` do linear `find` over nodes; fine at about 60 nodes.
+
+---
+
+## 6. Security and robustness: browser storage, clipboard, URL params, content/dev pages
+
+No XSS surface found: the content page and dev panel build DOM with `textContent` / `Option` and never put data into `innerHTML` (the one `jump.innerHTML = ''` is a clear). No third-party scripts, network calls or cookies.
+
+### S1. [medium, confirmed by execution] `tableExport` does not escape pipes, and its test encodes the bug
+`src/content/tableExport.ts:10`: `text.replace(/\|/g, '\|')`. In a JS string `'\|'` is just `|`, so nothing is escaped. `src/content/tableExport.test.ts:17` expects `'Odd \| one'`, which is also just `Odd | one`, so the test passes while asserting nothing. Real impact: the Enemies table joins moves with `'  |  '` (`contentPage.ts:240`), so "Copy as Markdown" for that table produces extra columns. Confirmed: a row `['x','m1  |  m2']` exports as `| x | m1  |  m2 |`.
+Fix: `text.replace(/\|/g, '\\|')` and change the test's expectation to `'Odd \\| one'`. This is a test whose expectation is wrong; fix both together. Not in the synergy-engine path.
+
+### S2. [low, by reading only] Stored data is trusted more than the types say
+`storage.loadReportHistory` casts parsed JSON to `RunReport[]` unvalidated (`storage.ts:64`). Harmless (it is only copied to the clipboard). See C5 for the save validator gaps.
+
+### S3. [low, by reading only] Storage failures and old saves are silent
+`storage.ts` `write` swallows quota/blocked errors by design. A private-window player loses the run on refresh with no warning; consider one small notice if `saveRun` fails. The save key is `deckbuilder.run.v1` while the payload has `version: 2`, and an incompatible save is discarded without telling the player. A one-line "your saved run was from an older version" message on the boot screen would help at the next breaking change.
+
+### S4. [low, by reading only] URL parameters
+`?seed` is strictly validated (`session.ts:117-123`: digits only, range-checked; invalid values are silently ignored). `?dev` is a presence check and the public site serves the dev panel to anyone (it can grant gold, cards, relics and skip fights). That is deliberate for playtesting, but treat any future reports or leaderboards as untrusted. The panel is a separate chunk loaded only with the flag (confirmed in the build output).
+
+### S5. [nit] Clipboard and display
+`copyToClipboard` tries the async API then a hidden textarea with `execCommand`; both are in try/catch and the textarea is removed. Fine. `display.ts:231` reads `devicePixelRatio` once at load, so moving the window to another monitor or changing browser zoom keeps the old canvas resolution until reload (phone/DPR work is skipped per HANDOFF).
+
+---
+
+## 7. Build, CI and deploy config
+
+### B1. [low] CI runs twice for branches with a PR
+`.github/workflows/ci.yml` triggers on `pull_request` and on `push` to every non-main branch, so a PR branch runs the same job twice per push. Fix: drop the `push` trigger or add `concurrency: { group: ci-${{ github.ref }}, cancel-in-progress: true }`.
+
+### B2. [low] Deploy does not run the same gate as CI
+`deploy-pages.yml` runs `npm test` then `tsc && vite build --base=...` rather than `npm run verify`. They are equivalent today but can drift. Fix: have both workflows call one script (for example `verify` then a base-path build).
+
+### B3. [low] No `engines` field
+`package.json` has no `engines`, while CI and the Dockerfile pin Node 24. Add `"engines": {"node": ">=24"}` (and an `.nvmrc`).
+
+### B4. [nit] Other config notes
+- `vite.config.ts` sets no `base`; the Pages base is only passed on the CLI. Deliberate, but `npm run build` output cannot be served from a subpath. I checked that favicon and asset URLs are rewritten correctly when `--base` is given (both pages).
+- The build prints a >500 kB chunk warning for Phaser every time. Setting `build.chunkSizeWarningLimit` would make a new, genuine warning visible.
+- The Dockerfile `COPY . .` is safe because `.dockerignore` excludes `node_modules` and `dist` (checked). It also excludes `*.md`, which the build does not need.
+- Workflow action versions (`checkout@v7`, `setup-node@v7`, `upload-pages-artifact@v5`, `deploy-pages@v5`) could not be verified from here; this PR's CI run is the check.
+
+---
