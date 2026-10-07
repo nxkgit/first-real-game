@@ -1,0 +1,115 @@
+{
+ "options": {
+  "runs": 300,
+  "baseSeed": 1,
+  "skill": "smart"
+ },
+ "rows": [
+  {
+   "name": "every draftable card offered, random pick",
+   "win": {
+    "p": 0.246667,
+    "lo": 0.201294,
+    "hi": 0.298445
+   },
+   "dWin": null,
+   "floor": 10.246667,
+   "cost": {
+    "mean": 19.163194,
+    "lo": 18.635433,
+    "hi": 19.690956
+   },
+   "dCost": null,
+   "deck": 16.606667,
+   "goldLeft": 8.833333,
+   "verdict": null
+  },
+  {
+   "name": "every draftable card offered, best by trial fights",
+   "win": {
+    "p": 0.626667,
+    "lo": 0.570655,
+    "hi": 0.679475
+   },
+   "dWin": {
+    "mean": 0.38,
+    "lo": 0.322695,
+    "hi": 0.437305
+   },
+   "floor": 11.723333,
+   "cost": {
+    "mean": 11.249722,
+    "lo": 10.764476,
+    "hi": 11.734969
+   },
+   "dCost": {
+    "mean": -7.913472,
+    "lo": -8.465118,
+    "hi": -7.361826
+   },
+   "deck": 17.536667,
+   "goldLeft": 10,
+   "verdict": "better"
+  },
+  {
+   "name": "every draftable card offered, synergy-seeking (trial + mechanism overlap)",
+   "win": {
+    "p": 0.63,
+    "lo": 0.574045,
+    "hi": 0.682668
+   },
+   "dWin": {
+    "mean": 0.383333,
+    "lo": 0.32594,
+    "hi": 0.440727
+   },
+   "floor": 11.716667,
+   "cost": {
+    "mean": 11.200833,
+    "lo": 10.716593,
+    "hi": 11.685073
+   },
+   "dCost": {
+    "mean": -7.962361,
+    "lo": -8.515094,
+    "hi": -7.409628
+   },
+   "deck": 17.533333,
+   "goldLeft": 10,
+   "verdict": "better"
+  },
+  {
+   "name": "reward pool only, best by trial fights (the live game's cards)",
+   "win": {
+    "p": 0.61,
+    "lo": 0.553749,
+    "hi": 0.66347
+   },
+   "dWin": {
+    "mean": 0.363333,
+    "lo": 0.302859,
+    "hi": 0.423808
+   },
+   "floor": 11.643333,
+   "cost": {
+    "mean": 12.187917,
+    "lo": 11.831954,
+    "hi": 12.543879
+   },
+   "dCost": {
+    "mean": -6.975278,
+    "lo": -7.584794,
+    "hi": -6.365762
+   },
+   "deck": 17.493333,
+   "goldLeft": 10.5,
+   "verdict": "better"
+  }
+ ],
+ "concentration": [
+  1.673333,
+  1.736667,
+  1.83,
+  1.186667
+ ]
+}

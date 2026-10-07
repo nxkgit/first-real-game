@@ -1,0 +1,159 @@
+{
+ "options": {
+  "seeds": 40,
+  "baseSeed": 1,
+  "skill": "greedy",
+  "offers": 3000
+ },
+ "stages": [
+  {
+   "stage": "starter",
+   "random": 0.482828,
+   "best3": 2.329301,
+   "best4": 2.791317,
+   "weakOffer3": 0.121333,
+   "bestRemoval": 2.186111,
+   "basicRemoval": 2.186111,
+   "bestWin": 0
+  },
+  {
+   "stage": "mid#1",
+   "random": 0.306566,
+   "best3": 2.313428,
+   "best4": 2.751351,
+   "weakOffer3": 0.204333,
+   "bestRemoval": 1.791667,
+   "basicRemoval": 0.908333,
+   "bestWin": 0
+  },
+  {
+   "stage": "mid#2",
+   "random": -1.464394,
+   "best3": 2.288015,
+   "best4": 2.717828,
+   "weakOffer3": 0.132,
+   "bestRemoval": 4.95,
+   "basicRemoval": -3.816667,
+   "bestWin": 0.002778
+  },
+  {
+   "stage": "mid#3",
+   "random": -0.430051,
+   "best3": 0.542021,
+   "best4": 0.826634,
+   "weakOffer3": 0.499,
+   "bestRemoval": 0.572222,
+   "basicRemoval": 0.572222,
+   "bestWin": 0
+  },
+  {
+   "stage": "late#1",
+   "random": -1.015909,
+   "best3": 0.208456,
+   "best4": 0.440504,
+   "weakOffer3": 0.504,
+   "bestRemoval": 4.125,
+   "basicRemoval": -0.197222,
+   "bestWin": 0
+  },
+  {
+   "stage": "late#2",
+   "random": -0.509848,
+   "best3": 0.522638,
+   "best4": 0.726519,
+   "weakOffer3": 0.337667,
+   "bestRemoval": 2.683333,
+   "basicRemoval": 0.469444,
+   "bestWin": 0
+  },
+  {
+   "stage": "late#3",
+   "random": -0.818687,
+   "best3": 0.1085,
+   "best4": 0.295158,
+   "weakOffer3": 0.504,
+   "bestRemoval": 1.825,
+   "basicRemoval": 0.566667,
+   "bestWin": 0
+  }
+ ],
+ "cards": [
+  [
+   "big-block",
+   2,
+   "2.28",
+   "0.54",
+   "4.45"
+  ],
+  [
+   "guarded-strike",
+   1,
+   "1.90",
+   "0.74",
+   "3.09"
+  ],
+  [
+   "jab",
+   0,
+   "0.43",
+   "-0.46",
+   "2.22"
+  ],
+  [
+   "heavy-hit",
+   3,
+   "0.03",
+   "-0.71",
+   "1.87"
+  ],
+  [
+   "bolt",
+   2,
+   "-0.29",
+   "-1.37",
+   "1.72"
+  ],
+  [
+   "fortify",
+   2,
+   "-0.29",
+   "-1.18",
+   "1.59"
+  ],
+  [
+   "weaken",
+   1,
+   "-0.36",
+   "-1.87",
+   "1.62"
+  ],
+  [
+   "strengthen",
+   1,
+   "-0.37",
+   "-1.14",
+   "0.81"
+  ],
+  [
+   "expose",
+   1,
+   "-1.54",
+   "-2.88",
+   "0.13"
+  ],
+  [
+   "sunder",
+   2,
+   "-2.43",
+   "-5.25",
+   "-0.72"
+  ],
+  [
+   "quick-draw",
+   1,
+   "-4.78",
+   "-17.78",
+   "-1.06"
+  ]
+ ]
+}

@@ -5,7 +5,8 @@ import type { MapParams } from '../game/actMap';
 import { PLAYER_MAX_HP } from '../data/tunables';
 import { heading, r6, table } from './report';
 import type { ExperimentResult } from './report';
-import { DEFAULT_RUN_POLICY, playRuns, withPolicy } from './runsim';
+import { getCard } from '../data/cards';
+import { DEFAULT_RUN_POLICY, mechanismsOf, playRuns, withPolicy } from './runsim';
 import type { RunPolicy, RunRecord } from './runsim';
 import { KINDS, fightsRemainingByFloor, shapeStats } from './mapstats';
 import { fix, fmtCI, fmtDiff, meanCI, pairedDiff, pct, verdict, wilson } from './stats';
@@ -164,6 +165,39 @@ export function goldGridExperiment(o: RunExpOptions & { golds: number[]; prices:
     '',
   ].join('\n');
   return { name: 'goldGrid', json: { options: { ...o }, rows: rows.map(rowJson) }, markdown };
+}
+
+/**
+ * Card versus gold depends on how often shops come up: price x shop frequency. For each shop weight
+ * the card policy is run on the SAME map shape as the gold policies, so each cell compares like with like.
+ */
+export function goldShopsExperiment(o: RunExpOptions & { shopWeights: number[]; prices: number[] }): ExperimentResult {
+  const base = baseOf(o);
+  const rows: (string | number)[][] = [];
+  const json: object[] = [];
+  for (const w of o.shopWeights) {
+    const map = { weights: { shop: w } };
+    const perPath = shapeStats(100, o.baseSeed, map).mean.shop.mean;
+    const entries: RunEntry[] = [{ name: 'card', policy: withPolicy(base, { gold: 'never', map }) }];
+    for (const price of o.prices) entries.push({ name: `price ${price}`, policy: withPolicy(base, { gold: 'always', path: 'shop', shopBuy: 'best', shopPrice: price, map }) });
+    const res = compareRuns(o.runs, o.baseSeed, entries);
+    const cells = res.slice(1).map((r) => {
+      const d = r.dCost!;
+      const tag = d.lo > 0 ? 'card wins' : d.hi < 0 ? 'gold wins' : '~equal';
+      return `${fmtDiff(d)}; ${ptsCell(r.dWin)} (${tag})`;
+    });
+    rows.push([`${w} (${fix(perPath, 2)} shops per path)`, ...cells]);
+    json.push({ shopWeight: w, shopsPerPath: r6(perPath), cells: res.slice(1).map((r, i) => ({ price: o.prices[i], dCost: r6(r.dCost!.mean), lo: r6(r.dCost!.lo), hi: r6(r.dCost!.hi), dWin: r6(r.dWin!.mean) })) });
+  }
+  const markdown = [
+    heading(2, 'Card versus gold: shop price x how often shops appear'),
+    '',
+    intro(o, 'Cell = [final deck cost with "always gold, route to shops" minus "always card", on the same map shape (HP/fight; POSITIVE = the card was better)]; [win-rate change, same comparison].'),
+    '',
+    table(['shop weight (stops per path)', ...o.prices.map((p) => `price ${p}`)], rows),
+    '',
+  ].join('\n');
+  return { name: 'goldShops', json: { options: { ...o }, rows: json }, markdown };
 }
 
 export interface RemovalOptions extends RunExpOptions {
@@ -356,16 +390,15 @@ export function pressureExperiment(o: PressureOptions): ExperimentResult {
     const fights = recs.flatMap((r) => r.fights);
     const rows: (string | number)[][] = [];
     for (let f = 1; f <= totalFloors; f++) {
-      const at = fights.filter((x) => x.floor === f);
-      if (at.length === 0) continue;
-      const won = at.filter((x) => x.won);
-      const lost = meanCI(won.map((x) => x.hpLost));
-      const tiers = new Set(at.map((x) => x.tier));
-      const tier = tiers.size === 1 ? [...tiers][0] : 'mixed';
-      const alive = recs.filter((r) => r.fights.some((x) => x.floor === f)).length;
-      const band = tiers.size === 1 && tier !== 'mixed' ? hpLostBand(tier as 'normal' | 'elite' | 'boss') : undefined;
-      const status = band ? bandMark(bandStatus(lost.mean, band)) : '-';
-      rows.push([f, tier, at.length, pct(alive / recs.length), fix(at.reduce((a, x) => a + x.hpBefore, 0) / at.length), `${fix(lost.mean)} [${fix(lost.lo)}, ${fix(lost.hi)}]`, pct(1 - won.length / at.length), band ? `${fix(band[0], 0)}-${fix(band[1], 0)}` : '-', status]);
+      for (const tier of ['normal', 'elite', 'boss'] as const) {
+        const at = fights.filter((x) => x.floor === f && x.tier === tier);
+        if (at.length === 0) continue;
+        const won = at.filter((x) => x.won);
+        const lost = meanCI(won.map((x) => x.hpLost));
+        const met = recs.filter((r) => r.fights.some((x) => x.floor === f && x.tier === tier)).length;
+        const band = hpLostBand(tier);
+        rows.push([f, tier, at.length, pct(met / recs.length), fix(at.reduce((a, x) => a + x.hpBefore, 0) / at.length), `${fix(lost.mean)} [${fix(lost.lo)}, ${fix(lost.hi)}]`, pct(1 - won.length / at.length), `${fix(band[0], 0)}-${fix(band[1], 0)}`, bandMark(bandStatus(lost.mean, band))]);
+      }
     }
     const byTier = (['normal', 'elite', 'boss'] as const).map((t) => {
       const at = fights.filter((x) => x.tier === t);
@@ -378,7 +411,7 @@ export function pressureExperiment(o: PressureOptions): ExperimentResult {
     sections.push(
       heading(3, e.name),
       '',
-      `Run win rate ${winCell(win)}. HP lost is over fights that were WON (what the target bands use); the loss column is the share of fights at that floor that were lost. "Reached" is the share of runs that played a fight on that floor.`,
+      `Run win rate ${winCell(win)}. HP lost is over fights that were WON (what the target bands use); the loss column is the share of fights at that floor that were lost. "Reached" is the share of runs that played that kind of fight on that floor.`,
       '',
       table(['floor', 'tier', 'fights', 'reached', 'HP on entering', 'HP lost when won [CI]', 'lost', 'band (HP)', 'vs band'], rows),
       '',
@@ -472,6 +505,9 @@ export function mapExperiment(o: RunExpOptions & { maps: number; runLevel: boole
 }
 
 /** Path choice: how much does the way through the map matter? */
+/** Floors counted when grouping runs by what their path held. */
+const EARLY_FLOORS = 7;
+
 export function pathExperiment(o: RunExpOptions): ExperimentResult {
   const base = baseOf(o);
   const entries: RunEntry[] = [
@@ -483,12 +519,12 @@ export function pathExperiment(o: RunExpOptions): ExperimentResult {
     { name: 'shop-seeking (with gold taken)', policy: withPolicy(base, { path: 'shop', gold: 'shop-ahead' }) },
   ];
   const rows = compareRuns(o.runs, o.baseSeed, entries);
-  // random-path runs grouped by how many elites / rests their path happened to hold
+  // random-path runs grouped by how many elites / rests / shops their path held in its first floors (counting only floors almost every run reaches, so dying early does not decide the group)
   const rand = rows[0].records;
   const groups = (kind: string, cap: number): (string | number)[][] => {
     const out: (string | number)[][] = [];
     for (let k = 0; k <= cap; k++) {
-      const at = rand.filter((r) => Math.min(cap, r.kinds[kind] ?? 0) === k);
+      const at = rand.filter((r) => Math.min(cap, r.trail.slice(0, EARLY_FLOORS).filter((x) => x === kind).length) === k);
       if (at.length < 5) continue;
       const w = wilson(at.filter((r) => r.won).length, at.length);
       out.push([`${k}${k === cap ? '+' : ''} ${kind}`, at.length, winCell(w), fmtCI(meanCI(at.map((r) => r.floorReached)))]);
@@ -504,7 +540,7 @@ export function pathExperiment(o: RunExpOptions): ExperimentResult {
     '',
     heading(3, 'Random-path runs grouped by what their path held'),
     '',
-    'Observational: the path was random, so groups differ by luck of the map as well as by the stops, but no policy selected into them.',
+    `Observational: the path was random, so groups differ by luck of the map as well as by the stops, but no policy selected into them. Only the first ${EARLY_FLOORS} floors are counted (nearly every run gets that far); counting the whole path would credit rests to runs that simply lived long enough to meet them.`,
     '',
     table(['group', 'runs', 'win rate [CI]', 'floor reached'], [...groups('elite', 3), ...groups('rest', 4), ...groups('shop', 2)]),
     '',
@@ -513,3 +549,46 @@ export function pathExperiment(o: RunExpOptions): ExperimentResult {
 }
 
 
+
+// =====================================================================================
+// does a synergy-seeking draft reach an engine?
+// =====================================================================================
+
+/**
+ * How many of the deck's non-starter cards share the most common mechanism label (a tag, a trigger
+ * kind, a scaling source, a status they apply). 1 = nothing in common; higher = the deck leans on
+ * one family. A crude "did the draft assemble an engine" signal; it does not say the engine works.
+ */
+export function concentration(deckIds: string[]): number {
+  const counts = new Map<string, number>();
+  for (const id of deckIds) {
+    const card = getCard(id);
+    if (['strike', 'defend', 'bolt', 'focus'].includes(id)) continue;
+    for (const m of mechanismsOf(card)) counts.set(m, (counts.get(m) ?? 0) + 1);
+  }
+  return Math.max(1, ...counts.values());
+}
+
+export function synergyDraftExperiment(o: RunExpOptions): ExperimentResult {
+  const base = withPolicy(baseOf(o), { draftPool: 'all', valueSkill: 'smart', valueSeeds: 4 });
+  const entries: RunEntry[] = [
+    { name: 'every draftable card offered, random pick', policy: withPolicy(base, { pick: 'random' }) },
+    { name: 'every draftable card offered, best by trial fights', policy: withPolicy(base, { pick: 'best' }) },
+    { name: 'every draftable card offered, synergy-seeking (trial + mechanism overlap)', policy: withPolicy(base, { pick: 'synergy' }) },
+    { name: 'reward pool only, best by trial fights (the live game\'s cards)', policy: withPolicy(base, { draftPool: 'reward', pick: 'best' }) },
+  ];
+  const rows = compareRuns(o.runs, o.baseSeed, entries);
+  const conc = rows.map((r) => meanCI(r.records.map((x) => concentration(x.finalDeck))));
+  const syn = rows.map((r) => pct(r.records.filter((x) => x.finalDeck.some((id) => getCard(id).owner === 'neutral' && !getCard(id).inRewardPool)).length / r.records.length, 0));
+  const markdown = [
+    heading(2, 'Does a synergy-seeking draft assemble an engine?'),
+    '',
+    intro(o, 'The first row is the comparison base. "Engine concentration" = how many non-starter cards of the final deck share the most common mechanism label (1 = none do). "Runs holding a synergy card" counts final decks with at least one card from outside the live reward pool.'),
+    '',
+    runTable(rows),
+    '',
+    table(['variant', 'engine concentration [CI]', 'runs holding a synergy card'], rows.map((r, i) => [r.name, fmtCI(conc[i], 2), syn[i]])),
+    '',
+  ].join('\n');
+  return { name: 'synergyDraft', json: { options: { ...o }, rows: rows.map(rowJson), concentration: conc.map((c) => r6(c.mean)) }, markdown };
+}

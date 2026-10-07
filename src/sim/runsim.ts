@@ -75,6 +75,8 @@ export interface RunPolicy {
   eliteGold?: number;
   startRelics: string[];
   startGold: number;
+  /** Added to max HP (and current HP) at the start: the calibration knob that turns any effect into "HP of budget". */
+  bonusMaxHp: number;
   /** Map-shape overrides on top of the tunables' defaults (in memory). */
   map: Partial<MapParams>;
   /** Fights per valuation (card gain estimates), per candidate. */
@@ -105,6 +107,7 @@ export const DEFAULT_RUN_POLICY: RunPolicy = {
   event: 'random',
   startRelics: [],
   startGold: 0,
+  bonusMaxHp: 0,
   map: {},
   valueSeeds: 4,
   valueSkill: 'greedy',
@@ -243,6 +246,8 @@ export interface RunRecord {
   fights: FightLog[];
   /** Stops visited, by kind (the boss excluded). */
   kinds: Record<string, number>;
+  /** The kind of stop visited on each floor in order (index 0 = floor 1; the boss excluded). */
+  trail: string[];
   rewardsCard: number;
   rewardsGold: number;
   goldGained: number;
@@ -282,6 +287,8 @@ export function newSimRun(seed: number, policy: RunPolicy): RunState {
   for (const id of policy.startRelics) run.grantRelic(getRelic(id));
   run.takeNotice();
   run.gold = policy.startGold;
+  run.maxHp += policy.bonusMaxHp;
+  run.hp += policy.bonusMaxHp;
   return run;
 }
 
@@ -305,6 +312,7 @@ export function playRunEx(seed: number, policy: RunPolicy = DEFAULT_RUN_POLICY):
     floorReached: 0,
     fights: [],
     kinds: {},
+    trail: [],
     rewardsCard: 0,
     rewardsGold: 0,
     goldGained: 0,
@@ -336,7 +344,10 @@ export function playRunEx(seed: number, policy: RunPolicy = DEFAULT_RUN_POLICY):
   for (let guard = 0; guard < 800 && run.phase !== 'won' && run.phase !== 'lost'; guard++) {
     if (run.phase === 'map') {
       const node = choosePathNode(run, policy, botRng);
-      if (node.kind !== 'boss') rec.kinds[node.kind] = (rec.kinds[node.kind] ?? 0) + 1;
+      if (node.kind !== 'boss') {
+        rec.kinds[node.kind] = (rec.kinds[node.kind] ?? 0) + 1;
+        rec.trail.push(node.kind);
+      }
       run.chooseNode(node.id);
       continue;
     }

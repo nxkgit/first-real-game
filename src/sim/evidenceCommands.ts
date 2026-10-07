@@ -1,5 +1,6 @@
-import { goldExperiment, goldGridExperiment, eventExperiment, mapExperiment, pathExperiment, pressureExperiment, relicRunExperiment, removalExperiment, restExperiment } from './evidenceRuns';
+import { goldExperiment, goldGridExperiment, goldShopsExperiment, eventExperiment, mapExperiment, pathExperiment, pressureExperiment, relicRunExperiment, removalExperiment, restExperiment, synergyDraftExperiment } from './evidenceRuns';
 import { deckSizeExperiment, pickExperiment, relicFightExperiment, upgradeExperiment } from './evidenceFights';
+import { hpBudgetExperiment } from './evidenceBudget';
 import { SKILL_LEVELS } from './skills';
 import type { SkillLevel } from './skills';
 import { heading } from './report';
@@ -14,7 +15,7 @@ import { compareRuns, runTable } from './evidenceRuns';
  * data file changes. `runEvidenceCommand` is the file-system-free entry the tests use.
  */
 
-export const EVIDENCE_COMMANDS = ['runs', 'gold', 'removal', 'rests', 'events', 'relics', 'maps', 'paths', 'pressure', 'picks', 'decksize', 'upgrades', 'evidence'] as const;
+export const EVIDENCE_COMMANDS = ['runs', 'gold', 'removal', 'rests', 'events', 'relics', 'maps', 'paths', 'pressure', 'picks', 'decksize', 'upgrades', 'synergy', 'evidence'] as const;
 
 export const EVIDENCE_USAGE = `Design evidence (docs/design/EVIDENCE.md)
   runs       compare whole-act policies / parameters (--vary name=a|b|c ...; see flags below)
@@ -29,6 +30,7 @@ export const EVIDENCE_USAGE = `Design evidence (docs/design/EVIDENCE.md)
   picks      what a card pick / shop buy / removal is worth (HP per fight), by deck stage
   decksize   thin versus fat decks, and add-plus-remove
   upgrades   what one upgrade is worth, per card
+  synergy    does a synergy-seeking draft assemble an engine? (every draftable card offered)
   evidence   all of the above into one document (--quick for a small run)
 
 Evidence flags
@@ -118,7 +120,8 @@ export function runEvidenceCommand(command: string, flags: Record<string, string
       const prices = list(flags, 'prices', quick ? [40] : [20, 30, 40, 50, 60, 80]);
       const a = goldExperiment({ ...run, prices });
       const b = goldGridExperiment({ ...run, golds: list(flags, 'golds', quick ? [25] : [15, 25, 40, 60]), prices: list(flags, 'grid-prices', quick ? [40] : [20, 30, 40, 60]) });
-      return { markdown: `${a.markdown}\n${b.markdown}`, json: { gold: a.json, grid: b.json } };
+      const c = goldShopsExperiment({ ...run, shopWeights: list(flags, 'shop-weights', quick ? [5] : [5, 10, 20, 40]), prices: list(flags, 'grid-prices', quick ? [40] : [20, 30, 40, 60]) });
+      return { markdown: [a.markdown, b.markdown, c.markdown].join('\n'), json: { gold: a.json, grid: b.json, shops: c.json } };
     }
     case 'removal':
       return one(removalExperiment({ ...run, removalPrices: list(flags, 'removal-prices', quick ? [50] : [25, 50, 75]) }));
@@ -132,7 +135,8 @@ export function runEvidenceCommand(command: string, flags: Record<string, string
     case 'relics': {
       const a = relicFightExperiment({ ...fight });
       const b = relicRunExperiment({ ...run });
-      return { markdown: `${a.markdown}\n${b.markdown}`, json: { fights: a.json, runs: b.json } };
+      const c = hpBudgetExperiment({ ...run, bonuses: list(flags, 'bonuses', quick ? [10] : [-20, -10, -5, 5, 10, 20, 30]) });
+      return { markdown: [a.markdown, b.markdown, c.markdown].join('\n'), json: { fights: a.json, runs: b.json, hpBudget: c.json } };
     }
     case 'maps':
       return one(mapExperiment({ ...run, maps: sizes.maps, runLevel: flags['no-runs'] !== 'true' }));
@@ -144,6 +148,8 @@ export function runEvidenceCommand(command: string, flags: Record<string, string
       return one(pickExperiment({ ...fight, offers: quick ? 100 : 3000 }));
     case 'decksize':
       return one(deckSizeExperiment({ ...fight, samples: sizes.samples, sizes: quick ? [8, 10, 14] : undefined }));
+    case 'synergy':
+      return one(synergyDraftExperiment({ ...run }));
     case 'upgrades':
       return one(upgradeExperiment({ ...fight }));
     case 'evidence': {

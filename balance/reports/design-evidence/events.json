@@ -1,0 +1,184 @@
+{
+ "plain": {
+  "options": {
+   "runs": 300,
+   "baseSeed": 1,
+   "skill": "smart",
+   "rich": false
+  },
+  "rows": [
+   {
+    "event": "event-a",
+    "choice": "Take it",
+    "runsMet": 128,
+    "dWin": -0.132812,
+    "dFloor": -0.539062,
+    "dCost": 0.250651,
+    "dHpAtBoss": -5.835937
+   },
+   {
+    "event": "event-a",
+    "choice": "Leave it",
+    "runsMet": 128,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   },
+   {
+    "event": "event-b",
+    "choice": "Rest here",
+    "runsMet": 110,
+    "dWin": 0.163636,
+    "dFloor": 0.5,
+    "dCost": -0.210227,
+    "dHpAtBoss": 10.390909
+   },
+   {
+    "event": "event-b",
+    "choice": "Study here",
+    "runsMet": 110,
+    "dWin": -0.054545,
+    "dFloor": -0.145455,
+    "dCost": 0.613258,
+    "dHpAtBoss": -0.763636
+   },
+   {
+    "event": "event-b",
+    "choice": "Move on",
+    "runsMet": 110,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   },
+   {
+    "event": "event-c",
+    "choice": "Fight for it",
+    "runsMet": 98,
+    "dWin": 0.05102,
+    "dFloor": 0.204082,
+    "dCost": -0.543367,
+    "dHpAtBoss": 4.459184
+   },
+   {
+    "event": "event-c",
+    "choice": "Walk away",
+    "runsMet": 98,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   },
+   {
+    "event": "event-d",
+    "choice": "Pay for strength",
+    "runsMet": 123,
+    "dWin": 0.121951,
+    "dFloor": 0.447154,
+    "dCost": -0.067073,
+    "dHpAtBoss": 12.154472
+   },
+   {
+    "event": "event-d",
+    "choice": "Decline",
+    "runsMet": 123,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   }
+  ]
+ },
+ "rich": {
+  "options": {
+   "runs": 300,
+   "baseSeed": 1,
+   "skill": "smart",
+   "rich": true
+  },
+  "rows": [
+   {
+    "event": "event-a",
+    "choice": "Take it",
+    "runsMet": 146,
+    "dWin": -0.157534,
+    "dFloor": -0.575342,
+    "dCost": 0.279395,
+    "dHpAtBoss": -6.863014
+   },
+   {
+    "event": "event-a",
+    "choice": "Leave it",
+    "runsMet": 146,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   },
+   {
+    "event": "event-b",
+    "choice": "Rest here",
+    "runsMet": 136,
+    "dWin": 0.220588,
+    "dFloor": 0.448529,
+    "dCost": -0.250613,
+    "dHpAtBoss": 9.051471
+   },
+   {
+    "event": "event-b",
+    "choice": "Study here",
+    "runsMet": 136,
+    "dWin": -0.029412,
+    "dFloor": -0.183824,
+    "dCost": 1.136642,
+    "dHpAtBoss": -0.044118
+   },
+   {
+    "event": "event-b",
+    "choice": "Move on",
+    "runsMet": 136,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   },
+   {
+    "event": "event-c",
+    "choice": "Fight for it",
+    "runsMet": 132,
+    "dWin": 0.068182,
+    "dFloor": -0.007576,
+    "dCost": -0.897727,
+    "dHpAtBoss": 3.227273
+   },
+   {
+    "event": "event-c",
+    "choice": "Walk away",
+    "runsMet": 132,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   },
+   {
+    "event": "event-d",
+    "choice": "Pay for strength",
+    "runsMet": 141,
+    "dWin": 0.134752,
+    "dFloor": 0.248227,
+    "dCost": 0.053783,
+    "dHpAtBoss": 9.48227
+   },
+   {
+    "event": "event-d",
+    "choice": "Decline",
+    "runsMet": 141,
+    "dWin": 0,
+    "dFloor": 0,
+    "dCost": 0,
+    "dHpAtBoss": 0
+   }
+  ]
+ }
+}
