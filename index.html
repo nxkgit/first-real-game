@@ -18,11 +18,36 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        /* the game handles every touch itself: no scrolling, pinch-zoom, text selection, or long-press menu */
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+      /* The 800x600 layout is unreadably small on a phone held upright, so ask for landscape. */
+      #rotate-hint {
+        display: none;
+      }
+      @media (orientation: portrait) and (max-width: 600px) {
+        #rotate-hint {
+          display: flex;
+          position: fixed;
+          inset: 0;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          text-align: center;
+          background: #0f0f15;
+          color: #c8c8d8;
+          font: 18px/1.5 monospace;
+          z-index: 1;
+        }
       }
     </style>
   </head>
   <body>
     <div id="app"></div>
+    <div id="rotate-hint">Turn your phone sideways to play.</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

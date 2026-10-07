@@ -188,10 +188,20 @@ export class CombatScene extends Phaser.Scene {
       .setOrigin(0.5, 1);
     const tip = this.add.container(0, 0, [tipBg, tipText]).setDepth(40).setVisible(false);
 
+    // Mouse: show while hovering. Touch has no hover — Phaser sends "over" when the finger lands
+    // and "out" when it lifts — so a tapped tooltip stays up until the next tap somewhere else.
+    let shownByTouchDown: number | null = null;
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (shownByTouchDown !== null && pointer.downTime !== shownByTouchDown) {
+        tip.setVisible(false);
+        shownByTouchDown = null;
+      }
+    });
+
     const add = (x: number, y: number, w: number, h: number, getText: () => string | null): void => {
       // below the hand (depth -1) so a wide hand overlapping a pile still gets the click
       const zone = this.add.zone(x, y, w, h).setInteractive().setDepth(-1);
-      zone.on('pointerover', () => {
+      zone.on('pointerover', (pointer: Phaser.Input.Pointer) => {
         const text = getText();
         if (!text) return;
         tipText.setText(text).setPosition(0, -6);
@@ -199,8 +209,11 @@ export class CombatScene extends Phaser.Scene {
         // keep the bubble on screen; it sits just above the hovered thing
         const halfWidth = tipBg.width / 2;
         tip.setPosition(Phaser.Math.Clamp(x, halfWidth + 4, 800 - halfWidth - 4), y - h / 2 - 4).setVisible(true);
+        shownByTouchDown = pointer.wasTouch ? pointer.downTime : null;
       });
-      zone.on('pointerout', () => tip.setVisible(false));
+      zone.on('pointerout', (pointer: Phaser.Input.Pointer) => {
+        if (!pointer.wasTouch) tip.setVisible(false);
+      });
     };
 
     const c = (): CombatState => this.combat;
