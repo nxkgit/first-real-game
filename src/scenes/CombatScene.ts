@@ -83,6 +83,8 @@ export class CombatScene extends Phaser.Scene {
   private playerBlockText!: Phaser.GameObjects.Text;
   private energyText!: Phaser.GameObjects.Text;
   private statusText!: Phaser.GameObjects.Text;
+  private drawCountText!: Phaser.GameObjects.Text;
+  private discardCountText!: Phaser.GameObjects.Text;
 
   private endTurnButton!: Phaser.GameObjects.Rectangle;
   private endTurnText!: Phaser.GameObjects.Text;
@@ -110,6 +112,7 @@ export class CombatScene extends Phaser.Scene {
     this.buildPlayerStatusArea();
     this.buildHandArea();
     this.buildTargetingUi();
+    this.buildTooltips();
     this.buildOverlays();
 
     this.combat = new CombatState(buildStarterDeck(), MVP1_ENEMY);
@@ -124,11 +127,13 @@ export class CombatScene extends Phaser.Scene {
   // ---------- static scene construction ----------
 
   private createParticleEmitters(): void {
-    const g = this.add.graphics();
-    g.fillStyle(0xffffff, 1);
-    g.fillCircle(4, 4, 4);
-    g.generateTexture('particle', 8, 8);
-    g.destroy();
+    if (!this.textures.exists('particle')) {
+      const g = this.add.graphics();
+      g.fillStyle(0xffffff, 1);
+      g.fillCircle(4, 4, 4);
+      g.generateTexture('particle', 8, 8);
+      g.destroy();
+    }
 
     this.hitParticles = this.add.particles(0, 0, 'particle', {
       speed: { min: 80, max: 220 },
@@ -156,10 +161,59 @@ export class CombatScene extends Phaser.Scene {
 
     this.add.rectangle(DRAW_PILE_POS.x, DRAW_PILE_POS.y, 54, 76, 0x2a2a3a).setStrokeStyle(2, 0x45455a);
     this.add.text(DRAW_PILE_POS.x, DRAW_PILE_POS.y + 48, 'Draw', { fontSize: '11px', color: '#777788' }).setOrigin(0.5);
+    this.drawCountText = this.add
+      .text(DRAW_PILE_POS.x, DRAW_PILE_POS.y, '', { fontSize: '20px', color: '#c8c8d8', fontStyle: 'bold' })
+      .setOrigin(0.5);
     this.add.rectangle(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, 54, 76, 0x2a2a3a).setStrokeStyle(2, 0x45455a);
     this.add
       .text(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y + 48, 'Discard', { fontSize: '11px', color: '#777788' })
       .setOrigin(0.5);
+    this.discardCountText = this.add
+      .text(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, '', { fontSize: '20px', color: '#c8c8d8', fontStyle: 'bold' })
+      .setOrigin(0.5);
+  }
+
+  /** Hover explanations for icon-only readouts. Each text callback returns null to show nothing. */
+  private buildTooltips(): void {
+    const tipBg = this.add.rectangle(0, 0, 10, 10, 0x0c0c12, 0.94).setStrokeStyle(1, 0x5a5a72).setOrigin(0.5, 1);
+    const tipText = this.add
+      .text(0, 0, '', { fontSize: '13px', color: '#e8e8f0', wordWrap: { width: 220 }, align: 'center' })
+      .setOrigin(0.5, 1);
+    const tip = this.add.container(0, 0, [tipBg, tipText]).setDepth(40).setVisible(false);
+
+    const add = (x: number, y: number, w: number, h: number, getText: () => string | null): void => {
+      // below the hand (depth -1) so a wide hand overlapping a pile still gets the click
+      const zone = this.add.zone(x, y, w, h).setInteractive().setDepth(-1);
+      zone.on('pointerover', () => {
+        const text = getText();
+        if (!text) return;
+        tipText.setText(text).setPosition(0, -6);
+        tipBg.setSize(tipText.width + 16, tipText.height + 12);
+        // keep the bubble on screen; it sits just above the hovered thing
+        const halfWidth = tipBg.width / 2;
+        tip.setPosition(Phaser.Math.Clamp(x, halfWidth + 4, 800 - halfWidth - 4), y - h / 2 - 4).setVisible(true);
+      });
+      zone.on('pointerout', () => tip.setVisible(false));
+    };
+
+    const c = (): CombatState => this.combat;
+    add(ENEMY_X, 92, 70, 34, () => {
+      const move = c().currentEnemyMove;
+      return move.kind === 'attack'
+        ? `Intends to attack for ${move.value} damage.`
+        : `Intends to gain ${move.value} block.`;
+    });
+    add(ENEMY_X, 384, 50, 24, () =>
+      c().enemyBlock > 0 ? `Block: absorbs the next ${c().enemyBlock} damage. Resets at the start of its turn.` : null
+    );
+    add(170, 360, 40, 28, () =>
+      c().playerBlock > 0 ? `Block: absorbs the next ${c().playerBlock} damage. Resets at the start of your turn.` : null
+    );
+    add(235, 360, 44, 44, () => `Energy: spent to play cards. Refills to ${c().maxEnergy} each turn.`);
+    add(DRAW_PILE_POS.x, DRAW_PILE_POS.y, 54, 76, () =>
+      `Draw pile: ${c().deck.drawPile.length} cards. When it runs out, the discard pile is shuffled back in.`
+    );
+    add(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, 54, 76, () => `Discard pile: ${c().deck.discardPile.length} cards.`);
   }
 
   /** A simple vector wizard: robe, pointed hood, and a glowing staff. Facing right. */
@@ -549,7 +603,13 @@ export class CombatScene extends Phaser.Scene {
     if (this.combat.phase === 'playerTurn') this.lockInput(false);
   }
 
+  private updatePileCounts(): void {
+    this.drawCountText.setText(`${this.combat.deck.drawPile.length}`);
+    this.discardCountText.setText(`${this.combat.deck.discardPile.length}`);
+  }
+
   private syncHand(): Promise<void> {
+    this.updatePileCounts();
     const hand = this.combat.deck.hand;
     const totalWidth = hand.length * (CARD_WIDTH + 10);
     const startX = 400 - totalWidth / 2 + CARD_WIDTH / 2;
@@ -929,6 +989,7 @@ export class CombatScene extends Phaser.Scene {
     this.playerBlockText.setText(c.playerBlock > 0 ? `${c.playerBlock}` : '');
 
     this.energyText.setText(`${c.energy}/${c.maxEnergy}`);
+    this.updatePileCounts();
 
     this.statusText.setText(c.log.slice(-2).map((e) => e.message).join('\n'));
 
