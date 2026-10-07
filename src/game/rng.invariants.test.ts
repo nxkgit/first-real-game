@@ -124,7 +124,8 @@ describe('no unseeded randomness in game code', () => {
   it('only the documented exceptions mention Math.random', () => {
     const found: Record<string, number> = {};
     for (const [path, text] of Object.entries(SOURCES)) {
-      if (/\.test\.ts$/.test(path) || /invariantHarness/.test(path)) continue;
+      // balance CLI entry points: a report date and benchmark timers, nothing that touches gameplay
+      if (/\.test\.ts$/.test(path) || /invariantHarness/.test(path) || /\/sim\/(balanceCli|commands)\.ts$/.test(path)) continue;
       const hits = stripComments(text).match(/Math\s*\.\s*random|crypto\s*\.\s*getRandomValues|\bperformance\s*\.\s*now|\bDate\s*\.\s*now|new\s+Date\s*\(/g);
       if (hits) found[path] = hits.length;
     }
