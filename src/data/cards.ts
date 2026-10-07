@@ -16,6 +16,7 @@ export const STRIKE: CardDefinition = {
   owner: MAGE,
   inRewardPool: false,
   effects: [{ kind: 'damage', value: 6 }],
+  upgrade: { effects: [{ kind: 'damage', value: 9 }] },
 };
 
 export const DEFEND: CardDefinition = {
@@ -26,6 +27,7 @@ export const DEFEND: CardDefinition = {
   owner: MAGE,
   inRewardPool: false,
   effects: [{ kind: 'block', value: 5 }],
+  upgrade: { effects: [{ kind: 'block', value: 8 }] },
 };
 
 export const BOLT: CardDefinition = {
@@ -37,6 +39,7 @@ export const BOLT: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'damage', value: 12 }],
+  upgrade: { effects: [{ kind: 'damage', value: 16 }] },
 };
 
 export const FOCUS: CardDefinition = {
@@ -47,6 +50,7 @@ export const FOCUS: CardDefinition = {
   owner: MAGE,
   inRewardPool: false,
   onTurnStartEffect: { kind: 'draw', value: 1 },
+  upgrade: { cost: 0 },
 };
 
 // ---- reward-pool cards ----
@@ -62,6 +66,7 @@ export const JAB: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'damage', value: 3 }],
+  upgrade: { effects: [{ kind: 'damage', value: 5 }] },
 };
 
 export const GUARDED_STRIKE: CardDefinition = {
@@ -76,6 +81,12 @@ export const GUARDED_STRIKE: CardDefinition = {
     { kind: 'damage', value: 5 },
     { kind: 'block', value: 5 },
   ],
+  upgrade: {
+    effects: [
+      { kind: 'damage', value: 7 },
+      { kind: 'block', value: 7 },
+    ],
+  },
 };
 
 export const HEAVY_HIT: CardDefinition = {
@@ -87,6 +98,7 @@ export const HEAVY_HIT: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'damage', value: 24 }],
+  upgrade: { effects: [{ kind: 'damage', value: 32 }] },
 };
 
 export const BIG_BLOCK: CardDefinition = {
@@ -97,6 +109,7 @@ export const BIG_BLOCK: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'block', value: 13 }],
+  upgrade: { effects: [{ kind: 'block', value: 18 }] },
 };
 
 export const QUICK_DRAW: CardDefinition = {
@@ -107,6 +120,7 @@ export const QUICK_DRAW: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'draw', value: 2 }],
+  upgrade: { effects: [{ kind: 'draw', value: 3 }] },
 };
 
 export const FORTIFY: CardDefinition = {
@@ -117,6 +131,7 @@ export const FORTIFY: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   onTurnStartEffect: { kind: 'block', value: 4 },
+  upgrade: { onTurnStartEffect: { kind: 'block', value: 6 } },
 };
 
 // ---- status-effect cards (Weak / Vulnerable / Strength) ----
@@ -130,6 +145,7 @@ export const WEAKEN: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'applyStatus', status: 'weak', value: 2, to: 'target' }],
+  upgrade: { effects: [{ kind: 'applyStatus', status: 'weak', value: 3, to: 'target' }] },
 };
 
 export const EXPOSE: CardDefinition = {
@@ -141,6 +157,7 @@ export const EXPOSE: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'target' }],
+  upgrade: { effects: [{ kind: 'applyStatus', status: 'vulnerable', value: 3, to: 'target' }] },
 };
 
 export const SUNDER: CardDefinition = {
@@ -155,6 +172,12 @@ export const SUNDER: CardDefinition = {
     { kind: 'damage', value: 8 },
     { kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'target' },
   ],
+  upgrade: {
+    effects: [
+      { kind: 'damage', value: 11 },
+      { kind: 'applyStatus', status: 'vulnerable', value: 3, to: 'target' },
+    ],
+  },
 };
 
 export const STRENGTHEN: CardDefinition = {
@@ -165,6 +188,7 @@ export const STRENGTHEN: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   effects: [{ kind: 'applyStatus', status: 'strength', value: 2, to: 'self' }],
+  upgrade: { effects: [{ kind: 'applyStatus', status: 'strength', value: 3, to: 'self' }] },
 };
 
 // ---- registry ----
@@ -188,11 +212,40 @@ const ALL_CARDS: CardDefinition[] = [
   STRENGTHEN,
 ];
 
+/**
+ * The upgraded version of a card, generated from its `upgrade` block and registered as `<id>+`.
+ * An upgraded card can't be upgraded again, and is never offered as a reward by itself.
+ */
+function buildUpgraded(card: CardDefinition): CardDefinition | undefined {
+  if (!card.upgrade) return undefined;
+  const { upgrade, ...rest } = card;
+  return {
+    ...rest,
+    ...upgrade,
+    id: `${card.id}+`,
+    name: `${card.name}+`,
+    upgradeOf: card.id,
+    inRewardPool: false,
+  };
+}
+
+const UPGRADED_CARDS: CardDefinition[] = ALL_CARDS.flatMap((card) => buildUpgraded(card) ?? []);
+
 export const CARDS: Readonly<Record<string, CardDefinition>> = Object.fromEntries(
-  ALL_CARDS.map((card): [string, CardDefinition] => [card.id, card])
+  [...ALL_CARDS, ...UPGRADED_CARDS].map((card): [string, CardDefinition] => [card.id, card])
 );
 
-if (Object.keys(CARDS).length !== ALL_CARDS.length) throw new Error('duplicate card id in ALL_CARDS');
+if (Object.keys(CARDS).length !== ALL_CARDS.length + UPGRADED_CARDS.length) throw new Error('duplicate card id');
+
+/** The upgraded version of `card`, or undefined if it can't be upgraded (already upgraded, or no upgrade defined). */
+export function upgradedVersion(card: CardDefinition): CardDefinition | undefined {
+  return card.upgrade ? CARDS[`${card.id}+`] : undefined;
+}
+
+/** Every base (not upgraded) card, in the order they are listed above. */
+export function baseCards(): CardDefinition[] {
+  return ALL_CARDS;
+}
 
 export function getCard(id: string): CardDefinition {
   const card = CARDS[id];

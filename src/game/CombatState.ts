@@ -10,11 +10,21 @@ import type {
   EnemyDefinition,
   EnemyMove,
   EnemyState,
+  RelicDefinition,
   StatusId,
   Statuses,
 } from './types';
 import { STATUSES } from '../data/statuses';
 import { HAND_SIZE, MAX_ENERGY, PLAYER_MAX_HP } from '../data/tunables';
+
+export interface CombatOptions {
+  /** HP the player brings in (a run carries it between fights); default is full HP. */
+  player?: { hp: number; maxHp: number };
+  /** Drives the shuffles; pass a seeded one to replay a fight. */
+  random?: () => number;
+  /** Relics the player has: their combat-start and turn-start effects apply. */
+  relics?: RelicDefinition[];
+}
 
 export type CombatPhase = 'playerTurn' | 'enemyTurn' | 'won' | 'lost';
 
@@ -68,6 +78,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** 1 on the first player turn, then counts up. */
   turnNumber = 0;
 
+  private readonly relics: RelicDefinition[];
   /** Power cards played so far this combat; their onTurnStartEffect fires every subsequent turn. */
   private activePowers: CardDefinition[] = [];
   /** "<combatant id>:<status id>" for statuses put on during the enemy phase of this round. They skip
@@ -75,17 +86,12 @@ export class CombatState extends EventEmitter<CombatEventMap> {
    *  (StS calls this "just applied"). */
   private freshStatuses = new Set<string>();
 
-  /** `player` carries HP between fights in a run; a standalone fight starts at full HP. `random`
-   *  drives the shuffles (pass a seeded one to replay a fight). */
-  constructor(
-    deckCards: CardDefinition[],
-    enemies: EnemyDefinition[],
-    player: { hp: number; maxHp: number } = { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP },
-    random: () => number = Math.random
-  ) {
+  constructor(deckCards: CardDefinition[], enemies: EnemyDefinition[], options: CombatOptions = {}) {
     super();
     if (enemies.length === 0) throw new Error('a fight needs at least one enemy');
-    this.deck = new Deck(deckCards, random);
+    const player = options.player ?? { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP };
+    this.relics = options.relics ?? [];
+    this.deck = new Deck(deckCards, options.random ?? Math.random);
     this.player = { id: PLAYER_ID, name: 'Hero', hp: player.hp, maxHp: player.maxHp, block: 0, statuses: {} };
     this.enemies = enemies.map((definition, i) => ({
       id: `enemy-${i}`,
@@ -100,6 +106,10 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   }
 
   start(): void {
+    // relics that act as a fight begins, before the first hand is drawn
+    for (const relic of this.relics) {
+      for (const effect of relic.onCombatStart ?? []) this.applyCardEffect(effect, undefined);
+    }
     this.startPlayerTurn(true);
   }
 
@@ -197,6 +207,9 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       if (power.onTurnStartEffect) {
         this.applyCardEffect(power.onTurnStartEffect, undefined);
       }
+    }
+    for (const relic of this.relics) {
+      for (const effect of relic.onTurnStart ?? []) this.applyCardEffect(effect, undefined);
     }
     this.pushLog(isFirstTurn ? 'Combat start.' : 'Your turn.');
     this.emitHandChanged();

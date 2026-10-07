@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { buildRunReport, formatRunReport } from '../game/runReport';
 import { CARDS, getCard } from '../data/cards';
 import { ENEMIES, getEnemy } from '../data/enemies';
+import { RELICS, getRelic } from '../data/relics';
 import { newRun } from '../data/run';
 import { enterCurrentNode } from '../scenes/ui';
 import { getCurrentRun } from '../session';
@@ -80,14 +81,17 @@ export function installDevPanel(game: Phaser.Game): void {
   // ---- sections ----
 
   const jump = select([]);
+  let jumpFor: unknown = null;
+  /** Lists every stop on this run's map (rebuilt when a new run starts). */
   const refreshJump = (): void => {
     const run = getCurrentRun();
-    if (!run || jump.options.length === run.nodes.length) return;
+    if (!run || jumpFor === run.map) return;
+    jumpFor = run.map;
     jump.innerHTML = '';
-    run.nodes.forEach((node, i) => {
-      const label = node.kind === 'combat' ? node.enemies.map((e) => e.name).join(' + ') : node.kind;
-      jump.add(new Option(`${i + 1}. ${label}`, String(i)));
-    });
+    for (const node of run.map.nodes) {
+      const what = node.enemies ? node.enemies.map((id) => getEnemy(id).name).join('+') : (node.eventId ?? '');
+      jump.add(new Option(`${node.floor + 1}.${node.lane} ${node.kind} ${what}`.trim(), node.id));
+    }
   };
 
   const enemyBoxes = Object.keys(ENEMIES).map((id) => {
@@ -101,25 +105,34 @@ export function installDevPanel(game: Phaser.Game): void {
   });
 
   const cardPick = select(Object.values(CARDS).map((c) => [c.id, `${c.name} (${c.cost})`]));
+  const relicPick = select(Object.values(RELICS).map((r) => [r.id, r.name]));
   const seedInput = document.createElement('input');
   seedInput.placeholder = 'seed (blank = random)';
   seedInput.style.cssText = 'font:inherit;width:130px;background:#1b1b24;color:#fff;border:1px solid #5a5a72;';
 
   body.append(
     info,
-    row(jump, button('Go to node', () => withRun((run) => run.jumpTo(Number(jump.value))))),
+    row(jump, button('Go to stop', () => withRun((run) => run.jumpTo(jump.value)))),
     row(...enemyBoxes.map((e) => e.label)),
     row(
       button('Fight these here', () => {
         const ids = enemyBoxes.filter((e) => e.box.checked).map((e) => e.box.value);
         if (ids.length === 0) return say('Tick at least one enemy.');
-        withRun((run) => {
-          run.nodes[run.nodeIndex] = { kind: 'combat', enemies: ids.map(getEnemy) };
-          run.jumpTo(run.nodeIndex);
-        });
+        withRun((run) => run.startFight(ids));
       })
     ),
     row(cardPick, button('Add card', () => withRun((run) => run.deck.push(getCard(cardPick.value)), false))),
+    row(
+      relicPick,
+      button('Give relic', () =>
+        withRun((run) => {
+          const relic = getRelic(relicPick.value);
+          if (run.relics.some((r) => r.id === relic.id)) throw new Error('Already have it.');
+          run.grantRelic(relic);
+          run.takeNotice();
+        }, false)
+      )
+    ),
     row(
       button('+50 gold', () => withRun((run) => (run.gold += 50), false)),
       button('Heal full', () => withRun((run) => (run.hp = run.maxHp), false)),
@@ -155,8 +168,7 @@ export function installDevPanel(game: Phaser.Game): void {
       info.textContent = 'No run yet.';
       return;
     }
-    jump.value = String(Math.min(run.nodeIndex, run.nodes.length - 1));
-    info.textContent = `seed ${run.seed}\nfloor ${run.floor}/${run.totalFloors}  ${run.phase}\nhp ${run.hp}/${run.maxHp}  gold ${run.gold}  deck ${run.deck.length}`;
+    info.textContent = `seed ${run.seed}\nfloor ${run.floor}/${run.totalFloors}  ${run.phase}\nhp ${run.hp}/${run.maxHp}  gold ${run.gold}  deck ${run.deck.length}  relics ${run.relics.length}`;
   }
 
   refresh();

@@ -26,7 +26,7 @@ Creative/aesthetic/narrative content (hero identity, art, flavor, names) is auth
 
 **Definition of done:** the full loop (draw → play → end turn → enemy turn → win/loss) runs in a browser, is playable with mouse/click, and feels responsive enough to evaluate "does this feel good" before building anything further.
 
-### MVP 2 — Chained Combats + Non-Combat Events (current target)
+### MVP 2 — Chained Combats + Non-Combat Events (done)
 
 A short linear sequence of a few fights plus non-combat nodes, deployed somewhere shareable for friend playtesting.
 
@@ -40,7 +40,21 @@ A short linear sequence of a few fights plus non-combat nodes, deployed somewher
 
 **Built since (2026-10-07):** Weak, Vulnerable and Strength (StS rules; see DESIGN_LOG.md); fights with several enemies (fight 2 is two placeholder enemies); enemy moves made of the same effects as cards, with StS-style generic buff/debuff intent icons; card text generated from effects; a card registry with hero ownership. A rough shop screen exists on its own branch as a visual draft only.
 
-**Still open for MVP 2:** shop contents and gold's value (a draft screen exists, nothing decided), non-combat events beyond the rest stop, and whether the path should become a branching map.
+**Superseded by the one-act demo below.** The fixed fight-fight-rest-fight path became a branching map, events and a boss were added, and the rest stop gained an upgrade option. Still open from this stage: shop contents and gold's value (a draft screen exists, nothing decided).
+
+### One-Act Demo (current target, built 2026-10-07)
+
+At the user's direction (2026-10-07), the run became essentially one Slay the Spire act: a branching map of stops leading to a boss. Everything is **placeholder content with provisional numbers** (logged in DESIGN_LOG.md); the point is the shape and the systems, so design can land into them later.
+
+- **Map.** A seeded, branching map: 12 floors plus the boss, 5 columns, 4 climbs drawn from the bottom that share stops where they overlap. Stop kinds: fight, elite, rest, shop, event, boss. Rules: floor 1 is all fights; the floor before the boss is all rests; elites and rests from floor 5, shops from floor 4, events from floor 2; elites/rests/shops never twice in a row on a path. All numbers in `src/data/tunables.ts`.
+- **Elites and boss.** Fights have a tier. Elites and the boss are drawn larger and announce themselves. An elite gives more gold and drops a relic (with either reward choice). Beating the boss wins the act and ends the run.
+- **Relics.** A relic is data: effects on pickup, after each win, at the start of each fight, or at the start of each turn, reusing the same effects cards use. Five basic placeholder relics (+1 Strength at fight start, +10 max HP, block at fight start, heal after each win, an extra card each turn). Relics come from elites and events.
+- **Events.** A stop with text and choices; each choice's outcomes are shown up front. Outcome kinds: gold, HP, max HP, a card, a random card, a relic, a fight. Four placeholder events.
+- **Card upgrades.** Every card can define an upgraded version (registered as `<id>+`). At a rest stop the player chooses: heal, or upgrade a card (shown next to its upgraded version before confirming), like StS. Upgrade numbers are placeholders.
+- **Shop.** Still the draft screen as a stop kind (flat price, four cards). Not a decision.
+- **Quality of life.** Draw/discard pile viewers, a settings panel (volume, mute, animation speed, screen shake), and a content browser page listing everything with Markdown/CSV export. Keyboard targeting for multi-enemy fights was explicitly left as is (mouse is the way to choose a target).
+
+**Still open:** shop contents and gold's value; real relics, events, encounters and map rules; upgrade numbers; rest-stop options beyond heal/upgrade; multiple acts; hero abilities; real content of every kind.
 
 ### Tooling and playtest readiness (built 2026-10-07)
 
@@ -88,16 +102,16 @@ Decision: **very similar to StS** — an icon above the enemy showing its next m
 
 ## Deferred (explicitly not MVP 1 — do not build yet)
 
-- Shop system (shop contents, prices, exchange rate between a card reward and gold) — gold itself now exists and is banked, but has no use yet
-- Relics
-- Non-combat event node design beyond the rest stop (narrative events, other node types)
-- Map/run structure beyond MVP 2's fixed linear path (branching map, elite placement, boss)
+- Shop system (shop contents, prices, exchange rate between a card reward and gold) — a draft screen exists as a stop kind; nothing about it is decided
+- Relics — a basic placeholder system exists (see "One-Act Demo"); real relic design (what they do, where they come from) is deferred
+- Non-combat events — a placeholder system exists; real event writing and design is deferred
+- Map/run structure — one act with a branching map exists; real encounter design, multiple acts, treasure stops and other stop kinds are deferred
 - Card rarity tiers and reward-pool weighting
 - Multiple heroes/archetypes (ranger, fighter, etc.) — MVP 1 is Mage only
 - Magic-school/tribe synergy system — deprioritized in favor of single-hero depth for now
 - Full status-effect roster beyond MVP 1's minimal set
 - Combat math/balance pass (HP/damage scale, target fight length in turns). A simulator now exists to support it (see "Tooling and playtest readiness"); the pass itself is still deferred
-- Enemy roster beyond the three placeholder enemies, enemy AI variety
+- Enemy roster beyond the placeholder enemies (four normal, two elites, one boss), enemy AI variety
 
 ## Open Questions
 

@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { CombatState } from '../game/CombatState';
 import type { CombatEventMap } from '../game/CombatState';
-import type { RunState } from '../game/RunState';
+import type { FightTier, RunState } from '../game/RunState';
 import type { CardInstance, EnemyDefinition } from '../game/types';
 import { PLAYER_ID } from '../game/types';
 import { Sfx } from '../audio/Sfx';
@@ -13,11 +13,14 @@ import {
   addButton,
   addDeckButton,
   addRunHud,
+  addSettingsButton,
   buildCardFace,
   closeDeckView,
   enterCurrentNode,
   isDeckViewOpen,
   onKeyPress,
+  shakeCamera,
+  toggleCardView,
   toggleDeckView,
 } from './ui';
 import { EnemyView } from './combat/EnemyView';
@@ -41,6 +44,7 @@ export class CombatScene extends Phaser.Scene {
   private combat!: CombatState;
   private run!: RunState;
   private enemyDefinitions!: EnemyDefinition[];
+  private tier: FightTier = 'normal';
 
   private playerView!: PlayerView;
   private enemyViews: EnemyView[] = [];
@@ -78,6 +82,7 @@ export class CombatScene extends Phaser.Scene {
     const node = this.run.currentNode;
     if (node.kind !== 'combat') throw new Error('CombatScene started on a non-combat node');
     this.enemyDefinitions = node.enemies;
+    this.tier = node.tier;
     this.handCards = new Map();
     this.enemyViews = [];
     this.sequencer = null;
@@ -90,15 +95,15 @@ export class CombatScene extends Phaser.Scene {
     this.buildBackground();
     const hud = addRunHud(this, this.run);
     addDeckButton(this, this.run, hud.x + hud.width + 70, () => this.targeting?.cancel());
+    addSettingsButton(this);
 
     // the fight's shuffles come from the run's seeded stream, so a replayed or resumed run is identical
     const fightRng = this.run.newCombatRng();
-    this.combat = new CombatState(
-      this.run.deck,
-      this.enemyDefinitions,
-      { hp: this.run.hp, maxHp: this.run.maxHp },
-      () => fightRng.next()
-    );
+    this.combat = new CombatState(this.run.deck, this.enemyDefinitions, {
+      player: { hp: this.run.hp, maxHp: this.run.maxHp },
+      random: () => fightRng.next(),
+      relics: this.run.relics,
+    });
     this.tooltips = new Tooltips(this);
     this.playerView = new PlayerView(this, this.combat, this.tooltips);
     const slots = enemySlots(this.combat.enemies.length);
@@ -163,12 +168,20 @@ export class CombatScene extends Phaser.Scene {
     // ground line to give the characters something to stand on
     this.add.rectangle(400, 340, 680, 2, 0x35304a).setOrigin(0.5);
 
-    this.add.rectangle(DRAW_PILE_POS.x, DRAW_PILE_POS.y, 54, 76, 0x2a2a3a).setStrokeStyle(2, 0x45455a);
+    this.add
+      .rectangle(DRAW_PILE_POS.x, DRAW_PILE_POS.y, 54, 76, 0x2a2a3a)
+      .setStrokeStyle(2, 0x45455a)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.openPile('draw'));
     this.add.text(DRAW_PILE_POS.x, DRAW_PILE_POS.y + 48, 'Draw', { fontSize: '11px', color: '#777788' }).setOrigin(0.5);
     this.drawCountText = this.add
       .text(DRAW_PILE_POS.x, DRAW_PILE_POS.y, '', { fontSize: '20px', color: '#c8c8d8', fontStyle: 'bold' })
       .setOrigin(0.5);
-    this.add.rectangle(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, 54, 76, 0x2a2a3a).setStrokeStyle(2, 0x45455a);
+    this.add
+      .rectangle(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, 54, 76, 0x2a2a3a)
+      .setStrokeStyle(2, 0x45455a)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.openPile('discard'));
     this.add
       .text(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y + 48, 'Discard', { fontSize: '11px', color: '#777788' })
       .setOrigin(0.5);
@@ -180,6 +193,16 @@ export class CombatScene extends Phaser.Scene {
     this.statusText = this.add
       .text(495, 28, '', { fontSize: '12px', color: '#9a9aae', align: 'center', wordWrap: { width: 300 } })
       .setOrigin(0.5);
+  }
+
+  /** Shows what is in a pile, in name order (not draw order). Only between animations, so it matches the counts. */
+  private openPile(which: 'draw' | 'discard'): void {
+    if (this.inputLocked && !isDeckViewOpen(this)) return;
+    this.targeting?.cancel();
+    const pile = which === 'draw' ? this.combat.deck.drawPile : this.combat.deck.discardPile;
+    const cards = pile.map((c) => c.definition).sort((a, b) => a.name.localeCompare(b.name));
+    const name = which === 'draw' ? 'Draw pile' : 'Discard pile';
+    toggleCardView(this, `${name} (${cards.length} cards${which === 'draw' ? ', not in draw order' : ''})`, cards);
   }
 
   private buildPileTooltips(): void {
@@ -259,6 +282,7 @@ export class CombatScene extends Phaser.Scene {
     this.combat.on('turnStarted', ({ isFirstTurn }) =>
       this.queue(async () => {
         this.refreshStatusBars();
+        if (isFirstTurn && this.tier !== 'normal') await this.showTurnBanner(this.tier === 'boss' ? 'BOSS FIGHT' : 'ELITE FIGHT');
         if (!isFirstTurn) await this.showTurnBanner('YOUR TURN');
       })
     );
@@ -507,7 +531,7 @@ export class CombatScene extends Phaser.Scene {
       // enemy lunges toward the player as the windup/attack motion
       const lungeX = view.x - (view.x - PLAYER_X) * 0.22;
       await this.tweenPromise({ targets: view.container, x: lungeX, duration: 140, ease: 'Sine.easeIn' });
-      this.cameras.main.shake(180, Phaser.Math.Clamp(damage.amount / 900, 0.004, 0.012));
+      shakeCamera(this, 180, Phaser.Math.Clamp(damage.amount / 900, 0.004, 0.012));
       this.flashCharacter(PLAYER_X, PLAYER_Y);
       this.punchCharacter(this.playerView.container);
       Sfx.hitPlayer();
@@ -515,19 +539,19 @@ export class CombatScene extends Phaser.Scene {
       await this.tweenPromise({ targets: view.container, x: view.x, duration: 160, ease: 'Sine.easeOut' });
     }
     if (blockGained) {
-      await this.tweenPromise({ targets: view.container, scale: 1.12, duration: 160, ease: 'Sine.easeOut' });
+      await this.tweenPromise({ targets: view.container, scale: view.baseScale * 1.12, duration: 160, ease: 'Sine.easeOut' });
       this.flashCharacter(view.x, view.y, 0x6fc3ff);
       this.blockParticles.explode(10, view.x, view.y);
       Sfx.block();
       this.spawnFloatingText(view.x, view.y - 100, `+${blockGained}`, '#9fd3ff');
-      await this.tweenPromise({ targets: view.container, scale: 1, duration: 160, ease: 'Sine.easeIn' });
+      await this.tweenPromise({ targets: view.container, scale: view.baseScale, duration: 160, ease: 'Sine.easeIn' });
     }
     if (!damage && !blockGained) {
       // buff/debuff: the enemy gathers itself; the badges themselves appear from statusChanged events
-      await this.tweenPromise({ targets: view.container, scale: 1.12, duration: 160, ease: 'Sine.easeOut' });
+      await this.tweenPromise({ targets: view.container, scale: view.baseScale * 1.12, duration: 160, ease: 'Sine.easeOut' });
       this.flashCharacter(view.x, view.y, 0xb07de0);
       Sfx.cast();
-      await this.tweenPromise({ targets: view.container, scale: 1, duration: 160, ease: 'Sine.easeIn' });
+      await this.tweenPromise({ targets: view.container, scale: view.baseScale, duration: 160, ease: 'Sine.easeIn' });
     }
 
     if (damage) {
@@ -542,7 +566,7 @@ export class CombatScene extends Phaser.Scene {
     const view = this.viewFor(payload.target);
     this.flashCharacter(view.x, view.y);
     this.hitParticles.explode(14, view.x, view.y);
-    this.cameras.main.shake(120, Phaser.Math.Clamp(payload.amount / 1100, 0.003, 0.009));
+    shakeCamera(this, 120, Phaser.Math.Clamp(payload.amount / 1100, 0.003, 0.009));
     Sfx.hitEnemy();
     this.spawnFloatingText(view.x, view.y - 90, `-${payload.amount - payload.absorbed}`, '#ffffff');
     view.setHp(payload.remainingHp);
@@ -589,7 +613,7 @@ export class CombatScene extends Phaser.Scene {
     } else {
       this.resultText.setText('DEFEAT').setColor('#ff6b6b').setScale(0.6).setAlpha(0);
       Sfx.defeat();
-      this.cameras.main.shake(400, 0.01);
+      shakeCamera(this, 400, 0.01);
       await this.tweenPromise({ targets: this.resultText, alpha: 1, scale: 1, duration: 500, ease: 'Sine.easeOut' });
     }
 
@@ -618,8 +642,8 @@ export class CombatScene extends Phaser.Scene {
   private punchCharacter(target: Phaser.GameObjects.Container): void {
     this.tweens.add({
       targets: target,
-      scaleX: 0.9,
-      scaleY: 1.08,
+      scaleX: target.scaleX * 0.9,
+      scaleY: target.scaleY * 1.08,
       duration: 90,
       yoyo: true,
       ease: 'Sine.easeOut',

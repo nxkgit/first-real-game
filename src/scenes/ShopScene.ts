@@ -2,12 +2,14 @@ import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
+import { saveRun } from '../storage';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
   addButton,
   addDeckButton,
   addRunHud,
+  addSettingsButton,
   buildCardFace,
   closeDeckView,
   enterCurrentNode,
@@ -42,6 +44,7 @@ export class ShopScene extends Phaser.Scene {
 
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
+    addSettingsButton(this);
 
     this.add.text(400, 80, 'Shop', { fontSize: '28px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     this.add
@@ -107,6 +110,7 @@ export class ShopScene extends Phaser.Scene {
     if (this.leaving) return;
     if (this.run.buyShopItem(index)) {
       Sfx.choose();
+      saveRun(this.run);
       this.scene.restart({ run: this.run }); // redraw with the new gold and the SOLD tag
     }
   }

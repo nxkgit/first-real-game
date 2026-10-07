@@ -20,6 +20,8 @@ export class EnemyView {
   readonly id: string;
   readonly x: number;
   readonly y = ENEMY_Y;
+  /** The drawing's normal size (1 unless the enemy is drawn larger, like an elite or boss). */
+  readonly baseScale: number;
   readonly container: Phaser.GameObjects.Container;
   readonly statusRow: StatusRow;
   /** Where a targeted card can be dropped/clicked onto this enemy (also where the reticle is drawn). */
@@ -51,7 +53,8 @@ export class EnemyView {
     this.targetArea = new Phaser.Geom.Rectangle(x - half, ENEMY_Y - 80, half * 2, 155);
 
     this.container = buildGoblinCharacter(scene, state.definition.placeholderColor ?? 0x5c8143);
-    this.container.setPosition(x, ENEMY_Y);
+    this.baseScale = state.definition.placeholderScale ?? 1;
+    this.container.setPosition(x, ENEMY_Y).setScale(this.baseScale);
     addIdleBob(scene, this.container, ENEMY_Y);
 
     this.nameText = scene.add

@@ -8,31 +8,35 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 
 ## Where things stand
 
-- **Live:** https://nxkgit.github.io/first-real-game/ (GitHub Pages; redeploys automatically on every push to `main`)
-- **Repo:** https://github.com/nxkgit/first-real-game. Everything is merged and pushed, and `main` is the only branch.
-- **Stage:** MVP 1 (a single fight) is **done**. MVP 2 (chained fights) has its **first build done**; see "Open decisions" for what's left.
-- **Health:** `npm test` passes 89 tests and `npm run build` is clean (on the `playtest-tooling` branch).
-- **Unmerged work (session 2), four stacked branches:** `status-effects` (Weak/Vulnerable/Strength) -> `shop-draft` (a rough shop screen and a shop stop on the path; a visual only, drop it if unwanted) -> `architecture` (multiple enemies per fight, shared effects for cards and enemy moves, generated card text, card registry, `CombatScene` split; pushed to GitHub) -> `playtest-tooling` (seeded randomness, save/resume, run reports, dev panel, simulator; local until pushed). `main` has none of this, so the live site is the old build. To publish all of it: merge `playtest-tooling` (it contains the others).
+- **Live:** https://nxkgit.github.io/first-real-game/ (GitHub Pages; redeploys automatically on every push to `main`). Add `?dev` for the dev panel, `?seed=123` to pick a seed. The content browser is at `/content.html` on the same site.
+- **Repo:** https://github.com/nxkgit/first-real-game. `main` is the live branch. The older feature branches (`status-effects`, `shop-draft`, `architecture`, `playtest-tooling`) are all merged into it and can be deleted.
+- **Stage:** MVP 1 (one fight) and MVP 2 (chained fights) are done. Session 2 went on to build a **one-act demo**: a branching map of fights, elites, rests, shops and events leading to a boss. See "What the game does today".
+- **Health:** `npm test` passes 130 tests and `npm run build` is clean.
 
 ### What the game does today
-- **The run:** a fixed path of fight → fight → rest stop → final fight. HP, deck and gold carry between stops. Losing ends the run; winning the last fight wins it. The end screen has a **New Run** button.
-- **Statuses:** Weak (-25% damage dealt), Vulnerable (+50% damage taken), Strength (+N per hit). Timed ones count down at the end of each round, and one an enemy puts on you skips that round's countdown. Shown as lettered badges with tooltips.
-- **Combat** (Slay the Spire style):
+- **The run is one act.**
+  - A seeded, branching map (13 floors: 12, then the boss). Pick one of the glowing stops to go there; the map tracks where you've been.
+  - Stop kinds: fight (F), elite (E), rest (R), shop ($, still the draft), event (?), boss (B). Floor rules: floor 1 is always fights, the floor before the boss is always a rest, elites and rests appear from floor 5, shops from floor 4, and elites/rests/shops never come twice in a row on a path.
+  - Losing ends the run. Beating the boss wins the act ("ACT COMPLETE").
+- **Fights** (Slay the Spire style):
   - draw 5 cards; 4 energy per turn
-  - attack cards are **aimed** (drag them onto the enemy, or click the card and then the enemy); skills and powers play on click
-  - fights can have several enemies; each shows an intent: sword plus total damage, shield plus block, and generic buff/debuff arrows (it does not say which status)
+  - attack cards are **aimed** (drag them onto an enemy, or click the card and then the enemy); skills and powers play on click
+  - fights can have several enemies (up to 3 laid out); each shows an intent: sword plus total damage, shield plus block, and generic buff/debuff arrows (it does not say which status)
+  - elites and the boss are drawn larger and announce themselves with a banner
   - **turn order on screen:** discard → enemy acts → draw
-- **Rewards:** after each win except the last, pick 1 of 3 cards **or** take 25 gold. Gold is saved but has nothing to buy yet.
-- **Rest stop:** heals 30% of max HP (capped at max).
-- **Run persistence:** the run saves to local storage at every stop; the next visit offers Continue or New Run. A fight in progress restarts from its start (same shuffle). The end screen shows the seed and a "Copy run report" button.
-- **Interface:**
-  - hover tooltips (tap on touch screens)
-  - draw/discard pile counts
-  - a **Deck (N)** viewer button
-  - keys: `1`–`9` play a card, `E` ends the turn, `D` opens the deck, `Esc` cancels; `1`–`3`/`G` on the reward screen
-- **Display:** fits any window size at full device resolution (the user's PC runs at 175% scaling). Phones held upright see a "turn sideways" message.
-- **Sound:** fantasy-styled sound effects (bells, harp, whooshes, hall reverb), generated in code with no audio files.
-- **Content:** all placeholder (Enemies A/B/C/D, 11 reward-pool cards, every number). Fight 2 is Enemy B plus Enemy D to exercise multi-enemy fights. Real content is the user's to design.
+  - click the draw or discard pile to see what's in it
+- **Statuses:** Weak (-25% damage dealt), Vulnerable (+50% damage taken), Strength (+N per hit). Timed ones count down at the end of each round, and one an enemy puts on you skips that round's countdown.
+- **Rewards:** after a normal win, pick 1 of 3 cards **or** take 25 gold. An elite gives 40 gold instead and also drops a **relic** (it comes with either choice). The boss gives nothing: the act is won.
+- **Rest stop:** heal 30% of max HP, **or upgrade one card** (you see the card next to its upgraded version first). Upgraded cards are named `<card>+` with a green name.
+- **Relics:** permanent, shown as small lettered badges under the top status line (hover or tap for the text). Five placeholders: +1 Strength at combat start, +10 max HP, 6 block at combat start, heal 4 after each win, draw 1 extra card each turn.
+- **Events:** text plus choices; each choice shows what it will do. Outcomes: gain/lose gold or HP, max HP, a card, a random card, a relic, or a fight. Four placeholders.
+- **Shop (draft):** four cards at a flat 40 gold. Labelled DRAFT; contents and pricing are undecided.
+- **Run persistence:** the run saves at every stop (and after an event choice is made); the next visit offers Continue or New Run. A fight in progress restarts from its start (same shuffle, so refreshing can't reroll it). The end screen shows the seed and a "Copy run report" button.
+- **Settings** (bottom-right button, remembered): volume, sound on/off, animation speed (1x/1.5x/2x), screen shake on/off.
+- **Interface:** hover tooltips (tap on touch screens), a **Deck (N)** viewer, keys `1`–`9` play a card, `E` ends the turn, `D` opens the deck, `Esc` cancels/closes. The user said keyboard targeting with several enemies can stay as is (number keys aim at the first living enemy).
+- **Display:** fits any window size at full device resolution. Phones held upright see a "turn sideways" message.
+- **Sound:** fantasy-styled sound effects, generated in code with no audio files.
+- **Content:** all placeholder (enemies A–D, two elites, a boss, 11 reward cards each with an upgrade, 5 relics, 4 events, every number). Real content is the user's to design.
 
 ---
 
@@ -40,63 +44,69 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 
 | Path | Role |
 |---|---|
-| `game/` | **Plain game logic, no Phaser.** `CombatState` (fight rules plus a typed event emitter; holds `player` and `enemies[]` as `Combatant`s with ids `'player'`, `'enemy-0'`, ...), `Deck`, `RunState` (run progress, rewards, rest, draft shop), `types.ts` (the shared `Effect` type used by cards **and** enemy moves), `describe.ts` (card text generated from effects), `intent.ts` (intent icons derived from a move's effects). Unit-tested (`*.test.ts`). |
-| `data/` | `tunables.ts` (**every balance number**), `cards.ts` (cards, the `CARDS` registry, `getCard(id)`, `rewardPoolFor(heroId)`, starter deck), `enemies.ts`, `statuses.ts` (status definitions with damage-modifier hooks), `run.ts` (the path, and `newRun()`) |
-| `scenes/` | `BootScene` → `CombatScene` / `RewardScene` / `RestScene` / `ShopScene` (draft) / `RunEndScene`. `ui.ts` holds the shared pieces: card face, buttons, the floor/gold status line, deck viewer, `onKeyPress`, and `enterCurrentNode()` (**every screen change goes through it**). |
-| `game/rng.ts`, `save.ts`, `runReport.ts` | Seedable `Rng`; validating `restoreRun`; the playtest report. `RunState` holds `rng`, a `history` log, `toSaved()` / `fromSaved()`, and `newCombatRng()` (**fights draw their shuffle seed from the run's stream**). |
-| `storage.ts`, `session.ts` | Browser storage (save, report history, clipboard; every access guarded) and the current-run holder. `enterCurrentNode()` saves the run and records finished runs. |
-| `dev/devPanel.ts` | The `?dev` panel (dynamic import, separate chunk). |
+| `game/` | **Plain game logic, no Phaser.** `CombatState` (fight rules plus a typed event emitter; `player` and `enemies[]` are `Combatant`s with ids `'player'`, `'enemy-0'`, ...; options for seeded shuffles and relics), `Deck`, `RunState` (the act: map position, HP/deck/relics/gold, rewards, rest, shop, events), `actMap.ts` (seeded map generator), `types.ts` (the shared `Effect` type used by cards **and** enemy moves, relic and event types), `describe.ts` (card, relic and event-outcome text generated from the data), `intent.ts`, `rng.ts`, `save.ts`, `runReport.ts`. Unit-tested (`*.test.ts`; `testHelpers.ts` builds small test worlds). |
+| `data/` | `tunables.ts` (**every balance number**, including the map rules), `cards.ts` (cards, upgrades, the `CARDS` registry, `getCard`, `upgradedVersion`, `rewardPoolFor`, starter deck), `enemies.ts`, `relics.ts`, `events.ts`, `statuses.ts`, `run.ts` (the act's content lists, `RUN_WORLD`, `newRun()`) |
+| `scenes/` | `BootScene` → `MapScene` → `CombatScene` / `RewardScene` / `RestScene` / `ShopScene` / `EventScene` → … → `RunEndScene`. `ui.ts` holds the shared pieces: card face, buttons, the status line and relic bar, the card-list viewer (deck and piles), the settings panel, and `enterCurrentNode()` (**every screen change goes through it**; it also saves the run). |
+| `scenes/combat/` | Pieces of the fight screen: `EnemyView` (one per enemy), `PlayerView`, `Targeting`, `Tooltips`, `StatusRow`, `drawings.ts`, `layout.ts`. `CombatScene` itself is wiring, the hand, and the animation queue. |
+| `storage.ts`, `session.ts`, `settings.ts` | Guarded browser storage (save, report history, clipboard), the current-run holder, and player settings. |
+| `dev/devPanel.ts` | The `?dev` panel (a separate chunk, loaded only with that flag): jump to any stop, custom fights, add cards/relics, gold/HP, seeded new run, copy reports. |
+| `content/` | The content browser page (`content.html` at the project root): every card, relic, enemy, status, event, and the act's settings, with Markdown/CSV copy. |
 | `sim/` | Headless simulator: `bot.ts` (greedy player), `simulate.ts`, `cli.ts`. |
-| `scenes/combat/` | Pieces of the fight screen: `EnemyView` (one per enemy), `PlayerView`, `Targeting` (card aiming), `Tooltips`, `StatusRow`, `drawings.ts` (placeholder art), `layout.ts` (positions; `enemySlots(n)`). `CombatScene` itself is just wiring, the hand, and the animation queue. |
 | `display.ts` | Fits the 800×600 layout to the window. **Every scene calls `useLayoutCamera(this)` first in `create()`.** |
-| `audio/Sfx.ts` | Generated sound effects (Web Audio). |
+| `audio/Sfx.ts` | Generated sound effects (Web Audio); follows the volume/mute settings. |
+| `vite.config.ts` | Two pages: the game and the content browser. |
 | `.github/workflows/deploy-pages.yml` | Tests, builds with the `/first-real-game/` base path, and deploys to Pages. |
 
 ### Patterns to keep (each one fixed a real bug)
-- **Cards and enemy moves are lists of `Effect`s.** To add an effect kind, extend the `Effect` union in `types.ts`, handle it in `CombatState` (card path `applyCardEffect`, enemy path `runEnemyMove`), and add its text in `describe.ts`. Card text and intent icons are derived; don't hand-write them. Each card needs `owner` and `inRewardPool`; a test checks that aimed cards are declared `target: 'enemy'`.
-- **Logic emits events; the scene replays them as a queue.** `CombatScene.sequencer` buffers the events from one action and plays their animations in order. When the scene finally plays an animation, the game logic has already moved on, so **animations must use the event's own data, not live state**. Hand changes carry a snapshot for exactly this reason. Breaking this rule made the next hand appear before the enemy attacked.
+- **Cards, enemy moves, relics and events are data.** Cards and enemy moves are lists of `Effect`s (relics reuse them). To add an effect kind, extend the `Effect` union in `types.ts`, handle it in `CombatState` (`applyCardEffect` for cards, `runEnemyMove` for enemies), and add its text in `describe.ts`. Card/relic text and intent icons are generated; don't hand-write them. Each card needs `owner` and `inRewardPool`, and an `upgrade` block (or it can't be upgraded). A test checks that aimed cards are declared `target: 'enemy'`.
+- **Upgrades are registered cards.** `getCard('strike+')` is the upgraded Strike, generated from Strike's `upgrade` block. The deck is still a list of card definitions, so saves, reports and tests need nothing special.
+- **All randomness is one seeded stream per run** (`RunState.rng`). The map, rewards, shop stock, events, relic rolls and each fight's shuffle seed (`newCombatRng()`) all come from it, in a fixed order, so a seed replays exactly and a saved run resumes identically. Don't call `Math.random()` for gameplay.
+- **Saves are by id.** `SavedRun` (version 2) stores card/relic/enemy/event ids and the whole map. `parseSavedRun` validates it; a bad or old save is discarded, never a crash. Bump `version` if the shape changes.
+- **Logic emits events; the scene replays them as a queue.** `CombatScene.sequencer` buffers the events from one action and plays their animations in order. When the scene finally plays an animation, the game logic has already moved on, so **animations must use the event's own data, not live state**. Breaking this rule made the next hand appear before the enemy attacked.
 - **Phaser reuses scene objects across restarts.** Reset every per-fight field in `init()`, not in field initializers.
-- **Keys:** use `onKeyPress()` from `ui.ts`, never `this.input.keyboard`. Phaser's keyboard plugin re-sends earlier keys when several arrive in one frame.
-- **Touch:** Phaser fires "over" when a finger lands and "out" when it lifts. Tooltips handle this (see `buildTooltips`).
+- **Keys:** use `onKeyPress()` from `ui.ts`, never `this.input.keyboard`. It also ignores keys typed into the dev panel's boxes.
+- **Touch:** Phaser fires "over" when a finger lands and "out" when it lifts. Tooltips (`Tooltips`, and the relic bar) handle this.
 - **TypeScript config:** `erasableSyntaxOnly` is on, so no constructor parameter properties (`constructor(private x)`).
 
 ---
 
 ## Open decisions (the user's to make)
 
-These are gameplay and creative calls. Per `CLAUDE.md`, ask rather than pick.
+These are gameplay and creative calls. Per `CLAUDE.md`, ask rather than pick. Everything the act demo uses is a **provisional placeholder** (logged in `DESIGN_LOG.md`).
 
-1. **The shop.** A draft screen exists (flat 40-gold cards). Contents, prices, and how much gold is worth against a card are undecided. Until it is real, taking gold is strictly worse than a card.
-2. **Events** beyond the rest stop: narrative events, other stop types.
-3. **Hero abilities:** the user wants each hero to have one ability usable once per turn. Not built; wait for the second hero or a design.
-4. **Status cards** that enemies put into the player's deck (user's idea, later).
-5. **A branching map** instead of the fixed linear path.
-6. **Real content:** hero identity, cards, enemies, art, and the balance numbers (all placeholders now).
-7. **Saving a run across a page refresh.** Easier now that cards have ids (`getCard`), but `RunState` still holds card objects.
-8. **A real phone-upright layout**, instead of the "turn sideways" message.
-9. **Keyboard play with several enemies:** number keys aim at the first living enemy. Fine for now; revisit if keyboard play matters.
+1. **The shop.** Contents, prices, and how much gold is worth against a card. Taking gold is still worse than a card unless you plan to shop.
+2. **Relics:** where they come from (elites and events for now), how many, what they do, whether bosses or shops give them.
+3. **Events:** real events, and whether event fights should give a normal reward.
+4. **Map shape and rules:** how many floors/paths, the mix of stop kinds, where elites appear, whether to add treasure stops or multiple acts.
+5. **Upgrades:** the numbers (all placeholders), and whether rest stops should offer more than heal-or-upgrade.
+6. **Hero abilities:** the user wants each hero to have one ability usable once per turn. Not built; wait for the second hero or a design.
+7. **Status cards** that enemies put into the player's deck (user's idea, later).
+8. **Real content:** hero identity, cards, enemies, art, names, and the balance numbers.
+9. **Rarity tiers and reward weighting.** Still deferred.
+10. **A real phone-upright layout**, instead of the "turn sideways" message.
 
 ## Next steps that don't need decisions
 
-- **Deferred on purpose (do when needed, not before):** an effect registry (once there are ~8 effect kinds), a `HeroDefinition` record (when the second hero starts), rarity tiers.
-- **Faster first load:** split Phaser into its own bundle chunk (the build warns about one 1.4 MB file).
-- **Test on a real phone.** Touch was only tested with simulated events. Not re-checked after the `CombatScene` split (tooltips and targeting were moved, not changed).
+- **Faster first load:** split Phaser into its own bundle chunk (the build warns about one 1.4 MB file). The user skipped this for now, along with the phone check.
+- **Test on a real phone.** Touch was only tested with simulated events, and not at all since the act, map and settings were added.
+- **Use the simulator** (below) when numbers change, to see what they did.
+- **Deferred on purpose (do when needed, not before):** an effect registry (once there are ~8 effect kinds), a `HeroDefinition` record (when the second hero starts).
 
 ---
 
 ## Working notes for Claude
 
-- **Git:** the user pushes. Auto mode blocks Claude from pushing to the public repo, so commit locally and give the user the `git push` command. Branch first; never commit straight to `main`, and check the current branch before committing, since the user switches branches between turns.
-- **Commit messages:** PowerShell 5.1 mangles double quotes inside here-strings passed to `git commit -m`. Write the message to a file in the scratchpad and use `git commit -F <file>` (the scratchpad folder may need `mkdir -p` first).
+- **Git:** the user said, for now, not to worry about gitflow: committing straight to `main` and pushing is fine (a push to `main` deploys the live site). If that changes, go back to branching and giving the user the push command. Check the current branch before committing.
+- **Commit messages:** shell quoting is fragile here (a heredoc with apostrophes or several in one command has failed repeatedly in Git Bash, and PowerShell 5.1 mangles double quotes). Write the message to a file in the scratchpad (Write tool) and use `git commit -F <file>`. For multi-line file edits, prefer the Write/Edit tools over shell heredocs; if a Python script is needed, save it as a file and run it, and open files as UTF-8 (`encoding='utf-8'`).
 - **Node in PowerShell:** if `npm` isn't found, the shell's PATH is stale. Prefix commands with `$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User');`
-- **Dev server:** `npx vite` (run it in the background) → http://localhost:5173/ (add `?dev` for the panel, `?seed=123` to pick a seed)
-- **Simulator:** `npm run sim -- --runs 500 --reward card|gold` (whole runs) or `npm run sim -- --fight enemy-b,enemy-d --runs 500`. It builds with Vite's server build into `.sim/` (git-ignored), so it needs no extra tools. The bot is simple; compare versions, don't read absolute numbers.
-- **Browser testing** (claude-in-chrome; the user picked **"Browser 2" (Windows)**):
-  - The automated tab counts as *hidden*, so Chrome throttles it almost completely. Temporarily add `(window as unknown as { __game: Phaser.Game }).__game = game;` to `main.ts`, then step frames by hand from the page with `__game.step(t, 16)` in a loop. Yield between steps with a `MessageChannel`, because `setTimeout` is throttled too. **Remove the hook before committing.**
-  - The first click or key press after loading a page is used up by browser focus; click an empty spot first.
+- **Dev server:** `npx vite` (run it in the background) → http://localhost:5173/ (`?dev` for the panel, `?seed=123` for a seed). Stop it afterwards (find the process on port 5173).
+- **Simulator:** `npm run sim -- --runs 400` plays whole acts with a simple bot. Options: `--reward card|gold|best` (random card / always gold / the card that does best in trial fights), `--rest heal|smart`, `--path random|smart`, `--out file.json`, and `--compare a.json b.json` to see what changed between two results. `--fight enemy-b,enemy-d` runs the starter deck against given enemies. It builds with Vite's server build into `.sim/` (git-ignored). Read results as comparisons, not as how players would do. The per-card "win rate with it" is biased (longer runs collect more cards). First numbers on the placeholder act: the bot wins about a third of runs picking random cards, about 38% always taking gold, and about 76% picking cards by trial fights; the boss is the hardest fight.
+- **Browser testing** (claude-in-chrome; whichever browser is connected):
+  - The automated tab counts as *hidden*, so Chrome throttles it almost completely. Temporarily add `(window as unknown as { __game: Phaser.Game }).__game = game;` to `main.ts`, then step frames by hand from the page with `__game.step(t, 16)` in a loop (yield between steps with a `MessageChannel`). **Remove the hook before committing.** Real mouse clicks work, but the game only reacts after you step frames afterwards. The page layout (and so click coordinates) can shift between screenshots; re-check coordinates from a fresh screenshot.
+  - The `?dev` panel's "Go to stop" is the fastest way to reach any screen. A HMR reload (editing a file while the page is open) loses the page's state and helpers.
   - Touch: temporarily set `input: { touch: true }` in the game config, then send synthetic `TouchEvent`s to the canvas.
   - Phone layouts: resizing the window doesn't work. Load the game in phone-sized `<iframe>`s instead.
   - Audio: Claude can't listen. Swap in `OfflineAudioContext`, render a sound, and measure its peak, loudness and length.
 - **Testing rule (`CLAUDE.md`):** after any change to combat flow, actually play it in the browser, and say plainly what was played versus only unit-tested.
 - **Design log:** append an entry to `DESIGN_LOG.md` for each real gameplay decision, under a `## Session N — date` heading.
-- **`notes.md`** in the root is the user's (empty, untracked). Leave it alone.
+- **`notes.md`** in the root is the user's (untracked). Leave it alone.

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
+import { relicText } from '../game/describe';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
 import {
@@ -8,6 +9,7 @@ import {
   addButton,
   addDeckButton,
   addRunHud,
+  addSettingsButton,
   buildCardFace,
   closeDeckView,
   enterCurrentNode,
@@ -36,6 +38,7 @@ export class RewardScene extends Phaser.Scene {
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
+    addSettingsButton(this);
 
     const offer = this.run.pendingReward;
     if (!offer) throw new Error('RewardScene started with no pending reward');
@@ -44,6 +47,20 @@ export class RewardScene extends Phaser.Scene {
     this.add
       .text(400, 128, 'Add one card to your deck, or take the gold instead.', { fontSize: '14px', color: '#9a9aae' })
       .setOrigin(0.5);
+    if (offer.relic) {
+      // an elite's relic comes whichever you pick
+      this.add
+        .rectangle(400, 168, 560, 34, 0x24243a)
+        .setStrokeStyle(2, 0xd8b23c);
+      this.add
+        .text(400, 168, `Relic with either choice: ${offer.relic.name}. ${relicText(offer.relic)}`, {
+          fontSize: '12px',
+          color: '#ffe066',
+          align: 'center',
+          wordWrap: { width: 540 },
+        })
+        .setOrigin(0.5);
+    }
 
     const spacing = 150;
     const startX = 400 - ((offer.cards.length - 1) * spacing) / 2;
@@ -65,7 +82,7 @@ export class RewardScene extends Phaser.Scene {
       stroke: 0xd8b23c,
     });
     this.add
-      .text(400, 500, `Deck: ${this.run.deck.length} cards.  Gold is saved for a shop (not built yet).`, {
+      .text(400, 500, `Deck: ${this.run.deck.length} cards.  Gold can be spent at a shop.`, {
         fontSize: '12px',
         color: '#777788',
       })

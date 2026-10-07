@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import type { CardDefinition } from '../game/types';
-import { cardText } from '../game/describe';
+import { cardText, relicText } from '../game/describe';
 import type { RunNode, RunState } from '../game/RunState';
+import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from '../settings';
 import { setCurrentRun } from '../session';
 import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
 
@@ -35,9 +36,10 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     })
     .setOrigin(0.5);
 
-  // name sits below the cost badge so long names never run into it; shrink to fit the width
+  // name sits below the cost badge so long names never run into it; shrink to fit the width.
+  // An upgraded card's name is green.
   const nameText = scene.add
-    .text(0, -36, card.name, { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' })
+    .text(0, -36, card.name, { fontSize: '14px', color: card.upgradeOf ? '#9fe08a' : '#ffffff', fontStyle: 'bold' })
     .setOrigin(0.5);
   for (let size = 13; nameText.width > CARD_WIDTH - 12 && size >= 10; size--) nameText.setFontSize(size);
   const typeText = scene.add.text(0, -19, card.type.toUpperCase(), { fontSize: '10px', color: '#9a9aae' }).setOrigin(0.5);
@@ -95,21 +97,26 @@ export function onKeyPress(scene: Phaser.Scene, handler: (key: string) => void):
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => window.removeEventListener('keydown', listener));
 }
 
-// ---- deck viewer ----
+/** Shakes the camera unless the player has turned motion down in the settings. */
+export function shakeCamera(scene: Phaser.Scene, duration: number, intensity: number): void {
+  if (!getSettings().reducedMotion) scene.cameras.main.shake(duration, intensity);
+}
 
-const openDeckViews = new WeakMap<Phaser.Scene, Phaser.GameObjects.Container>();
+// ---- card list viewer (the deck, a draw pile, a discard pile) ----
+
+const openCardViews = new WeakMap<Phaser.Scene, Phaser.GameObjects.Container>();
 
 export function isDeckViewOpen(scene: Phaser.Scene): boolean {
-  return openDeckViews.has(scene);
+  return openCardViews.has(scene);
 }
 
 export function closeDeckView(scene: Phaser.Scene): void {
-  openDeckViews.get(scene)?.destroy();
-  openDeckViews.delete(scene);
+  openCardViews.get(scene)?.destroy();
+  openCardViews.delete(scene);
 }
 
-/** Opens (or closes, if open) a full-screen view of every card in the run's deck. */
-export function toggleDeckView(scene: Phaser.Scene, run: RunState): void {
+/** Opens (or closes, if one is open) a full-screen view of a list of cards. */
+export function toggleCardView(scene: Phaser.Scene, title: string, cards: CardDefinition[]): void {
   if (isDeckViewOpen(scene)) {
     closeDeckView(scene);
     return;
@@ -118,33 +125,39 @@ export function toggleDeckView(scene: Phaser.Scene, run: RunState): void {
   // the backdrop is interactive and on top, so nothing underneath can be clicked while it's open
   const backdrop = scene.add.rectangle(400, 300, 800, 600, 0x08080c, 0.92).setInteractive();
   backdrop.on('pointerdown', () => closeDeckView(scene));
-  const title = scene.add
-    .text(400, 36, `Deck (${run.deck.length} cards)`, { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' })
-    .setOrigin(0.5);
+  const heading = scene.add.text(400, 36, title, { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
   const hint = scene.add
-    .text(400, 62, 'Click anywhere to close', { fontSize: '12px', color: '#777788' })
+    .text(400, 62, cards.length === 0 ? 'Nothing here. Click anywhere to close' : 'Click anywhere to close', {
+      fontSize: '12px',
+      color: '#777788',
+    })
     .setOrigin(0.5);
-  const view = scene.add.container(0, 0, [backdrop, title, hint]).setDepth(100);
+  const view = scene.add.container(0, 0, [backdrop, heading, hint]).setDepth(100);
 
-  // lay cards out in a grid that always fits below the title, shrinking if the deck gets big
-  const cols = 6;
-  const rows = Math.max(1, Math.ceil(run.deck.length / cols));
-  const scale = Math.min(0.9, (600 - 100) / (rows * (CARD_HEIGHT + 16)));
+  // lay cards out in a grid that always fits below the title, shrinking if there are many
+  const cols = cards.length > 36 ? 10 : cards.length > 24 ? 8 : 6;
+  const rows = Math.max(1, Math.ceil(cards.length / cols));
+  const scale = Math.min(0.9, (600 - 100) / (rows * (CARD_HEIGHT + 16)), 740 / (cols * (CARD_WIDTH + 14)));
   const stepX = (CARD_WIDTH + 14) * scale;
   const stepY = (CARD_HEIGHT + 16) * scale;
-  run.deck.forEach((card, i) => {
+  cards.forEach((card, i) => {
     const col = i % cols;
     const row = Math.floor(i / cols);
-    const inRow = Math.min(cols, run.deck.length - row * cols);
+    const inRow = Math.min(cols, cards.length - row * cols);
     const x = 400 + (col - (inRow - 1) / 2) * stepX;
     const y = 90 + stepY / 2 + row * stepY;
     view.add(buildCardFace(scene, card).setPosition(x, y).setScale(scale));
   });
 
-  openDeckViews.set(scene, view);
+  openCardViews.set(scene, view);
   // scenes are reused across restarts, so never let a stale entry outlive the view
-  view.once(Phaser.GameObjects.Events.DESTROY, () => openDeckViews.delete(scene));
-  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => openDeckViews.delete(scene));
+  view.once(Phaser.GameObjects.Events.DESTROY, () => openCardViews.delete(scene));
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => openCardViews.delete(scene));
+}
+
+/** Opens (or closes) the view of every card in the run's deck. */
+export function toggleDeckView(scene: Phaser.Scene, run: RunState): void {
+  toggleCardView(scene, `Deck (${run.deck.length} cards)`, run.deck);
 }
 
 /** Small top-bar "Deck (N)" button that toggles the deck viewer. */
@@ -162,17 +175,154 @@ export function addDeckButton(scene: Phaser.Scene, run: RunState, x: number, bef
   );
 }
 
-/** Top-left run status line: floor, gold, and (outside combat, where HP isn't otherwise shown) HP. */
-export function addRunHud(scene: Phaser.Scene, run: RunState, opts: { showHp?: boolean } = {}): Phaser.GameObjects.Text {
-  const parts = [`Floor ${run.floor}/${run.totalFloors}`, `Gold ${run.gold}`];
-  if (opts.showHp) parts.unshift(`HP ${run.hp}/${run.maxHp}`);
-  return scene.add.text(20, 22, parts.join('    '), { fontSize: '14px', color: '#c8c8d8' }).setOrigin(0, 0.5);
+// ---- run readout, relics ----
+
+/** The text of the run status line: floor, gold, and (outside combat) HP. */
+export function runHudText(run: RunState, showHp: boolean): string {
+  const parts = [`Floor ${Math.max(1, run.floor)}/${run.totalFloors}`, `Gold ${run.gold}`];
+  if (showHp) parts.unshift(`HP ${run.hp}/${run.maxHp}`);
+  return parts.join('    ');
 }
+
+/** Top-left run status line (floor, gold, and outside combat also HP), with the relics you hold below it. */
+export function addRunHud(scene: Phaser.Scene, run: RunState, opts: { showHp?: boolean } = {}): Phaser.GameObjects.Text {
+  const text = scene.add.text(20, 22, runHudText(run, opts.showHp ?? false), { fontSize: '14px', color: '#c8c8d8' }).setOrigin(0, 0.5);
+  addRelicBar(scene, run);
+  return text;
+}
+
+const RELIC_COLORS = [0xc9544f, 0x4f8fd9, 0x5fb36b, 0xd8b23c, 0xb07de0, 0xe0803c];
+
+/** A row of small badges, one per relic held; hover (or tap) one to read what it does. */
+function addRelicBar(scene: Phaser.Scene, run: RunState): void {
+  if (run.relics.length === 0) return;
+  const bubbleBg = scene.add.rectangle(0, 0, 10, 10, 0x0c0c12, 0.95).setStrokeStyle(1, 0x5a5a72).setOrigin(0, 0);
+  const bubbleText = scene.add
+    .text(8, 6, '', { fontSize: '12px', color: '#e8e8f0', wordWrap: { width: 230 } })
+    .setOrigin(0, 0);
+  const bubble = scene.add.container(0, 0, [bubbleBg, bubbleText]).setDepth(150).setVisible(false);
+  let shownByTouch: number | null = null;
+
+  scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+    if (shownByTouch !== null && pointer.downTime !== shownByTouch) {
+      bubble.setVisible(false);
+      shownByTouch = null;
+    }
+  });
+
+  run.relics.forEach((relic, i) => {
+    const x = 32 + i * 30;
+    const y = 54;
+    const hash = [...relic.id].reduce((n, ch) => n + ch.charCodeAt(0), 0);
+    const badge = scene.add
+      .rectangle(x, y, 24, 24, RELIC_COLORS[hash % RELIC_COLORS.length])
+      .setStrokeStyle(2, 0xffffff, 0.6)
+      .setInteractive({ useHandCursor: true });
+    scene.add
+      .text(x, y, relic.name.charAt(0).toUpperCase(), { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' })
+      .setOrigin(0.5);
+    badge.on('pointerover', (pointer: Phaser.Input.Pointer) => {
+      bubbleText.setText(`${relic.name}\n${relicText(relic)}`);
+      bubbleBg.setSize(bubbleText.width + 16, bubbleText.height + 12);
+      bubble.setPosition(Math.min(x - 12, 800 - bubbleBg.width - 4), y + 18).setVisible(true);
+      shownByTouch = pointer.wasTouch ? pointer.downTime : null;
+    });
+    badge.on('pointerout', (pointer: Phaser.Input.Pointer) => {
+      if (!pointer.wasTouch) bubble.setVisible(false);
+    });
+  });
+}
+
+// ---- settings ----
+
+/** Applies the animation-speed setting to a scene and keeps it in step if the setting changes. */
+function followAnimationSpeed(scene: Phaser.Scene): void {
+  const apply = (): void => {
+    scene.tweens.timeScale = getSettings().animationSpeed;
+    scene.time.timeScale = getSettings().animationSpeed;
+  };
+  apply();
+  const off = onSettingsChange(apply);
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, off);
+}
+
+/** Adds the small Settings button in the bottom-right corner, and applies the saved animation speed. */
+export function addSettingsButton(scene: Phaser.Scene): void {
+  followAnimationSpeed(scene);
+  let panel: Phaser.GameObjects.Container | null = null;
+
+  const close = (): void => {
+    panel?.destroy();
+    panel = null;
+  };
+  const open = (): void => {
+    close();
+    const parts: Phaser.GameObjects.GameObject[] = [];
+    const backdrop = scene.add.rectangle(400, 300, 800, 600, 0x08080c, 0.8).setInteractive();
+    backdrop.on('pointerdown', close);
+    const box = scene.add.rectangle(400, 300, 380, 300, 0x1b1b24).setStrokeStyle(2, 0x5a5a72).setInteractive();
+    parts.push(backdrop, box);
+    parts.push(scene.add.text(400, 170, 'Settings', { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5));
+
+    const s = getSettings();
+    const row = (y: number, label: string, value: string, onClick: () => void): void => {
+      parts.push(scene.add.text(240, y, label, { fontSize: '15px', color: '#c8c8d8' }).setOrigin(0, 0.5));
+      parts.push(
+        addButton(scene, 530, y, value, onClick, {
+          width: 130,
+          height: 30,
+          fontSize: 14,
+          fill: 0x2a2a3a,
+          stroke: 0x5a5a72,
+          once: false,
+        })
+      );
+    };
+    const volumeSteps = [0, 0.25, 0.5, 0.75, 1];
+    row(220, 'Volume', `${Math.round(s.volume * 100)}%`, () => {
+      const next = volumeSteps.find((v) => v > s.volume + 0.001) ?? 0;
+      updateSettings({ volume: next });
+      open();
+    });
+    row(262, 'Sound', s.muted ? 'Off' : 'On', () => {
+      updateSettings({ muted: !s.muted });
+      open();
+    });
+    row(304, 'Animation speed', `${s.animationSpeed}x`, () => {
+      const next = ANIMATION_SPEEDS[(ANIMATION_SPEEDS.indexOf(s.animationSpeed) + 1) % ANIMATION_SPEEDS.length];
+      updateSettings({ animationSpeed: next });
+      open();
+    });
+    row(346, 'Screen shake', s.reducedMotion ? 'Off' : 'On', () => {
+      updateSettings({ reducedMotion: !s.reducedMotion });
+      open();
+    });
+    parts.push(addButton(scene, 400, 410, 'Close', close, { width: 140, height: 36, fontSize: 15, once: false }));
+    panel = scene.add.container(0, 0, parts).setDepth(200);
+  };
+
+  addButton(scene, 756, 586, 'Settings', () => (panel ? close() : open()), {
+    width: 76,
+    height: 22,
+    fontSize: 11,
+    fill: 0x2a2a3a,
+    stroke: 0x5a5a72,
+    once: false,
+  });
+  scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => (panel = null));
+}
+
+// ---- moving between screens ----
 
 /** Runs whose report has already been stored, so re-entering the end screen doesn't store it twice. */
 const reportedRuns = new WeakSet<RunState>();
 
-const NODE_SCENE: Record<RunNode['kind'], string> = { combat: 'CombatScene', rest: 'RestScene', shop: 'ShopScene' };
+const NODE_SCENE: Record<RunNode['kind'], string> = {
+  combat: 'CombatScene',
+  rest: 'RestScene',
+  shop: 'ShopScene',
+  event: 'EventScene',
+};
 
 /** Starts whichever scene matches where the run is now. Every scene transition goes through here. */
 export function enterCurrentNode(scene: Phaser.Scene, run: RunState): void {
@@ -188,7 +338,9 @@ export function enterCurrentNode(scene: Phaser.Scene, run: RunState): void {
     return;
   }
   saveRun(run); // every stop is a save point
-  if (run.phase === 'reward') {
+  if (run.phase === 'map') {
+    scene.scene.start('MapScene', { run });
+  } else if (run.phase === 'reward') {
     scene.scene.start('RewardScene', { run });
   } else {
     scene.scene.start(NODE_SCENE[run.currentNode.kind], { run });

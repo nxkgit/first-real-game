@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content browser</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #14141c;
+        --panel: #1b1b24;
+        --line: #35354a;
+        --text: #d8d8e4;
+        --dim: #9a9aae;
+        --accent: #d8b23c;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.5 system-ui, sans-serif;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      h1 {
+        margin: 8px 0 4px;
+        font-size: 24px;
+      }
+      h2 {
+        margin: 32px 0 6px;
+        font-size: 18px;
+        color: var(--accent);
+      }
+      p.note {
+        color: var(--dim);
+        margin: 4px 0 8px;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+        margin: 12px 0;
+      }
+      a {
+        color: #7fb3ff;
+      }
+      .tools {
+        display: flex;
+        gap: 6px;
+        margin: 6px 0;
+      }
+      button {
+        font: inherit;
+        color: var(--text);
+        background: #2a2a3a;
+        border: 1px solid #5a5a72;
+        border-radius: 4px;
+        padding: 3px 10px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #34344a;
+      }
+      .wrap {
+        overflow-x: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background: var(--panel);
+      }
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 4px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #22222e;
+        white-space: nowrap;
+      }
+      .status {
+        color: var(--dim);
+        margin-left: 8px;
+        align-self: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Content browser</h1>
+      <p class="note">
+        Everything in the game as it is right now, with card and relic text generated from the real data. All names and numbers
+        are placeholders. <a href="./">Back to the game</a>
+      </p>
+      <nav id="nav"></nav>
+      <div id="sections"></div>
+    </main>
+    <script type="module" src="/src/content/contentPage.ts"></script>
+  </body>
+</html>

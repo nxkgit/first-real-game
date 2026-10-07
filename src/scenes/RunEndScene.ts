@@ -4,7 +4,7 @@ import { useLayoutCamera } from '../display';
 import { newRun } from '../data/run';
 import { buildRunReport, formatRunReport } from '../game/runReport';
 import { copyToClipboard } from '../storage';
-import { addButton, enterCurrentNode } from './ui';
+import { addButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /** End of a run, won or lost: a short summary and a way to start over. */
 export class RunEndScene extends Phaser.Scene {
@@ -21,10 +21,11 @@ export class RunEndScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addSettingsButton(this);
 
     const won = this.run.phase === 'won';
     this.add
-      .text(400, 190, won ? 'RUN COMPLETE' : 'DEFEATED', {
+      .text(400, 190, won ? 'ACT COMPLETE' : 'DEFEATED', {
         fontSize: '40px',
         color: won ? '#ffe066' : '#ff6b6b',
         fontStyle: 'bold',
@@ -32,7 +33,7 @@ export class RunEndScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const where = won
-      ? `Cleared all ${this.run.totalFloors} floors.`
+      ? `Beat the boss on floor ${this.run.totalFloors}.`
       : `Fell on floor ${this.run.floor} of ${this.run.totalFloors}.`;
     this.add.text(400, 245, where, { fontSize: '16px', color: '#c8c8d8' }).setOrigin(0.5);
     this.add

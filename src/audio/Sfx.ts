@@ -8,16 +8,27 @@
 // - noise(): filtered noise bursts (whooshes, impacts, card flicks)
 // Everything feeds a master bus with a dry path and a reverb send.
 
+import { effectiveVolume, onSettingsChange } from '../settings';
+
 let ctx: AudioContext | null = null;
+let master: GainNode | null = null;
 let dryBus: GainNode;
 let reverbSend: GainNode;
 let noiseBuffer: AudioBuffer;
 
+/** Loudness of the whole mix at full volume; the player's volume setting scales it. */
+const MASTER_LEVEL = 0.55;
+
+// follow the volume and mute settings as they change
+onSettingsChange(() => {
+  if (master) master.gain.value = MASTER_LEVEL * effectiveVolume();
+});
+
 function audio(): AudioContext {
   if (!ctx) {
     ctx = new AudioContext();
-    const master = ctx.createGain();
-    master.gain.value = 0.55;
+    master = ctx.createGain();
+    master.gain.value = MASTER_LEVEL * effectiveVolume();
     master.connect(ctx.destination);
 
     dryBus = ctx.createGain();

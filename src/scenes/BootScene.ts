@@ -3,7 +3,7 @@ import { newRun } from '../data/run';
 import { useLayoutCamera } from '../display';
 import { seedFromUrl } from '../session';
 import { clearSavedRun, loadSavedRun } from '../storage';
-import { addButton, enterCurrentNode } from './ui';
+import { addButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /** First scene: starts a fresh run, or offers to continue the one saved in this browser. */
 export class BootScene extends Phaser.Scene {
@@ -20,12 +20,13 @@ export class BootScene extends Phaser.Scene {
 
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addSettingsButton(this);
     this.add.text(400, 150, 'Run in progress', { fontSize: '30px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     this.add
       .text(
         400,
         205,
-        `Floor ${saved.floor} of ${saved.totalFloors}    HP ${saved.hp}/${saved.maxHp}    Gold ${saved.gold}    Deck ${saved.deck.length}`,
+        `Floor ${Math.max(1, saved.floor)} of ${saved.totalFloors}    HP ${saved.hp}/${saved.maxHp}    Gold ${saved.gold}    Deck ${saved.deck.length}`,
         { fontSize: '14px', color: '#c8c8d8' }
       )
       .setOrigin(0.5);

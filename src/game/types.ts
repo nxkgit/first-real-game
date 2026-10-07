@@ -56,6 +56,13 @@ export interface CardDefinition {
   effects?: Effect[];
   /** Power cards only: applied at the start of every subsequent player turn for the rest of combat. */
   onTurnStartEffect?: Effect;
+  /**
+   * What changes when the card is upgraded (at a rest stop). Leave it out and the card can't be
+   * upgraded. The upgraded card is generated from this and registered as `<id>+` (see data/cards.ts).
+   */
+  upgrade?: { cost?: number; effects?: Effect[]; onTurnStartEffect?: Effect; description?: string };
+  /** Set on a generated upgraded card: the id of the card it was upgraded from. */
+  upgradeOf?: string;
 }
 
 export interface CardInstance {
@@ -74,6 +81,8 @@ export interface EnemyDefinition {
   maxHp: number;
   /** Body color for the shared placeholder enemy drawing, until enemies get real visuals. */
   placeholderColor?: number;
+  /** Size of the shared placeholder drawing (1 = normal), so elites and bosses can stand out. */
+  placeholderScale?: number;
   /** Fixed repeating sequence of moves. Index wraps around. */
   movePattern: EnemyMove[];
 }
@@ -92,4 +101,57 @@ export interface EnemyState extends Combatant {
   definition: EnemyDefinition;
   /** Which move of the pattern is next. */
   moveIndex: number;
+}
+
+// ---- relics ----
+
+/** Something a relic (or an event) does to the run itself, outside a fight. */
+export type RunEffect =
+  | { kind: 'maxHp'; value: number }
+  | { kind: 'heal'; value: number }
+  | { kind: 'gold'; value: number };
+
+/** A permanent item for the rest of the run. */
+export interface RelicDefinition {
+  id: string;
+  name: string;
+  /** Text override. Leave it out: the text is generated from the effects (see describe.ts). */
+  description?: string;
+  /** When picked up. */
+  onPickup?: RunEffect[];
+  /** After every fight you win. */
+  onVictory?: RunEffect[];
+  /** On you, as each fight starts. Same effects as cards (a status, block, a draw). */
+  onCombatStart?: Effect[];
+  /** On you, at the start of every one of your turns. */
+  onTurnStart?: Effect[];
+}
+
+// ---- events ----
+
+export type EventOutcome =
+  /** Negative loses gold (never below 0). */
+  | { kind: 'gold'; value: number }
+  /** Negative loses HP (never below 1). */
+  | { kind: 'hp'; value: number }
+  | { kind: 'maxHp'; value: number }
+  | { kind: 'card'; cardId: string }
+  /** A random card from the reward pool. */
+  | { kind: 'randomCard' }
+  /** A random relic you don't have yet. */
+  | { kind: 'relic' }
+  /** Fight these enemies (by id) now; the usual reward follows a win. */
+  | { kind: 'fight'; enemies: string[] };
+
+export interface EventChoice {
+  label: string;
+  outcomes: EventOutcome[];
+}
+
+/** A non-combat stop: some text and a few choices. */
+export interface EventDefinition {
+  id: string;
+  title: string;
+  text: string;
+  choices: EventChoice[];
 }
