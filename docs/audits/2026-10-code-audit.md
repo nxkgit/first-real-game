@@ -199,3 +199,36 @@ Fix: `text.replace(/\|/g, '\\|')` and change the test's expectation to `'Odd \\|
 - Workflow action versions (`checkout@v7`, `setup-node@v7`, `upload-pages-artifact@v5`, `deploy-pages@v5`) could not be verified from here; this PR's CI run is the check.
 
 ---
+
+## 8. Prioritized fix plan
+
+Each group is one safe PR. "Conflicts" means it touches files the in-flight synergy-engine work is changing (CombatState, Deck, types, describe, cards, statuses, relics, tunables); do those after the synergy PR merges, or fold them into it.
+
+| # | PR | Findings | Touches | Conflicts with synergy engine? |
+|---|----|----------|---------|-------------------------------|
+| 1 | **Fix content export escaping** (do first, tiny) | S1 | `content/tableExport.ts`, its test | No |
+| 2 | **Input and scene hardening** | P3, R3, R4, R6, B-nits in scenes | `scenes/ui.ts`, `CombatScene.ts` (try/finally), `EnemyView.ts`, `RunEndScene.ts` | Low: `CombatScene.ts` is touched by R1/P1 in group 5, so do these together after the synergy PR if that PR edits the scene |
+| 3 | **CI and build config** | B1, B2, B3, B4 | `.github/workflows/*`, `package.json`, `vite.config.ts`, README/title text | No |
+| 4 | **Save validation and save UX** | C5, C6, C7, S2, S3 | `game/save.ts`, `RunState.ts` (`fromSaved`, `chooseEventOption`), `storage.ts`, `BootScene.ts`, `MapScene.ts` | Partly: `SavedRun` shape if cards/relics gain fields. Land before or bump `version` together |
+| 5 | **Scene reads event data only; handle every event** | P1, R1, R2 | `CombatState.ts` event payloads, `CombatScene.ts`, `StatusRow.ts`, `EnemyView.ts`, `PlayerView.ts`, `data/statuses.ts` | **Yes**: do after (or inside) the synergy PR |
+| 6 | **Combat rule fixes** | C1 (block relic), C3 (hand cap), C2 (powers, needs a user decision first), C4 (fresh stack rule, needs a decision), C10 (require seeded rng) | `CombatState.ts`, `Deck.ts`, `tunables.ts` + tests | **Yes**: highest conflict. C1 is a one-line move and a test; strongly recommend doing C1 now as its own tiny PR if the synergy branch has not touched `start()`/`startPlayerTurn()`, otherwise fold it in |
+| 7 | **Layering and describe** | A1, A2 (map layout from `map.floors`), C9 | `game/describe.ts`, `MapScene.ts`, `RunState.ts` | Yes for describe.ts |
+| 8 | **Optional cleanup** | Section 5, ShopScene redraw (P2), sim cleanups in C11 | scenes, `sim/` | Mostly no |
+
+Order I would use: 1, 3, then 2 and 4 in parallel, then wait for synergy, then 6, 5, 7, 8.
+
+### Questions that need the user (not decided here)
+1. Do power cards leave the deck for the rest of the fight (StS) or recycle and stack (current behaviour)? (C2.)
+2. Is the whole status stack "fresh" when an enemy adds to a debuff you already have, or only the new stacks? (C4.)
+3. Is retrying a lost fight by refreshing before pressing Continue acceptable? (C8.)
+4. Hand-size cap: 10 as in StS? (C3.)
+
+### Decisions I made in this audit
+- Kept the audit strictly read-only: only this file is added. Throwaway test scripts lived outside the repo (scratch space) and were not committed.
+- Treated "powers recycle" and "stack skips the whole countdown" as design questions rather than bugs, because no document decides them.
+- Dropped findings I could not substantiate (listed at the top, for example a possible float-ordering problem in `calcDamage`, which showed no difference for the current multipliers).
+- I could not open the PR with `gh` (not installed in this environment); the branch is pushed and the PR must be opened from the GitHub link for `auto/code-audit`.
+
+### What was executed versus read
+- **Executed** (throwaway Vitest scripts, run against `main`): C1, C2, C3, C4, C5, A1, S1, plus the clean-bill checks listed at the top (map invariants over 3000 seeds, simulator over 300 runs, save/restore lockstep over 60 seeds, a second `finishCombat` throws). `npm run verify` passes before and after (this PR changes no code).
+- **Read only**: everything labelled "by reading only", including all Phaser scene findings (no browser was available).
