@@ -322,9 +322,20 @@ export class CombatScene extends Phaser.Scene {
     this.combat.on('energyChanged', ({ energy }) =>
       this.queue(async () => this.playerView.setEnergy(energy, this.combat.maxEnergy))
     );
-    this.combat.on('hpLost', ({ remainingHp }) =>
-      this.queue(async () => this.playerView.setHp(remainingHp, this.combat.player.maxHp))
-    );
+    this.combat.on('hpLost', ({ amount, remainingHp }) => {
+      // Enemy hits also fire this, but their own animation already shows the number; read the phase now
+      // (when the event fires), not later inside the queued step, because the logic has moved on by then.
+      const selfInflicted = this.combat.phase !== 'enemyTurn';
+      this.queue(async () => {
+        this.playerView.setHp(remainingHp, this.combat.player.maxHp);
+        if (selfInflicted && amount > 0) {
+          this.flashCharacter(PLAYER_X, PLAYER_Y);
+          this.punchCharacter(this.playerView.container);
+          Sfx.hitPlayer();
+          this.spawnFloatingText(PLAYER_X + 50, PLAYER_Y - 100, `-${amount}`, '#ff6b6b');
+        }
+      });
+    });
     this.combat.on('combatEnded', ({ result }) => this.queue(() => this.animateCombatEnd(result)));
   }
 
@@ -350,8 +361,13 @@ export class CombatScene extends Phaser.Scene {
   }
 
   private async runSteps(steps: AnimStep[]): Promise<void> {
-    for (const step of steps) {
-      await step();
+    try {
+      for (const step of steps) {
+        await step();
+      }
+    } catch (error) {
+      // a broken animation must not leave the player stuck with input locked
+      console.error('animation step failed', error);
     }
     this.lockInput(false);
     this.refreshStatusBars();

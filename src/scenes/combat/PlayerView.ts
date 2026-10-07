@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { CombatState } from '../../game/CombatState';
+import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { PLAYER_X, PLAYER_Y } from './layout';
@@ -61,7 +62,7 @@ export class PlayerView {
         : null
     );
     tooltips.add(235, STAT_Y, 44, 44, () => `Energy: spent to play cards. Refills to ${combat.maxEnergy} each turn.`);
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < STATUS_ORDER.length; i++) {
       tooltips.add(this.statusRow.slotX(i), STATUS_Y, STATUS_SLOT_WIDTH - 4, 28, () => this.statusRow.textAt(i));
     }
   }

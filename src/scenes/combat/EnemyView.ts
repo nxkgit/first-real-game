@@ -3,6 +3,7 @@ import type { CombatState } from '../../game/CombatState';
 import { intentIcons } from '../../game/intent';
 import type { IntentIcon } from '../../game/intent';
 import type { EnemyState } from '../../game/types';
+import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { ENEMY_Y } from './layout';
@@ -88,14 +89,14 @@ export class EnemyView {
     drawShield(this.blockIcon);
     this.blockText = scene.add.text(x + 3, BLOCK_Y + 3, '', { fontSize: '14px', color: '#9fd3ff', fontStyle: 'bold' }).setOrigin(0, 0.5);
 
-    // three status slots, centered under the enemy
-    this.statusRow = new StatusRow(scene, x - STATUS_SLOT_WIDTH, STATUS_Y);
+    // one slot per status kind, centered under the enemy
+    this.statusRow = new StatusRow(scene, x - ((STATUS_ORDER.length - 1) * STATUS_SLOT_WIDTH) / 2, STATUS_Y);
 
     tooltips.add(x, INTENT_Y, 110, 34, () => this.intentTooltip());
     tooltips.add(x, BLOCK_Y + 1, 50, 24, () =>
       this.state.block > 0 ? `Block: absorbs the next ${this.state.block} damage. Resets at the start of its turn.` : null
     );
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < STATUS_ORDER.length; i++) {
       tooltips.add(this.statusRow.slotX(i), STATUS_Y, STATUS_SLOT_WIDTH - 4, 28, () => this.statusRow.textAt(i));
     }
 
