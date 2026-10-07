@@ -35,3 +35,14 @@
 | 40 | +5.6 [+5.1, +6.0] (card wins) | +5.6 [+5.1, +6.1] (card wins) | +5.7 [+5.2, +6.2] (card wins) | +5.8 [+5.3, +6.3] (card wins) |
 | 60 | +5.6 [+5.1, +6.1] (card wins) | +5.6 [+5.1, +6.1] (card wins) | +5.6 [+5.1, +6.1] (card wins) | +5.6 [+5.1, +6.1] (card wins) |
 
+## Card versus gold: shop price x how often shops appear
+
+300 paired runs per row on seeds 1..300, fights played by the smart bot. Cell = [final deck cost with "always gold, route to shops" minus "always card", on the same map shape (HP/fight; POSITIVE = the card was better)]; [win-rate change, same comparison]. "final deck cost" is the HP per fight the end-of-run deck loses against four reference fights (lower is better), a far less noisy measure than a run's win/loss. Brackets are 95% intervals; differences are paired by seed against the first row. Run-level win rates are noisy (about 5 points needs a few hundred runs), so read deck cost next to them.
+
+| shop weight (stops per path) | price 20 | price 30 | price 40 | price 60 |
+| --- | --- | --- | --- | --- |
+| 5 (0.37 shops per path) | +5.7 [+5.2, +6.2]; -26.7 [-32.8, -20.5] pts (card wins) | +5.8 [+5.3, +6.3]; -27.0 [-32.9, -21.1] pts (card wins) | +5.9 [+5.4, +6.4]; -28.0 [-34.0, -22.0] pts (card wins) | +6.1 [+5.6, +6.6]; -30.7 [-36.7, -24.7] pts (card wins) |
+| 10 (0.69 shops per path) | +4.3 [+3.8, +4.8]; -23.7 [-30.2, -17.1] pts (card wins) | +4.3 [+3.8, +4.8]; -25.3 [-32.0, -18.7] pts (card wins) | +4.5 [+4.0, +4.9]; -25.3 [-31.8, -18.9] pts (card wins) | +4.9 [+4.4, +5.3]; -29.7 [-36.0, -23.4] pts (card wins) |
+| 20 (1.22 shops per path) | +2.9 [+2.3, +3.4]; -19.7 [-26.2, -13.1] pts (card wins) | +2.8 [+2.3, +3.3]; -19.7 [-26.3, -13.0] pts (card wins) | +3.0 [+2.6, +3.5]; -25.0 [-31.8, -18.2] pts (card wins) | +3.6 [+3.1, +4.1]; -28.3 [-35.2, -21.5] pts (card wins) |
+| 40 (1.85 shops per path) | +1.9 [+1.4, +2.3]; -4.0 [-10.8, +2.8] pts (card wins) | +2.0 [+1.6, +2.5]; -7.7 [-14.4, -0.9] pts (card wins) | +2.2 [+1.8, +2.7]; -9.7 [-16.7, -2.7] pts (card wins) | +3.3 [+2.8, +3.7]; -16.0 [-22.4, -9.6] pts (card wins) |
+

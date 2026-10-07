@@ -15,7 +15,7 @@ How to read it:
 
 | # | Open decision (HANDOFF) | What the numbers say | Evidence-backed range / mechanic | Blocked on creative content? |
 |---|---|---|---|---|
-| 1 | Shop: contents, price, gold's value against a card | Always taking gold loses 26-33 win points (smart) at **every** price from 20 to 80, because a path meets a shop only ~0.4 times and gold left unspent is worth nothing. Taking gold **only when the offered cards are weak** (best card saves under 1 HP per fight) *wins* 13-15 points at every price. So the standing choice is dominated, the per-offer choice is live. | To keep "card or gold" a real choice every time: either (a) guarantee shops (about 1.5+ per path, section 1) and price a card at 25-30 gold against a 25-gold reward, or (b) keep shops rare and accept that gold is chosen only on weak offers (20-50% of offers from mid-deck on). Price is a weak knob next to shop frequency. A shop price above reward gold makes gold lumpy (price 40 needs two gold picks per card). | Partly: what the shop *sells* is creative; the price and frequency numbers are not. |
+| 1 | Shop: contents, price, gold's value against a card | Always taking gold loses 26-33 win points (smart) at **every** price from 20 to 80, because a path meets a shop only ~0.4 times and gold left unspent is worth nothing. Taking gold **only when the offered cards are weak** (best card saves under 1 HP per fight) *wins* 13-15 points at every price. So the standing choice is dominated, the per-offer choice is live. | To keep "card or gold" a real choice every time: either (a) make shops frequent (about 1.8 per path) AND cheap (price <= ~20-25 against a 25-gold reward): only that corner of the grid reaches a toss-up (win -4 [-11, +3]) and even there the card still leaves a better deck, or (b) keep shops rare and accept that gold is chosen only on weak offers (20-50% of offers from mid-deck on). Price is a weak knob next to shop frequency. A shop price above reward gold makes gold lumpy (price 40 needs two gold picks per card). | Partly: what the shop *sells* is creative; the price and frequency numbers are not. |
 | 1b | Card removal as a service | One removal is worth 0.9-2.6 HP per fight from a mid deck on, as much as or more than the best of 4 shop cards (1.05-1.4). A removal costing more than about 2x a card is dominated at late stages. | Price removal at 1x-2x a card; below 1x it dominates buying cards. | No |
 | 2 | Relics: sources, count, effects | Placeholder relics span ~0 to ~35 win points. Per act: Guard Token ~30 HP, Recovery Token ~30 HP, Vitality Token 10 HP (+15 points), Strength Token ~6 HP, Draw Token ~1-2 HP, two synergy relics 0 outside their decks. Elites give one each and a path meets ~0.5 elites. | A relic worth 5-15 HP over the act moves win rate 5-20 points; anything near 30 HP (a third of the HP budget) decides the act. Relics that act every fight are worth 3-4 HP x fights; "once" relics 1 HP per HP. Sizing in HP-equivalents (section 2) keeps them comparable. | **Yes** (what they do). The sizing method is not. |
 | 3 | Events: real events, whether event fights reward | Gold-for-HP trades are strongly negative while gold is nearly worthless (+60 gold -8 HP = -13 points); HP heals and max HP are strongly positive (+15 HP = +16 points; +8 max HP = +12 points); a "pay gold" cost is free when you hold none. | An event choice is live when its HP-equivalent value is within a few HP of the alternatives; table in section 3 converts outcomes. Costs paid in gold only bite once gold has a use. | **Yes** (the events themselves). |
@@ -63,7 +63,16 @@ Reading: a typical *random* card is worth about nothing (many dilute the deck); 
 
 Reward gold amount does not rescue it: with 15, 25, 40 or 60 gold per reward and prices 20-60, always-gold still ends with a deck 5.6-6.6 HP per fight worse than always-card in every cell of the grid (`goldGrid` in `gold.md`). Gold is only unspent value.
 
-SHOPFREQ
+*Price x shop frequency* (always-gold with shop routing minus always-card, on the same map shape; final deck cost in HP/fight, then win points; positive cost = card better):
+
+| shop weight (shops per path) | price 20 | price 30 | price 40 | price 60 |
+|---|---|---|---|---|
+| 5 (0.37, today) | +5.7; -26.7 | +5.8; -27.0 | +5.9; -28.0 | +6.1; -30.7 |
+| 10 (0.69) | +4.3; -23.7 | +4.3; -25.3 | +4.5; -25.3 | +4.9; -29.7 |
+| 20 (1.22) | +2.9; -19.7 | +2.8; -19.7 | +3.0; -25.0 | +3.6; -28.3 |
+| 40 (1.85) | +1.9; **-4.0 [-10.8, +2.8]** | +2.0; -7.7 [-14.4, -0.9] | +2.2; -9.7 [-16.7, -2.7] | +3.3; -16.0 |
+
+Only the corner of the table with many shops (about 1.8 per path) and a low price (20) comes close to a toss-up (win -4.0, interval spans zero); the deck is still ~1.9 HP per fight worse, so even there the *card* is not beaten. The deck loses because every gold pick forgoes a card now for a card later at the same quality minus a shelf's variance, and unspent gold is lost.
 
 *Why*, as arithmetic: a gold pick is worth `(G / P) x (best-of-4 / best-of-3) x u` card-picks, where G is reward gold, P the card price, and u the chance the gold is ever spent. With the table above (ratio about 1.2 at mid stages):
 
@@ -83,7 +92,7 @@ Gold can only be a toss-up when `u` is near 1 and P is near G. Lumpiness matters
 
 **(e) Mechanical consequences of each plausible choice.**
 - *Flat price P, reward gold G = 25, shops as today (~0.4 per path):* gold is dominated as a standing policy at any P in 20-80. It is still chosen sensibly on weak offers (+14 points), so the choice exists only where offers vary; if every offer has a decent card the choice collapses to "card".
-- *Price at or below G (<= 25) and about 1.5 shops per path:* one gold pick buys one shelf card (best of 4, ~15-30% better than best of 3), so gold is roughly a toss-up for a player who will meet a shop. Needs the shop-frequency table above to confirm the break-even.
+- *Price at or below G (<= 25) and about 1.5 shops per path:* one gold pick buys one shelf card (best of 4, ~15-30% better than best of 3), so gold approaches a toss-up only when shops are also frequent (1.8 per path: -4.0 [-10.8, +2.8] points; at 1.2 per path it is still -19.7). Measured, not assumed: the formula above is optimistic because it ignores the card already forgone.
 - *Price above G (40+):* gold is lumpy; a single gold pick is worth nothing until combined with another, so taking gold early is a bet on future gold.
 - *Removal service* (`npm run balance -- removal`): see 1b.
 - *Gold from events* (+60) is worth ~0 HP at current shop frequency; making gold matter re-prices every gold event (section 3).
