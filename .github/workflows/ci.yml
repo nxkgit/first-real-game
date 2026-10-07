@@ -1,11 +1,12 @@
-# Checks every pull request and every branch push (main is covered by the deploy workflow,
-# which runs the same tests before publishing). Keeps unattended work honest.
+# Checks every pull request, and pushes to the unattended-work branches (auto/** and integration/**).
+# Other branches are covered when their PR opens, so a PR branch is not checked twice; main is
+# covered by the deploy workflow, which runs the same checks before publishing.
 name: CI
 
 on:
   pull_request:
   push:
-    branches-ignore: [main]
+    branches: ['auto/**', 'integration/**']
 
 permissions:
   contents: read
