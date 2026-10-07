@@ -190,6 +190,17 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return true;
   }
 
+  /** Dev tool: defeats every living enemy at once, announced like a normal kill, so the fight ends as a win. */
+  devKillAllEnemies(): void {
+    if (this.phase !== 'playerTurn') return;
+    for (const enemy of this.livingEnemies) {
+      enemy.hp = 0;
+      enemy.block = 0;
+      this.emit('enemyDied', { enemyId: enemy.id });
+    }
+    this.checkWinLoss();
+  }
+
   endPlayerTurn(): void {
     if (this.phase !== 'playerTurn') return;
     this.deck.discardHand();

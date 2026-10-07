@@ -6,6 +6,7 @@ import type { CardInstance, EnemyDefinition } from '../game/types';
 import { PLAYER_ID } from '../game/types';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
+import { setCurrentCombat } from '../session';
 import { STATUSES } from '../data/statuses';
 import {
   CARD_HEIGHT,
@@ -104,6 +105,8 @@ export class CombatScene extends Phaser.Scene {
       random: () => fightRng.next(),
       relics: this.run.relics,
     });
+    setCurrentCombat(this.combat);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => setCurrentCombat(null));
     this.tooltips = new Tooltips(this);
     this.playerView = new PlayerView(this, this.combat, this.tooltips);
     const slots = enemySlots(this.combat.enemies.length);

@@ -119,4 +119,23 @@ describe('fights with several enemies', () => {
     expect(combat.player.hp).toBe(combat.player.maxHp - 5);
     expect(combat.player.statuses.weak).toBe(1);
   });
+
+  it('the dev kill defeats every enemy, announces each, and ends the fight as a win', () => {
+    const combat = started([foe('a', 30, hit(1)), foe('b', 30, hit(1)), foe('c', 30, hit(1))]);
+    const seen: string[] = [];
+    combat.on('enemyDied', ({ enemyId }) => seen.push(enemyId));
+    combat.on('combatEnded', ({ result }) => seen.push(result));
+    combat.devKillAllEnemies();
+    expect(combat.livingEnemies).toHaveLength(0);
+    expect(combat.phase).toBe('won');
+    expect(seen).toEqual(['enemy-0', 'enemy-1', 'enemy-2', 'won']);
+  });
+
+  it('the dev kill does nothing once the fight is over', () => {
+    const combat = started([foe('a', 30, hit(1000))]);
+    combat.endPlayerTurn(); // the player falls
+    combat.devKillAllEnemies();
+    expect(combat.phase).toBe('lost');
+    expect(combat.enemies[0].hp).toBe(30);
+  });
 });

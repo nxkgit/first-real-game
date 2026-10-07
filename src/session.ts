@@ -1,3 +1,4 @@
+import type { CombatState } from './game/CombatState';
 import type { RunState } from './game/RunState';
 
 /** The run being played right now, so tools outside the scenes (the dev panel) can find it. */
@@ -9,6 +10,17 @@ export function getCurrentRun(): RunState | null {
 
 export function setCurrentRun(run: RunState): void {
   current = run;
+}
+
+/** The fight on screen right now, if any, so the dev panel can act on it. */
+let currentCombat: CombatState | null = null;
+
+export function getCurrentCombat(): CombatState | null {
+  return currentCombat;
+}
+
+export function setCurrentCombat(combat: CombatState | null): void {
+  currentCombat = combat;
 }
 
 /** A seed given in the page address (`?seed=123`), for replaying a particular run. */

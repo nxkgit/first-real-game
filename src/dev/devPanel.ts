@@ -5,7 +5,7 @@ import { ENEMIES, getEnemy } from '../data/enemies';
 import { RELICS, getRelic } from '../data/relics';
 import { newRun } from '../data/run';
 import { enterCurrentNode } from '../scenes/ui';
-import { getCurrentRun } from '../session';
+import { getCurrentCombat, getCurrentRun } from '../session';
 import { copyToClipboard, loadReportHistory } from '../storage';
 
 /**
@@ -119,6 +119,12 @@ export function installDevPanel(game: Phaser.Game): void {
         const ids = enemyBoxes.filter((e) => e.box.checked).map((e) => e.box.value);
         if (ids.length === 0) return say('Tick at least one enemy.');
         withRun((run) => run.startFight(ids));
+      }),
+      button('Kill enemies', () => {
+        const combat = getCurrentCombat();
+        if (!combat || combat.phase !== 'playerTurn') return say('Only during your turn in a fight.');
+        combat.devKillAllEnemies();
+        say('Enemies defeated.');
       })
     ),
     row(cardPick, button('Add card', () => withRun((run) => run.deck.push(getCard(cardPick.value)), false))),

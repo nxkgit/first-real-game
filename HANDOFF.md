@@ -49,7 +49,7 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 | `scenes/` | `BootScene` → `MapScene` → `CombatScene` / `RewardScene` / `RestScene` / `ShopScene` / `EventScene` → … → `RunEndScene`. `ui.ts` holds the shared pieces: card face, buttons, the status line and relic bar, the card-list viewer (deck and piles), the settings panel, and `enterCurrentNode()` (**every screen change goes through it**; it also saves the run). |
 | `scenes/combat/` | Pieces of the fight screen: `EnemyView` (one per enemy), `PlayerView`, `Targeting`, `Tooltips`, `StatusRow`, `drawings.ts`, `layout.ts`. `CombatScene` itself is wiring, the hand, and the animation queue. |
 | `storage.ts`, `session.ts`, `settings.ts` | Guarded browser storage (save, report history, clipboard), the current-run holder, and player settings. |
-| `dev/devPanel.ts` | The `?dev` panel (a separate chunk, loaded only with that flag): jump to any stop, custom fights, add cards/relics, gold/HP, seeded new run, copy reports. |
+| `dev/devPanel.ts` | The `?dev` panel (a separate chunk, loaded only with that flag): jump to any stop, custom fights, **kill all enemies instantly**, add cards/relics, gold/HP, seeded new run, copy reports. |
 | `content/` | The content browser page (`content.html` at the project root): every card, relic, enemy, status, event, and the act's settings, with Markdown/CSV copy. |
 | `sim/` | Headless simulator: `bot.ts` (greedy player), `simulate.ts`, `cli.ts`. |
 | `display.ts` | Fits the 800×600 layout to the window. **Every scene calls `useLayoutCamera(this)` first in `create()`.** |
