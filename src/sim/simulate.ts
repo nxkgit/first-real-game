@@ -1,4 +1,3 @@
-import { CombatState } from '../game/CombatState';
 import type { FightTier, RunState } from '../game/RunState';
 import type { MapNode } from '../game/actMap';
 import { Rng } from '../game/rng';
@@ -7,7 +6,9 @@ import { PLAYER_MAX_HP, SHOP_CARD_PRICE } from '../data/tunables';
 import { buildStarterDeck } from '../data/cards';
 import { getEnemy } from '../data/enemies';
 import { ACT_CONTENT, newRun } from '../data/run';
-import { playBotTurn } from './bot';
+import { runFight } from './fight';
+import { rngStartOf } from './fightCore';
+import type { SkillLevel } from './skills';
 
 /**
  * Headless play: runs the real game rules with the simple bot (bot.ts) and measures what happens.
@@ -26,6 +27,8 @@ export interface SimOptions {
   reward: RewardPolicy;
   rest: RestPolicy;
   path: PathPolicy;
+  /** Which bot plays the fights (default greedy). */
+  skill?: SkillLevel;
 }
 
 export const DEFAULT_OPTIONS: SimOptions = { reward: 'card', rest: 'smart', path: 'smart' };
@@ -47,20 +50,11 @@ export function playFight(
   player: { hp: number; maxHp: number },
   rng: Rng,
   maxTurns = 60,
-  relics: RelicDefinition[] = []
+  relics: RelicDefinition[] = [],
+  skill: SkillLevel = 'greedy'
 ): FightResult {
-  const combat = new CombatState(deck, enemies, { player, random: () => rng.next(), relics });
-  const plays: Record<string, number> = {};
-  combat.on('cardPlayed', ({ card }) => {
-    plays[card.definition.id] = (plays[card.definition.id] ?? 0) + 1;
-  });
-  combat.start();
-  while (combat.phase === 'playerTurn') {
-    if (combat.turnNumber > maxTurns) return { result: 'stalled', turns: combat.turnNumber, hpAfter: combat.player.hp, plays };
-    playBotTurn(combat);
-    if (combat.phase === 'playerTurn') combat.endPlayerTurn();
-  }
-  return { result: combat.phase === 'won' ? 'won' : 'lost', turns: combat.turnNumber, hpAfter: combat.player.hp, plays };
+  const r = runFight({ deck, enemies, player, relics }, rngStartOf(rng), skill, maxTurns);
+  return { result: r.result, turns: r.turns, hpAfter: r.hpAfter, plays: r.plays };
 }
 
 // ---------- one run ----------
@@ -86,6 +80,10 @@ export interface RunOutcome {
   fights: FightRecord[];
   /** Ids of the cards the bot added to its deck (rewards, shop, events). */
   picks: string[];
+  /** Ids of every card offered as a fight reward (3 per reward), whether taken or not. */
+  offered: string[];
+  /** The subset of `picks` that were chosen from a fight reward (so offered/rewardPicks give pick rates). */
+  rewardPicks: string[];
   restChoices: { heal: number; upgrade: number };
   relics: string[];
   finalDeck: string[];
@@ -127,6 +125,8 @@ export function playRun(seed: number, options: SimOptions = DEFAULT_OPTIONS): Ru
   const botRng = new Rng(seed ^ 0x9e3779b9);
   const fights: FightRecord[] = [];
   const picks: string[] = [];
+  const offered: string[] = [];
+  const rewardPicks: string[] = [];
   const restChoices = { heal: 0, upgrade: 0 };
   let lostTo: string | undefined;
 
@@ -138,6 +138,7 @@ export function playRun(seed: number, options: SimOptions = DEFAULT_OPTIONS): Ru
     if (run.phase === 'reward') {
       const offer = run.pendingReward;
       if (!offer) throw new Error('reward phase without an offer');
+      for (const c of offer.cards) offered.push(c.id);
       if (options.reward === 'gold') {
         run.takeRewardGold();
       } else {
@@ -147,6 +148,7 @@ export function playRun(seed: number, options: SimOptions = DEFAULT_OPTIONS): Ru
           index = scores.indexOf(Math.max(...scores));
         }
         picks.push(offer.cards[index].id);
+        rewardPicks.push(offer.cards[index].id);
         run.takeRewardCard(index);
       }
       continue;
@@ -155,7 +157,7 @@ export function playRun(seed: number, options: SimOptions = DEFAULT_OPTIONS): Ru
     const node = run.currentNode;
     if (node.kind === 'combat') {
       const hpBefore = run.hp;
-      const fight = playFight(run.deck, node.enemies, { hp: run.hp, maxHp: run.maxHp }, run.newCombatRng(), 60, run.relics);
+      const fight = playFight(run.deck, node.enemies, { hp: run.hp, maxHp: run.maxHp }, run.newCombatRng(), 60, run.relics, options.skill ?? 'greedy');
       fights.push({
         floor: run.floor,
         tier: node.tier,
@@ -199,6 +201,8 @@ export function playRun(seed: number, options: SimOptions = DEFAULT_OPTIONS): Ru
     lostTo: run.phase === 'lost' ? lostTo : undefined,
     fights,
     picks,
+    offered,
+    rewardPicks,
     restChoices,
     relics: run.relics.map((r) => r.id),
     finalDeck: run.deck.map(baseId),
@@ -338,7 +342,7 @@ function fightsWithPlays(fights: FightRecord[], id: string): number[] {
 }
 
 export function simulateRuns(opts: { runs: number; seed: number } & Partial<SimOptions>): SimSummary {
-  const options: SimOptions = { ...DEFAULT_OPTIONS, reward: opts.reward ?? DEFAULT_OPTIONS.reward, rest: opts.rest ?? DEFAULT_OPTIONS.rest, path: opts.path ?? DEFAULT_OPTIONS.path };
+  const options: SimOptions = { ...DEFAULT_OPTIONS, reward: opts.reward ?? DEFAULT_OPTIONS.reward, rest: opts.rest ?? DEFAULT_OPTIONS.rest, path: opts.path ?? DEFAULT_OPTIONS.path, ...(opts.skill ? { skill: opts.skill } : {}) };
   const outcomes = Array.from({ length: opts.runs }, (_, i) => playRun(opts.seed + i, options));
   return summarize(outcomes, options);
 }

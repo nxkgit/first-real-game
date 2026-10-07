@@ -1,0 +1,9597 @@
+{
+ "generated": "2026-10-07",
+ "skills": [
+  "random",
+  "greedy",
+  "smart"
+ ],
+ "ladder": {
+  "setup": {
+   "fights": [
+    "enemy-a",
+    "enemy-d+enemy-d",
+    "enemy-b+enemy-d",
+    "enemy-c",
+    "enemy-a+enemy-d",
+    "enemy-d+enemy-d+enemy-d",
+    "elite-a",
+    "elite-b",
+    "boss-a"
+   ],
+   "seeds": 100,
+   "baseSeed": 1,
+   "units": 900
+  },
+  "sets": [
+   {
+    "name": "starter",
+    "decks": [
+     [
+      "strike",
+      "strike",
+      "strike",
+      "strike",
+      "defend",
+      "defend",
+      "defend",
+      "defend",
+      "bolt",
+      "focus"
+     ]
+    ]
+   },
+   {
+    "name": "mid",
+    "decks": [
+     [
+      "strike",
+      "strike",
+      "strike",
+      "strike",
+      "defend",
+      "defend",
+      "defend",
+      "defend",
+      "bolt",
+      "focus",
+      "bolt",
+      "quick-draw",
+      "strengthen",
+      "heavy-hit",
+      "jab"
+     ],
+     [
+      "strike",
+      "strike",
+      "strike",
+      "strike",
+      "defend",
+      "defend",
+      "defend",
+      "defend",
+      "bolt",
+      "focus",
+      "fortify",
+      "expose",
+      "big-block",
+      "weaken",
+      "quick-draw"
+     ],
+     [
+      "strike",
+      "strike",
+      "strike",
+      "strike",
+      "defend",
+      "defend",
+      "defend",
+      "defend",
+      "bolt",
+      "focus",
+      "heavy-hit",
+      "weaken",
+      "strengthen",
+      "jab",
+      "big-block"
+     ]
+    ]
+   },
+   {
+    "name": "late",
+    "decks": [
+     [
+      "strike",
+      "strike",
+      "strike",
+      "strike",
+      "defend",
+      "defend",
+      "defend",
+      "defend",
+      "bolt+",
+      "focus",
+      "bolt",
+      "fortify",
+      "expose+",
+      "guarded-strike",
+      "jab",
+      "weaken",
+      "big-block",
+      "heavy-hit",
+      "sunder",
+      "quick-draw+"
+     ],
+     [
+      "strike",
+      "strike",
+      "strike+",
+      "strike",
+      "defend",
+      "defend+",
+      "defend",
+      "defend",
+      "bolt",
+      "focus",
+      "expose",
+      "big-block",
+      "weaken",
+      "guarded-strike",
+      "bolt",
+      "sunder",
+      "fortify",
+      "quick-draw",
+      "strengthen",
+      "heavy-hit+"
+     ],
+     [
+      "strike",
+      "strike",
+      "strike",
+      "strike",
+      "defend+",
+      "defend",
+      "defend",
+      "defend",
+      "bolt",
+      "focus",
+      "quick-draw",
+      "jab",
+      "big-block",
+      "heavy-hit+",
+      "expose",
+      "weaken",
+      "sunder+",
+      "bolt",
+      "strengthen",
+      "guarded-strike"
+     ]
+    ]
+   }
+  ],
+  "rows": [
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.13,
+     "lo": 5.420466,
+     "hi": 6.839534
+    },
+    "hpLostWhenWon": {
+     "mean": 6.13,
+     "lo": 5.420466,
+     "hi": 6.839534
+    },
+    "turns": {
+     "mean": 3.94,
+     "lo": 3.762412,
+     "hi": 4.117588
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     0,
+     40,
+     28,
+     31,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.1,
+     "lo": 5.374546,
+     "hi": 6.825454
+    },
+    "hpLostWhenWon": {
+     "mean": 6.1,
+     "lo": 5.374546,
+     "hi": 6.825454
+    },
+    "turns": {
+     "mean": 4.73,
+     "lo": 4.514099,
+     "hi": 4.945901
+    },
+    "turnsMedian": 5,
+    "turnsP10": 3,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     0,
+     13,
+     27,
+     41,
+     15,
+     1,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 16.89,
+     "lo": 15.681217,
+     "hi": 18.098783
+    },
+    "hpLostWhenWon": {
+     "mean": 16.89,
+     "lo": 15.681217,
+     "hi": 18.098783
+    },
+    "turns": {
+     "mean": 7.92,
+     "lo": 7.662562,
+     "hi": 8.177438
+    },
+    "turnsMedian": 8,
+    "turnsP10": 6.9,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     3,
+     7,
+     28,
+     34,
+     19,
+     3,
+     6,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 16.73,
+     "lo": 15.28954,
+     "hi": 18.17046
+    },
+    "hpLostWhenWon": {
+     "mean": 16.73,
+     "lo": 15.28954,
+     "hi": 18.17046
+    },
+    "turns": {
+     "mean": 6.81,
+     "lo": 6.632691,
+     "hi": 6.987309
+    },
+    "turnsMedian": 7,
+    "turnsP10": 6,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     3,
+     37,
+     41,
+     14,
+     5,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 22.39,
+     "lo": 21.054226,
+     "hi": 23.725774
+    },
+    "hpLostWhenWon": {
+     "mean": 22.39,
+     "lo": 21.054226,
+     "hi": 23.725774
+    },
+    "turns": {
+     "mean": 6.43,
+     "lo": 6.207951,
+     "hi": 6.652049
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     18,
+     43,
+     25,
+     8,
+     4,
+     2,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 21.15,
+     "lo": 19.869169,
+     "hi": 22.430831
+    },
+    "hpLostWhenWon": {
+     "mean": 21.15,
+     "lo": 19.869169,
+     "hi": 22.430831
+    },
+    "turns": {
+     "mean": 7.08,
+     "lo": 6.841734,
+     "hi": 7.318266
+    },
+    "turnsMedian": 7,
+    "turnsP10": 6,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     8,
+     27,
+     30,
+     20,
+     14,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 100,
+    "win": {
+     "p": 0.99,
+     "lo": 0.945514,
+     "hi": 0.998233
+    },
+    "hpLost": {
+     "mean": 34.06,
+     "lo": 32.269947,
+     "hi": 35.850053
+    },
+    "hpLostWhenWon": {
+     "mean": 33.79798,
+     "lo": 32.067362,
+     "hi": 35.528597
+    },
+    "turns": {
+     "mean": 7.46,
+     "lo": 7.254309,
+     "hi": 7.665691
+    },
+    "turnsMedian": 7,
+    "turnsP10": 6,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     1,
+     16,
+     39,
+     26,
+     16,
+     2,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 30.3,
+     "lo": 28.793259,
+     "hi": 31.806741
+    },
+    "hpLostWhenWon": {
+     "mean": 30.3,
+     "lo": 28.793259,
+     "hi": 31.806741
+    },
+    "turns": {
+     "mean": 8.86,
+     "lo": 8.59597,
+     "hi": 9.12403
+    },
+    "turnsMedian": 9,
+    "turnsP10": 7,
+    "turnsP90": 10,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     14,
+     34,
+     11,
+     31,
+     8,
+     0,
+     1,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "starter",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 100,
+    "win": {
+     "p": 0,
+     "lo": 0,
+     "hi": 0.036993
+    },
+    "hpLost": {
+     "mean": 60,
+     "lo": 60,
+     "hi": 60
+    },
+    "hpLostWhenWon": null,
+    "turns": {
+     "mean": 11.55,
+     "lo": 11.181586,
+     "hi": 11.918414
+    },
+    "turnsMedian": 12,
+    "turnsP10": 9,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3,
+     0,
+     25,
+     0,
+     0,
+     33,
+     36,
+     0,
+     3
+    ],
+    "flags": {
+     "win": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.696667,
+     "lo": 6.247957,
+     "hi": 7.145376
+    },
+    "hpLostWhenWon": {
+     "mean": 6.696667,
+     "lo": 6.247957,
+     "hi": 7.145376
+    },
+    "turns": {
+     "mean": 4.08,
+     "lo": 3.892367,
+     "hi": 4.267633
+    },
+    "turnsMedian": 4,
+    "turnsP10": 2,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     31,
+     113,
+     55,
+     48,
+     33,
+     10,
+     2,
+     4,
+     2,
+     1,
+     1,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.45,
+     "lo": 5.954274,
+     "hi": 6.945726
+    },
+    "hpLostWhenWon": {
+     "mean": 6.45,
+     "lo": 5.954274,
+     "hi": 6.945726
+    },
+    "turns": {
+     "mean": 4.596667,
+     "lo": 4.397937,
+     "hi": 4.795397
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     17,
+     87,
+     55,
+     59,
+     42,
+     14,
+     18,
+     5,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 13.983333,
+     "lo": 13.208609,
+     "hi": 14.758058
+    },
+    "hpLostWhenWon": {
+     "mean": 13.983333,
+     "lo": 13.208609,
+     "hi": 14.758058
+    },
+    "turns": {
+     "mean": 7.916667,
+     "lo": 7.545267,
+     "hi": 8.288066
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     10,
+     78,
+     45,
+     54,
+     16,
+     17,
+     5,
+     25,
+     14,
+     14,
+     7,
+     15
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 14.1,
+     "lo": 13.335568,
+     "hi": 14.864432
+    },
+    "hpLostWhenWon": {
+     "mean": 14.1,
+     "lo": 13.335568,
+     "hi": 14.864432
+    },
+    "turns": {
+     "mean": 6.576667,
+     "lo": 6.3101,
+     "hi": 6.843233
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     3,
+     55,
+     47,
+     76,
+     37,
+     31,
+     22,
+     3,
+     9,
+     9,
+     4,
+     3,
+     1
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 19.986667,
+     "lo": 19.03293,
+     "hi": 20.940404
+    },
+    "hpLostWhenWon": {
+     "mean": 19.986667,
+     "lo": 19.03293,
+     "hi": 20.940404
+    },
+    "turns": {
+     "mean": 6.506667,
+     "lo": 6.230648,
+     "hi": 6.782685
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 10,
+    "turnHistogram": [
+     0,
+     0,
+     9,
+     36,
+     89,
+     66,
+     23,
+     12,
+     20,
+     19,
+     13,
+     5,
+     2,
+     6,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 19.333333,
+     "lo": 18.460467,
+     "hi": 20.2062
+    },
+    "hpLostWhenWon": {
+     "mean": 19.333333,
+     "lo": 18.460467,
+     "hi": 20.2062
+    },
+    "turns": {
+     "mean": 7.16,
+     "lo": 6.851222,
+     "hi": 7.468778
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 12,
+    "turnHistogram": [
+     0,
+     0,
+     2,
+     27,
+     71,
+     71,
+     23,
+     28,
+     19,
+     13,
+     15,
+     16,
+     3,
+     10,
+     2
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.996667,
+     "lo": 0.981363,
+     "hi": 0.999411
+    },
+    "hpLost": {
+     "mean": 27.763333,
+     "lo": 26.614355,
+     "hi": 28.912312
+    },
+    "hpLostWhenWon": {
+     "mean": 27.655518,
+     "lo": 26.522355,
+     "hi": 28.788681
+    },
+    "turns": {
+     "mean": 7.32,
+     "lo": 7.03767,
+     "hi": 7.60233
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 11,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     14,
+     54,
+     84,
+     43,
+     24,
+     26,
+     16,
+     15,
+     12,
+     8,
+     0,
+     4
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 22.07,
+     "lo": 20.996812,
+     "hi": 23.143188
+    },
+    "hpLostWhenWon": {
+     "mean": 22.07,
+     "lo": 20.996812,
+     "hi": 23.143188
+    },
+    "turns": {
+     "mean": 8.296667,
+     "lo": 7.901486,
+     "hi": 8.691847
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     13,
+     42,
+     54,
+     67,
+     31,
+     3,
+     20,
+     19,
+     3,
+     19,
+     9,
+     20
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.653333,
+     "lo": 0.597848,
+     "hi": 0.704941
+    },
+    "hpLost": {
+     "mean": 49.783333,
+     "lo": 48.601164,
+     "hi": 50.965503
+    },
+    "hpLostWhenWon": {
+     "mean": 44.362245,
+     "lo": 43.093433,
+     "hi": 45.631057
+    },
+    "turns": {
+     "mean": 12.983333,
+     "lo": 12.348286,
+     "hi": 13.618381
+    },
+    "turnsMedian": 11,
+    "turnsP10": 8,
+    "turnsP90": 21,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     19,
+     15,
+     80,
+     25,
+     25,
+     19,
+     32,
+     4,
+     81
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 5.166667,
+     "lo": 4.741365,
+     "hi": 5.591968
+    },
+    "hpLostWhenWon": {
+     "mean": 5.166667,
+     "lo": 4.741365,
+     "hi": 5.591968
+    },
+    "turns": {
+     "mean": 3.36,
+     "lo": 3.239844,
+     "hi": 3.480156
+    },
+    "turnsMedian": 3,
+    "turnsP10": 2,
+    "turnsP90": 5,
+    "turnHistogram": [
+     4,
+     54,
+     128,
+     70,
+     32,
+     12,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.17,
+     "lo": 5.717445,
+     "hi": 6.622555
+    },
+    "hpLostWhenWon": {
+     "mean": 6.17,
+     "lo": 5.717445,
+     "hi": 6.622555
+    },
+    "turns": {
+     "mean": 3.87,
+     "lo": 3.745158,
+     "hi": 3.994842
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     22,
+     104,
+     94,
+     56,
+     19,
+     5,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 12.633333,
+     "lo": 11.909691,
+     "hi": 13.356975
+    },
+    "hpLostWhenWon": {
+     "mean": 12.633333,
+     "lo": 11.909691,
+     "hi": 13.356975
+    },
+    "turns": {
+     "mean": 6.403333,
+     "lo": 6.225772,
+     "hi": 6.580895
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     3,
+     20,
+     77,
+     65,
+     66,
+     41,
+     19,
+     4,
+     4,
+     1,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 11.27,
+     "lo": 10.557647,
+     "hi": 11.982353
+    },
+    "hpLostWhenWon": {
+     "mean": 11.27,
+     "lo": 10.557647,
+     "hi": 11.982353
+    },
+    "turns": {
+     "mean": 5.193333,
+     "lo": 5.034271,
+     "hi": 5.352396
+    },
+    "turnsMedian": 5,
+    "turnsP10": 3.900000000000002,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     3,
+     27,
+     87,
+     38,
+     99,
+     34,
+     8,
+     3,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 17.073333,
+     "lo": 16.302114,
+     "hi": 17.844552
+    },
+    "hpLostWhenWon": {
+     "mean": 17.073333,
+     "lo": 16.302114,
+     "hi": 17.844552
+    },
+    "turns": {
+     "mean": 5.386667,
+     "lo": 5.255924,
+     "hi": 5.51741
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     0,
+     9,
+     49,
+     122,
+     77,
+     28,
+     10,
+     5,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 18.56,
+     "lo": 17.804162,
+     "hi": 19.315838
+    },
+    "hpLostWhenWon": {
+     "mean": 18.56,
+     "lo": 17.804162,
+     "hi": 19.315838
+    },
+    "turns": {
+     "mean": 5.97,
+     "lo": 5.830758,
+     "hi": 6.109242
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     2,
+     22,
+     87,
+     111,
+     40,
+     29,
+     7,
+     1,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 20.643333,
+     "lo": 19.633312,
+     "hi": 21.653354
+    },
+    "hpLostWhenWon": {
+     "mean": 20.643333,
+     "lo": 19.633312,
+     "hi": 21.653354
+    },
+    "turns": {
+     "mean": 5.57,
+     "lo": 5.430021,
+     "hi": 5.709979
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     0,
+     10,
+     44,
+     99,
+     83,
+     46,
+     12,
+     6,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 17.786667,
+     "lo": 16.902401,
+     "hi": 18.670932
+    },
+    "hpLostWhenWon": {
+     "mean": 17.786667,
+     "lo": 16.902401,
+     "hi": 18.670932
+    },
+    "turns": {
+     "mean": 6.373333,
+     "lo": 6.203667,
+     "hi": 6.543
+    },
+    "turnsMedian": 7,
+    "turnsP10": 4,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     3,
+     30,
+     61,
+     49,
+     103,
+     34,
+     13,
+     4,
+     2,
+     1,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "late",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.883333,
+     "lo": 0.842067,
+     "hi": 0.914907
+    },
+    "hpLost": {
+     "mean": 43.013333,
+     "lo": 41.65622,
+     "hi": 44.370447
+    },
+    "hpLostWhenWon": {
+     "mean": 40.769811,
+     "lo": 39.45313,
+     "hi": 42.086493
+    },
+    "turns": {
+     "mean": 10.453333,
+     "lo": 10.204454,
+     "hi": 10.702212
+    },
+    "turnsMedian": 10,
+    "turnsP10": 8,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     13,
+     43,
+     65,
+     41,
+     53,
+     15,
+     42,
+     14,
+     12
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 2.56,
+     "lo": 2.064245,
+     "hi": 3.055755
+    },
+    "hpLostWhenWon": {
+     "mean": 2.56,
+     "lo": 2.064245,
+     "hi": 3.055755
+    },
+    "turns": {
+     "mean": 4.11,
+     "lo": 3.8922,
+     "hi": 4.3278
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     0,
+     46,
+     6,
+     39,
+     9,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "below",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 1.6,
+     "lo": 1.095001,
+     "hi": 2.104999
+    },
+    "hpLostWhenWon": {
+     "mean": 1.6,
+     "lo": 1.095001,
+     "hi": 2.104999
+    },
+    "turns": {
+     "mean": 4.56,
+     "lo": 4.436301,
+     "hi": 4.683699
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     0,
+     5,
+     36,
+     57,
+     2,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "below",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 4.15,
+     "lo": 3.607663,
+     "hi": 4.692337
+    },
+    "hpLostWhenWon": {
+     "mean": 4.15,
+     "lo": 3.607663,
+     "hi": 4.692337
+    },
+    "turns": {
+     "mean": 7.02,
+     "lo": 6.876556,
+     "hi": 7.163444
+    },
+    "turnsMedian": 7,
+    "turnsP10": 7,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     8,
+     1,
+     72,
+     19,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "below",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 4.67,
+     "lo": 3.902347,
+     "hi": 5.437653
+    },
+    "hpLostWhenWon": {
+     "mean": 4.67,
+     "lo": 3.902347,
+     "hi": 5.437653
+    },
+    "turns": {
+     "mean": 7.66,
+     "lo": 7.472858,
+     "hi": 7.847142
+    },
+    "turnsMedian": 7,
+    "turnsP10": 7,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     67,
+     0,
+     33,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "below",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 8.44,
+     "lo": 7.859609,
+     "hi": 9.020391
+    },
+    "hpLostWhenWon": {
+     "mean": 8.44,
+     "lo": 7.859609,
+     "hi": 9.020391
+    },
+    "turns": {
+     "mean": 7.84,
+     "lo": 7.631822,
+     "hi": 8.048178
+    },
+    "turnsMedian": 7,
+    "turnsP10": 7,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     60,
+     0,
+     36,
+     4,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 9.8,
+     "lo": 9.379743,
+     "hi": 10.220257
+    },
+    "hpLostWhenWon": {
+     "mean": 9.8,
+     "lo": 9.379743,
+     "hi": 10.220257
+    },
+    "turns": {
+     "mean": 7.55,
+     "lo": 7.426125,
+     "hi": 7.673875
+    },
+    "turnsMedian": 8,
+    "turnsP10": 7,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     7,
+     31,
+     62,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 23.76,
+     "lo": 22.681323,
+     "hi": 24.838677
+    },
+    "hpLostWhenWon": {
+     "mean": 23.76,
+     "lo": 22.681323,
+     "hi": 24.838677
+    },
+    "turns": {
+     "mean": 8.58,
+     "lo": 8.359876,
+     "hi": 8.800124
+    },
+    "turnsMedian": 8,
+    "turnsP10": 8,
+    "turnsP90": 10,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     5,
+     0,
+     61,
+     0,
+     34,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 13.82,
+     "lo": 12.897982,
+     "hi": 14.742018
+    },
+    "hpLostWhenWon": {
+     "mean": 13.82,
+     "lo": 12.897982,
+     "hi": 14.742018
+    },
+    "turns": {
+     "mean": 10.21,
+     "lo": 10.00455,
+     "hi": 10.41545
+    },
+    "turnsMedian": 10,
+    "turnsP10": 8,
+    "turnsP90": 11,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     14,
+     0,
+     39,
+     46,
+     0,
+     1,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "starter",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 100,
+    "win": {
+     "p": 0.9,
+     "lo": 0.825634,
+     "hi": 0.944771
+    },
+    "hpLost": {
+     "mean": 50.28,
+     "lo": 49.139593,
+     "hi": 51.420407
+    },
+    "hpLostWhenWon": {
+     "mean": 49.2,
+     "lo": 48.154246,
+     "hi": 50.245754
+    },
+    "turns": {
+     "mean": 16.64,
+     "lo": 16.492366,
+     "hi": 16.787634
+    },
+    "turnsMedian": 17,
+    "turnsP10": 15.9,
+    "turnsP90": 17,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     100
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.936667,
+     "lo": 0.903209,
+     "hi": 0.959083
+    },
+    "hpLost": {
+     "mean": 8.15,
+     "lo": 6.567372,
+     "hi": 9.732628
+    },
+    "hpLostWhenWon": {
+     "mean": 4.644128,
+     "lo": 4.204842,
+     "hi": 5.083414
+    },
+    "turns": {
+     "mean": 8.176667,
+     "lo": 6.601506,
+     "hi": 9.751827
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 10,
+    "turnHistogram": [
+     0,
+     6,
+     126,
+     29,
+     49,
+     27,
+     19,
+     6,
+     7,
+     4,
+     4,
+     2,
+     0,
+     1,
+     20
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "below",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.89,
+     "lo": 0.849544,
+     "hi": 0.920595
+    },
+    "hpLost": {
+     "mean": 9.83,
+     "lo": 7.79331,
+     "hi": 11.86669
+    },
+    "hpLostWhenWon": {
+     "mean": 3.629213,
+     "lo": 3.192114,
+     "hi": 4.066313
+    },
+    "turns": {
+     "mean": 11.066667,
+     "lo": 9.064391,
+     "hi": 13.068942
+    },
+    "turnsMedian": 5,
+    "turnsP10": 3,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     1,
+     75,
+     66,
+     60,
+     19,
+     11,
+     16,
+     7,
+     2,
+     9,
+     0,
+     0,
+     0,
+     34
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "below",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.71,
+     "lo": 0.656254,
+     "hi": 0.758435
+    },
+    "hpLost": {
+     "mean": 21.66,
+     "lo": 18.850386,
+     "hi": 24.469614
+    },
+    "hpLostWhenWon": {
+     "mean": 6,
+     "lo": 5.401829,
+     "hi": 6.598171
+    },
+    "turns": {
+     "mean": 21.986667,
+     "lo": 19.156772,
+     "hi": 24.816561
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     4,
+     107,
+     25,
+     59,
+     7,
+     3,
+     1,
+     5,
+     1,
+     0,
+     0,
+     88
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.776667,
+     "lo": 0.726209,
+     "hi": 0.820129
+    },
+    "hpLost": {
+     "mean": 20.216667,
+     "lo": 17.737565,
+     "hi": 22.695768
+    },
+    "hpLostWhenWon": {
+     "mean": 8.776824,
+     "lo": 8.072712,
+     "hi": 9.480936
+    },
+    "turns": {
+     "mean": 18.296667,
+     "lo": 15.693398,
+     "hi": 20.899936
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     66,
+     26,
+     69,
+     43,
+     9,
+     6,
+     1,
+     5,
+     4,
+     2,
+     2,
+     67
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.746667,
+     "lo": 0.694546,
+     "hi": 0.79255
+    },
+    "hpLost": {
+     "mean": 24.25,
+     "lo": 21.810573,
+     "hi": 26.689427
+    },
+    "hpLostWhenWon": {
+     "mean": 12.120536,
+     "lo": 11.294822,
+     "hi": 12.946249
+    },
+    "turns": {
+     "mean": 20.453333,
+     "lo": 17.769998,
+     "hi": 23.136669
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     9,
+     40,
+     63,
+     85,
+     4,
+     3,
+     8,
+     3,
+     4,
+     3,
+     0,
+     78
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.703333,
+     "lo": 0.649337,
+     "hi": 0.752189
+    },
+    "hpLost": {
+     "mean": 24.966667,
+     "lo": 22.34632,
+     "hi": 27.587014
+    },
+    "hpLostWhenWon": {
+     "mean": 10.189573,
+     "lo": 9.529711,
+     "hi": 10.849436
+    },
+    "turns": {
+     "mean": 22.386667,
+     "lo": 19.539623,
+     "hi": 25.23371
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     14,
+     62,
+     83,
+     32,
+     10,
+     2,
+     1,
+     2,
+     2,
+     1,
+     1,
+     90
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.71,
+     "lo": 0.656254,
+     "hi": 0.758435
+    },
+    "hpLost": {
+     "mean": 30.163333,
+     "lo": 27.846166,
+     "hi": 32.4805
+    },
+    "hpLostWhenWon": {
+     "mean": 17.976526,
+     "lo": 16.799292,
+     "hi": 19.153759
+    },
+    "turns": {
+     "mean": 22.196667,
+     "lo": 19.381068,
+     "hi": 25.012266
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     9,
+     31,
+     127,
+     18,
+     16,
+     1,
+     1,
+     4,
+     2,
+     0,
+     3,
+     88
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.693333,
+     "lo": 0.638984,
+     "hi": 0.742794
+    },
+    "hpLost": {
+     "mean": 28.766667,
+     "lo": 26.268217,
+     "hi": 31.265116
+    },
+    "hpLostWhenWon": {
+     "mean": 14.951923,
+     "lo": 13.745411,
+     "hi": 16.158435
+    },
+    "turns": {
+     "mean": 23.813333,
+     "lo": 21.005898,
+     "hi": 26.620769
+    },
+    "turnsMedian": 8,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     5,
+     29,
+     9,
+     58,
+     90,
+     3,
+     6,
+     2,
+     1,
+     4,
+     1,
+     92
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.63,
+     "lo": 0.574045,
+     "hi": 0.682668
+    },
+    "hpLost": {
+     "mean": 43.936667,
+     "lo": 42.030361,
+     "hi": 45.842973
+    },
+    "hpLostWhenWon": {
+     "mean": 34.502646,
+     "lo": 32.438933,
+     "hi": 36.566358
+    },
+    "turns": {
+     "mean": 27.3,
+     "lo": 24.597132,
+     "hi": 30.002868
+    },
+    "turnsMedian": 11,
+    "turnsP10": 10,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     8,
+     19,
+     69,
+     92,
+     1,
+     6,
+     4,
+     100
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 5.17,
+     "lo": 4.735205,
+     "hi": 5.604795
+    },
+    "hpLostWhenWon": {
+     "mean": 5.17,
+     "lo": 4.735205,
+     "hi": 5.604795
+    },
+    "turns": {
+     "mean": 3.513333,
+     "lo": 3.377798,
+     "hi": 3.648869
+    },
+    "turnsMedian": 3,
+    "turnsP10": 2,
+    "turnsP90": 5,
+    "turnHistogram": [
+     1,
+     51,
+     132,
+     47,
+     54,
+     10,
+     4,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 5.213333,
+     "lo": 4.780908,
+     "hi": 5.645759
+    },
+    "hpLostWhenWon": {
+     "mean": 5.213333,
+     "lo": 4.780908,
+     "hi": 5.645759
+    },
+    "turns": {
+     "mean": 4.18,
+     "lo": 4.046802,
+     "hi": 4.313198
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     14,
+     83,
+     86,
+     78,
+     33,
+     3,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 7.966667,
+     "lo": 7.425136,
+     "hi": 8.508197
+    },
+    "hpLostWhenWon": {
+     "mean": 7.966667,
+     "lo": 7.425136,
+     "hi": 8.508197
+    },
+    "turns": {
+     "mean": 6.136667,
+     "lo": 5.950947,
+     "hi": 6.322386
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     14,
+     24,
+     91,
+     42,
+     71,
+     32,
+     18,
+     7,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 9.16,
+     "lo": 8.57826,
+     "hi": 9.74174
+    },
+    "hpLostWhenWon": {
+     "mean": 9.16,
+     "lo": 8.57826,
+     "hi": 9.74174
+    },
+    "turns": {
+     "mean": 5.083333,
+     "lo": 4.905444,
+     "hi": 5.261223
+    },
+    "turnsMedian": 5,
+    "turnsP10": 3,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     5,
+     32,
+     104,
+     37,
+     65,
+     38,
+     11,
+     7,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 13.386667,
+     "lo": 12.729865,
+     "hi": 14.043469
+    },
+    "hpLostWhenWon": {
+     "mean": 13.386667,
+     "lo": 12.729865,
+     "hi": 14.043469
+    },
+    "turns": {
+     "mean": 5.893333,
+     "lo": 5.743162,
+     "hi": 6.043505
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     0,
+     12,
+     28,
+     71,
+     99,
+     61,
+     18,
+     10,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 14.643333,
+     "lo": 14.046172,
+     "hi": 15.240495
+    },
+    "hpLostWhenWon": {
+     "mean": 14.643333,
+     "lo": 14.046172,
+     "hi": 15.240495
+    },
+    "turns": {
+     "mean": 6.45,
+     "lo": 6.27123,
+     "hi": 6.62877
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     2,
+     17,
+     72,
+     88,
+     47,
+     39,
+     24,
+     5,
+     6,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 16.54,
+     "lo": 15.713714,
+     "hi": 17.366286
+    },
+    "hpLostWhenWon": {
+     "mean": 16.54,
+     "lo": 15.713714,
+     "hi": 17.366286
+    },
+    "turns": {
+     "mean": 5.913333,
+     "lo": 5.736551,
+     "hi": 6.090115
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 8,
+    "turnHistogram": [
+     0,
+     0,
+     7,
+     54,
+     64,
+     84,
+     41,
+     31,
+     14,
+     3,
+     2,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 12.866667,
+     "lo": 12.111999,
+     "hi": 13.621335
+    },
+    "hpLostWhenWon": {
+     "mean": 12.866667,
+     "lo": 12.111999,
+     "hi": 13.621335
+    },
+    "turns": {
+     "mean": 6.6,
+     "lo": 6.366419,
+     "hi": 6.833581
+    },
+    "turnsMedian": 7,
+    "turnsP10": 4,
+    "turnsP90": 10,
+    "turnHistogram": [
+     0,
+     0,
+     6,
+     43,
+     64,
+     29,
+     68,
+     42,
+     14,
+     23,
+     8,
+     0,
+     2,
+     1,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "late",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 29.72,
+     "lo": 28.602994,
+     "hi": 30.837006
+    },
+    "hpLostWhenWon": {
+     "mean": 29.72,
+     "lo": 28.602994,
+     "hi": 30.837006
+    },
+    "turns": {
+     "mean": 11.003333,
+     "lo": 10.649527,
+     "hi": 11.35714
+    },
+    "turnsMedian": 11,
+    "turnsP10": 7,
+    "turnsP90": 15,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     5,
+     6,
+     26,
+     49,
+     28,
+     25,
+     35,
+     17,
+     38,
+     31,
+     40
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 7.1,
+     "lo": 6.633734,
+     "hi": 7.566266
+    },
+    "hpLostWhenWon": {
+     "mean": 7.1,
+     "lo": 6.633734,
+     "hi": 7.566266
+    },
+    "turns": {
+     "mean": 3.02,
+     "lo": 2.971419,
+     "hi": 3.068581
+    },
+    "turnsMedian": 3,
+    "turnsP10": 3,
+    "turnsP90": 3,
+    "turnHistogram": [
+     0,
+     2,
+     94,
+     4,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 5.6,
+     "lo": 4.935813,
+     "hi": 6.264187
+    },
+    "hpLostWhenWon": {
+     "mean": 5.6,
+     "lo": 4.935813,
+     "hi": 6.264187
+    },
+    "turns": {
+     "mean": 3.31,
+     "lo": 3.213758,
+     "hi": 3.406242
+    },
+    "turnsMedian": 3,
+    "turnsP10": 3,
+    "turnsP90": 4,
+    "turnHistogram": [
+     0,
+     0,
+     70,
+     29,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 9.71,
+     "lo": 8.910389,
+     "hi": 10.509611
+    },
+    "hpLostWhenWon": {
+     "mean": 9.71,
+     "lo": 8.910389,
+     "hi": 10.509611
+    },
+    "turns": {
+     "mean": 5.42,
+     "lo": 5.310353,
+     "hi": 5.529647
+    },
+    "turnsMedian": 5,
+    "turnsP10": 5,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     61,
+     36,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 14.77,
+     "lo": 13.80047,
+     "hi": 15.73953
+    },
+    "hpLostWhenWon": {
+     "mean": 14.77,
+     "lo": 13.80047,
+     "hi": 15.73953
+    },
+    "turns": {
+     "mean": 5.21,
+     "lo": 5.065689,
+     "hi": 5.354311
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     15,
+     52,
+     30,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 15.3,
+     "lo": 14.555154,
+     "hi": 16.044846
+    },
+    "hpLostWhenWon": {
+     "mean": 15.3,
+     "lo": 14.555154,
+     "hi": 16.044846
+    },
+    "turns": {
+     "mean": 4.97,
+     "lo": 4.863003,
+     "hi": 5.076997
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     16,
+     71,
+     13,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 16,
+     "lo": 15.13259,
+     "hi": 16.86741
+    },
+    "hpLostWhenWon": {
+     "mean": 16,
+     "lo": 15.13259,
+     "hi": 16.86741
+    },
+    "turns": {
+     "mean": 5.31,
+     "lo": 5.209728,
+     "hi": 5.410272
+    },
+    "turnsMedian": 5,
+    "turnsP10": 5,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     2,
+     65,
+     33,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 31.71,
+     "lo": 30.237608,
+     "hi": 33.182392
+    },
+    "hpLostWhenWon": {
+     "mean": 31.71,
+     "lo": 30.237608,
+     "hi": 33.182392
+    },
+    "turns": {
+     "mean": 5.91,
+     "lo": 5.804344,
+     "hi": 6.015656
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     18,
+     74,
+     7,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 100,
+    "win": {
+     "p": 1,
+     "lo": 0.963007,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 29.98,
+     "lo": 28.713281,
+     "hi": 31.246719
+    },
+    "hpLostWhenWon": {
+     "mean": 29.98,
+     "lo": 28.713281,
+     "hi": 31.246719
+    },
+    "turns": {
+     "mean": 6.76,
+     "lo": 6.643557,
+     "hi": 6.876443
+    },
+    "turnsMedian": 7,
+    "turnsP10": 6,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     1,
+     29,
+     63,
+     7,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "starter",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 100,
+    "win": {
+     "p": 0.3,
+     "lo": 0.218949,
+     "hi": 0.395849
+    },
+    "hpLost": {
+     "mean": 58.78,
+     "lo": 58.318789,
+     "hi": 59.241211
+    },
+    "hpLostWhenWon": {
+     "mean": 55.933333,
+     "lo": 54.977993,
+     "hi": 56.888674
+    },
+    "turns": {
+     "mean": 12.27,
+     "lo": 11.93246,
+     "hi": 12.60754
+    },
+    "turnsMedian": 13,
+    "turnsP10": 9,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     20,
+     0,
+     1,
+     0,
+     74,
+     1,
+     4
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 8.146667,
+     "lo": 7.772817,
+     "hi": 8.520516
+    },
+    "hpLostWhenWon": {
+     "mean": 8.146667,
+     "lo": 7.772817,
+     "hi": 8.520516
+    },
+    "turns": {
+     "mean": 3.113333,
+     "lo": 2.975728,
+     "hi": 3.250939
+    },
+    "turnsMedian": 3,
+    "turnsP10": 2,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     107,
+     115,
+     40,
+     20,
+     14,
+     2,
+     1,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.996667,
+     "lo": 0.981363,
+     "hi": 0.999411
+    },
+    "hpLost": {
+     "mean": 7.186667,
+     "lo": 6.622521,
+     "hi": 7.750813
+    },
+    "hpLostWhenWon": {
+     "mean": 7.010033,
+     "lo": 6.563109,
+     "hi": 7.456958
+    },
+    "turns": {
+     "mean": 3.8,
+     "lo": 3.377511,
+     "hi": 4.222489
+    },
+    "turnsMedian": 3,
+    "turnsP10": 2,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     87,
+     105,
+     29,
+     31,
+     25,
+     17,
+     1,
+     2,
+     0,
+     0,
+     2,
+     0,
+     0,
+     1
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.796667,
+     "lo": 0.747506,
+     "hi": 0.838326
+    },
+    "hpLost": {
+     "mean": 20.773333,
+     "lo": 18.468884,
+     "hi": 23.077783
+    },
+    "hpLostWhenWon": {
+     "mean": 10.761506,
+     "lo": 10.115295,
+     "hi": 11.407718
+    },
+    "turns": {
+     "mean": 16.666667,
+     "lo": 14.119069,
+     "hi": 19.214264
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     7,
+     86,
+     102,
+     5,
+     5,
+     8,
+     9,
+     6,
+     4,
+     3,
+     3,
+     0,
+     62
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.883333,
+     "lo": 0.842067,
+     "hi": 0.914907
+    },
+    "hpLost": {
+     "mean": 20.326667,
+     "lo": 18.580549,
+     "hi": 22.072784
+    },
+    "hpLostWhenWon": {
+     "mean": 15.086792,
+     "lo": 14.39052,
+     "hi": 15.783065
+    },
+    "turns": {
+     "mean": 11.456667,
+     "lo": 9.405289,
+     "hi": 13.508044
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     37,
+     127,
+     40,
+     13,
+     21,
+     8,
+     10,
+     2,
+     3,
+     3,
+     0,
+     0,
+     36
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.9,
+     "lo": 0.860834,
+     "hi": 0.929052
+    },
+    "hpLost": {
+     "mean": 20.1,
+     "lo": 18.461783,
+     "hi": 21.738217
+    },
+    "hpLostWhenWon": {
+     "mean": 15.666667,
+     "lo": 14.9541,
+     "hi": 16.379234
+    },
+    "turns": {
+     "mean": 10.353333,
+     "lo": 8.424818,
+     "hi": 12.281849
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 18.70000000000107,
+    "turnHistogram": [
+     0,
+     0,
+     91,
+     89,
+     31,
+     12,
+     14,
+     8,
+     10,
+     8,
+     2,
+     0,
+     4,
+     1,
+     30
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.91,
+     "lo": 0.872223,
+     "hi": 0.93741
+    },
+    "hpLost": {
+     "mean": 19.746667,
+     "lo": 18.170105,
+     "hi": 21.323228
+    },
+    "hpLostWhenWon": {
+     "mean": 15.765568,
+     "lo": 15.047646,
+     "hi": 16.48349
+    },
+    "turns": {
+     "mean": 10.283333,
+     "lo": 8.454616,
+     "hi": 12.112051
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 12,
+    "turnHistogram": [
+     0,
+     0,
+     58,
+     103,
+     38,
+     7,
+     16,
+     7,
+     15,
+     16,
+     6,
+     5,
+     0,
+     0,
+     29
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.81,
+     "lo": 0.761796,
+     "hi": 0.850365
+    },
+    "hpLost": {
+     "mean": 31.013333,
+     "lo": 29.228285,
+     "hi": 32.798381
+    },
+    "hpLostWhenWon": {
+     "mean": 24.213992,
+     "lo": 23.215017,
+     "hi": 25.212966
+    },
+    "turns": {
+     "mean": 15.893333,
+     "lo": 13.408989,
+     "hi": 18.377678
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     108,
+     83,
+     12,
+     7,
+     5,
+     11,
+     9,
+     5,
+     0,
+     3,
+     0,
+     57
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.803333,
+     "lo": 0.754641,
+     "hi": 0.844355
+    },
+    "hpLost": {
+     "mean": 29.216667,
+     "lo": 27.369495,
+     "hi": 31.063838
+    },
+    "hpLostWhenWon": {
+     "mean": 21.680498,
+     "lo": 20.862435,
+     "hi": 22.498561
+    },
+    "turns": {
+     "mean": 16.333333,
+     "lo": 13.819905,
+     "hi": 18.846762
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     96,
+     90,
+     13,
+     12,
+     5,
+     5,
+     8,
+     6,
+     4,
+     2,
+     0,
+     59
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.563333,
+     "lo": 0.506759,
+     "hi": 0.618306
+    },
+    "hpLost": {
+     "mean": 51.433333,
+     "lo": 50.281907,
+     "hi": 52.584759
+    },
+    "hpLostWhenWon": {
+     "mean": 44.792899,
+     "lo": 43.421927,
+     "hi": 46.163871
+    },
+    "turns": {
+     "mean": 25.633333,
+     "lo": 22.797968,
+     "hi": 28.468699
+    },
+    "turnsMedian": 8,
+    "turnsP10": 7,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     51,
+     107,
+     39,
+     2,
+     0,
+     0,
+     0,
+     0,
+     100
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.146667,
+     "lo": 5.745306,
+     "hi": 6.548028
+    },
+    "hpLostWhenWon": {
+     "mean": 6.146667,
+     "lo": 5.745306,
+     "hi": 6.548028
+    },
+    "turns": {
+     "mean": 2.536667,
+     "lo": 2.466612,
+     "hi": 2.606721
+    },
+    "turnsMedian": 2,
+    "turnsP10": 2,
+    "turnsP90": 3,
+    "turnHistogram": [
+     4,
+     147,
+     133,
+     16,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "below"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.016667,
+     "lo": 5.613105,
+     "hi": 6.420229
+    },
+    "hpLostWhenWon": {
+     "mean": 6.016667,
+     "lo": 5.613105,
+     "hi": 6.420229
+    },
+    "turns": {
+     "mean": 2.763333,
+     "lo": 2.694016,
+     "hi": 2.832651
+    },
+    "turnsMedian": 3,
+    "turnsP10": 2,
+    "turnsP90": 3,
+    "turnHistogram": [
+     0,
+     98,
+     177,
+     23,
+     2,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "below"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 9.28,
+     "lo": 8.794477,
+     "hi": 9.765523
+    },
+    "hpLostWhenWon": {
+     "mean": 9.28,
+     "lo": 8.794477,
+     "hi": 9.765523
+    },
+    "turns": {
+     "mean": 4.593333,
+     "lo": 4.482201,
+     "hi": 4.704465
+    },
+    "turnsMedian": 5,
+    "turnsP10": 3,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     1,
+     41,
+     92,
+     119,
+     40,
+     6,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 11.286667,
+     "lo": 10.726337,
+     "hi": 11.846997
+    },
+    "hpLostWhenWon": {
+     "mean": 11.286667,
+     "lo": 10.726337,
+     "hi": 11.846997
+    },
+    "turns": {
+     "mean": 3.936667,
+     "lo": 3.834068,
+     "hi": 4.039265
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     12,
+     76,
+     151,
+     42,
+     18,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 13.076667,
+     "lo": 12.525123,
+     "hi": 13.62821
+    },
+    "hpLostWhenWon": {
+     "mean": 13.076667,
+     "lo": 12.525123,
+     "hi": 13.62821
+    },
+    "turns": {
+     "mean": 3.84,
+     "lo": 3.745094,
+     "hi": 3.934906
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     2,
+     116,
+     120,
+     53,
+     8,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 14.336667,
+     "lo": 13.819846,
+     "hi": 14.853487
+    },
+    "hpLostWhenWon": {
+     "mean": 14.336667,
+     "lo": 13.819846,
+     "hi": 14.853487
+    },
+    "turns": {
+     "mean": 4.24,
+     "lo": 4.145456,
+     "hi": 4.334544
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     0,
+     51,
+     149,
+     80,
+     17,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 18.526667,
+     "lo": 17.779925,
+     "hi": 19.273409
+    },
+    "hpLostWhenWon": {
+     "mean": 18.526667,
+     "lo": 17.779925,
+     "hi": 19.273409
+    },
+    "turns": {
+     "mean": 4.64,
+     "lo": 4.52273,
+     "hi": 4.75727
+    },
+    "turnsMedian": 5,
+    "turnsP10": 3,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     0,
+     39,
+     99,
+     107,
+     44,
+     9,
+     1,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "below"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 15.856667,
+     "lo": 15.160068,
+     "hi": 16.553266
+    },
+    "hpLostWhenWon": {
+     "mean": 15.856667,
+     "lo": 15.160068,
+     "hi": 16.553266
+    },
+    "turns": {
+     "mean": 4.74,
+     "lo": 4.60593,
+     "hi": 4.87407
+    },
+    "turnsMedian": 4,
+    "turnsP10": 4,
+    "turnsP90": 6.100000000000023,
+    "turnHistogram": [
+     0,
+     0,
+     23,
+     132,
+     87,
+     28,
+     21,
+     7,
+     1,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "below"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "late",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.993333,
+     "lo": 0.976022,
+     "hi": 0.99817
+    },
+    "hpLost": {
+     "mean": 34.606667,
+     "lo": 33.524259,
+     "hi": 35.689074
+    },
+    "hpLostWhenWon": {
+     "mean": 34.436242,
+     "lo": 33.372728,
+     "hi": 35.499755
+    },
+    "turns": {
+     "mean": 9.57,
+     "lo": 9.232388,
+     "hi": 9.907612
+    },
+    "turnsMedian": 9,
+    "turnsP10": 7,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     7,
+     17,
+     59,
+     48,
+     35,
+     32,
+     42,
+     12,
+     24,
+     14,
+     10
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   }
+  ]
+ },
+ "lengths": {
+  "setup": {
+   "fights": [
+    "enemy-a",
+    "enemy-d+enemy-d",
+    "enemy-b+enemy-d",
+    "enemy-c",
+    "enemy-a+enemy-d",
+    "enemy-d+enemy-d+enemy-d",
+    "elite-a",
+    "elite-b",
+    "boss-a"
+   ],
+   "seeds": 100,
+   "baseSeed": 1,
+   "units": 900
+  },
+  "set": "mid",
+  "rows": [
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.696667,
+     "lo": 6.247957,
+     "hi": 7.145376
+    },
+    "hpLostWhenWon": {
+     "mean": 6.696667,
+     "lo": 6.247957,
+     "hi": 7.145376
+    },
+    "turns": {
+     "mean": 4.08,
+     "lo": 3.892367,
+     "hi": 4.267633
+    },
+    "turnsMedian": 4,
+    "turnsP10": 2,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     31,
+     113,
+     55,
+     48,
+     33,
+     10,
+     2,
+     4,
+     2,
+     1,
+     1,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 6.45,
+     "lo": 5.954274,
+     "hi": 6.945726
+    },
+    "hpLostWhenWon": {
+     "mean": 6.45,
+     "lo": 5.954274,
+     "hi": 6.945726
+    },
+    "turns": {
+     "mean": 4.596667,
+     "lo": 4.397937,
+     "hi": 4.795397
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 7,
+    "turnHistogram": [
+     0,
+     17,
+     87,
+     55,
+     59,
+     42,
+     14,
+     18,
+     5,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 13.983333,
+     "lo": 13.208609,
+     "hi": 14.758058
+    },
+    "hpLostWhenWon": {
+     "mean": 13.983333,
+     "lo": 13.208609,
+     "hi": 14.758058
+    },
+    "turns": {
+     "mean": 7.916667,
+     "lo": 7.545267,
+     "hi": 8.288066
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     10,
+     78,
+     45,
+     54,
+     16,
+     17,
+     5,
+     25,
+     14,
+     14,
+     7,
+     15
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 14.1,
+     "lo": 13.335568,
+     "hi": 14.864432
+    },
+    "hpLostWhenWon": {
+     "mean": 14.1,
+     "lo": 13.335568,
+     "hi": 14.864432
+    },
+    "turns": {
+     "mean": 6.576667,
+     "lo": 6.3101,
+     "hi": 6.843233
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 9,
+    "turnHistogram": [
+     0,
+     0,
+     3,
+     55,
+     47,
+     76,
+     37,
+     31,
+     22,
+     3,
+     9,
+     9,
+     4,
+     3,
+     1
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 19.986667,
+     "lo": 19.03293,
+     "hi": 20.940404
+    },
+    "hpLostWhenWon": {
+     "mean": 19.986667,
+     "lo": 19.03293,
+     "hi": 20.940404
+    },
+    "turns": {
+     "mean": 6.506667,
+     "lo": 6.230648,
+     "hi": 6.782685
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 10,
+    "turnHistogram": [
+     0,
+     0,
+     9,
+     36,
+     89,
+     66,
+     23,
+     12,
+     20,
+     19,
+     13,
+     5,
+     2,
+     6,
+     0
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 19.333333,
+     "lo": 18.460467,
+     "hi": 20.2062
+    },
+    "hpLostWhenWon": {
+     "mean": 19.333333,
+     "lo": 18.460467,
+     "hi": 20.2062
+    },
+    "turns": {
+     "mean": 7.16,
+     "lo": 6.851222,
+     "hi": 7.468778
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 12,
+    "turnHistogram": [
+     0,
+     0,
+     2,
+     27,
+     71,
+     71,
+     23,
+     28,
+     19,
+     13,
+     15,
+     16,
+     3,
+     10,
+     2
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.996667,
+     "lo": 0.981363,
+     "hi": 0.999411
+    },
+    "hpLost": {
+     "mean": 27.763333,
+     "lo": 26.614355,
+     "hi": 28.912312
+    },
+    "hpLostWhenWon": {
+     "mean": 27.655518,
+     "lo": 26.522355,
+     "hi": 28.788681
+    },
+    "turns": {
+     "mean": 7.32,
+     "lo": 7.03767,
+     "hi": 7.60233
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 11,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     14,
+     54,
+     84,
+     43,
+     24,
+     26,
+     16,
+     15,
+     12,
+     8,
+     0,
+     4
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 22.07,
+     "lo": 20.996812,
+     "hi": 23.143188
+    },
+    "hpLostWhenWon": {
+     "mean": 22.07,
+     "lo": 20.996812,
+     "hi": 23.143188
+    },
+    "turns": {
+     "mean": 8.296667,
+     "lo": 7.901486,
+     "hi": 8.691847
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 13,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     13,
+     42,
+     54,
+     67,
+     31,
+     3,
+     20,
+     19,
+     3,
+     19,
+     9,
+     20
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "random",
+    "set": "mid",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.653333,
+     "lo": 0.597848,
+     "hi": 0.704941
+    },
+    "hpLost": {
+     "mean": 49.783333,
+     "lo": 48.601164,
+     "hi": 50.965503
+    },
+    "hpLostWhenWon": {
+     "mean": 44.362245,
+     "lo": 43.093433,
+     "hi": 45.631057
+    },
+    "turns": {
+     "mean": 12.983333,
+     "lo": 12.348286,
+     "hi": 13.618381
+    },
+    "turnsMedian": 11,
+    "turnsP10": 8,
+    "turnsP90": 21,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     19,
+     15,
+     80,
+     25,
+     25,
+     19,
+     32,
+     4,
+     81
+    ],
+    "flags": {
+     "win": "above",
+     "hp": "above",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.936667,
+     "lo": 0.903209,
+     "hi": 0.959083
+    },
+    "hpLost": {
+     "mean": 8.15,
+     "lo": 6.567372,
+     "hi": 9.732628
+    },
+    "hpLostWhenWon": {
+     "mean": 4.644128,
+     "lo": 4.204842,
+     "hi": 5.083414
+    },
+    "turns": {
+     "mean": 8.176667,
+     "lo": 6.601506,
+     "hi": 9.751827
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 10,
+    "turnHistogram": [
+     0,
+     6,
+     126,
+     29,
+     49,
+     27,
+     19,
+     6,
+     7,
+     4,
+     4,
+     2,
+     0,
+     1,
+     20
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "below",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.89,
+     "lo": 0.849544,
+     "hi": 0.920595
+    },
+    "hpLost": {
+     "mean": 9.83,
+     "lo": 7.79331,
+     "hi": 11.86669
+    },
+    "hpLostWhenWon": {
+     "mean": 3.629213,
+     "lo": 3.192114,
+     "hi": 4.066313
+    },
+    "turns": {
+     "mean": 11.066667,
+     "lo": 9.064391,
+     "hi": 13.068942
+    },
+    "turnsMedian": 5,
+    "turnsP10": 3,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     1,
+     75,
+     66,
+     60,
+     19,
+     11,
+     16,
+     7,
+     2,
+     9,
+     0,
+     0,
+     0,
+     34
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "below",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.71,
+     "lo": 0.656254,
+     "hi": 0.758435
+    },
+    "hpLost": {
+     "mean": 21.66,
+     "lo": 18.850386,
+     "hi": 24.469614
+    },
+    "hpLostWhenWon": {
+     "mean": 6,
+     "lo": 5.401829,
+     "hi": 6.598171
+    },
+    "turns": {
+     "mean": 21.986667,
+     "lo": 19.156772,
+     "hi": 24.816561
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     4,
+     107,
+     25,
+     59,
+     7,
+     3,
+     1,
+     5,
+     1,
+     0,
+     0,
+     88
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.776667,
+     "lo": 0.726209,
+     "hi": 0.820129
+    },
+    "hpLost": {
+     "mean": 20.216667,
+     "lo": 17.737565,
+     "hi": 22.695768
+    },
+    "hpLostWhenWon": {
+     "mean": 8.776824,
+     "lo": 8.072712,
+     "hi": 9.480936
+    },
+    "turns": {
+     "mean": 18.296667,
+     "lo": 15.693398,
+     "hi": 20.899936
+    },
+    "turnsMedian": 6,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     66,
+     26,
+     69,
+     43,
+     9,
+     6,
+     1,
+     5,
+     4,
+     2,
+     2,
+     67
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.746667,
+     "lo": 0.694546,
+     "hi": 0.79255
+    },
+    "hpLost": {
+     "mean": 24.25,
+     "lo": 21.810573,
+     "hi": 26.689427
+    },
+    "hpLostWhenWon": {
+     "mean": 12.120536,
+     "lo": 11.294822,
+     "hi": 12.946249
+    },
+    "turns": {
+     "mean": 20.453333,
+     "lo": 17.769998,
+     "hi": 23.136669
+    },
+    "turnsMedian": 7,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     9,
+     40,
+     63,
+     85,
+     4,
+     3,
+     8,
+     3,
+     4,
+     3,
+     0,
+     78
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.703333,
+     "lo": 0.649337,
+     "hi": 0.752189
+    },
+    "hpLost": {
+     "mean": 24.966667,
+     "lo": 22.34632,
+     "hi": 27.587014
+    },
+    "hpLostWhenWon": {
+     "mean": 10.189573,
+     "lo": 9.529711,
+     "hi": 10.849436
+    },
+    "turns": {
+     "mean": 22.386667,
+     "lo": 19.539623,
+     "hi": 25.23371
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     14,
+     62,
+     83,
+     32,
+     10,
+     2,
+     1,
+     2,
+     2,
+     1,
+     1,
+     90
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.71,
+     "lo": 0.656254,
+     "hi": 0.758435
+    },
+    "hpLost": {
+     "mean": 30.163333,
+     "lo": 27.846166,
+     "hi": 32.4805
+    },
+    "hpLostWhenWon": {
+     "mean": 17.976526,
+     "lo": 16.799292,
+     "hi": 19.153759
+    },
+    "turns": {
+     "mean": 22.196667,
+     "lo": 19.381068,
+     "hi": 25.012266
+    },
+    "turnsMedian": 6,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     9,
+     31,
+     127,
+     18,
+     16,
+     1,
+     1,
+     4,
+     2,
+     0,
+     3,
+     88
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.693333,
+     "lo": 0.638984,
+     "hi": 0.742794
+    },
+    "hpLost": {
+     "mean": 28.766667,
+     "lo": 26.268217,
+     "hi": 31.265116
+    },
+    "hpLostWhenWon": {
+     "mean": 14.951923,
+     "lo": 13.745411,
+     "hi": 16.158435
+    },
+    "turns": {
+     "mean": 23.813333,
+     "lo": 21.005898,
+     "hi": 26.620769
+    },
+    "turnsMedian": 8,
+    "turnsP10": 5,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     5,
+     29,
+     9,
+     58,
+     90,
+     3,
+     6,
+     2,
+     1,
+     4,
+     1,
+     92
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "greedy",
+    "set": "mid",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.63,
+     "lo": 0.574045,
+     "hi": 0.682668
+    },
+    "hpLost": {
+     "mean": 43.936667,
+     "lo": 42.030361,
+     "hi": 45.842973
+    },
+    "hpLostWhenWon": {
+     "mean": 34.502646,
+     "lo": 32.438933,
+     "hi": 36.566358
+    },
+    "turns": {
+     "mean": 27.3,
+     "lo": 24.597132,
+     "hi": 30.002868
+    },
+    "turnsMedian": 11,
+    "turnsP10": 10,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     8,
+     19,
+     69,
+     92,
+     1,
+     6,
+     4,
+     100
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-a",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 1,
+     "lo": 0.987357,
+     "hi": 1
+    },
+    "hpLost": {
+     "mean": 8.146667,
+     "lo": 7.772817,
+     "hi": 8.520516
+    },
+    "hpLostWhenWon": {
+     "mean": 8.146667,
+     "lo": 7.772817,
+     "hi": 8.520516
+    },
+    "turns": {
+     "mean": 3.113333,
+     "lo": 2.975728,
+     "hi": 3.250939
+    },
+    "turnsMedian": 3,
+    "turnsP10": 2,
+    "turnsP90": 5,
+    "turnHistogram": [
+     0,
+     107,
+     115,
+     40,
+     20,
+     14,
+     2,
+     1,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.996667,
+     "lo": 0.981363,
+     "hi": 0.999411
+    },
+    "hpLost": {
+     "mean": 7.186667,
+     "lo": 6.622521,
+     "hi": 7.750813
+    },
+    "hpLostWhenWon": {
+     "mean": 7.010033,
+     "lo": 6.563109,
+     "hi": 7.456958
+    },
+    "turns": {
+     "mean": 3.8,
+     "lo": 3.377511,
+     "hi": 4.222489
+    },
+    "turnsMedian": 3,
+    "turnsP10": 2,
+    "turnsP90": 6,
+    "turnHistogram": [
+     0,
+     87,
+     105,
+     29,
+     31,
+     25,
+     17,
+     1,
+     2,
+     0,
+     0,
+     2,
+     0,
+     0,
+     1
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "in"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-b+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.796667,
+     "lo": 0.747506,
+     "hi": 0.838326
+    },
+    "hpLost": {
+     "mean": 20.773333,
+     "lo": 18.468884,
+     "hi": 23.077783
+    },
+    "hpLostWhenWon": {
+     "mean": 10.761506,
+     "lo": 10.115295,
+     "hi": 11.407718
+    },
+    "turns": {
+     "mean": 16.666667,
+     "lo": 14.119069,
+     "hi": 19.214264
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     7,
+     86,
+     102,
+     5,
+     5,
+     8,
+     9,
+     6,
+     4,
+     3,
+     3,
+     0,
+     62
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-c",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.883333,
+     "lo": 0.842067,
+     "hi": 0.914907
+    },
+    "hpLost": {
+     "mean": 20.326667,
+     "lo": 18.580549,
+     "hi": 22.072784
+    },
+    "hpLostWhenWon": {
+     "mean": 15.086792,
+     "lo": 14.39052,
+     "hi": 15.783065
+    },
+    "turns": {
+     "mean": 11.456667,
+     "lo": 9.405289,
+     "hi": 13.508044
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     37,
+     127,
+     40,
+     13,
+     21,
+     8,
+     10,
+     2,
+     3,
+     3,
+     0,
+     0,
+     36
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-a+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.9,
+     "lo": 0.860834,
+     "hi": 0.929052
+    },
+    "hpLost": {
+     "mean": 20.1,
+     "lo": 18.461783,
+     "hi": 21.738217
+    },
+    "hpLostWhenWon": {
+     "mean": 15.666667,
+     "lo": 14.9541,
+     "hi": 16.379234
+    },
+    "turns": {
+     "mean": 10.353333,
+     "lo": 8.424818,
+     "hi": 12.281849
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 18.70000000000107,
+    "turnHistogram": [
+     0,
+     0,
+     91,
+     89,
+     31,
+     12,
+     14,
+     8,
+     10,
+     8,
+     2,
+     0,
+     4,
+     1,
+     30
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "enemy-d+enemy-d+enemy-d",
+    "tier": "normal",
+    "n": 300,
+    "win": {
+     "p": 0.91,
+     "lo": 0.872223,
+     "hi": 0.93741
+    },
+    "hpLost": {
+     "mean": 19.746667,
+     "lo": 18.170105,
+     "hi": 21.323228
+    },
+    "hpLostWhenWon": {
+     "mean": 15.765568,
+     "lo": 15.047646,
+     "hi": 16.48349
+    },
+    "turns": {
+     "mean": 10.283333,
+     "lo": 8.454616,
+     "hi": 12.112051
+    },
+    "turnsMedian": 4,
+    "turnsP10": 3,
+    "turnsP90": 12,
+    "turnHistogram": [
+     0,
+     0,
+     58,
+     103,
+     38,
+     7,
+     16,
+     7,
+     15,
+     16,
+     6,
+     5,
+     0,
+     0,
+     29
+    ],
+    "flags": {
+     "win": "below",
+     "hp": "above",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "elite-a",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.81,
+     "lo": 0.761796,
+     "hi": 0.850365
+    },
+    "hpLost": {
+     "mean": 31.013333,
+     "lo": 29.228285,
+     "hi": 32.798381
+    },
+    "hpLostWhenWon": {
+     "mean": 24.213992,
+     "lo": 23.215017,
+     "hi": 25.212966
+    },
+    "turns": {
+     "mean": 15.893333,
+     "lo": 13.408989,
+     "hi": 18.377678
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     108,
+     83,
+     12,
+     7,
+     5,
+     11,
+     9,
+     5,
+     0,
+     3,
+     0,
+     57
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "elite-b",
+    "tier": "elite",
+    "n": 300,
+    "win": {
+     "p": 0.803333,
+     "lo": 0.754641,
+     "hi": 0.844355
+    },
+    "hpLost": {
+     "mean": 29.216667,
+     "lo": 27.369495,
+     "hi": 31.063838
+    },
+    "hpLostWhenWon": {
+     "mean": 21.680498,
+     "lo": 20.862435,
+     "hi": 22.498561
+    },
+    "turns": {
+     "mean": 16.333333,
+     "lo": 13.819905,
+     "hi": 18.846762
+    },
+    "turnsMedian": 5,
+    "turnsP10": 4,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     96,
+     90,
+     13,
+     12,
+     5,
+     5,
+     8,
+     6,
+     4,
+     2,
+     0,
+     59
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "in",
+     "turns": "above"
+    }
+   },
+   {
+    "skill": "smart",
+    "set": "mid",
+    "fight": "boss-a",
+    "tier": "boss",
+    "n": 300,
+    "win": {
+     "p": 0.563333,
+     "lo": 0.506759,
+     "hi": 0.618306
+    },
+    "hpLost": {
+     "mean": 51.433333,
+     "lo": 50.281907,
+     "hi": 52.584759
+    },
+    "hpLostWhenWon": {
+     "mean": 44.792899,
+     "lo": 43.421927,
+     "hi": 46.163871
+    },
+    "turns": {
+     "mean": 25.633333,
+     "lo": 22.797968,
+     "hi": 28.468699
+    },
+    "turnsMedian": 8,
+    "turnsP10": 7,
+    "turnsP90": 61,
+    "turnHistogram": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     51,
+     107,
+     39,
+     2,
+     0,
+     0,
+     0,
+     0,
+     100
+    ],
+    "flags": {
+     "win": "in",
+     "hp": "above",
+     "turns": "above"
+    }
+   }
+  ]
+ },
+ "cards": {
+  "context": "starter",
+  "headline": "hpLost",
+  "setup": {
+   "fights": [
+    "enemy-a",
+    "enemy-d+enemy-d",
+    "enemy-b+enemy-d",
+    "enemy-c",
+    "enemy-a+enemy-d",
+    "enemy-d+enemy-d+enemy-d",
+    "elite-a",
+    "elite-b",
+    "boss-a"
+   ],
+   "seeds": 60,
+   "baseSeed": 1,
+   "units": 540
+  },
+  "rows": [
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0.003704,
+      "lo": -0.001425,
+      "hi": 0.008832
+     },
+     "hpLost": {
+      "mean": -0.425926,
+      "lo": -1.084058,
+      "hi": 0.232206
+     },
+     "turns": {
+      "mean": -0.535185,
+      "lo": -0.668387,
+      "hi": -0.401983
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "defend",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0.001852,
+      "lo": -0.001778,
+      "hi": 0.005481
+     },
+     "hpLost": {
+      "mean": -1.338889,
+      "lo": -2.063319,
+      "hi": -0.614459
+     },
+     "turns": {
+      "mean": 0.62963,
+      "lo": 0.472616,
+      "hi": 0.786643
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "bolt",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0,
+      "lo": -0.005138,
+      "hi": 0.005138
+     },
+     "hpLost": {
+      "mean": -0.544444,
+      "lo": -1.233782,
+      "hi": 0.144893
+     },
+     "turns": {
+      "mean": -0.744444,
+      "lo": -0.883957,
+      "hi": -0.604932
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "focus",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.009259,
+      "lo": -0.018839,
+      "hi": 0.000321
+     },
+     "hpLost": {
+      "mean": 3.942593,
+      "lo": 3.166036,
+      "hi": 4.719149
+     },
+     "turns": {
+      "mean": 0.505556,
+      "lo": 0.34666,
+      "hi": 0.664451
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "jab",
+    "type": "attack",
+    "cost": 0,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.014815,
+      "lo": 0.004616,
+      "hi": 0.025014
+     },
+     "hpLost": {
+      "mean": -3.244444,
+      "lo": -3.901871,
+      "hi": -2.587018
+     },
+     "turns": {
+      "mean": -0.833333,
+      "lo": -0.967063,
+      "hi": -0.699604
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "guarded-strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -3.951852,
+      "lo": -4.629223,
+      "hi": -3.274481
+     },
+     "turns": {
+      "mean": -0.311111,
+      "lo": -0.453294,
+      "hi": -0.168928
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "heavy-hit",
+    "type": "attack",
+    "cost": 3,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.02037,
+      "lo": 0.007385,
+      "hi": 0.033356
+     },
+     "hpLost": {
+      "mean": -2.922222,
+      "lo": -3.696443,
+      "hi": -2.148002
+     },
+     "turns": {
+      "mean": -1.066667,
+      "lo": -1.22333,
+      "hi": -0.910004
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "big-block",
+    "type": "skill",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.001852,
+      "lo": -0.008142,
+      "hi": 0.004439
+     },
+     "hpLost": {
+      "mean": -2.066667,
+      "lo": -2.784697,
+      "hi": -1.348636
+     },
+     "turns": {
+      "mean": 1.046296,
+      "lo": 0.887864,
+      "hi": 1.204729
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "quick-draw",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.011111,
+      "lo": -0.021344,
+      "hi": -0.000879
+     },
+     "hpLost": {
+      "mean": 4.238889,
+      "lo": 3.455033,
+      "hi": 5.022745
+     },
+     "turns": {
+      "mean": 0.444444,
+      "lo": 0.284788,
+      "hi": 0.604101
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "fortify",
+    "type": "power",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.061111,
+      "lo": 0.040247,
+      "hi": 0.081975
+     },
+     "hpLost": {
+      "mean": -2.783333,
+      "lo": -3.638235,
+      "hi": -1.928431
+     },
+     "turns": {
+      "mean": 1.416667,
+      "lo": 1.201886,
+      "hi": 1.631448
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "weaken",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.012963,
+      "lo": 0.003414,
+      "hi": 0.022512
+     },
+     "hpLost": {
+      "mean": -1.374074,
+      "lo": -2.073018,
+      "hi": -0.67513
+     },
+     "turns": {
+      "mean": 0.824074,
+      "lo": 0.666207,
+      "hi": 0.981941
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "expose",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.012963,
+      "lo": 0.002119,
+      "hi": 0.023807
+     },
+     "hpLost": {
+      "mean": -0.5,
+      "lo": -1.190438,
+      "hi": 0.190438
+     },
+     "turns": {
+      "mean": -0.490741,
+      "lo": -0.636916,
+      "hi": -0.344565
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "sunder",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.003704,
+      "lo": -0.003555,
+      "hi": 0.010963
+     },
+     "hpLost": {
+      "mean": -1.331481,
+      "lo": -2.057792,
+      "hi": -0.605171
+     },
+     "turns": {
+      "mean": -0.896296,
+      "lo": -1.039794,
+      "hi": -0.752798
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "add",
+    "card": "strengthen",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.064815,
+      "lo": 0.04403,
+      "hi": 0.085599
+     },
+     "hpLost": {
+      "mean": -3.092593,
+      "lo": -3.8179,
+      "hi": -2.367285
+     },
+     "turns": {
+      "mean": -1.014815,
+      "lo": -1.158666,
+      "hi": -0.870964
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     },
+     "hpLost": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     },
+     "turns": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "defend",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0,
+      "lo": -0.005138,
+      "hi": 0.005138
+     },
+     "hpLost": {
+      "mean": -0.788889,
+      "lo": -1.475175,
+      "hi": -0.102603
+     },
+     "turns": {
+      "mean": 1.488889,
+      "lo": 1.33446,
+      "hi": 1.643318
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "bolt",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.001852,
+      "lo": -0.001778,
+      "hi": 0.005481
+     },
+     "hpLost": {
+      "mean": -0.32037,
+      "lo": -0.901861,
+      "hi": 0.26112
+     },
+     "turns": {
+      "mean": -0.183333,
+      "lo": -0.314565,
+      "hi": -0.052102
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "focus",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.016667,
+      "lo": -0.028633,
+      "hi": -0.0047
+     },
+     "hpLost": {
+      "mean": 4.731481,
+      "lo": 3.963102,
+      "hi": 5.499861
+     },
+     "turns": {
+      "mean": 1.240741,
+      "lo": 1.074469,
+      "hi": 1.407012
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "jab",
+    "type": "attack",
+    "cost": 0,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.012963,
+      "lo": 0.003414,
+      "hi": 0.022512
+     },
+     "hpLost": {
+      "mean": -3.424074,
+      "lo": -3.984887,
+      "hi": -2.863261
+     },
+     "turns": {
+      "mean": -0.338889,
+      "lo": -0.473503,
+      "hi": -0.204275
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "guarded-strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.007407,
+      "lo": 0.000169,
+      "hi": 0.014646
+     },
+     "hpLost": {
+      "mean": -4.07037,
+      "lo": -4.432851,
+      "hi": -3.70789
+     },
+     "turns": {
+      "mean": 0.287037,
+      "lo": 0.216171,
+      "hi": 0.357903
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "heavy-hit",
+    "type": "attack",
+    "cost": 3,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.025926,
+      "lo": 0.01251,
+      "hi": 0.039342
+     },
+     "hpLost": {
+      "mean": -2.477778,
+      "lo": -3.111375,
+      "hi": -1.844181
+     },
+     "turns": {
+      "mean": -0.659259,
+      "lo": -0.809194,
+      "hi": -0.509324
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "big-block",
+    "type": "skill",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0,
+      "lo": -0.005138,
+      "hi": 0.005138
+     },
+     "hpLost": {
+      "mean": -1.32037,
+      "lo": -2.05016,
+      "hi": -0.59058
+     },
+     "turns": {
+      "mean": 2.12963,
+      "lo": 1.944424,
+      "hi": 2.314835
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "quick-draw",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.031481,
+      "lo": -0.047092,
+      "hi": -0.015871
+     },
+     "hpLost": {
+      "mean": 5.498148,
+      "lo": 4.686394,
+      "hi": 6.309902
+     },
+     "turns": {
+      "mean": 1.340741,
+      "lo": 1.180591,
+      "hi": 1.500891
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "fortify",
+    "type": "power",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.081481,
+      "lo": 0.058386,
+      "hi": 0.104577
+     },
+     "hpLost": {
+      "mean": -3.540741,
+      "lo": -4.345384,
+      "hi": -2.736098
+     },
+     "turns": {
+      "mean": 2.72037,
+      "lo": 2.461825,
+      "hi": 2.978916
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "weaken",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.003704,
+      "lo": -0.003555,
+      "hi": 0.010963
+     },
+     "hpLost": {
+      "mean": -1.074074,
+      "lo": -1.492619,
+      "hi": -0.655529
+     },
+     "turns": {
+      "mean": 1.709259,
+      "lo": 1.588585,
+      "hi": 1.829933
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "expose",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": 0.012963,
+      "lo": -0.338529,
+      "hi": 0.364455
+     },
+     "turns": {
+      "mean": 0.148148,
+      "lo": 0.077502,
+      "hi": 0.218794
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "sunder",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.007407,
+      "lo": 0.000169,
+      "hi": 0.014646
+     },
+     "hpLost": {
+      "mean": -0.922222,
+      "lo": -1.548043,
+      "hi": -0.296401
+     },
+     "turns": {
+      "mean": -0.290741,
+      "lo": -0.42857,
+      "hi": -0.152912
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "random",
+    "mode": "replace",
+    "card": "strengthen",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.061111,
+      "lo": 0.040889,
+      "hi": 0.081333
+     },
+     "hpLost": {
+      "mean": -2.503704,
+      "lo": -3.108682,
+      "hi": -1.898726
+     },
+     "turns": {
+      "mean": -0.546296,
+      "lo": -0.6737,
+      "hi": -0.418893
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.001852,
+      "lo": -0.0139,
+      "hi": 0.010196
+     },
+     "hpLost": {
+      "mean": 1.003704,
+      "lo": 0.557312,
+      "hi": 1.450096
+     },
+     "turns": {
+      "mean": -0.609259,
+      "lo": -0.717552,
+      "hi": -0.500967
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "defend",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0.001852,
+      "lo": -0.009046,
+      "hi": 0.01275
+     },
+     "hpLost": {
+      "mean": -1.438889,
+      "lo": -1.918889,
+      "hi": -0.958889
+     },
+     "turns": {
+      "mean": 0.192593,
+      "lo": 0.087679,
+      "hi": 0.297506
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "bolt",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.001852,
+      "lo": -0.009046,
+      "hi": 0.01275
+     },
+     "hpLost": {
+      "mean": 0.914815,
+      "lo": 0.473327,
+      "hi": 1.356303
+     },
+     "turns": {
+      "mean": -0.711111,
+      "lo": -0.822905,
+      "hi": -0.599318
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "focus",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.17037,
+      "lo": -0.202109,
+      "hi": -0.138631
+     },
+     "hpLost": {
+      "mean": 12.77037,
+      "lo": 11.684948,
+      "hi": 13.855793
+     },
+     "turns": {
+      "mean": 3.935185,
+      "lo": 3.603478,
+      "hi": 4.266892
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "jab",
+    "type": "attack",
+    "cost": 0,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -1.146296,
+      "lo": -1.658983,
+      "hi": -0.63361
+     },
+     "turns": {
+      "mean": -1.57037,
+      "lo": -1.681773,
+      "hi": -1.458968
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "guarded-strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -3.407407,
+      "lo": -3.88248,
+      "hi": -2.932335
+     },
+     "turns": {
+      "mean": -1.098148,
+      "lo": -1.197759,
+      "hi": -0.998537
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "heavy-hit",
+    "type": "attack",
+    "cost": 3,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -1.194444,
+      "lo": -1.768936,
+      "hi": -0.619952
+     },
+     "turns": {
+      "mean": -1.67037,
+      "lo": -1.820042,
+      "hi": -1.520699
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "big-block",
+    "type": "skill",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -5.224074,
+      "lo": -5.871203,
+      "hi": -4.576945
+     },
+     "turns": {
+      "mean": 0.203704,
+      "lo": 0.091048,
+      "hi": 0.316359
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "quick-draw",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.874074,
+      "lo": -0.902082,
+      "hi": -0.846066
+     },
+     "hpLost": {
+      "mean": 40.261111,
+      "lo": 38.544922,
+      "hi": 41.9773
+     },
+     "turns": {
+      "mean": 4.42037,
+      "lo": 3.933862,
+      "hi": 4.906879
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "fortify",
+    "type": "power",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -4.103704,
+      "lo": -5.129916,
+      "hi": -3.077492
+     },
+     "turns": {
+      "mean": 4.25,
+      "lo": 3.883826,
+      "hi": 4.616174
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "weaken",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.077778,
+      "lo": -0.100964,
+      "hi": -0.054591
+     },
+     "hpLost": {
+      "mean": 1.059259,
+      "lo": 0.578914,
+      "hi": 1.539605
+     },
+     "turns": {
+      "mean": 2.735185,
+      "lo": 2.52513,
+      "hi": 2.94524
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "expose",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.075926,
+      "lo": -0.099993,
+      "hi": -0.051859
+     },
+     "hpLost": {
+      "mean": 2.311111,
+      "lo": 1.809402,
+      "hi": 2.81282
+     },
+     "turns": {
+      "mean": -0.82963,
+      "lo": -0.989822,
+      "hi": -0.669437
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "sunder",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.018519,
+      "lo": -0.033852,
+      "hi": -0.003185
+     },
+     "hpLost": {
+      "mean": 2.366667,
+      "lo": 1.866437,
+      "hi": 2.866896
+     },
+     "turns": {
+      "mean": -2.133333,
+      "lo": -2.30529,
+      "hi": -1.961376
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "add",
+    "card": "strengthen",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.011111,
+      "lo": -0.024672,
+      "hi": 0.00245
+     },
+     "hpLost": {
+      "mean": 0.531481,
+      "lo": -0.01448,
+      "hi": 1.077443
+     },
+     "turns": {
+      "mean": -1.546296,
+      "lo": -1.711418,
+      "hi": -1.381174
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     },
+     "hpLost": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     },
+     "turns": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "defend",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0,
+      "lo": -0.007266,
+      "hi": 0.007266
+     },
+     "hpLost": {
+      "mean": -2.005556,
+      "lo": -2.337069,
+      "hi": -1.674042
+     },
+     "turns": {
+      "mean": 0.907407,
+      "lo": 0.817874,
+      "hi": 0.996941
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "bolt",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.001852,
+      "lo": -0.005481,
+      "hi": 0.001778
+     },
+     "hpLost": {
+      "mean": 0.198148,
+      "lo": 0.050945,
+      "hi": 0.345351
+     },
+     "turns": {
+      "mean": 0.053704,
+      "lo": 0.00038,
+      "hi": 0.107028
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "focus",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.201852,
+      "lo": -0.235737,
+      "hi": -0.167967
+     },
+     "hpLost": {
+      "mean": 14.546296,
+      "lo": 13.372496,
+      "hi": 15.720097
+     },
+     "turns": {
+      "mean": 5.085185,
+      "lo": 4.705582,
+      "hi": 5.464789
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "jab",
+    "type": "attack",
+    "cost": 0,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -2.355556,
+      "lo": -2.638031,
+      "hi": -2.07308
+     },
+     "turns": {
+      "mean": -1.135185,
+      "lo": -1.227745,
+      "hi": -1.042625
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "guarded-strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -4.016667,
+      "lo": -4.341135,
+      "hi": -3.692198
+     },
+     "turns": {
+      "mean": -0.696296,
+      "lo": -0.78515,
+      "hi": -0.607442
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "heavy-hit",
+    "type": "attack",
+    "cost": 3,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -2.068519,
+      "lo": -2.461622,
+      "hi": -1.675415
+     },
+     "turns": {
+      "mean": -1.074074,
+      "lo": -1.203083,
+      "hi": -0.945065
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "big-block",
+    "type": "skill",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -6.175926,
+      "lo": -6.732206,
+      "hi": -5.619645
+     },
+     "turns": {
+      "mean": 0.866667,
+      "lo": 0.766751,
+      "hi": 0.966582
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "quick-draw",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.961111,
+      "lo": -0.977432,
+      "hi": -0.94479
+     },
+     "hpLost": {
+      "mean": 45.096296,
+      "lo": 43.668158,
+      "hi": 46.524435
+     },
+     "turns": {
+      "mean": 4.138889,
+      "lo": 3.625596,
+      "hi": 4.652182
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "fortify",
+    "type": "power",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.009259,
+      "lo": 0.001173,
+      "hi": 0.017345
+     },
+     "hpLost": {
+      "mean": -4.585185,
+      "lo": -5.6215,
+      "hi": -3.54887
+     },
+     "turns": {
+      "mean": 6.664815,
+      "lo": 6.301334,
+      "hi": 7.028295
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "weaken",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.090741,
+      "lo": -0.11499,
+      "hi": -0.066491
+     },
+     "hpLost": {
+      "mean": 1.675926,
+      "lo": 1.252035,
+      "hi": 2.099817
+     },
+     "turns": {
+      "mean": 4.601852,
+      "lo": 4.325095,
+      "hi": 4.878608
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "expose",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.098148,
+      "lo": -0.123265,
+      "hi": -0.073031
+     },
+     "hpLost": {
+      "mean": 4.227778,
+      "lo": 3.75367,
+      "hi": 4.701885
+     },
+     "turns": {
+      "mean": 0.401852,
+      "lo": 0.227858,
+      "hi": 0.575846
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "sunder",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.042593,
+      "lo": -0.060398,
+      "hi": -0.024787
+     },
+     "hpLost": {
+      "mean": 4.094444,
+      "lo": 3.594363,
+      "hi": 4.594526
+     },
+     "turns": {
+      "mean": -1.785185,
+      "lo": -1.950517,
+      "hi": -1.619854
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "greedy",
+    "mode": "replace",
+    "card": "strengthen",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.022222,
+      "lo": -0.03836,
+      "hi": -0.006084
+     },
+     "hpLost": {
+      "mean": 2.109259,
+      "lo": 1.693221,
+      "hi": 2.525298
+     },
+     "turns": {
+      "mean": -0.537037,
+      "lo": -0.701294,
+      "hi": -0.37278
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0.014815,
+      "lo": -0.002939,
+      "hi": 0.032568
+     },
+     "hpLost": {
+      "mean": -0.835185,
+      "lo": -1.336692,
+      "hi": -0.333679
+     },
+     "turns": {
+      "mean": -0.153704,
+      "lo": -0.237988,
+      "hi": -0.06942
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "defend",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.02037,
+      "lo": -0.036112,
+      "hi": -0.004628
+     },
+     "hpLost": {
+      "mean": -1.259259,
+      "lo": -1.783028,
+      "hi": -0.735491
+     },
+     "turns": {
+      "mean": 0.25,
+      "lo": 0.170138,
+      "hi": 0.329862
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "bolt",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.014815,
+      "lo": -0.005698,
+      "hi": 0.035328
+     },
+     "hpLost": {
+      "mean": -0.203704,
+      "lo": -0.759501,
+      "hi": 0.352094
+     },
+     "turns": {
+      "mean": -0.531481,
+      "lo": -0.624279,
+      "hi": -0.438684
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "focus",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.035185,
+      "lo": -0.05074,
+      "hi": -0.019631
+     },
+     "hpLost": {
+      "mean": 9.240741,
+      "lo": 8.408485,
+      "hi": 10.072996
+     },
+     "turns": {
+      "mean": 0.651852,
+      "lo": 0.513679,
+      "hi": 0.790025
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "jab",
+    "type": "attack",
+    "cost": 0,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.055556,
+      "lo": 0.034898,
+      "hi": 0.076213
+     },
+     "hpLost": {
+      "mean": -3.872222,
+      "lo": -4.494675,
+      "hi": -3.249769
+     },
+     "turns": {
+      "mean": -0.468519,
+      "lo": -0.551875,
+      "hi": -0.385162
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "guarded-strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.07037,
+      "lo": 0.048175,
+      "hi": 0.092566
+     },
+     "hpLost": {
+      "mean": -5.644444,
+      "lo": -6.25553,
+      "hi": -5.033359
+     },
+     "turns": {
+      "mean": -0.3,
+      "lo": -0.376671,
+      "hi": -0.223329
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "heavy-hit",
+    "type": "attack",
+    "cost": 3,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.066667,
+      "lo": 0.045608,
+      "hi": 0.087725
+     },
+     "hpLost": {
+      "mean": -3.225926,
+      "lo": -3.785968,
+      "hi": -2.665884
+     },
+     "turns": {
+      "mean": -1.446296,
+      "lo": -1.548112,
+      "hi": -1.344481
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "big-block",
+    "type": "skill",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.072222,
+      "lo": 0.050369,
+      "hi": 0.094075
+     },
+     "hpLost": {
+      "mean": -6.462963,
+      "lo": -7.209088,
+      "hi": -5.716838
+     },
+     "turns": {
+      "mean": 0.796296,
+      "lo": 0.677594,
+      "hi": 0.914999
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "quick-draw",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.196296,
+      "lo": -0.229828,
+      "hi": -0.162764
+     },
+     "hpLost": {
+      "mean": 13.227778,
+      "lo": 12.101963,
+      "hi": 14.353593
+     },
+     "turns": {
+      "mean": 1.042593,
+      "lo": 0.825952,
+      "hi": 1.259233
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "fortify",
+    "type": "power",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.075926,
+      "lo": 0.053564,
+      "hi": 0.098287
+     },
+     "hpLost": {
+      "mean": -2.72963,
+      "lo": -3.767723,
+      "hi": -1.691536
+     },
+     "turns": {
+      "mean": 3.037037,
+      "lo": 2.68032,
+      "hi": 3.393754
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "weaken",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.033333,
+      "lo": -0.049335,
+      "hi": -0.017332
+     },
+     "hpLost": {
+      "mean": 0.059259,
+      "lo": -0.465999,
+      "hi": 0.584517
+     },
+     "turns": {
+      "mean": 0.731481,
+      "lo": 0.646587,
+      "hi": 0.816376
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "expose",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.003704,
+      "lo": -0.013333,
+      "hi": 0.020741
+     },
+     "hpLost": {
+      "mean": -0.268519,
+      "lo": -0.833694,
+      "hi": 0.296657
+     },
+     "turns": {
+      "mean": -1.155556,
+      "lo": -1.267585,
+      "hi": -1.043526
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "sunder",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.024074,
+      "lo": 0.004616,
+      "hi": 0.043532
+     },
+     "hpLost": {
+      "mean": -0.359259,
+      "lo": -0.926,
+      "hi": 0.207481
+     },
+     "turns": {
+      "mean": -1.355556,
+      "lo": -1.476687,
+      "hi": -1.234424
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "smart",
+    "mode": "add",
+    "card": "strengthen",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.07037,
+      "lo": 0.048175,
+      "hi": 0.092566
+     },
+     "hpLost": {
+      "mean": -0.290741,
+      "lo": -0.888899,
+      "hi": 0.307418
+     },
+     "turns": {
+      "mean": -1.342593,
+      "lo": -1.462403,
+      "hi": -1.222782
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     },
+     "hpLost": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     },
+     "turns": {
+      "mean": 0,
+      "lo": 0,
+      "hi": 0
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "defend",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.025926,
+      "lo": -0.040292,
+      "hi": -0.01156
+     },
+     "hpLost": {
+      "mean": -0.42037,
+      "lo": -0.794819,
+      "hi": -0.045922
+     },
+     "turns": {
+      "mean": 0.47963,
+      "lo": 0.418755,
+      "hi": 0.540504
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "bolt",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.001852,
+      "lo": -0.015921,
+      "hi": 0.012218
+     },
+     "hpLost": {
+      "mean": 0.685185,
+      "lo": 0.299299,
+      "hi": 1.071071
+     },
+     "turns": {
+      "mean": -0.364815,
+      "lo": -0.43347,
+      "hi": -0.29616
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "focus",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": false,
+    "delta": {
+     "win": {
+      "mean": -0.044444,
+      "lo": -0.061842,
+      "hi": -0.027047
+     },
+     "hpLost": {
+      "mean": 11.838889,
+      "lo": 11.006156,
+      "hi": 12.671622
+     },
+     "turns": {
+      "mean": 1.007407,
+      "lo": 0.865864,
+      "hi": 1.14895
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "jab",
+    "type": "attack",
+    "cost": 0,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.05,
+      "lo": 0.030897,
+      "hi": 0.069103
+     },
+     "hpLost": {
+      "mean": -3.448148,
+      "lo": -3.942541,
+      "hi": -2.953755
+     },
+     "turns": {
+      "mean": -0.32963,
+      "lo": -0.399068,
+      "hi": -0.260192
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "guarded-strike",
+    "type": "attack",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.07037,
+      "lo": 0.048778,
+      "hi": 0.091963
+     },
+     "hpLost": {
+      "mean": -5.190741,
+      "lo": -5.6464,
+      "hi": -4.735082
+     },
+     "turns": {
+      "mean": -0.168519,
+      "lo": -0.227732,
+      "hi": -0.109305
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "heavy-hit",
+    "type": "attack",
+    "cost": 3,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.068519,
+      "lo": 0.047191,
+      "hi": 0.089846
+     },
+     "hpLost": {
+      "mean": -3.316667,
+      "lo": -3.80452,
+      "hi": -2.828814
+     },
+     "turns": {
+      "mean": -1.464815,
+      "lo": -1.566947,
+      "hi": -1.362683
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "big-block",
+    "type": "skill",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.075926,
+      "lo": 0.053564,
+      "hi": 0.098287
+     },
+     "hpLost": {
+      "mean": -7.501852,
+      "lo": -8.222189,
+      "hi": -6.781514
+     },
+     "turns": {
+      "mean": 1.211111,
+      "lo": 1.089425,
+      "hi": 1.332797
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "quick-draw",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.466667,
+      "lo": -0.508784,
+      "hi": -0.42455
+     },
+     "hpLost": {
+      "mean": 20.701852,
+      "lo": 19.158481,
+      "hi": 22.245222
+     },
+     "turns": {
+      "mean": 2.138889,
+      "lo": 1.826571,
+      "hi": 2.451206
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "fortify",
+    "type": "power",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.075926,
+      "lo": 0.053564,
+      "hi": 0.098287
+     },
+     "hpLost": {
+      "mean": -3.422222,
+      "lo": -4.544013,
+      "hi": -2.300431
+     },
+     "turns": {
+      "mean": 4.525926,
+      "lo": 4.12307,
+      "hi": 4.928782
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "weaken",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.035185,
+      "lo": -0.05074,
+      "hi": -0.019631
+     },
+     "hpLost": {
+      "mean": 1.633333,
+      "lo": 1.173608,
+      "hi": 2.093059
+     },
+     "turns": {
+      "mean": 1.016667,
+      "lo": 0.938339,
+      "hi": 1.094994
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "expose",
+    "type": "skill",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.011111,
+      "lo": -0.027331,
+      "hi": 0.005109
+     },
+     "hpLost": {
+      "mean": 0.57963,
+      "lo": 0.095296,
+      "hi": 1.063963
+     },
+     "turns": {
+      "mean": -1.027778,
+      "lo": -1.135093,
+      "hi": -0.920463
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "sunder",
+    "type": "attack",
+    "cost": 2,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": -0.001852,
+      "lo": -0.019274,
+      "hi": 0.01557
+     },
+     "hpLost": {
+      "mean": 0.27963,
+      "lo": -0.213496,
+      "hi": 0.772756
+     },
+     "turns": {
+      "mean": -1.27963,
+      "lo": -1.398841,
+      "hi": -1.160418
+     }
+    },
+    "verdict": "negligible"
+   },
+   {
+    "skill": "smart",
+    "mode": "replace",
+    "card": "strengthen",
+    "type": "power",
+    "cost": 1,
+    "owner": "mage",
+    "inRewardPool": true,
+    "delta": {
+     "win": {
+      "mean": 0.053704,
+      "lo": 0.032076,
+      "hi": 0.075332
+     },
+     "hpLost": {
+      "mean": -0.005556,
+      "lo": -0.562864,
+      "hi": 0.551753
+     },
+     "turns": {
+      "mean": -1.192593,
+      "lo": -1.315468,
+      "hi": -1.069717
+     }
+    },
+    "verdict": "negligible"
+   }
+  ]
+ },
+ "pairs": {
+  "skill": "smart",
+  "context": "starter",
+  "headline": "hpLost",
+  "setup": {
+   "fights": [
+    "enemy-a",
+    "enemy-d+enemy-d",
+    "enemy-b+enemy-d",
+    "enemy-c",
+    "enemy-a+enemy-d",
+    "enemy-d+enemy-d+enemy-d",
+    "elite-a",
+    "elite-b",
+    "boss-a"
+   ],
+   "seeds": 40,
+   "baseSeed": 1,
+   "units": 360
+  },
+  "totalPairs": 45,
+  "evaluated": 45,
+  "sampled": false,
+  "rows": [
+   {
+    "a": "heavy-hit",
+    "b": "quick-draw",
+    "synergy": {
+     "win": {
+      "mean": 0.094444,
+      "lo": 0.045441,
+      "hi": 0.143448
+     },
+     "hpLost": {
+      "mean": 7.455556,
+      "lo": 5.884103,
+      "hi": 9.027008
+     },
+     "turns": {
+      "mean": 0.522222,
+      "lo": 0.241789,
+      "hi": 0.802656
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "quick-draw",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": 0.133333,
+      "lo": 0.086561,
+      "hi": 0.180106
+     },
+     "hpLost": {
+      "mean": 6.688889,
+      "lo": 5.220356,
+      "hi": 8.157422
+     },
+     "turns": {
+      "mean": 0.438889,
+      "lo": 0.161501,
+      "hi": 0.716276
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "quick-draw",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": 0.102778,
+      "lo": 0.053651,
+      "hi": 0.151905
+     },
+     "hpLost": {
+      "mean": 6.547222,
+      "lo": 5.072206,
+      "hi": 8.022239
+     },
+     "turns": {
+      "mean": 0.497222,
+      "lo": 0.22858,
+      "hi": 0.765864
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "jab",
+    "b": "quick-draw",
+    "synergy": {
+     "win": {
+      "mean": 0.113889,
+      "lo": 0.066257,
+      "hi": 0.161521
+     },
+     "hpLost": {
+      "mean": 6.355556,
+      "lo": 4.74333,
+      "hi": 7.967781
+     },
+     "turns": {
+      "mean": 0.816667,
+      "lo": 0.551034,
+      "hi": 1.082299
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "quick-draw",
+    "synergy": {
+     "win": {
+      "mean": 0.058333,
+      "lo": 0.006677,
+      "hi": 0.10999
+     },
+     "hpLost": {
+      "mean": 5.347222,
+      "lo": 3.612503,
+      "hi": 7.081941
+     },
+     "turns": {
+      "mean": 0.177778,
+      "lo": -0.131622,
+      "hi": 0.487177
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "quick-draw",
+    "b": "expose",
+    "synergy": {
+     "win": {
+      "mean": 0.133333,
+      "lo": 0.088508,
+      "hi": 0.178159
+     },
+     "hpLost": {
+      "mean": 4.966667,
+      "lo": 3.482646,
+      "hi": 6.450687
+     },
+     "turns": {
+      "mean": 0.355556,
+      "lo": 0.082933,
+      "hi": 0.628178
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "expose",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": -0.005556,
+      "lo": -0.031121,
+      "hi": 0.02001
+     },
+     "hpLost": {
+      "mean": 1.908333,
+      "lo": 0.830644,
+      "hi": 2.986022
+     },
+     "turns": {
+      "mean": -0.711111,
+      "lo": -0.857803,
+      "hi": -0.564419
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "sunder",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": -0.016667,
+      "lo": -0.044413,
+      "hi": 0.011079
+     },
+     "hpLost": {
+      "mean": 1.797222,
+      "lo": 0.740784,
+      "hi": 2.853661
+     },
+     "turns": {
+      "mean": -0.777778,
+      "lo": -0.927504,
+      "hi": -0.628051
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "weaken",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": 0.038889,
+      "lo": 0.013636,
+      "hi": 0.064142
+     },
+     "hpLost": {
+      "mean": 1.4,
+      "lo": 0.501038,
+      "hi": 2.298962
+     },
+     "turns": {
+      "mean": 0.166667,
+      "lo": 0.035367,
+      "hi": 0.297966
+     }
+    },
+    "verdict": "better"
+   },
+   {
+    "a": "big-block",
+    "b": "quick-draw",
+    "synergy": {
+     "win": {
+      "mean": -0.038889,
+      "lo": -0.095404,
+      "hi": 0.017626
+     },
+     "hpLost": {
+      "mean": 0.844444,
+      "lo": -1.19639,
+      "hi": 2.885279
+     },
+     "turns": {
+      "mean": -0.25,
+      "lo": -0.617489,
+      "hi": 0.117489
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "heavy-hit",
+    "b": "expose",
+    "synergy": {
+     "win": {
+      "mean": 0,
+      "lo": -0.021808,
+      "hi": 0.021808
+     },
+     "hpLost": {
+      "mean": 0.780556,
+      "lo": -0.26308,
+      "hi": 1.824192
+     },
+     "turns": {
+      "mean": -0.586111,
+      "lo": -0.730698,
+      "hi": -0.441524
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "heavy-hit",
+    "b": "weaken",
+    "synergy": {
+     "win": {
+      "mean": 0.038889,
+      "lo": 0.014841,
+      "hi": 0.062936
+     },
+     "hpLost": {
+      "mean": 0.538889,
+      "lo": -0.401302,
+      "hi": 1.47908
+     },
+     "turns": {
+      "mean": 0.047222,
+      "lo": -0.102502,
+      "hi": 0.196946
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "weaken",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": 0.022222,
+      "lo": -0.007551,
+      "hi": 0.051995
+     },
+     "hpLost": {
+      "mean": 0.452778,
+      "lo": -0.413978,
+      "hi": 1.319534
+     },
+     "turns": {
+      "mean": 0.163889,
+      "lo": 0.036341,
+      "hi": 0.291437
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "jab",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": -0.038889,
+      "lo": -0.064142,
+      "hi": -0.013636
+     },
+     "hpLost": {
+      "mean": 0.311111,
+      "lo": -0.753301,
+      "hi": 1.375523
+     },
+     "turns": {
+      "mean": -0.15,
+      "lo": -0.276209,
+      "hi": -0.023791
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "weaken",
+    "b": "expose",
+    "synergy": {
+     "win": {
+      "mean": 0.044444,
+      "lo": 0.015964,
+      "hi": 0.072925
+     },
+     "hpLost": {
+      "mean": 0.183333,
+      "lo": -0.701994,
+      "hi": 1.068661
+     },
+     "turns": {
+      "mean": 0.030556,
+      "lo": -0.10417,
+      "hi": 0.165281
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "heavy-hit",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": -0.016667,
+      "lo": -0.044413,
+      "hi": 0.011079
+     },
+     "hpLost": {
+      "mean": -0.061111,
+      "lo": -1.059076,
+      "hi": 0.936854
+     },
+     "turns": {
+      "mean": -0.822222,
+      "lo": -0.979538,
+      "hi": -0.664906
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "weaken",
+    "synergy": {
+     "win": {
+      "mean": 0.022222,
+      "lo": -0.004388,
+      "hi": 0.048832
+     },
+     "hpLost": {
+      "mean": -0.375,
+      "lo": -1.337884,
+      "hi": 0.587884
+     },
+     "turns": {
+      "mean": -0.133333,
+      "lo": -0.288076,
+      "hi": 0.021409
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": -0.058333,
+      "lo": -0.084917,
+      "hi": -0.03175
+     },
+     "hpLost": {
+      "mean": -0.563889,
+      "lo": -1.566665,
+      "hi": 0.438887
+     },
+     "turns": {
+      "mean": -0.136111,
+      "lo": -0.263543,
+      "hi": -0.008679
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "big-block",
+    "b": "weaken",
+    "synergy": {
+     "win": {
+      "mean": 0.036111,
+      "lo": 0.013945,
+      "hi": 0.058277
+     },
+     "hpLost": {
+      "mean": -0.658333,
+      "lo": -1.75178,
+      "hi": 0.435113
+     },
+     "turns": {
+      "mean": -0.294444,
+      "lo": -0.495855,
+      "hi": -0.093034
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "jab",
+    "b": "weaken",
+    "synergy": {
+     "win": {
+      "mean": 0.005556,
+      "lo": -0.022238,
+      "hi": 0.033349
+     },
+     "hpLost": {
+      "mean": -0.85,
+      "lo": -1.857911,
+      "hi": 0.157911
+     },
+     "turns": {
+      "mean": -0.016667,
+      "lo": -0.164965,
+      "hi": 0.131632
+     }
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "fortify",
+    "synergy": {
+     "win": {
+      "mean": -0.066667,
+      "lo": -0.093597,
+      "hi": -0.039736
+     },
+     "hpLost": {
+      "mean": -1.125,
+      "lo": -2.106003,
+      "hi": -0.143997
+     },
+     "turns": {
+      "mean": 0.638889,
+      "lo": 0.360945,
+      "hi": 0.916833
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "jab",
+    "b": "expose",
+    "synergy": {
+     "win": {
+      "mean": -0.002778,
+      "lo": -0.031105,
+      "hi": 0.02555
+     },
+     "hpLost": {
+      "mean": -1.358333,
+      "lo": -2.340962,
+      "hi": -0.375704
+     },
+     "turns": {
+      "mean": -0.166667,
+      "lo": -0.298869,
+      "hi": -0.034465
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "jab",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": -0.016667,
+      "lo": -0.04332,
+      "hi": 0.009986
+     },
+     "hpLost": {
+      "mean": -1.466667,
+      "lo": -2.451001,
+      "hi": -0.482333
+     },
+     "turns": {
+      "mean": -0.183333,
+      "lo": -0.313027,
+      "hi": -0.053639
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "heavy-hit",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": -0.075,
+      "lo": -0.109899,
+      "hi": -0.040101
+     },
+     "hpLost": {
+      "mean": -1.502778,
+      "lo": -2.485546,
+      "hi": -0.520009
+     },
+     "turns": {
+      "mean": -0.941667,
+      "lo": -1.09115,
+      "hi": -0.792183
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "expose",
+    "synergy": {
+     "win": {
+      "mean": -0.013889,
+      "lo": -0.041111,
+      "hi": 0.013333
+     },
+     "hpLost": {
+      "mean": -1.519444,
+      "lo": -2.463743,
+      "hi": -0.575146
+     },
+     "turns": {
+      "mean": -0.127778,
+      "lo": -0.259543,
+      "hi": 0.003988
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": -0.027778,
+      "lo": -0.053188,
+      "hi": -0.002368
+     },
+     "hpLost": {
+      "mean": -1.738889,
+      "lo": -2.690862,
+      "hi": -0.786916
+     },
+     "turns": {
+      "mean": -0.161111,
+      "lo": -0.285273,
+      "hi": -0.036949
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "expose",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": -0.047222,
+      "lo": -0.082638,
+      "hi": -0.011807
+     },
+     "hpLost": {
+      "mean": -1.933333,
+      "lo": -2.918947,
+      "hi": -0.94772
+     },
+     "turns": {
+      "mean": -1.077778,
+      "lo": -1.246155,
+      "hi": -0.909401
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "big-block",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": -0.061111,
+      "lo": -0.088182,
+      "hi": -0.03404
+     },
+     "hpLost": {
+      "mean": -2.077778,
+      "lo": -3.19325,
+      "hi": -0.962306
+     },
+     "turns": {
+      "mean": 0.55,
+      "lo": 0.372072,
+      "hi": 0.727928
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "jab",
+    "b": "big-block",
+    "synergy": {
+     "win": {
+      "mean": -0.041667,
+      "lo": -0.067455,
+      "hi": -0.015878
+     },
+     "hpLost": {
+      "mean": -2.2,
+      "lo": -3.360909,
+      "hi": -1.039091
+     },
+     "turns": {
+      "mean": 0.202778,
+      "lo": 0.032786,
+      "hi": 0.372769
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "jab",
+    "b": "guarded-strike",
+    "synergy": {
+     "win": {
+      "mean": -0.041667,
+      "lo": -0.067455,
+      "hi": -0.015878
+     },
+     "hpLost": {
+      "mean": -2.286111,
+      "lo": -3.305132,
+      "hi": -1.26709
+     },
+     "turns": {
+      "mean": -0.052778,
+      "lo": -0.190486,
+      "hi": 0.08493
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "fortify",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": -0.019444,
+      "lo": -0.043124,
+      "hi": 0.004235
+     },
+     "hpLost": {
+      "mean": -2.288889,
+      "lo": -3.345239,
+      "hi": -1.232538
+     },
+     "turns": {
+      "mean": 0.761111,
+      "lo": 0.491395,
+      "hi": 1.030827
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "jab",
+    "b": "fortify",
+    "synergy": {
+     "win": {
+      "mean": -0.047222,
+      "lo": -0.071724,
+      "hi": -0.022721
+     },
+     "hpLost": {
+      "mean": -2.366667,
+      "lo": -3.440095,
+      "hi": -1.293239
+     },
+     "turns": {
+      "mean": 1.338889,
+      "lo": 1.018909,
+      "hi": 1.658869
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "heavy-hit",
+    "b": "fortify",
+    "synergy": {
+     "win": {
+      "mean": -0.063889,
+      "lo": -0.089186,
+      "hi": -0.038591
+     },
+     "hpLost": {
+      "mean": -2.552778,
+      "lo": -3.618723,
+      "hi": -1.486833
+     },
+     "turns": {
+      "mean": 1.236111,
+      "lo": 0.909954,
+      "hi": 1.562268
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "heavy-hit",
+    "synergy": {
+     "win": {
+      "mean": -0.063889,
+      "lo": -0.091436,
+      "hi": -0.036342
+     },
+     "hpLost": {
+      "mean": -2.713889,
+      "lo": -3.677531,
+      "hi": -1.750247
+     },
+     "turns": {
+      "mean": -0.266667,
+      "lo": -0.408249,
+      "hi": -0.125085
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "big-block",
+    "b": "fortify",
+    "synergy": {
+     "win": {
+      "mean": -0.066667,
+      "lo": -0.09247,
+      "hi": -0.040863
+     },
+     "hpLost": {
+      "mean": -2.777778,
+      "lo": -3.888716,
+      "hi": -1.66684
+     },
+     "turns": {
+      "mean": 0.711111,
+      "lo": 0.425524,
+      "hi": 0.996698
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "fortify",
+    "b": "strengthen",
+    "synergy": {
+     "win": {
+      "mean": -0.063889,
+      "lo": -0.090335,
+      "hi": -0.037443
+     },
+     "hpLost": {
+      "mean": -2.830556,
+      "lo": -3.970785,
+      "hi": -1.690326
+     },
+     "turns": {
+      "mean": 1.008333,
+      "lo": 0.612666,
+      "hi": 1.404001
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "guarded-strike",
+    "b": "big-block",
+    "synergy": {
+     "win": {
+      "mean": -0.063889,
+      "lo": -0.092495,
+      "hi": -0.035283
+     },
+     "hpLost": {
+      "mean": -2.841667,
+      "lo": -3.948903,
+      "hi": -1.73443
+     },
+     "turns": {
+      "mean": 0.413889,
+      "lo": 0.248046,
+      "hi": 0.579732
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "jab",
+    "b": "heavy-hit",
+    "synergy": {
+     "win": {
+      "mean": -0.047222,
+      "lo": -0.071724,
+      "hi": -0.022721
+     },
+     "hpLost": {
+      "mean": -2.85,
+      "lo": -3.853241,
+      "hi": -1.846759
+     },
+     "turns": {
+      "mean": -0.3,
+      "lo": -0.437881,
+      "hi": -0.162119
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "quick-draw",
+    "b": "weaken",
+    "synergy": {
+     "win": {
+      "mean": -0.097222,
+      "lo": -0.152713,
+      "hi": -0.041731
+     },
+     "hpLost": {
+      "mean": -2.919444,
+      "lo": -4.559111,
+      "hi": -1.279778
+     },
+     "turns": {
+      "mean": -1.347222,
+      "lo": -1.691842,
+      "hi": -1.002602
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "big-block",
+    "b": "expose",
+    "synergy": {
+     "win": {
+      "mean": -0.011111,
+      "lo": -0.034213,
+      "hi": 0.011991
+     },
+     "hpLost": {
+      "mean": -2.986111,
+      "lo": -4.076999,
+      "hi": -1.895224
+     },
+     "turns": {
+      "mean": 0.416667,
+      "lo": 0.246387,
+      "hi": 0.586947
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "big-block",
+    "b": "sunder",
+    "synergy": {
+     "win": {
+      "mean": -0.047222,
+      "lo": -0.076173,
+      "hi": -0.018272
+     },
+     "hpLost": {
+      "mean": -3.161111,
+      "lo": -4.30332,
+      "hi": -2.018902
+     },
+     "turns": {
+      "mean": 0.552778,
+      "lo": 0.385892,
+      "hi": 0.719663
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "heavy-hit",
+    "b": "big-block",
+    "synergy": {
+     "win": {
+      "mean": -0.058333,
+      "lo": -0.082578,
+      "hi": -0.034089
+     },
+     "hpLost": {
+      "mean": -3.361111,
+      "lo": -4.410589,
+      "hi": -2.311633
+     },
+     "turns": {
+      "mean": 0.588889,
+      "lo": 0.408797,
+      "hi": 0.76898
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "fortify",
+    "b": "expose",
+    "synergy": {
+     "win": {
+      "mean": -0.116667,
+      "lo": -0.155639,
+      "hi": -0.077694
+     },
+     "hpLost": {
+      "mean": -5.641667,
+      "lo": -7.063132,
+      "hi": -4.220201
+     },
+     "turns": {
+      "mean": -3.986111,
+      "lo": -5.289621,
+      "hi": -2.682601
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "fortify",
+    "b": "weaken",
+    "synergy": {
+     "win": {
+      "mean": -0.211111,
+      "lo": -0.254024,
+      "hi": -0.168198
+     },
+     "hpLost": {
+      "mean": -6.952778,
+      "lo": -8.958583,
+      "hi": -4.946973
+     },
+     "turns": {
+      "mean": -10.905556,
+      "lo": -12.884767,
+      "hi": -8.926344
+     }
+    },
+    "verdict": "worse"
+   },
+   {
+    "a": "quick-draw",
+    "b": "fortify",
+    "synergy": {
+     "win": {
+      "mean": -0.522222,
+      "lo": -0.577774,
+      "hi": -0.466671
+     },
+     "hpLost": {
+      "mean": -16.475,
+      "lo": -18.507491,
+      "hi": -14.442509
+     },
+     "turns": {
+      "mean": -36.097222,
+      "lo": -38.45501,
+      "hi": -33.739434
+     }
+    },
+    "verdict": "worse"
+   }
+  ]
+ },
+ "outliers": {
+  "method": "Outlier method: within a cohort of 4 or more values, a value is flagged when its modified z-score (0.6745 * (x - median) / MAD, Iglewicz-Hoaglin) exceeds 3.5 in magnitude OR it lies outside the Tukey fences (Q1 - 1.5 IQR, Q3 + 1.5 IQR). Median/MAD/IQR are used because the cohort itself may contain the outlier. A flag means \"look at this\", not \"this is wrong\".",
+  "headline": "hpLost",
+  "entries": [
+   {
+    "kind": "card",
+    "skill": "random",
+    "cohort": "all cards",
+    "id": "focus",
+    "metric": "HP lost change when added",
+    "value": -3.942593,
+    "modifiedZ": -3.032337,
+    "z": -2.044998,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "random",
+    "cohort": "all cards",
+    "id": "quick-draw",
+    "metric": "HP lost change when added",
+    "value": -4.238889,
+    "modifiedZ": -3.201889,
+    "z": -2.165169,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "greedy",
+    "cohort": "all cards",
+    "id": "focus",
+    "metric": "HP lost change when added",
+    "value": -12.77037,
+    "modifiedZ": -4.291404,
+    "z": -0.833583,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "greedy",
+    "cohort": "all cards",
+    "id": "quick-draw",
+    "metric": "HP lost change when added",
+    "value": -40.261111,
+    "modifiedZ": -14.084026,
+    "z": -3.226318,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "greedy",
+    "cohort": "cost 1",
+    "id": "focus",
+    "metric": "HP lost change when added",
+    "value": -12.77037,
+    "modifiedZ": -4.222869,
+    "z": -0.425736,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "greedy",
+    "cohort": "cost 1",
+    "id": "quick-draw",
+    "metric": "HP lost change when added",
+    "value": -40.261111,
+    "modifiedZ": -14.112205,
+    "z": -2.333747,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "smart",
+    "cohort": "all cards",
+    "id": "focus",
+    "metric": "HP lost change when added",
+    "value": -9.240741,
+    "modifiedZ": -4.749212,
+    "z": -1.76972,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "smart",
+    "cohort": "all cards",
+    "id": "quick-draw",
+    "metric": "HP lost change when added",
+    "value": -13.227778,
+    "modifiedZ": -6.673928,
+    "z": -2.518108,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "smart",
+    "cohort": "cost 1",
+    "id": "focus",
+    "metric": "HP lost change when added",
+    "value": -9.240741,
+    "modifiedZ": -8.36576,
+    "z": -1.202933,
+    "outsideIqr": true
+   },
+   {
+    "kind": "card",
+    "skill": "smart",
+    "cohort": "cost 1",
+    "id": "guarded-strike",
+    "metric": "HP lost change when added",
+    "value": 5.644444,
+    "modifiedZ": 4.71418,
+    "z": 1.196663,
+    "outsideIqr": false
+   },
+   {
+    "kind": "card",
+    "skill": "smart",
+    "cohort": "cost 1",
+    "id": "quick-draw",
+    "metric": "HP lost change when added",
+    "value": -13.227778,
+    "modifiedZ": -11.869257,
+    "z": -1.845671,
+    "outsideIqr": true
+   }
+  ],
+  "worseThanNothing": [
+   {
+    "skill": "random",
+    "card": "focus",
+    "delta": {
+     "mean": 3.942593,
+     "lo": 3.166036,
+     "hi": 4.719149
+    }
+   },
+   {
+    "skill": "random",
+    "card": "quick-draw",
+    "delta": {
+     "mean": 4.238889,
+     "lo": 3.455033,
+     "hi": 5.022745
+    }
+   },
+   {
+    "skill": "greedy",
+    "card": "strike",
+    "delta": {
+     "mean": 1.003704,
+     "lo": 0.557312,
+     "hi": 1.450096
+    }
+   },
+   {
+    "skill": "greedy",
+    "card": "bolt",
+    "delta": {
+     "mean": 0.914815,
+     "lo": 0.473327,
+     "hi": 1.356303
+    }
+   },
+   {
+    "skill": "greedy",
+    "card": "focus",
+    "delta": {
+     "mean": 12.77037,
+     "lo": 11.684948,
+     "hi": 13.855793
+    }
+   },
+   {
+    "skill": "greedy",
+    "card": "quick-draw",
+    "delta": {
+     "mean": 40.261111,
+     "lo": 38.544922,
+     "hi": 41.9773
+    }
+   },
+   {
+    "skill": "greedy",
+    "card": "weaken",
+    "delta": {
+     "mean": 1.059259,
+     "lo": 0.578914,
+     "hi": 1.539605
+    }
+   },
+   {
+    "skill": "greedy",
+    "card": "expose",
+    "delta": {
+     "mean": 2.311111,
+     "lo": 1.809402,
+     "hi": 2.81282
+    }
+   },
+   {
+    "skill": "greedy",
+    "card": "sunder",
+    "delta": {
+     "mean": 2.366667,
+     "lo": 1.866437,
+     "hi": 2.866896
+    }
+   },
+   {
+    "skill": "smart",
+    "card": "focus",
+    "delta": {
+     "mean": 9.240741,
+     "lo": 8.408485,
+     "hi": 10.072996
+    }
+   },
+   {
+    "skill": "smart",
+    "card": "quick-draw",
+    "delta": {
+     "mean": 13.227778,
+     "lo": 12.101963,
+     "hi": 14.353593
+    }
+   }
+  ]
+ },
+ "drafts": {
+  "runs": 100,
+  "baseSeed": 1,
+  "skill": "greedy",
+  "policies": [
+   {
+    "policy": "reward=card (random pick)",
+    "win": {
+     "p": 0.37,
+     "lo": 0.281824,
+     "hi": 0.467795
+    },
+    "floor": {
+     "mean": 9.92,
+     "lo": 9.224544,
+     "hi": 10.615456
+    },
+    "winChange": null,
+    "floorChange": null,
+    "verdict": null
+   },
+   {
+    "policy": "reward=gold (always gold)",
+    "win": {
+     "p": 0.41,
+     "lo": 0.318673,
+     "hi": 0.507986
+    },
+    "floor": {
+     "mean": 12.23,
+     "lo": 11.895998,
+     "hi": 12.564002
+    },
+    "winChange": {
+     "mean": 0.04,
+     "lo": -0.082412,
+     "hi": 0.162412
+    },
+    "floorChange": {
+     "mean": 2.31,
+     "lo": 1.550312,
+     "hi": 3.069688
+    },
+    "verdict": "inconclusive"
+   },
+   {
+    "policy": "reward=best (trial-fight pick)",
+    "win": {
+     "p": 0.77,
+     "lo": 0.678456,
+     "hi": 0.841567
+    },
+    "floor": {
+     "mean": 12.71,
+     "lo": 12.500731,
+     "hi": 12.919269
+    },
+    "winChange": {
+     "mean": 0.4,
+     "lo": 0.271035,
+     "hi": 0.528965
+    },
+    "floorChange": {
+     "mean": 2.79,
+     "lo": 2.105671,
+     "hi": 3.474329
+    },
+    "verdict": "better"
+   },
+   {
+    "policy": "rest=heal (never upgrade)",
+    "win": {
+     "p": 0.36,
+     "lo": 0.272712,
+     "hi": 0.457646
+    },
+    "floor": {
+     "mean": 9.91,
+     "lo": 9.216589,
+     "hi": 10.603411
+    },
+    "winChange": {
+     "mean": -0.01,
+     "lo": -0.0298,
+     "hi": 0.0098
+    },
+    "floorChange": {
+     "mean": -0.01,
+     "lo": -0.054453,
+     "hi": 0.034453
+    },
+    "verdict": "negligible"
+   },
+   {
+    "policy": "path=random",
+    "win": {
+     "p": 0.28,
+     "lo": 0.201397,
+     "hi": 0.37488
+    },
+    "floor": {
+     "mean": 9.98,
+     "lo": 9.2821,
+     "hi": 10.6779
+    },
+    "winChange": {
+     "mean": -0.09,
+     "lo": -0.219256,
+     "hi": 0.039256
+    },
+    "floorChange": {
+     "mean": 0.06,
+     "lo": -0.883852,
+     "hi": 1.003852
+    },
+    "verdict": "inconclusive"
+   }
+  ],
+  "pickRates": {
+   "reward=card (random pick)": [
+    {
+     "card": "jab",
+     "offered": 171,
+     "picked": 68,
+     "rate": 0.397661
+    },
+    {
+     "card": "sunder",
+     "offered": 141,
+     "picked": 55,
+     "rate": 0.390071
+    },
+    {
+     "card": "big-block",
+     "offered": 172,
+     "picked": 61,
+     "rate": 0.354651
+    },
+    {
+     "card": "expose",
+     "offered": 170,
+     "picked": 59,
+     "rate": 0.347059
+    },
+    {
+     "card": "bolt",
+     "offered": 186,
+     "picked": 62,
+     "rate": 0.333333
+    },
+    {
+     "card": "heavy-hit",
+     "offered": 189,
+     "picked": 61,
+     "rate": 0.322751
+    },
+    {
+     "card": "weaken",
+     "offered": 163,
+     "picked": 52,
+     "rate": 0.319018
+    },
+    {
+     "card": "fortify",
+     "offered": 176,
+     "picked": 56,
+     "rate": 0.318182
+    },
+    {
+     "card": "guarded-strike",
+     "offered": 185,
+     "picked": 58,
+     "rate": 0.313514
+    },
+    {
+     "card": "strengthen",
+     "offered": 161,
+     "picked": 50,
+     "rate": 0.310559
+    },
+    {
+     "card": "quick-draw",
+     "offered": 176,
+     "picked": 48,
+     "rate": 0.272727
+    }
+   ],
+   "reward=best (trial-fight pick)": [
+    {
+     "card": "guarded-strike",
+     "offered": 236,
+     "picked": 166,
+     "rate": 0.70339
+    },
+    {
+     "card": "big-block",
+     "offered": 223,
+     "picked": 152,
+     "rate": 0.681614
+    },
+    {
+     "card": "jab",
+     "offered": 227,
+     "picked": 86,
+     "rate": 0.378855
+    },
+    {
+     "card": "heavy-hit",
+     "offered": 232,
+     "picked": 84,
+     "rate": 0.362069
+    },
+    {
+     "card": "weaken",
+     "offered": 213,
+     "picked": 76,
+     "rate": 0.356808
+    },
+    {
+     "card": "bolt",
+     "offered": 244,
+     "picked": 78,
+     "rate": 0.319672
+    },
+    {
+     "card": "strengthen",
+     "offered": 208,
+     "picked": 43,
+     "rate": 0.206731
+    },
+    {
+     "card": "fortify",
+     "offered": 239,
+     "picked": 46,
+     "rate": 0.192469
+    },
+    {
+     "card": "expose",
+     "offered": 204,
+     "picked": 35,
+     "rate": 0.171569
+    },
+    {
+     "card": "sunder",
+     "offered": 175,
+     "picked": 24,
+     "rate": 0.137143
+    },
+    {
+     "card": "quick-draw",
+     "offered": 214,
+     "picked": 15,
+     "rate": 0.070093
+    }
+   ]
+  }
+ }
+}
