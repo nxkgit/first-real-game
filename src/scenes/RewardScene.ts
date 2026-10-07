@@ -88,7 +88,7 @@ export class RewardScene extends Phaser.Scene {
     if (this.chosen) return;
     this.chosen = true;
     apply();
-    Sfx.cardPlay();
+    Sfx.choose();
     enterCurrentNode(this, this.run);
   }
 }

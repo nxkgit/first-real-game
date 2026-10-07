@@ -40,7 +40,7 @@ export class RestScene extends Phaser.Scene {
 
     addButton(this, 400, 420, heal > 0 ? `Rest (+${heal} HP)` : 'Continue', () => {
       this.run.rest();
-      if (heal > 0) Sfx.block();
+      if (heal > 0) Sfx.heal();
       enterCurrentNode(this, this.run);
     });
   }
