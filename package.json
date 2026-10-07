@@ -14,9 +14,12 @@
     "balance": "vite build --ssr src/sim/balanceCli.ts --outDir .sim/balance --emptyOutDir --logLevel warn && node .sim/balance/balanceCli.js",
     "balance:baseline": "npm run balance -- baseline",
     "balance:check": "npm run balance -- check",
-    "balance:report": "npm run balance -- report --out balance/reports/sample"
+    "balance:report": "npm run balance -- report --out balance/reports/sample",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install --with-deps chromium"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@vitest/coverage-v8": "^5.0.3",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
