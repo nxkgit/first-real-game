@@ -40,3 +40,18 @@
 | starts with exhaust-token | 179 | 41.9 | 90.5% |
 | starts with kill-token | 177 | 40.7 | 87.6% |
 
+## HP budget: win rate against starting max HP
+
+300 paired runs per row on seeds 1..300, smart bot. Starting max HP (and HP) changed in memory; the rest of the run is the same. Differences are paired by seed against the first row, 95% intervals.
+
+| variant | win rate [95% CI] | win vs first (paired) | floor reached | final deck cost, HP/fight [CI] | cost vs first | deck size | gold left | verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| max HP 60 (current) | 54.0% [48.3%, 59.6%] | base | 11.3 [11.0, 11.6] | 6.9 [6.6, 7.3] | base | 17.3 | 10 | base |
+| max HP 40 (-20) | 26.0% [21.4%, 31.2%] | -28.0 [-33.3, -22.7] pts | 9.3 [9.0, 9.6] | 7.3 [7.0, 7.6] | +0.3 [+0.1, +0.5] | 15.9 | 9 | worse |
+| max HP 50 (-10) | 40.3% [34.9%, 46.0%] | -13.7 [-17.9, -9.5] pts | 10.4 [10.1, 10.7] | 7.1 [6.8, 7.5] | +0.2 [+0.0, +0.4] | 16.6 | 10 | worse |
+| max HP 55 (-5) | 48.3% [42.7%, 54.0%] | -5.7 [-8.9, -2.5] pts | 11.0 [10.7, 11.3] | 7.0 [6.7, 7.3] | +0.1 [-0.0, +0.2] | 17.0 | 10 | worse |
+| max HP 65 (+5) | 63.0% [57.4%, 68.3%] | +9.0 [+5.5, +12.5] pts | 11.6 [11.4, 11.9] | 6.9 [6.6, 7.3] | -0.0 [-0.1, +0.1] | 17.5 | 10 | better |
+| max HP 70 (+10) | 68.7% [63.2%, 73.7%] | +14.7 [+10.7, +18.7] pts | 12.0 [11.7, 12.2] | 6.8 [6.5, 7.2] | -0.1 [-0.2, +0.0] | 17.7 | 10 | better |
+| max HP 80 (+20) | 80.3% [75.5%, 84.4%] | +26.3 [+21.3, +31.4] pts | 12.4 [12.3, 12.6] | 6.8 [6.5, 7.1] | -0.2 [-0.3, -0.0] | 18.0 | 10 | better |
+| max HP 90 (+30) | 87.7% [83.5%, 90.9%] | +33.7 [+28.2, +39.1] pts | 12.7 [12.5, 12.8] | 6.7 [6.4, 7.0] | -0.3 [-0.4, -0.1] | 18.2 | 10 | better |
+

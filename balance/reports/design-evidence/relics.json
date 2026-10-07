@@ -371,5 +371,71 @@
     "verdict": "inconclusive"
    }
   ]
+ },
+ "hpBudget": {
+  "options": {
+   "runs": 300,
+   "baseSeed": 1,
+   "skill": "smart",
+   "bonuses": [
+    -20,
+    -10,
+    -5,
+    5,
+    10,
+    20,
+    30
+   ]
+  },
+  "rows": [
+   {
+    "name": "max HP 60 (current)",
+    "win": 0.54,
+    "dWin": null,
+    "floor": 11.306667
+   },
+   {
+    "name": "max HP 40 (-20)",
+    "win": 0.26,
+    "dWin": -0.28,
+    "floor": 9.306667
+   },
+   {
+    "name": "max HP 50 (-10)",
+    "win": 0.403333,
+    "dWin": -0.136667,
+    "floor": 10.426667
+   },
+   {
+    "name": "max HP 55 (-5)",
+    "win": 0.483333,
+    "dWin": -0.056667,
+    "floor": 10.983333
+   },
+   {
+    "name": "max HP 65 (+5)",
+    "win": 0.63,
+    "dWin": 0.09,
+    "floor": 11.62
+   },
+   {
+    "name": "max HP 70 (+10)",
+    "win": 0.686667,
+    "dWin": 0.146667,
+    "floor": 11.956667
+   },
+   {
+    "name": "max HP 80 (+20)",
+    "win": 0.803333,
+    "dWin": 0.263333,
+    "floor": 12.41
+   },
+   {
+    "name": "max HP 90 (+30)",
+    "win": 0.876667,
+    "dWin": 0.336667,
+    "floor": 12.66
+   }
+  ]
  }
 }
