@@ -1,6 +1,7 @@
 import type { CardDefinition } from '../game/types';
 import { Rng } from '../game/rng';
-import { MAGE, baseCards, buildStarterDeck, rewardPoolFor, upgradedVersion } from '../data/cards';
+import { MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
+import { SYNERGY_CARDS } from '../data/synergyCards';
 import { ACT_CONTENT } from '../data/run';
 
 /**
@@ -68,7 +69,7 @@ export function samplingPool(pool: 'reward' | 'all'): CardDefinition[] {
  *   mid: starter + 5 sampled cards (about floor 5-6).
  *   late: starter + 10 sampled cards, 3 cards upgraded (about floor 10+).
  */
-export function referenceDeckSets(opts: { pool?: 'reward' | 'all'; samples?: number } = {}): DeckSet[] {
+export function referenceDeckSets(opts: { pool?: 'reward' | 'all'; samples?: number; synergy?: boolean } = {}): DeckSet[] {
   const pool = samplingPool(opts.pool ?? 'reward');
   const samples = opts.samples ?? 3;
   const make = (extra: number, upgrades: number, seed: number): CardDefinition[] => {
@@ -89,10 +90,52 @@ export function referenceDeckSets(opts: { pool?: 'reward' | 'all'; samples?: num
   };
   const many = (extra: number, upgrades: number, seed: number): CardDefinition[][] =>
     Array.from({ length: samples }, (_, i) => make(extra, upgrades, seed + i * 101));
-  return [
+  const core: DeckSet[] = [
     { name: 'starter', description: 'the starter deck', decks: [buildStarterDeck()] },
     { name: 'mid', description: 'starter + 5 sampled cards', decks: many(5, 0, 5000) },
     { name: 'late', description: 'starter + 10 sampled cards, 3 upgraded', decks: many(10, 3, 9000) },
+  ];
+  return opts.synergy ? [...core, ...synergyDeckSets({ samples })] : core;
+}
+
+/** Cards by id, with "id*3" meaning three copies. */
+export function deckFromSpec(spec: string[]): CardDefinition[] {
+  const out: CardDefinition[] = [];
+  for (const part of spec) {
+    const [id, n] = part.split('*');
+    const count = n === undefined ? 1 : Number(n);
+    if (!Number.isInteger(count) || count < 1) throw new Error(`bad copy count in "${part}"`);
+    for (let i = 0; i < count; i++) out.push(getCard(id.trim()));
+  }
+  return out;
+}
+
+/**
+ * Hand-built reference decks, one per synergy family of src/data/synergyCards.ts (about 13-15 cards:
+ * a basic frame plus the family). They are NOT meant to be balanced or realistic: each shows whether
+ * its family can carry a deck, and how fast it ends fights. Existing sets keep their seeds, so old
+ * results stay comparable. The mixed set samples 8 synergy cards on top of the starter deck.
+ */
+export function synergyDeckSets(opts: { samples?: number } = {}): DeckSet[] {
+  const named = (name: string, description: string, spec: string[]): DeckSet => ({ name, description, decks: [deckFromSpec(spec)] });
+  const mixed = (seed: number): CardDefinition[] => {
+    const r = new Rng(seed);
+    const bag = [...SYNERGY_CARDS];
+    const deck = buildStarterDeck();
+    for (let i = 0; i < 8; i++) deck.push(bag.splice(Math.floor(r.next() * bag.length), 1)[0]);
+    return deck;
+  };
+  return [
+    named('syn-tag', 'tag-a deck: enablers, payoff, draw power', ['strike*2', 'defend*3', 'prime-a*3', 'tag-a-payoff*2', 'tag-a-echo', 'bolt', 'jab*2']),
+    named('syn-exhaust', 'exhaust deck: Cull, one-shot attacks, exhaust payoff and engine', ['strike*2', 'defend*2', 'cull*2', 'single-use-strike*2', 'exhaust-payoff*2', 'exhaust-engine', 'quick-draw', 'bolt']),
+    named('syn-trigger', 'trigger / block deck: block triggers, Block Slam', ['strike*2', 'defend*3', 'attack-echo', 'block-spark', 'end-guard', 'block-slam*2', 'opening-spark', 'big-block', 'jab']),
+    named('syn-mult', 'empowered / strength multiplier deck', ['strike*3', 'defend*2', 'power-up*2', 'strengthen', 'double-strength', 'pain-engine', 'blood-strike*2', 'heavy-hit', 'bolt']),
+    named('syn-combo', 'combo-count deck: cheap plays into count scaling', ['strike*2', 'defend*2', 'jab*3', 'combo-strike*2', 'hand-strike*2', 'quick-draw', 'expose', 'opportunist']),
+    {
+      name: 'syn-mixed',
+      description: 'starter + 8 sampled synergy cards',
+      decks: Array.from({ length: opts.samples ?? 3 }, (_, i) => mixed(31000 + i * 101)),
+    },
   ];
 }
 

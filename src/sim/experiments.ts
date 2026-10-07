@@ -1,4 +1,5 @@
 import { baseCards, upgradedVersion } from '../data/cards';
+import { SYNERGY_CARDS } from '../data/synergyCards';
 import { Rng } from '../game/rng';
 import type { CardDefinition } from '../game/types';
 import { Evaluator, METRICS, METRIC_IDS } from './engine';
@@ -36,9 +37,18 @@ const concat = (parts: Float64Array[]): Float64Array => {
 };
 const benefitSign = (m: MetricId): number => (METRICS[m].higherIsBetter ? 1 : -1);
 
+/** Which cards an experiment tests: every card, only the synergy cards, or only reward-pool cards. */
+export type CardSet = 'all' | 'synergy' | 'reward';
+
+export function inCardSet(card: CardDefinition, set: CardSet | undefined): boolean {
+  if (set === undefined || set === 'all') return true;
+  if (set === 'reward') return card.inRewardPool;
+  return SYNERGY_CARDS.some((c) => c.id === card.id);
+}
+
 function contextDeck(name: string, pool: 'reward' | 'all'): CardDefinition[] {
-  const set = referenceDeckSets({ pool }).find((s) => s.name === name);
-  if (!set) throw new Error(`unknown deck context "${name}" (starter, mid, late)`);
+  const set = referenceDeckSets({ pool, synergy: true }).find((s) => s.name === name);
+  if (!set) throw new Error(`unknown deck context "${name}" (starter, mid, late, syn-tag, syn-exhaust, syn-trigger, syn-mult, syn-combo, syn-mixed)`);
   return set.decks[0];
 }
 
@@ -59,6 +69,8 @@ export interface CardsOptions {
   includeUpgrades?: boolean;
   headline?: MetricId;
   pool?: 'reward' | 'all';
+  /** Restrict the tested cards (default all). */
+  cardset?: CardSet;
 }
 
 export interface CardRow {
@@ -74,8 +86,8 @@ export interface CardRow {
   verdict: Verdict;
 }
 
-export function cardCandidates(includeUpgrades: boolean): CardDefinition[] {
-  const base = baseCards();
+export function cardCandidates(includeUpgrades: boolean, cardset?: CardSet): CardDefinition[] {
+  const base = baseCards().filter((c) => inCardSet(c, cardset));
   return includeUpgrades ? [...base, ...base.flatMap((c) => upgradedVersion(c) ?? [])] : [...base];
 }
 
@@ -84,7 +96,7 @@ export function cardsExperiment(ev: Evaluator, opts: CardsOptions): ExperimentRe
   const modes = opts.modes ?? ['add', 'replace'];
   const headline = opts.headline ?? 'hpLost';
   const deck = contextDeck(context, opts.pool ?? 'reward');
-  const cards = cardCandidates(opts.includeUpgrades ?? false);
+  const cards = cardCandidates(opts.includeUpgrades ?? false, opts.cardset);
   const rows: CardRow[] = [];
   const sections: string[] = [];
 
@@ -157,6 +169,7 @@ export interface PairsOptions {
   maxPairs?: number;
   includeStarter?: boolean;
   pool?: 'reward' | 'all';
+  cardset?: CardSet;
   top?: number;
   /** Evaluate only these pairs, written "a+b" (to confirm a lead with more seeds). */
   only?: string[];
@@ -175,7 +188,7 @@ export function pairsExperiment(ev: Evaluator, opts: PairsOptions): ExperimentRe
   const headline = opts.headline ?? 'hpLost';
   const deck = contextDeck(context, opts.pool ?? 'reward');
   const starter = starterIds();
-  const cards = baseCards().filter((c) => opts.includeStarter || !starter.has(c.id));
+  const cards = baseCards().filter((c) => (opts.includeStarter || !starter.has(c.id)) && inCardSet(c, opts.cardset));
   const all: [CardDefinition, CardDefinition][] = [];
   for (let i = 0; i < cards.length; i++) for (let j = i + 1; j < cards.length; j++) all.push([cards[i], cards[j]]);
   let chosen = all;
@@ -395,7 +408,7 @@ const rowJson = (r: LadderRow): object => ({
 
 export function lengthsExperiment(ev: Evaluator, opts: { skills: SkillLevel[]; set?: string; pool?: 'reward' | 'all' }): ExperimentResult & { rows: LadderRow[] } {
   const setName = opts.set ?? TARGET_DECK_SET;
-  const sets = referenceDeckSets({ pool: opts.pool }).filter((s) => s.name === setName);
+  const sets = referenceDeckSets({ pool: opts.pool, synergy: true }).filter((s) => s.name === setName);
   if (sets.length === 0) throw new Error(`unknown deck set "${setName}"`);
   const rows = ladderRows(ev, opts.skills, sets);
   const out: string[] = [

@@ -1,9 +1,11 @@
 import type { CombatState } from '../game/CombatState';
 import { Rng } from '../game/rng';
-import type { CardInstance, EnemyState } from '../game/types';
+import type { CardInstance } from '../game/types';
 import { HAND_SIZE } from '../data/tunables';
 import { playBotTurn } from './bot';
 import { reconstruct } from './fightCore';
+import { smartChoices, threat } from './smart';
+import type { Choice } from './smart';
 import type { Action, FightSpec, RngStart } from './fightCore';
 
 /**
@@ -95,113 +97,8 @@ const greedyBot: Bot = {
 
 // ---------- smart: heuristic sequencing ----------
 
-const KNOWN_KINDS = new Set(['damage', 'block', 'draw', 'applyStatus']);
-
-interface Profile {
-  damage: number;
-  block: number;
-  draws: boolean;
-  debuff: boolean;
-  selfBuff: boolean;
-  /** Any effect kind this bot has no heuristic for (energy gain, scaling, ...): treated as setup. */
-  other: boolean;
-  power: boolean;
-}
-
-function profileOf(card: CardInstance): Profile {
-  const def = card.definition;
-  const effects = def.effects ?? [];
-  const p: Profile = { damage: 0, block: 0, draws: false, debuff: false, selfBuff: false, other: false, power: def.type === 'power' || def.onTurnStartEffect !== undefined };
-  for (const e of effects) {
-    if (e.kind === 'damage') p.damage += e.value;
-    else if (e.kind === 'block') p.block += e.value;
-    else if (e.kind === 'draw') p.draws = true;
-    else if (e.kind === 'applyStatus') {
-      if (e.to === 'self') p.selfBuff = true;
-      else p.debuff = true;
-    }
-    if (!KNOWN_KINDS.has(e.kind)) p.other = true;
-  }
-  return p;
-}
-
-/** Damage per hit the enemy's pattern deals on average per turn, with its current statuses. */
-function threat(combat: CombatState, enemy: EnemyState): number {
-  const pattern = enemy.definition.movePattern;
-  let total = 0;
-  for (const move of pattern) {
-    for (const e of move.effects) if (e.kind === 'damage') total += combat.calcDamage(e.value, enemy, combat.player);
-  }
-  return total / Math.max(1, pattern.length);
-}
-
-function incomingNow(combat: CombatState): number {
-  return combat.livingEnemies.reduce((sum, e) => sum + (combat.intentDamage(e) ?? 0), 0);
-}
-
-/** Every card the hand can play right now, each with its best target and a priority (higher first). */
-export interface Choice {
-  card: CardInstance;
-  targetId?: string;
-  score: number;
-}
-
-export function smartChoices(combat: CombatState): Choice[] {
-  const living = combat.livingEnemies;
-  if (living.length === 0) return [];
-  const player = combat.player;
-  const incoming = incomingNow(combat);
-  const needBlock = Math.max(0, incoming - player.block);
-  const facingLethal = needBlock >= player.hp;
-  const totalEnemyHp = living.reduce((n, e) => n + e.hp, 0);
-  const threats = new Map(living.map((e) => [e.id, threat(combat, e)]));
-  const choices: Choice[] = [];
-
-  for (const card of combat.deck.hand) {
-    if (!combat.canPlay(card)) continue;
-    const def = card.definition;
-    const p = profileOf(card);
-    const aimed = def.target === 'enemy';
-    const hits = (def.effects ?? []).filter((e) => e.kind === 'damage');
-    const dealt = (e: EnemyState): number => hits.reduce((n, h) => n + combat.calcDamage(h.value, combat.player, e), 0);
-    const effective = (e: EnemyState): number => Math.min(dealt(e), e.hp + e.block);
-
-    let target: EnemyState | undefined;
-    if (aimed) {
-      if (p.damage > 0) {
-        const killable = living.filter((e) => dealt(e) >= e.hp + e.block);
-        const pool = killable.length > 0 ? killable : living;
-        const rank = (e: EnemyState): number => (killable.length > 0 ? (threats.get(e.id) ?? 0) : (threats.get(e.id) ?? 0) / (e.hp + e.block + 1));
-        target = pool.reduce((best, e) => (rank(e) > rank(best) || (rank(e) === rank(best) && e.hp < best.hp) ? e : best), pool[0]);
-      } else {
-        const rank = (e: EnemyState): number => (threats.get(e.id) ?? 0) + (e.hp + e.block) / 10;
-        target = living.reduce((best, e) => (rank(e) > rank(best) ? e : best), living[0]);
-      }
-    }
-
-    const cost = def.cost + 0.5;
-    const blockUseful = Math.min(p.block, needBlock) * (facingLethal ? 6 : 1.2);
-    const latePhase = totalEnemyHp <= 12;
-    let score: number;
-    if (aimed && target && p.damage > 0 && dealt(target) >= target.hp + target.block) {
-      score = 1000 + (threats.get(target.id) ?? 0) * 3 + effective(target) - def.cost;
-    } else if (p.power) {
-      score = latePhase ? 90 : 300;
-    } else if (p.damage === 0 && p.block === 0 && (p.draws || p.selfBuff || p.other)) {
-      score = latePhase ? 90 : p.selfBuff ? 280 : p.draws ? 260 : 250;
-    } else if (p.damage === 0 && p.block === 0 && p.debuff) {
-      score = target && target.hp + target.block > 14 ? 200 : 60;
-    } else if (p.damage > 0 && target) {
-      score = 100 + (effective(target) + blockUseful) / cost + (p.debuff && target.hp > 14 ? 30 : 0) + (p.draws || p.selfBuff ? 20 : 0);
-    } else if (p.block > 0) {
-      score = needBlock > 0 ? 100 + blockUseful / cost : 5;
-    } else {
-      score = 1;
-    }
-    choices.push({ card, targetId: target?.id, score: score - def.cost * 0.01 });
-  }
-  return choices.sort((a, b) => b.score - a.score);
-}
+export { smartChoices } from './smart';
+export type { Choice } from './smart';
 
 /** One smart turn, played straight onto `combat` (no recording): used by the bot and by rollouts. */
 function playSmartTurn(combat: CombatState, playCardFn: (card: CardInstance, targetId?: string) => boolean): void {
@@ -223,6 +120,8 @@ const smartBot: Bot = {
 export const EXPERT_CANDIDATES = 6;
 /** Turns each rollout covers: the rest of this turn, then this many minus one further turns. */
 export const EXPERT_HORIZON = 2;
+/** How much better (HP-equivalents) a play must look than smart's pick to replace it. */
+export const EXPERT_MARGIN = 0.75;
 
 /** Average damage per turn the deck can output, from the cards it holds (all piles are public information). */
 function outputGuess(combat: CombatState): number {
@@ -275,23 +174,23 @@ const expertBot: Bot = {
       // the same hypothetical shuffles for every candidate at this decision: a fair comparison
       const hypo = (ctx.start.seed ^ Math.imul(ctx.history.length + 1, 0x9e3779b1)) >>> 0;
 
+      // smart's own first pick is the default: another play, or ending the turn, must beat it by a margin
+      // (the rollouts are noisy; without a margin the lookahead talks itself out of good plays)
       let bestValue = -Infinity;
-      let bestChoice: Choice | undefined; // undefined = end the turn
-      const endState = reconstruct(ctx.spec, ctx.start, ctx.history, hypo);
-      endState.endPlayerTurn();
-      const endValue = rollout(endState, EXPERT_HORIZON - 1);
-      bestValue = endValue;
+      let bestChoice: Choice | undefined;
       for (const choice of candidates) {
         const state = reconstruct(ctx.spec, ctx.start, ctx.history, hypo);
         const card = state.deck.hand[ctx.combat.deck.hand.indexOf(choice.card)];
         if (!card || !state.playCard(card.instanceId, choice.targetId)) continue;
         const value = rollout(state, EXPERT_HORIZON);
-        // ties go to the earlier (smart-preferred) play; ending the turn must be strictly better to win
-        if (value > bestValue + 1e-9) {
+        if (bestChoice === undefined || value > bestValue + EXPERT_MARGIN) {
           bestValue = value;
           bestChoice = choice;
         }
       }
+      const endState = reconstruct(ctx.spec, ctx.start, ctx.history, hypo);
+      endState.endPlayerTurn();
+      if (bestChoice !== undefined && rollout(endState, EXPERT_HORIZON - 1) > bestValue + EXPERT_MARGIN) bestChoice = undefined;
       if (!bestChoice) return;
       if (!play(ctx, bestChoice.card, bestChoice.targetId)) return;
     }
