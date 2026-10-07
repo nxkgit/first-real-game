@@ -200,6 +200,13 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return Math.max(0, Math.floor(amount));
   }
 
+  /** What one damage effect of `card` would really deal to `target` right now (Strength, Weak,
+   *  Vulnerable, scaling, Empowered). Uses the same formula as playing the card. For the live
+   *  number on card faces. */
+  previewCardDamage(card: CardDefinition, effect: { value: number; scaling?: Scaling }, target: EnemyState): number {
+    return this.calcDamage(this.scaledValue(effect, target), this.player, target, card.type === 'attack');
+  }
+
   /** Total damage the enemy's next move will deal the player right now (statuses included), or
    *  undefined if that move doesn't attack. For the intent readout. */
   intentDamage(enemy: EnemyState): number | undefined {

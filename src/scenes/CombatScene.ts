@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { CombatState } from '../game/CombatState';
 import type { CombatEventMap } from '../game/CombatState';
 import type { FightTier, RunState } from '../game/RunState';
-import type { CardInstance, EnemyDefinition } from '../game/types';
+import type { CardInstance, Effect, EnemyDefinition } from '../game/types';
 import { PLAYER_ID } from '../game/types';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
@@ -16,6 +16,7 @@ import {
   addRunHud,
   addSettingsButton,
   buildCardFace,
+  setCardLiveText,
   closeDeckView,
   enterCurrentNode,
   isDeckViewOpen,
@@ -511,7 +512,7 @@ export class CombatScene extends Phaser.Scene {
       );
     }
 
-    return Promise.all(animations).then(() => undefined);
+    return Promise.all(animations).then(() => this.refreshCardNumbers());
   }
 
   private buildCardVisual(card: CardInstance, canPlay: boolean): Phaser.GameObjects.Container {
@@ -723,5 +724,21 @@ export class CombatScene extends Phaser.Scene {
     for (const view of this.enemyViews) view.syncFrom();
 
     this.statusText.setText(c.log.slice(-2).map((e) => e.message).join('\n'));
+    this.refreshCardNumbers();
+  }
+
+  /** Shows each hand card's damage as it would really land now, against the first living enemy
+   *  (the one the number keys aim at). Reads live state, so call it only when animations are done. */
+  private refreshCardNumbers(): void {
+    const target = this.combat.livingEnemies[0];
+    for (const card of this.combat.deck.hand) {
+      const tracked = this.handCards.get(card.instanceId);
+      if (!tracked) continue;
+      const live =
+        target && card.definition.target === 'enemy'
+          ? (e: Effect) => (e.kind === 'damage' ? this.combat.previewCardDamage(card.definition, e, target) : undefined)
+          : undefined;
+      setCardLiveText(tracked.container, card.definition, live);
+    }
   }
 }

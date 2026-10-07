@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition, Effect } from '../game/types';
 import { cardText, relicText } from '../game/describe';
 import type { RunNode, RunState } from '../game/RunState';
 import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from '../settings';
@@ -53,7 +53,36 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     })
     .setOrigin(0.5);
 
-  return scene.add.container(0, 0, [g, costBadge, costText, nameText, typeText, descText]);
+  const face = scene.add.container(0, 0, [g, costBadge, costText, nameText, typeText, descText]);
+  face.setData('descText', descText);
+  return face;
+}
+
+/**
+ * Re-writes a card face's text with live damage numbers. `liveDamage` gives what a damage effect
+ * would really deal now; the text turns green if the card's total is above its printed total and
+ * red if below. Cards without damage keep their normal text and colour.
+ */
+export function setCardLiveText(
+  face: Phaser.GameObjects.Container,
+  card: CardDefinition,
+  liveDamage: ((effect: Effect) => number | undefined) | undefined
+): void {
+  const desc = face.getData('descText') as Phaser.GameObjects.Text | undefined;
+  if (!desc) return;
+  let printed = 0;
+  let live = 0;
+  const tracked = (effect: Effect): number | undefined => {
+    const n = liveDamage?.(effect);
+    if (n !== undefined && effect.kind === 'damage') {
+      printed += effect.value;
+      live += n;
+    }
+    return n;
+  };
+  const text = cardText(card, tracked);
+  if (desc.text !== text) desc.setText(text);
+  desc.setColor(live > printed ? '#7fe08a' : live < printed ? '#ff7b7b' : '#d8d8e4');
 }
 
 /** A clickable rectangle button with a hover grow. Returns its container. */

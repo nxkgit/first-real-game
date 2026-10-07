@@ -69,9 +69,14 @@ export function describeTrigger(trigger: Trigger): string {
 }
 
 /** The text on a card's face: its `description` if it has one, otherwise generated from its effects. */
-export function cardText(card: CardDefinition): string {
+export function cardText(card: CardDefinition, liveDamage?: (effect: Effect) => number | undefined): string {
   if (card.description !== undefined) return card.description;
-  const parts = (card.effects ?? []).map((effect) => describeEffect(effect));
+  // With `liveDamage`, a damage effect shows what it would really deal right now ("Deal 9 damage.")
+  // instead of the printed number and its scaling note.
+  const parts = (card.effects ?? []).map((effect) => {
+    const live = effect.kind === 'damage' ? liveDamage?.(effect) : undefined;
+    return live === undefined ? describeEffect(effect) : plainEffect(effect, live, {});
+  });
   if (card.onTurnStartEffect) {
     const text = describeEffect(card.onTurnStartEffect, { atTurnStart: true });
     parts.push(`At the start of each turn, ${text.charAt(0).toLowerCase()}${text.slice(1)}`);
