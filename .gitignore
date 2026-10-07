@@ -7,3 +7,6 @@ coverage
 .claude/worktrees
 test-results
 playwright-report
+
+# raw downloaded art packs; only the files we use get copied into the project
+/assets/
