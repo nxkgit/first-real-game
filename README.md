@@ -1,0 +1,85 @@
+# first-real-game
+
+A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built with TypeScript and Phaser. This is a learning/portfolio project — an exercise in building a real, working game end-to-end with Claude Code.
+
+Currently at **MVP 1**: a single, fully playable combat encounter — draw a hand, play cards, manage energy, watch the enemy telegraph and resolve its move, win or lose. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.
+
+All visuals are built from Phaser's drawing primitives (shapes, not image assets) — a simple vector mage and goblin, card UI with tweened animation, particle effects, and procedurally-generated sound. Placeholder-quality by design; final art direction is a separate, later pass.
+
+## Tech stack
+
+- **TypeScript** + **[Phaser](https://phaser.io/)** (4.x) for the game engine
+- **Vite** for dev server and production builds
+- No backend — it's a fully static, client-side game
+
+## Running with Docker (recommended)
+
+This is the easiest way to run the game exactly as it'll be deployed — no need to install Node, npm, or any dependencies locally.
+
+**Prerequisites:** [Docker](https://docs.docker.com/get-docker/) (with Docker Compose, which ships with Docker Desktop).
+
+```bash
+docker compose up --build
+```
+
+This builds the image (installs dependencies, compiles TypeScript, produces a production Vite build, then copies the built static files into a lean nginx image) and starts the container. Once it's up, open:
+
+```
+http://localhost:8080
+```
+
+To run it in the background instead of tying up your terminal:
+
+```bash
+docker compose up --build -d
+```
+
+To stop it:
+
+```bash
+docker compose down
+```
+
+After pulling new changes or editing source files, rebuild with `docker compose up --build` again — the image isn't rebuilt automatically.
+
+### What's actually happening under the hood
+
+`Dockerfile` uses a two-stage build:
+
+1. **Build stage** (`node:24-alpine`) — installs dependencies with `npm ci` (uses the committed `package-lock.json` for a reproducible install) and runs `npm run build`, which type-checks with `tsc` and produces an optimized static bundle in `dist/`.
+2. **Runtime stage** (`nginx:1.27-alpine`) — copies just the built `dist/` output into nginx's web root. The Node toolchain, source files, and `node_modules` never make it into the final image, so it stays small.
+
+`docker-compose.yml` just wraps `docker build .` and maps container port 80 (nginx's default) to host port 8080, so you don't have to remember the long-form `docker build`/`docker run` commands.
+
+If you want a different host port, edit the `ports` mapping in `docker-compose.yml` (e.g. `"3000:80"` to use port 3000 instead).
+
+## Running without Docker
+
+Requires Node.js (v24+ recommended — matches what the Docker build uses).
+
+```bash
+npm install
+npm run dev
+```
+
+This starts Vite's dev server (with hot module reload) at `http://localhost:5173`.
+
+Other scripts:
+
+```bash
+npm run build    # type-check + production build, output to dist/
+npm run preview  # serve the production build locally, for a final sanity check
+```
+
+## Project structure
+
+```
+src/
+  game/        # Pure TypeScript game logic (deck, combat state, rules) — no Phaser dependency, unit-testable in isolation
+  data/        # Data-driven card and enemy definitions
+  scenes/      # Phaser scene(s): rendering, input, animation
+  audio/       # Procedural sound effects (Web Audio API, no audio files)
+  main.ts      # Phaser game entry point
+```
+
+The split between `src/game` (plain logic) and `src/scenes` (Phaser rendering) is deliberate — see [`CLAUDE.md`](CLAUDE.md) for the architectural conventions this project follows.
