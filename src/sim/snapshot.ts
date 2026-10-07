@@ -27,6 +27,8 @@ export interface SnapshotConfig {
   skills: SkillLevel[];
   pool: 'reward' | 'all';
   includeUpgrades: boolean;
+  /** Also measure the hand-built synergy decks (suites.ts). Absent in older baselines = false. */
+  synergySets?: boolean;
 }
 
 export interface Snapshot {
@@ -38,7 +40,7 @@ export interface Snapshot {
   metrics: Record<string, Summary>;
 }
 
-export const DEFAULT_SNAPSHOT_CONFIG: SnapshotConfig = { baseSeed: 1, seeds: 100, skills: ['random', 'greedy', 'smart'], pool: 'reward', includeUpgrades: false };
+export const DEFAULT_SNAPSHOT_CONFIG: SnapshotConfig = { baseSeed: 1, seeds: 100, skills: ['random', 'greedy', 'smart'], pool: 'reward', includeUpgrades: false, synergySets: true };
 
 /** A fingerprint of everything that determines fight outcomes: cards, enemies, relics, act lists, tunables. */
 export function contentHash(): string {
@@ -63,7 +65,7 @@ const concat = (parts: Float64Array[]): Float64Array => {
 export function buildSnapshot(config: SnapshotConfig, generated: string, onProgress?: (msg: string) => void): Snapshot {
   const fights = actFights();
   const ev = new Evaluator({ fights, seeds: config.seeds, baseSeed: config.baseSeed });
-  const sets: DeckSet[] = referenceDeckSets({ pool: config.pool });
+  const sets: DeckSet[] = referenceDeckSets({ pool: config.pool, synergy: config.synergySets === true });
   const metrics: Record<string, Summary> = {};
 
   for (const skill of config.skills) {

@@ -2,6 +2,12 @@ import { Evaluator } from './engine';
 import type { EvalConfig, MetricId } from './engine';
 import { DEFAULT_POLICIES, draftExperiment } from './drafts';
 import type { DraftPolicy } from './drafts';
+import { comboUniverse, combosExperiment, deckExperiment } from './combos';
+import { loopsExperiment } from './loops';
+import { dominanceExperiment } from './dominance';
+import { ablateExperiment } from './ablate';
+import { applyAssignments, parseAssignments, tweakExperiment } from './tweak';
+import type { ComboGoal } from './combos';
 import { cardsExperiment, ladderExperiment, lengthsExperiment, outlierExperiment, pairsExperiment } from './experiments';
 import { DEFAULT_OPTIONS } from './simulate';
 import type { PathPolicy, RestPolicy, RewardPolicy } from './simulate';
@@ -14,7 +20,11 @@ import type { SkillLevel } from './skills';
 import { DEFAULT_SNAPSHOT_CONFIG, buildSnapshot, compareSnapshots, renderComparison } from './snapshot';
 import type { Snapshot } from './snapshot';
 import { heading, table } from './report';
-import { actFights, parseFights, referenceDeckSets } from './suites';
+import { actFights, deckFromSpec, parseFights, referenceDeckSets } from './suites';
+import type { DeckSet } from './suites';
+import { buildStarterDeck, getCard } from '../data/cards';
+import type { CardDefinition } from '../game/types';
+import type { CardSet } from './experiments';
 
 /**
  * The balance command line, minus the file system: `runCommand` turns a subcommand and its flags
@@ -34,7 +44,7 @@ export interface CommandResult {
   defaultOut?: string;
 }
 
-export const COMMANDS = ['cards', 'pairs', 'ladder', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench'] as const;
+export const COMMANDS = ['cards', 'pairs', 'ladder', 'deck', 'combos', 'loops', 'dominance', 'tweak', 'ablate', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench'] as const;
 export type Command = (typeof COMMANDS)[number];
 
 export const BASELINE_PATH = 'balance/baselines/baseline.json';
@@ -48,6 +58,12 @@ Commands
   lengths    fight-length distribution per fight
   drafts     whole-run comparison of draft / rest / path policies
   outliers   cards and fights far outside their cohort
+  deck       run one exact deck (--cards a,b*2 | --set name) against the fights, plus raw output vs a Dummy
+  ablate     each card's contribution inside a built deck (deck minus one copy vs full deck, --sets synergy|name,...)
+  tweak      what-if: change a card's numbers in memory and measure the change (--card id --set path=value)
+  dominance  strictly dominated cards (static arithmetic on the card data)
+  loops      exhaustive search of tiny decks for free-play loops (minimal loop cores)
+  combos     adversarial random search for decks that kill fastest / deal most damage (--goal damage|speed|stall)
   report     all of the above in one document
   baseline   write the committed baseline (${BASELINE_PATH})
   check      compare current content against the baseline (never fails on balance movement)
@@ -62,12 +78,16 @@ Common flags
   --context name   deck the card is added to: starter | mid | late (default starter)
   --headline m     win | hpLost | turns  (default hpLost): the metric verdicts read
   --pool p         reward | all  (cards that reference decks are sampled from; default reward)
+  --cardset s      all | synergy | reward  (which cards cards / pairs / combos test; default all)
+  --sets s         ladder deck sets: core (default) | synergy | all | name,name
   --modes m        add | replace | add,replace   (cards)
   --upgrades       also test upgraded cards (cards)
   --max-pairs N    most pairs to evaluate (pairs; default 150)
   --pairs a+b,c+d  evaluate only these pairs (pairs; to confirm a lead with more seeds)
   --runs N         whole runs per policy (drafts; default 100)
   --reward card|gold|best --rest heal|smart --path random|smart   custom draft policy vs the default
+  --note text      baseline: replace the note stored in the baseline (state date, commit and what the content is)
+  --tweak spec     run any command with in-memory card changes: card:path=value,path=value;card2:path=value (nothing on disk changes)
   --out base       write base.md and base.json   (baseline: the JSON path; check: the Markdown path)
   --json           print JSON instead of Markdown`;
 
@@ -92,6 +112,35 @@ function evaluatorFor(flags: Record<string, string>, defaultSeeds: number): Eval
 
 const headlineOf = (flags: Record<string, string>): MetricId => oneOf<MetricId>(flags.headline, ['win', 'hpLost', 'turns'], 'hpLost', 'headline');
 const poolOf = (flags: Record<string, string>): 'reward' | 'all' => oneOf(flags.pool, ['reward', 'all'] as const, 'reward', 'pool');
+const cardsetOf = (flags: Record<string, string>): CardSet => oneOf<CardSet>(flags.cardset, ['all', 'synergy', 'reward'], 'all', 'cardset');
+
+/** --sets core (default) | synergy | all | name,name  (deck sets the ladder measures). */
+function setsOf(flags: Record<string, string>): DeckSet[] {
+  const all = referenceDeckSets({ pool: poolOf(flags), synergy: true });
+  const spec = flags.sets ?? 'core';
+  if (spec === 'all') return all;
+  if (spec === 'core') return all.filter((s) => ['starter', 'mid', 'late'].includes(s.name));
+  if (spec === 'synergy') return all.filter((s) => s.name.startsWith('syn-'));
+  return spec.split(',').map((name) => {
+    const found = all.find((s) => s.name === name.trim());
+    if (!found) throw new Error(`unknown deck set "${name}" (${all.map((s) => s.name).join(', ')}, or core | synergy | all)`);
+    return found;
+  });
+}
+
+/** --cards strike*4,defend*4,bolt   or   --set syn-tag   or   --context mid (the first deck of that set). */
+function deckFromFlags(flags: Record<string, string>): { deck: CardDefinition[]; label: string } {
+  const withStarter = flags.with === 'starter';
+  if (flags.cards) {
+    const deck = [...(withStarter ? buildStarterDeck() : []), ...deckFromSpec(flags.cards.split(','))];
+    return { deck, label: `${withStarter ? 'starter + ' : ''}${flags.cards}` };
+  }
+  const name = flags.set ?? flags.context;
+  if (!name) throw new Error('deck needs --cards a,b*2,c  or  --set <deck set name>');
+  const found = referenceDeckSets({ pool: poolOf(flags), synergy: true }).find((s) => s.name === name);
+  if (!found) throw new Error(`unknown deck set "${name}"`);
+  return { deck: found.decks[0], label: `${name} (first deck)` };
+}
 
 function policiesFrom(flags: Record<string, string>): DraftPolicy[] {
   if (flags.reward === undefined && flags.rest === undefined && flags.path === undefined) return DEFAULT_POLICIES;
@@ -133,12 +182,26 @@ function bench(flags: Record<string, string>): CommandResult {
 
 /** Runs one subcommand. `today` is the date stamped into reports (yyyy-mm-dd). */
 export function runCommand(command: string, flags: Record<string, string>, io: CommandIO, today: string): CommandResult {
+  // --tweak "card:path=value,path=value;card2:path=value" runs ANY command with those card changes applied in memory
+  const restores = (flags.tweak && flags.tweak !== 'true' ? flags.tweak.split(';') : []).map((part) => {
+    const colon = part.indexOf(':');
+    if (colon < 1) throw new Error(`bad --tweak "${part}" (use card:path=value, e.g. tag-a-echo:triggers.0.oncePerTurn=true)`);
+    return applyAssignments(getCard(part.slice(0, colon).trim()), parseAssignments(part.slice(colon + 1)));
+  });
+  try {
+    return runCommandInner(command, flags, io, today);
+  } finally {
+    for (const r of restores.reverse()) r();
+  }
+}
+
+function runCommandInner(command: string, flags: Record<string, string>, io: CommandIO, today: string): CommandResult {
   const skills = parseSkills(flags.skills);
   switch (command) {
     case 'cards': {
       const ev = evaluatorFor(flags, 40);
       const modes = (flags.modes ?? 'add,replace').split(',') as ('add' | 'replace')[];
-      const r = cardsExperiment(ev, { skills, context: flags.context, modes, includeUpgrades: flags.upgrades === 'true', headline: headlineOf(flags), pool: poolOf(flags) });
+      const r = cardsExperiment(ev, { skills, context: flags.context, modes, includeUpgrades: flags.upgrades === 'true', headline: headlineOf(flags), pool: poolOf(flags), cardset: cardsetOf(flags) });
       return { markdown: r.markdown, json: r.json };
     }
     case 'pairs': {
@@ -150,11 +213,73 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
         maxPairs: num(flags, 'max-pairs', 150),
         only: flags.pairs ? flags.pairs.split(',') : undefined,
         pool: poolOf(flags),
+        cardset: cardsetOf(flags),
+      });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'deck': {
+      const { deck, label } = deckFromFlags(flags);
+      const r = deckExperiment({ deck, label, fights: parseFights(flags.fights), seeds: num(flags, 'seeds', 60), baseSeed: num(flags, 'seed', 1), skills, dummyTurns: flags.turns ? num(flags, 'turns', 6) : 6 });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'combos': {
+      const goal = oneOf<ComboGoal>(flags.goal, ['damage', 'speed', 'stall'], 'damage', 'goal');
+      const [lo, hi] = (flags.size ?? '8-20').split('-').map(Number);
+      if (!Number.isInteger(lo) || !Number.isInteger(hi) || lo < 1 || hi < lo) throw new Error('--size must look like 8-20');
+      const r = combosExperiment({
+        goal,
+        skill: oneOf<SkillLevel>(flags.skill, SKILL_LEVELS, 'smart', 'skill'),
+        minSize: lo,
+        maxSize: hi,
+        trials: num(flags, 'trials', 300),
+        climb: num(flags, 'climb', 150),
+        searchSeeds: num(flags, 'search-seeds', 6),
+        confirmSeeds: num(flags, 'confirm-seeds', 40),
+        baseSeed: num(flags, 'seed', 1),
+        cards: comboUniverse(flags.cardset),
+        fights: parseFights(flags.fights ?? 'boss-a'),
+        dummyTurns: num(flags, 'turns', 5),
+        top: num(flags, 'top', 5),
+        maxCopies: num(flags, 'max-copies', 3),
+        minAttackers: num(flags, 'min-attackers', 4),
+      });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'ablate': {
+      const r = ablateExperiment(evaluatorFor(flags, 100), { sets: setsOf({ ...flags, sets: flags.sets ?? 'synergy' }), skills, headline: headlineOf(flags) });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'tweak': {
+      if (!flags.card || !flags.set) throw new Error('tweak needs --card <id> --set path=value[,path=value]  (e.g. --card blood-strike --set effects.0.value=2)');
+      const r = tweakExperiment({
+        card: flags.card,
+        sets: parseAssignments(flags.set),
+        context: flags.context ?? 'mid',
+        skills,
+        config: { fights: parseFights(flags.fights), seeds: num(flags, 'seeds', 100), baseSeed: num(flags, 'seed', 1) },
+        headline: headlineOf(flags),
+        pool: poolOf(flags),
+      });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'dominance': {
+      const r = dominanceExperiment();
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'loops': {
+      const r = loopsExperiment({
+        cards: comboUniverse(flags.cardset),
+        maxSize: num(flags, 'max-size', 4),
+        maxCopies: num(flags, 'max-copies', 2),
+        threshold: num(flags, 'threshold', 20),
+        skill: oneOf<SkillLevel>(flags.skill, SKILL_LEVELS, 'smart', 'skill'),
+        seed: num(flags, 'seed', 1),
+        turns: num(flags, 'turns', 2),
       });
       return { markdown: r.markdown, json: r.json };
     }
     case 'ladder': {
-      const r = ladderExperiment(evaluatorFor(flags, 60), { skills, pool: poolOf(flags) });
+      const r = ladderExperiment(evaluatorFor(flags, 60), { skills, pool: poolOf(flags), sets: setsOf(flags) });
       return { markdown: r.markdown, json: r.json };
     }
     case 'lengths': {
@@ -168,7 +293,7 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
     case 'outliers': {
       const headline = headlineOf(flags);
       const cardsEv = evaluatorFor(flags, 40);
-      const cards = cardsExperiment(cardsEv, { skills, modes: ['add'], context: flags.context, headline, pool: poolOf(flags) });
+      const cards = cardsExperiment(cardsEv, { skills, modes: ['add'], context: flags.context, headline, pool: poolOf(flags), cardset: cardsetOf(flags) });
       const ladder = ladderExperiment(evaluatorFor(flags, 60), { skills, pool: poolOf(flags) });
       const r = outlierExperiment({ skills, headline, cardRows: cards.rows, ladder: ladder.rows });
       return { markdown: r.markdown, json: r.json };
@@ -179,17 +304,17 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
       const ladderEv = evaluatorFor(flags, 100);
       const cardsEv = evaluatorFor(flags, 60);
       const pairsEv = evaluatorFor({ ...flags, seeds: flags['pair-seeds'] ?? '40' }, 40);
-      const ladder = ladderExperiment(ladderEv, { skills, pool });
+      const ladder = ladderExperiment(ladderEv, { skills, pool, sets: referenceDeckSets({ pool, synergy: true }) });
       const lengths = lengthsExperiment(ladderEv, { skills, pool });
-      const cards = cardsExperiment(cardsEv, { skills, modes: ['add', 'replace'], headline, pool });
-      const pairs = pairsExperiment(pairsEv, { skill: oneOf<SkillLevel>(flags.skill, SKILL_LEVELS, 'smart', 'skill'), headline, maxPairs: num(flags, 'max-pairs', 120), pool });
+      const cards = cardsExperiment(cardsEv, { skills, modes: ['add', 'replace'], headline, pool, cardset: cardsetOf(flags) });
+      const pairs = pairsExperiment(pairsEv, { skill: oneOf<SkillLevel>(flags.skill, SKILL_LEVELS, 'smart', 'skill'), headline, maxPairs: num(flags, 'max-pairs', 120), pool, cardset: cardsetOf(flags) });
       const outliers = outlierExperiment({ skills, headline, cardRows: cards.rows, ladder: ladder.rows });
       const drafts = draftExperiment({ runs: num(flags, 'runs', 100), baseSeed: num(flags, 'seed', 1), skill: 'greedy' });
       const parts = [ladder, lengths, cards, pairs, outliers, drafts];
       const header = [
         heading(1, 'Balance report'),
         '',
-        `Generated ${today} by \`npm run balance -- report\` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: ${skills.join(', ')}. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md.`,
+        `Generated ${today} by \`npm run balance -- report\` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: ${skills.join(', ')}. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md.${flags.note && flags.note !== 'true' ? ` ${flags.note}` : ''}`,
         '',
       ].join('\n');
       return { markdown: [header, ...parts.map((p) => p.markdown)].join('\n\n'), json: { generated: today, skills, ...Object.fromEntries(parts.map((p) => [p.name, p.json])) } };
@@ -203,6 +328,7 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
         pool: poolOf(flags),
       };
       const snap = buildSnapshot(config, today);
+      if (flags.note && flags.note !== 'true') snap.note = flags.note;
       return { markdown: `Baseline built: ${Object.keys(snap.metrics).length} metrics, content fingerprint ${snap.content.hash}.`, json: snap, defaultOut: BASELINE_PATH };
     }
     case 'check': {

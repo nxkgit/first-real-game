@@ -12,6 +12,15 @@ npm run balance -- ladder                    # how hard is each fight?
 npm run balance -- cards --skills smart      # what does each card do for a deck?
 npm run balance -- pairs --skill smart       # which pairs help or hurt each other?
 npm run balance -- drafts --runs 300         # whole-run policy comparison
+npm run balance -- ladder --sets synergy     # the hand-built synergy decks (also: --sets all | name,name)
+npm run balance -- cards --cardset synergy --context syn-mult   # card effect in a synergy deck
+npm run balance -- ablate --sets synergy     # each card's contribution inside the deck it was built for
+npm run balance -- deck --cards "strike*4,defend*4,bolt" --with starter   # one exact deck (or --set syn-tag)
+npm run balance -- loops --max-size 5        # exhaustive: which tiny decks play forever? (minimal loops)
+npm run balance -- combos --goal speed --fights boss-a   # adversarial search (damage | speed | stall)
+npm run balance -- tweak --card blood-strike --set effects.0.value=2   # what-if: before/after, paired
+npm run balance -- loops --tweak "tag-a-echo:triggers.0.oncePerTurn=true"   # any command, with in-memory card changes
+npm run balance -- dominance                 # strictly dominated plain cards (static)
 npm run balance:report                       # everything, written to balance/reports/sample.{md,json}
 npm run balance:check                        # did my change move anything? (vs the committed baseline)
 npm run balance:baseline                     # accept the current numbers as the new baseline
@@ -40,8 +49,8 @@ Every experiment takes `--out base` (writes `base.md` and `base.json`) or `--jso
 |---|---|---|
 | `random` | plays random legal cards until nothing is playable | the floor: a fight it wins most of the time tests nothing |
 | `greedy` | the original bot: scores each card alone (`bot.ts`) | a careless but not random player. Known weakness: it spends energy on status cards over and over and can drag fights out (see Observations) |
-| `smart` | sequences a turn: takes lethal, plays setup (powers, draw, self-buffs, and any effect kind it does not recognise) before payoffs, debuffs before hits, blocks when incoming damage matters (hard when it would be lethal), aims at the killable or most dangerous enemy | an attentive player; fast |
-| `expert` | smart plus lookahead: for each candidate play it rebuilds the fight by replaying the action history on a fresh `CombatState`, finishes the turn and plays the next with `smart`, and keeps the play with the best resulting position (HP minus what the surviving enemies will still cost). Judges plays by what actually happens, so it copes with card interactions its heuristics know nothing about | upper bound on skill; use on interesting cards and bosses. About 20x slower |
+| `smart` | sequences a turn (`smart.ts`): takes lethal; gains energy before spending it; plays setup (powers, draw when there is energy to use it, self-buffs, Empowered when there is a hit to put it on, Strength doublers when there is Strength, any effect kind it does not recognise) and enablers (tagged cards, exhausters, Vulnerable, block givers) before the payoffs that scale with them, keeping energy back for the payoff; puts Empowered on the biggest hit; does not waste one-shot (exhaust) attacks on overkill; never takes self-damage into lethal; debuffs before hits; blocks when incoming damage matters (hard when it would be lethal); aims at the killable or most dangerous enemy | an attentive player; fast. It trades HP for speed (on the plain starter deck `greedy` loses less HP) |
+| `expert` | smart plus lookahead: for each candidate play it rebuilds the fight by replaying the action history on a fresh `CombatState`, finishes the turn and plays the next with `smart`, and keeps the play with the best resulting position (HP minus what the surviving enemies will still cost). Another play (or ending the turn) must beat `smart`'s own pick by `EXPERT_MARGIN` (0.75) to replace it. Judges plays by what actually happens, so it copes with card interactions its heuristics know nothing about | the careful player: saves HP over `smart` on ordinary decks. NOT an upper bound on synergy decks: its position value sees only HP and enemy HP, not stored value (Strength, counters). About 20x slower |
 
 Lookahead reshuffles the draw pile with a hypothetical seed before simulating, so it cannot see the true order of the draw pile. `CombatState` has no clone; state is reconstructed by replay (`fightCore.ts`).
 
@@ -58,7 +67,7 @@ Lookahead reshuffles the draw pile with a hypothetical seed before simulating, s
 | **turns per fight** | player turns until the fight ends. | Not a quality measure by itself: a card that makes fights longer is not worse, it changes pacing. Use it to find fights outside the length target and decks that stall. |
 | **pick rate** | at fight rewards, `times a card was taken / times it was offered` (`drafts`). A random picker takes any given offer about 1/3 of the time (3 choices). | Depends on the policy that picks. Under `reward=best` (picks by trial fights) it shows what a thoughtful picker prefers; a card near 70% is a dominant choice, near 5% a dominated one. Shop buys are not counted. |
 | **card effect** | paired `deck with card minus deck without`, per metric. "Added" puts the card in the deck; "replace" swaps it for the deck's most common card (the Strike). | Measured in a fixed context (default the starter deck). It is stand-alone value: cards that need partners look weak, and cards whose value depends on the deck's size or energy curve look different in `--context mid`/`late`. |
-| **synergy score** | `benefit(A+B) - benefit(A) - benefit(B)`, where benefit is measured against the same deck without them, per unit, on identical seeds. Positive: the pair is worth more than the sum. Negative: they overlap (compete for energy, draw, targets) or are redundant. | A four-way difference: roughly twice the noise of a single-card effect, so it needs ~4x the units. Among 100+ pairs, ~5% look significant by chance. Treat each hit as a lead and re-run it (`--pairs a+b --seeds 300`). Sampled when there are more pairs than `--max-pairs`. Redundant cards (two big blocks) score negative without being a defect. |
+| **synergy score** | `benefit(A+B) - benefit(A) - benefit(B)`, where benefit is measured against the same deck without them, per unit, on identical seeds. Positive: the pair is worth more than the sum. Negative: they overlap (compete for energy, draw, targets) or are redundant. | A four-way difference: roughly twice the noise of a single-card effect, so it needs ~4x the units. Among 100+ pairs, ~5% look significant by chance. Treat each hit as a lead and re-run it (`--pairs a+b --seeds 300`). Sampled when there are more pairs than `--max-pairs`. Redundant cards (two big blocks) score negative without being a defect. **The scores have a non-zero centre** (benefits are not additive even for cards that do not interact; the mid deck's median pair is about +0.7 HP), so with 20 or more pairs the verdict compares each pair with the median pair, and with fewer with zero. Controls help: include a pair that cannot interact (`strike+defend`). Payoff cards belong in `ablate` (a card inside its own built deck), not in pairs. |
 
 **Run-level win rates per card are biased** (the old `npm run sim` table, and any "win rate with card X" computed from whole runs): a run that survives longer collects more cards, and good cards are picked by runs that are already doing well, so cards that appear in longer runs look better regardless of their power. Do not use them to judge cards; use `cards` / `pairs`. The `drafts` experiment is for comparing *policies*, with paired seeds, and says so in its output.
 
@@ -120,6 +129,13 @@ Run the checklist below. The card is picked up automatically from `baseCards()`.
 ### Run-level questions
 `npm run balance -- drafts --runs 300 --reward best --rest heal` compares a custom policy with random picks on the same seeds. Resolving a 5-point win-rate difference takes a few hundred runs per policy. Gold versus card (the plan's "gold must be a genuine toss-up") is the `reward=gold` row against `reward=best`.
 
+### Checklist: a synergy card or mechanic (added with the first synergy analysis)
+1. `loops --max-size 5` after adding a card: does it create a minimal loop (free plays that refill themselves)? The only loop found so far is a 0-cost tagged card plus a draw-per-tagged-play trigger. A new 0-cost draw or energy card is the usual suspect.
+2. `ablate --sets synergy` (add a deck for the family to `synergyDeckSets` in `suites.ts`): does the card help the deck built for it? `cards --context syn-<family>` shows the single-card effect there. Pairs are the wrong tool for payoff cards.
+3. `combos --goal speed --fights boss-a --cardset all` and `--goal damage`: how fast can a search-built deck win, and which cards are in every top deck? An engine-sized result (a 12-card deck killing the boss in 4 turns against 9 for a normal deck) is a design question, not a bug; a deck that never needs to stop is a bug. Read the confirmed column (fresh seeds), not the search score.
+4. Before proposing a number change, measure it: `tweak --card <id> --set path=value`, or `--tweak "card:path=value;card2:path=value"` on any command (nothing on disk changes). Re-run `loops` under the tweak when it touches cost, draw or energy.
+5. The `smart` bot treats any effect kind it has no rule for as setup. If a card's value depends on sequencing, add the rule to `smart.ts` (see "Extending the tooling") and a constructed-deck test like those in `src/sim/smart.test.ts` (a hand that is exactly the deck: a 5-card deck is the opening hand, so the turn is deterministic).
+
 ## How many runs?
 
 Units needed for a 95% half-width `h` is about `(1.96 * sd / h)^2`. Rough sd of a per-unit paired difference seen in the placeholder content: HP lost ~8, turns ~1.7, win ~0.2. A fight-suite of N fights times S seeds gives N*S units.
@@ -150,7 +166,7 @@ Playtest instead (or after) when: a change is about how something feels, a card'
 The tooling drives combat only through `CombatState`'s public API (`playCard`, `canPlay`, `endPlayerTurn`, `phase`, `energy`, `deck.hand`, `enemies`, `player`, `calcDamage`, `intentDamage`, ...), so a new `Effect` kind, pile or event does not break it. Unknown effect kinds are treated as "setup" by `smart` and are judged by outcomes by `expert`. What to do for a new mechanic:
 
 1. Nothing for it to *run*: cards using it appear automatically in `cards` and `pairs`.
-2. To make `smart` handle it well, add a branch in `profileOf` / `smartChoices` in `skills.ts` (what it is worth, when to play it). `expert` needs no change, except that `evaluate()` (the position value) may need a term if the mechanic stores value the player cannot see in HP and enemy HP (for example a persistent counter): add it there.
+2. To make `smart` handle it well, add a branch in `profileOf` / `smartChoices` in `smart.ts` (what it is worth, when to play it; enablers and payoffs are matched by `enables()` and `GROWING`). `expert` needs no change, except that `evaluate()` (the position value) may need a term if the mechanic stores value the player cannot see in HP and enemy HP (for example a persistent counter): add it there.
 3. If a new mechanic makes replay-based reconstruction diverge (anything random that is not the shuffle stream), `reconstruct` throws "replay diverged"; route the new randomness through the same seeded stream.
 4. If the mechanic needs a new tunable band, put it in `targets.ts`.
 5. Add a case to `balance.test.ts` (the "effect kind it has never heard of" test is the model).
@@ -166,7 +182,7 @@ Within a cohort of 4 or more, a value is flagged when its modified z-score (0.67
 
 Not findings about the real game; examples of the kind of thing the tools surface:
 
-- Powers return to the discard pile after being played and can be played again, stacking their effect (Focus's extra draw stacks every time it is replayed). With a small deck this makes draw cards and Focus look harmful (Quick Draw plus the greedy bot lost about 90 points of win rate). If powers are meant to be played once per fight, that is an engine question (the synergy-engine branch's exhaust may address it) and the bots do not special-case it.
+- (Resolved by the engine: powers now stay in play after being played and no longer recycle and stack. The first version of this document recorded the old behaviour as an observation.)
 - The greedy bot can stall against decks with several status cards and little damage (it keeps spending energy on Weaken/Expose). Greedy therefore reads below `random` on some mid-sized decks: a property of that bot, which is why several skills are reported.
 - The Boss and the heavy normal fights are far outside the provisional bands for the placeholder numbers; the report lists them as LOW/HIGH.
 
@@ -176,15 +192,22 @@ Not findings about the real game; examples of the kind of thing the tools surfac
 |---|---|
 | `src/sim/stats.ts` | CIs, Wilson, paired and Welch differences, verdicts, outlier flags |
 | `src/sim/fightCore.ts` | `FightSpec`, replay-based reconstruction |
-| `src/sim/skills.ts` | the four bot skill levels |
+| `src/sim/skills.ts` | the four bot skill levels (random, greedy, smart's driver, expert) |
+| `src/sim/smart.ts` | the `smart` bot's per-step ranking (`smartChoices`), including the synergy mechanics |
+| `src/sim/combos.ts` | `deck` (fixed deck), `combos` (adversarial search), the Dummy enemy |
+| `src/sim/loops.ts` | `loops`: exhaustive search of tiny decks for free-play loops |
+| `src/sim/ablate.ts` | `ablate`: a card's contribution inside a built deck |
+| `src/sim/tweak.ts` | `tweak` and the global `--tweak` flag: in-memory card changes |
+| `src/sim/dominance.ts` | `dominance`: static strict-dominance check |
 | `src/sim/engine.ts` | paired `Evaluator`, metrics, seeds |
-| `src/sim/suites.ts` | fight suites and reference decks, derived from the registries |
+| `src/sim/suites.ts` | fight suites and reference decks (core: starter, mid, late; synergy: syn-tag, syn-exhaust, syn-trigger, syn-mult, syn-combo, syn-mixed), derived from the registries or hand-listed by card id |
 | `src/sim/targets.ts` | PROVISIONAL bands and check tolerances |
 | `src/sim/experiments.ts`, `drafts.ts` | the experiments |
 | `src/sim/snapshot.ts` | baseline and `check` |
 | `src/sim/commands.ts`, `balanceCli.ts` | command line |
-| `balance/baselines/baseline.json` | committed baseline (regenerate with `npm run balance:baseline`) |
-| `balance/reports/sample.md`, `.json` | sample report from the placeholder content |
+| `balance/baselines/baseline.json` | committed baseline (regenerate with `npm run balance:baseline`; the stored `note` says date, commit and that the content is placeholder: pass `-- --note "..."` to the CLI to set it) |
+| `balance/reports/sample.md`, `.json` | sample report from the placeholder content (ladder includes the synergy decks) |
+| `docs/balance/synergy-findings-2026-10.md` | the first real analysis (synergy content): findings, adversarial search, proposed tweaks |
 
 ## Optional CI step (suggestion only; workflows were not edited)
 
