@@ -2,12 +2,12 @@ import type { CardDefinition } from '../game/types';
 
 // PLACEHOLDER synergy-test cards. They exist to exercise the synergy engine (scaling values,
 // multipliers, triggers, tags, exhaust, energy, self-damage) and give the simulator and tests
-// something to build decks from. They are NOT in the reward pool, so the live game never offers
-// them. Names are plain and descriptive; every number is PROVISIONAL. Real card design (and any
+// something to build decks from. As of 2026-10-07 they ARE in the reward pool (the user wants every
+// placeholder offered to players for testing; flip `base.inRewardPool` to take them out again). Names are plain and descriptive; every number is PROVISIONAL. Real card design (and any
 // tags with meaning) is the user's to author. Text is generated (game/describe.ts).
 // How to write one: docs/SYNERGY_ENGINE.md.
 
-const base = { owner: 'neutral', inRewardPool: false } as const;
+const base = { owner: 'neutral', inRewardPool: true } as const;
 
 // ---- scaling ----
 
