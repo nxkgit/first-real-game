@@ -45,8 +45,15 @@ function chooseTarget(combat: CombatState, card: CardInstance): EnemyState | und
   return pool.reduce((best, e) => (e.hp + e.block < best.hp + best.block ? e : best), pool[0]);
 }
 
-/** Plays out one player turn (not including ending it). */
-export function playBotTurn(combat: CombatState): void {
+/**
+ * Plays out one player turn (not including ending it). `play` is how a card is actually played;
+ * the default plays it straight on the combat, and callers that record actions (skills.ts) pass
+ * their own.
+ */
+export function playBotTurn(
+  combat: CombatState,
+  play: (card: CardInstance, targetId?: string) => boolean = (card, targetId) => combat.playCard(card.instanceId, targetId)
+): void {
   for (let guard = 0; guard < 50 && combat.phase === 'playerTurn'; guard++) {
     const options = combat.deck.hand
       .filter((c) => combat.canPlay(c))
@@ -56,6 +63,6 @@ export function playBotTurn(combat: CombatState): void {
     const pick = options[0];
     if (!pick) return;
     const target = chooseTarget(combat, pick.card);
-    if (!combat.playCard(pick.card.instanceId, target?.id)) return;
+    if (!play(pick.card, target?.id)) return;
   }
 }

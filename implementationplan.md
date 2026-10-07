@@ -65,6 +65,7 @@ Work that makes the MVP 2 build ready for friend playtesting and gives the later
 - **Playtest report.** Each run keeps a stop-by-stop log (fights, turns, HP, card picks, rests, shop buys). The end screen has a "Copy run report" button; the last 20 finished runs are kept in the browser. No personal information is recorded.
 - **Dev panel.** Add `?dev` to the address: jump to any stop, start a fight with chosen enemies, add cards, change gold or HP, start a seeded run, copy reports. Loaded only with that flag.
 - **Balance simulator.** `npm run sim` plays whole runs (or one fight) headlessly with a simple greedy bot and reports win rates, fight lengths, HP lost and card picks. It measures; it does not decide. Its results are only meaningful as comparisons between versions of the content or tunables, since a real player is not this bot. This is a tool for the deferred "combat math/balance pass", not the pass itself.
+- **Synergy engine.** Data-driven card-to-card interactions: scaling values, Empowered and status-multiplying, triggers on power cards and relics, tags, exhaust, energy gain and self-damage, with 20 placeholder cards and 2 relics kept out of the reward pools. This partly lifts the "full status-effect roster" deferral for the mechanics synergies need; the tribe/school system stays deferred. See `docs/SYNERGY_ENGINE.md`.
 
 ## Architecture Principles
 

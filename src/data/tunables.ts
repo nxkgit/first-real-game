@@ -5,8 +5,19 @@
 // ---- combat ----
 export const MAX_ENERGY = 4;
 export const HAND_SIZE = 5;
+/** Most cards the hand can hold. A card drawn into a full hand goes straight to the discard pile (as in StS). PROVISIONAL. */
+export const MAX_HAND_SIZE = 10;
+
+/**
+ * How many levels deep triggered effects may set off further triggers (a trigger's effect gaining
+ * block that fires a block trigger, and so on). Beyond this depth the event is simply ignored, so a
+ * badly written pair of triggers can't loop forever. PROVISIONAL.
+ */
+export const MAX_TRIGGER_DEPTH = 3;
 
 // ---- statuses ----
+/** Empowered: the holder's next attack card deals this multiple of its damage (one stack per attack). */
+export const EMPOWERED_DAMAGE_MULT = 2;
 /** Weak: the holder's attacks deal this fraction of their damage. */
 export const WEAK_DAMAGE_MULT = 0.75;
 /** Vulnerable: the holder takes this multiple of attack damage. */

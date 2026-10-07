@@ -37,11 +37,27 @@ export const DRAW_TOKEN: RelicDefinition = {
 
 const ALL_RELICS: RelicDefinition[] = [STRENGTH_TOKEN, VITALITY_TOKEN, GUARD_TOKEN, RECOVERY_TOKEN, DRAW_TOKEN];
 
+// Placeholder synergy-test relics (use triggers). Registered so saves, the dev panel and the
+// content browser know them, but NOT in RELIC_POOL, so the live game never hands them out.
+export const EXHAUST_TOKEN: RelicDefinition = {
+  id: 'exhaust-token',
+  name: 'Exhaust Token',
+  triggers: [{ on: 'cardExhausted', effects: [{ kind: 'block', value: 3 }] }],
+};
+
+export const KILL_TOKEN: RelicDefinition = {
+  id: 'kill-token',
+  name: 'Kill Token',
+  triggers: [{ on: 'enemyDied', oncePerTurn: true, effects: [{ kind: 'draw', value: 1 }] }],
+};
+
+export const SYNERGY_RELICS: RelicDefinition[] = [EXHAUST_TOKEN, KILL_TOKEN];
+
 export const RELICS: Readonly<Record<string, RelicDefinition>> = Object.fromEntries(
-  ALL_RELICS.map((relic): [string, RelicDefinition] => [relic.id, relic])
+  [...ALL_RELICS, ...SYNERGY_RELICS].map((relic): [string, RelicDefinition] => [relic.id, relic])
 );
 
-if (Object.keys(RELICS).length !== ALL_RELICS.length) throw new Error('duplicate relic id');
+if (Object.keys(RELICS).length !== ALL_RELICS.length + SYNERGY_RELICS.length) throw new Error('duplicate relic id');
 
 export function getRelic(id: string): RelicDefinition {
   const relic = RELICS[id];

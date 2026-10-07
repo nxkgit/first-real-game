@@ -1,0 +1,1916 @@
+{
+ "version": 1,
+ "generated": "2026-10-07",
+ "note": "Content at the time was placeholder. Regenerate with `npm run balance:baseline`. See docs/BALANCE.md.",
+ "content": {
+  "hash": "1cd0535f",
+  "cards": [
+   "big-block",
+   "big-block+",
+   "bolt",
+   "bolt+",
+   "defend",
+   "defend+",
+   "expose",
+   "expose+",
+   "focus",
+   "focus+",
+   "fortify",
+   "fortify+",
+   "guarded-strike",
+   "guarded-strike+",
+   "heavy-hit",
+   "heavy-hit+",
+   "jab",
+   "jab+",
+   "quick-draw",
+   "quick-draw+",
+   "strengthen",
+   "strengthen+",
+   "strike",
+   "strike+",
+   "sunder",
+   "sunder+",
+   "weaken",
+   "weaken+"
+  ],
+  "enemies": [
+   "boss-a",
+   "elite-a",
+   "elite-b",
+   "enemy-a",
+   "enemy-b",
+   "enemy-c",
+   "enemy-d"
+  ],
+  "fights": [
+   "enemy-a",
+   "enemy-d+enemy-d",
+   "enemy-b+enemy-d",
+   "enemy-c",
+   "enemy-a+enemy-d",
+   "enemy-d+enemy-d+enemy-d",
+   "elite-a",
+   "elite-b",
+   "boss-a"
+  ]
+ },
+ "config": {
+  "baseSeed": 1,
+  "seeds": 100,
+  "skills": [
+   "random",
+   "greedy",
+   "smart"
+  ],
+  "pool": "reward",
+  "includeUpgrades": false
+ },
+ "metrics": {
+  "ladder/random/starter/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-a/hpLost": {
+   "mean": 6.13,
+   "sd": 3.583506,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-a/turns": {
+   "mean": 3.94,
+   "sd": 0.896908,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-d+enemy-d/hpLost": {
+   "mean": 6.1,
+   "sd": 3.663911,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-d+enemy-d/turns": {
+   "mean": 4.73,
+   "sd": 1.090408,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-b+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-b+enemy-d/hpLost": {
+   "mean": 16.89,
+   "sd": 6.104966,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-b+enemy-d/turns": {
+   "mean": 7.92,
+   "sd": 1.300194,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-c/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-c/hpLost": {
+   "mean": 16.73,
+   "sd": 7.275051,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-c/turns": {
+   "mean": 6.81,
+   "sd": 0.895499,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-a+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-a+enemy-d/hpLost": {
+   "mean": 22.39,
+   "sd": 6.746335,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-a+enemy-d/turns": {
+   "mean": 6.43,
+   "sd": 1.121462,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 21.15,
+   "sd": 6.468845,
+   "n": 100
+  },
+  "ladder/random/starter/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 7.08,
+   "sd": 1.203362,
+   "n": 100
+  },
+  "ladder/random/starter/elite-a/win": {
+   "mean": 0.99,
+   "sd": 0.1,
+   "n": 100
+  },
+  "ladder/random/starter/elite-a/hpLost": {
+   "mean": 34.06,
+   "sd": 9.040671,
+   "n": 100
+  },
+  "ladder/random/starter/elite-a/turns": {
+   "mean": 7.46,
+   "sd": 1.038842,
+   "n": 100
+  },
+  "ladder/random/starter/elite-b/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/elite-b/hpLost": {
+   "mean": 30.3,
+   "sd": 7.609802,
+   "n": 100
+  },
+  "ladder/random/starter/elite-b/turns": {
+   "mean": 8.86,
+   "sd": 1.333485,
+   "n": 100
+  },
+  "ladder/random/starter/boss-a/win": {
+   "mean": 0,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/boss-a/hpLost": {
+   "mean": 60,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/random/starter/boss-a/turns": {
+   "mean": 11.55,
+   "sd": 1.860678,
+   "n": 100
+  },
+  "ladder/random/mid/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-a/hpLost": {
+   "mean": 6.696667,
+   "sd": 3.965316,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-a/turns": {
+   "mean": 4.08,
+   "sd": 1.658141,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-d+enemy-d/hpLost": {
+   "mean": 6.45,
+   "sd": 4.380807,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-d+enemy-d/turns": {
+   "mean": 4.596667,
+   "sd": 1.756209,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-b+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-b+enemy-d/hpLost": {
+   "mean": 13.983333,
+   "sd": 6.846359,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-b+enemy-d/turns": {
+   "mean": 7.916667,
+   "sd": 3.282118,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-c/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-c/hpLost": {
+   "mean": 14.1,
+   "sd": 6.755402,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-c/turns": {
+   "mean": 6.576667,
+   "sd": 2.355692,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-a+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-a+enemy-d/hpLost": {
+   "mean": 19.986667,
+   "sd": 8.428322,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-a+enemy-d/turns": {
+   "mean": 6.506667,
+   "sd": 2.439219,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 19.333333,
+   "sd": 7.71366,
+   "n": 300
+  },
+  "ladder/random/mid/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 7.16,
+   "sd": 2.728715,
+   "n": 300
+  },
+  "ladder/random/mid/elite-a/win": {
+   "mean": 0.996667,
+   "sd": 0.057735,
+   "n": 300
+  },
+  "ladder/random/mid/elite-a/hpLost": {
+   "mean": 27.763333,
+   "sd": 10.153701,
+   "n": 300
+  },
+  "ladder/random/mid/elite-a/turns": {
+   "mean": 7.32,
+   "sd": 2.494998,
+   "n": 300
+  },
+  "ladder/random/mid/elite-b/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/mid/elite-b/hpLost": {
+   "mean": 22.07,
+   "sd": 9.483929,
+   "n": 300
+  },
+  "ladder/random/mid/elite-b/turns": {
+   "mean": 8.296667,
+   "sd": 3.492274,
+   "n": 300
+  },
+  "ladder/random/mid/boss-a/win": {
+   "mean": 0.653333,
+   "sd": 0.476704,
+   "n": 300
+  },
+  "ladder/random/mid/boss-a/hpLost": {
+   "mean": 49.783333,
+   "sd": 10.447018,
+   "n": 300
+  },
+  "ladder/random/mid/boss-a/turns": {
+   "mean": 12.983333,
+   "sd": 5.612014,
+   "n": 300
+  },
+  "ladder/random/late/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/enemy-a/hpLost": {
+   "mean": 5.166667,
+   "sd": 3.758454,
+   "n": 300
+  },
+  "ladder/random/late/enemy-a/turns": {
+   "mean": 3.36,
+   "sd": 1.061834,
+   "n": 300
+  },
+  "ladder/random/late/enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/enemy-d+enemy-d/hpLost": {
+   "mean": 6.17,
+   "sd": 3.999302,
+   "n": 300
+  },
+  "ladder/random/late/enemy-d+enemy-d/turns": {
+   "mean": 3.87,
+   "sd": 1.103248,
+   "n": 300
+  },
+  "ladder/random/late/enemy-b+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/enemy-b+enemy-d/hpLost": {
+   "mean": 12.633333,
+   "sd": 6.394936,
+   "n": 300
+  },
+  "ladder/random/late/enemy-b+enemy-d/turns": {
+   "mean": 6.403333,
+   "sd": 1.569139,
+   "n": 300
+  },
+  "ladder/random/late/enemy-c/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/enemy-c/hpLost": {
+   "mean": 11.27,
+   "sd": 6.295173,
+   "n": 300
+  },
+  "ladder/random/late/enemy-c/turns": {
+   "mean": 5.193333,
+   "sd": 1.405658,
+   "n": 300
+  },
+  "ladder/random/late/enemy-a+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/enemy-a+enemy-d/hpLost": {
+   "mean": 17.073333,
+   "sd": 6.815384,
+   "n": 300
+  },
+  "ladder/random/late/enemy-a+enemy-d/turns": {
+   "mean": 5.386667,
+   "sd": 1.155395,
+   "n": 300
+  },
+  "ladder/random/late/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 18.56,
+   "sd": 6.679455,
+   "n": 300
+  },
+  "ladder/random/late/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 5.97,
+   "sd": 1.230507,
+   "n": 300
+  },
+  "ladder/random/late/elite-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/elite-a/hpLost": {
+   "mean": 20.643333,
+   "sd": 8.925713,
+   "n": 300
+  },
+  "ladder/random/late/elite-a/turns": {
+   "mean": 5.57,
+   "sd": 1.237013,
+   "n": 300
+  },
+  "ladder/random/late/elite-b/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/random/late/elite-b/hpLost": {
+   "mean": 17.786667,
+   "sd": 7.814391,
+   "n": 300
+  },
+  "ladder/random/late/elite-b/turns": {
+   "mean": 6.373333,
+   "sd": 1.499372,
+   "n": 300
+  },
+  "ladder/random/late/boss-a/win": {
+   "mean": 0.883333,
+   "sd": 0.321559,
+   "n": 300
+  },
+  "ladder/random/late/boss-a/hpLost": {
+   "mean": 43.013333,
+   "sd": 11.993023,
+   "n": 300
+  },
+  "ladder/random/late/boss-a/turns": {
+   "mean": 10.453333,
+   "sd": 2.199382,
+   "n": 300
+  },
+  "card-add/random/strike/win": {
+   "mean": 0.004444,
+   "sd": 0.066555,
+   "n": 900
+  },
+  "card-add/random/strike/hpLost": {
+   "mean": -0.422222,
+   "sd": 7.728107,
+   "n": 900
+  },
+  "card-add/random/strike/turns": {
+   "mean": -0.611111,
+   "sd": 1.557889,
+   "n": 900
+  },
+  "card-add/random/defend/win": {
+   "mean": 0.002222,
+   "sd": 0.047114,
+   "n": 900
+  },
+  "card-add/random/defend/hpLost": {
+   "mean": -0.914444,
+   "sd": 8.529502,
+   "n": 900
+  },
+  "card-add/random/defend/turns": {
+   "mean": 0.654444,
+   "sd": 1.877071,
+   "n": 900
+  },
+  "card-add/random/bolt/win": {
+   "mean": 0.004444,
+   "sd": 0.094228,
+   "n": 900
+  },
+  "card-add/random/bolt/hpLost": {
+   "mean": -0.288889,
+   "sd": 8.198109,
+   "n": 900
+  },
+  "card-add/random/bolt/turns": {
+   "mean": -0.815556,
+   "sd": 1.664048,
+   "n": 900
+  },
+  "card-add/random/focus/win": {
+   "mean": -0.008889,
+   "sd": 0.105092,
+   "n": 900
+  },
+  "card-add/random/focus/hpLost": {
+   "mean": 4.113333,
+   "sd": 9.192566,
+   "n": 900
+  },
+  "card-add/random/focus/turns": {
+   "mean": 0.495556,
+   "sd": 1.881643,
+   "n": 900
+  },
+  "card-add/random/jab/win": {
+   "mean": 0.015556,
+   "sd": 0.123817,
+   "n": 900
+  },
+  "card-add/random/jab/hpLost": {
+   "mean": -3.233333,
+   "sd": 7.700671,
+   "n": 900
+  },
+  "card-add/random/jab/turns": {
+   "mean": -0.866667,
+   "sd": 1.611969,
+   "n": 900
+  },
+  "card-add/random/guarded-strike/win": {
+   "mean": 0.012222,
+   "sd": 0.109938,
+   "n": 900
+  },
+  "card-add/random/guarded-strike/hpLost": {
+   "mean": -3.935556,
+   "sd": 8.038303,
+   "n": 900
+  },
+  "card-add/random/guarded-strike/turns": {
+   "mean": -0.365556,
+   "sd": 1.661155,
+   "n": 900
+  },
+  "card-add/random/heavy-hit/win": {
+   "mean": 0.023333,
+   "sd": 0.158237,
+   "n": 900
+  },
+  "card-add/random/heavy-hit/hpLost": {
+   "mean": -2.668889,
+   "sd": 8.825797,
+   "n": 900
+  },
+  "card-add/random/heavy-hit/turns": {
+   "mean": -1.143333,
+   "sd": 1.823865,
+   "n": 900
+  },
+  "card-add/random/big-block/win": {
+   "mean": 0.002222,
+   "sd": 0.081665,
+   "n": 900
+  },
+  "card-add/random/big-block/hpLost": {
+   "mean": -1.727778,
+   "sd": 8.544479,
+   "n": 900
+  },
+  "card-add/random/big-block/turns": {
+   "mean": 1.014444,
+   "sd": 1.945535,
+   "n": 900
+  },
+  "card-add/random/quick-draw/win": {
+   "mean": -0.01,
+   "sd": 0.110162,
+   "n": 900
+  },
+  "card-add/random/quick-draw/hpLost": {
+   "mean": 4.571111,
+   "sd": 9.407145,
+   "n": 900
+  },
+  "card-add/random/quick-draw/turns": {
+   "mean": 0.485556,
+   "sd": 1.921372,
+   "n": 900
+  },
+  "card-add/random/fortify/win": {
+   "mean": 0.066667,
+   "sd": 0.254,
+   "n": 900
+  },
+  "card-add/random/fortify/hpLost": {
+   "mean": -2.533333,
+   "sd": 9.932027,
+   "n": 900
+  },
+  "card-add/random/fortify/turns": {
+   "mean": 1.401111,
+   "sd": 2.574842,
+   "n": 900
+  },
+  "card-add/random/weaken/win": {
+   "mean": 0.008889,
+   "sd": 0.093913,
+   "n": 900
+  },
+  "card-add/random/weaken/hpLost": {
+   "mean": -1.448889,
+   "sd": 8.27964,
+   "n": 900
+  },
+  "card-add/random/weaken/turns": {
+   "mean": 0.755556,
+   "sd": 1.877275,
+   "n": 900
+  },
+  "card-add/random/expose/win": {
+   "mean": 0.013333,
+   "sd": 0.124076,
+   "n": 900
+  },
+  "card-add/random/expose/hpLost": {
+   "mean": -0.59,
+   "sd": 8.271244,
+   "n": 900
+  },
+  "card-add/random/expose/turns": {
+   "mean": -0.573333,
+   "sd": 1.708501,
+   "n": 900
+  },
+  "card-add/random/sunder/win": {
+   "mean": 0.013333,
+   "sd": 0.124076,
+   "n": 900
+  },
+  "card-add/random/sunder/hpLost": {
+   "mean": -1.202222,
+   "sd": 8.442648,
+   "n": 900
+  },
+  "card-add/random/sunder/turns": {
+   "mean": -0.974444,
+   "sd": 1.73122,
+   "n": 900
+  },
+  "card-add/random/strengthen/win": {
+   "mean": 0.064444,
+   "sd": 0.24568,
+   "n": 900
+  },
+  "card-add/random/strengthen/hpLost": {
+   "mean": -2.765556,
+   "sd": 8.413635,
+   "n": 900
+  },
+  "card-add/random/strengthen/turns": {
+   "mean": -1.073333,
+   "sd": 1.657276,
+   "n": 900
+  },
+  "ladder/greedy/starter/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-a/hpLost": {
+   "mean": 2.56,
+   "sd": 2.503815,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-a/turns": {
+   "mean": 4.11,
+   "sd": 1.1,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-d+enemy-d/hpLost": {
+   "mean": 1.6,
+   "sd": 2.5505,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-d+enemy-d/turns": {
+   "mean": 4.56,
+   "sd": 0.624742,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-b+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-b+enemy-d/hpLost": {
+   "mean": 4.15,
+   "sd": 2.739074,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-b+enemy-d/turns": {
+   "mean": 7.02,
+   "sd": 0.724464,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-c/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-c/hpLost": {
+   "mean": 4.67,
+   "sd": 3.877037,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-c/turns": {
+   "mean": 7.66,
+   "sd": 0.945163,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-a+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-a+enemy-d/hpLost": {
+   "mean": 8.44,
+   "sd": 2.931266,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-a+enemy-d/turns": {
+   "mean": 7.84,
+   "sd": 1.051406,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 9.8,
+   "sd": 2.12251,
+   "n": 100
+  },
+  "ladder/greedy/starter/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 7.55,
+   "sd": 0.625631,
+   "n": 100
+  },
+  "ladder/greedy/starter/elite-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/elite-a/hpLost": {
+   "mean": 23.76,
+   "sd": 5.447861,
+   "n": 100
+  },
+  "ladder/greedy/starter/elite-a/turns": {
+   "mean": 8.58,
+   "sd": 1.111737,
+   "n": 100
+  },
+  "ladder/greedy/starter/elite-b/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/greedy/starter/elite-b/hpLost": {
+   "mean": 13.82,
+   "sd": 4.656656,
+   "n": 100
+  },
+  "ladder/greedy/starter/elite-b/turns": {
+   "mean": 10.21,
+   "sd": 1.037625,
+   "n": 100
+  },
+  "ladder/greedy/starter/boss-a/win": {
+   "mean": 0.9,
+   "sd": 0.301511,
+   "n": 100
+  },
+  "ladder/greedy/starter/boss-a/hpLost": {
+   "mean": 50.28,
+   "sd": 5.75963,
+   "n": 100
+  },
+  "ladder/greedy/starter/boss-a/turns": {
+   "mean": 16.64,
+   "sd": 0.745627,
+   "n": 100
+  },
+  "ladder/greedy/mid/enemy-a/win": {
+   "mean": 0.936667,
+   "sd": 0.243968,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-a/hpLost": {
+   "mean": 8.15,
+   "sd": 13.985928,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-a/turns": {
+   "mean": 8.176667,
+   "sd": 13.919938,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-d+enemy-d/win": {
+   "mean": 0.89,
+   "sd": 0.313413,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-d+enemy-d/hpLost": {
+   "mean": 9.83,
+   "sd": 17.998544,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-d+enemy-d/turns": {
+   "mean": 11.066667,
+   "sd": 17.694421,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-b+enemy-d/win": {
+   "mean": 0.71,
+   "sd": 0.45452,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-b+enemy-d/hpLost": {
+   "mean": 21.66,
+   "sd": 24.829002,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-b+enemy-d/turns": {
+   "mean": 21.986667,
+   "sd": 25.008223,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-c/win": {
+   "mean": 0.776667,
+   "sd": 0.417176,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-c/hpLost": {
+   "mean": 20.216667,
+   "sd": 21.908209,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-c/turns": {
+   "mean": 18.296667,
+   "sd": 23.005496,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-a+enemy-d/win": {
+   "mean": 0.746667,
+   "sd": 0.435647,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-a+enemy-d/hpLost": {
+   "mean": 24.25,
+   "sd": 21.557596,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-a+enemy-d/turns": {
+   "mean": 20.453333,
+   "sd": 23.713052,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 0.703333,
+   "sd": 0.457552,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 24.966667,
+   "sd": 23.156416,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 22.386667,
+   "sd": 25.159767,
+   "n": 300
+  },
+  "ladder/greedy/mid/elite-a/win": {
+   "mean": 0.71,
+   "sd": 0.45452,
+   "n": 300
+  },
+  "ladder/greedy/mid/elite-a/hpLost": {
+   "mean": 30.163333,
+   "sd": 20.477167,
+   "n": 300
+  },
+  "ladder/greedy/mid/elite-a/turns": {
+   "mean": 22.196667,
+   "sd": 24.881888,
+   "n": 300
+  },
+  "ladder/greedy/mid/elite-b/win": {
+   "mean": 0.693333,
+   "sd": 0.46188,
+   "n": 300
+  },
+  "ladder/greedy/mid/elite-b/hpLost": {
+   "mean": 28.766667,
+   "sd": 22.079188,
+   "n": 300
+  },
+  "ladder/greedy/mid/elite-b/turns": {
+   "mean": 23.813333,
+   "sd": 24.809747,
+   "n": 300
+  },
+  "ladder/greedy/mid/boss-a/win": {
+   "mean": 0.63,
+   "sd": 0.483611,
+   "n": 300
+  },
+  "ladder/greedy/mid/boss-a/hpLost": {
+   "mean": 43.936667,
+   "sd": 16.846325,
+   "n": 300
+  },
+  "ladder/greedy/mid/boss-a/turns": {
+   "mean": 27.3,
+   "sd": 23.885667,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-a/hpLost": {
+   "mean": 5.17,
+   "sd": 3.842349,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-a/turns": {
+   "mean": 3.513333,
+   "sd": 1.19775,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-d+enemy-d/hpLost": {
+   "mean": 5.213333,
+   "sd": 3.821409,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-d+enemy-d/turns": {
+   "mean": 4.18,
+   "sd": 1.177095,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-b+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-b+enemy-d/hpLost": {
+   "mean": 7.966667,
+   "sd": 4.785592,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-b+enemy-d/turns": {
+   "mean": 6.136667,
+   "sd": 1.64123,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-c/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-c/hpLost": {
+   "mean": 9.16,
+   "sd": 5.14093,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-c/turns": {
+   "mean": 5.083333,
+   "sd": 1.572035,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-a+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-a+enemy-d/hpLost": {
+   "mean": 13.386667,
+   "sd": 5.804262,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-a+enemy-d/turns": {
+   "mean": 5.893333,
+   "sd": 1.327087,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 14.643333,
+   "sd": 5.277211,
+   "n": 300
+  },
+  "ladder/greedy/late/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 6.45,
+   "sd": 1.579816,
+   "n": 300
+  },
+  "ladder/greedy/late/elite-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/elite-a/hpLost": {
+   "mean": 16.54,
+   "sd": 7.302018,
+   "n": 300
+  },
+  "ladder/greedy/late/elite-a/turns": {
+   "mean": 5.913333,
+   "sd": 1.56225,
+   "n": 300
+  },
+  "ladder/greedy/late/elite-b/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/elite-b/hpLost": {
+   "mean": 12.866667,
+   "sd": 6.669119,
+   "n": 300
+  },
+  "ladder/greedy/late/elite-b/turns": {
+   "mean": 6.6,
+   "sd": 2.064187,
+   "n": 300
+  },
+  "ladder/greedy/late/boss-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/greedy/late/boss-a/hpLost": {
+   "mean": 29.72,
+   "sd": 9.871157,
+   "n": 300
+  },
+  "ladder/greedy/late/boss-a/turns": {
+   "mean": 11.003333,
+   "sd": 3.126645,
+   "n": 300
+  },
+  "card-add/greedy/strike/win": {
+   "mean": -0.001111,
+   "sd": 0.152833,
+   "n": 900
+  },
+  "card-add/greedy/strike/hpLost": {
+   "mean": 1.027778,
+   "sd": 5.372892,
+   "n": 900
+  },
+  "card-add/greedy/strike/turns": {
+   "mean": -0.666667,
+   "sd": 1.248804,
+   "n": 900
+  },
+  "card-add/greedy/defend/win": {
+   "mean": 0.003333,
+   "sd": 0.129128,
+   "n": 900
+  },
+  "card-add/greedy/defend/hpLost": {
+   "mean": -1.454444,
+   "sd": 5.627591,
+   "n": 900
+  },
+  "card-add/greedy/defend/turns": {
+   "mean": 0.154444,
+   "sd": 1.203227,
+   "n": 900
+  },
+  "card-add/greedy/bolt/win": {
+   "mean": -0.002222,
+   "sd": 0.156418,
+   "n": 900
+  },
+  "card-add/greedy/bolt/hpLost": {
+   "mean": 0.946667,
+   "sd": 5.317656,
+   "n": 900
+  },
+  "card-add/greedy/bolt/turns": {
+   "mean": -0.768889,
+   "sd": 1.299409,
+   "n": 900
+  },
+  "card-add/greedy/focus/win": {
+   "mean": -0.167778,
+   "sd": 0.373877,
+   "n": 900
+  },
+  "card-add/greedy/focus/hpLost": {
+   "mean": 12.773333,
+   "sd": 12.847084,
+   "n": 900
+  },
+  "card-add/greedy/focus/turns": {
+   "mean": 3.892222,
+   "sd": 3.890684,
+   "n": 900
+  },
+  "card-add/greedy/jab/win": {
+   "mean": 0.011111,
+   "sd": 0.10488,
+   "n": 900
+  },
+  "card-add/greedy/jab/hpLost": {
+   "mean": -1.123333,
+   "sd": 6.039296,
+   "n": 900
+  },
+  "card-add/greedy/jab/turns": {
+   "mean": -1.605556,
+   "sd": 1.315169,
+   "n": 900
+  },
+  "card-add/greedy/guarded-strike/win": {
+   "mean": 0.01,
+   "sd": 0.110162,
+   "n": 900
+  },
+  "card-add/greedy/guarded-strike/hpLost": {
+   "mean": -3.4,
+   "sd": 5.615409,
+   "n": 900
+  },
+  "card-add/greedy/guarded-strike/turns": {
+   "mean": -1.138889,
+   "sd": 1.21615,
+   "n": 900
+  },
+  "card-add/greedy/heavy-hit/win": {
+   "mean": 0.011111,
+   "sd": 0.10488,
+   "n": 900
+  },
+  "card-add/greedy/heavy-hit/hpLost": {
+   "mean": -1.16,
+   "sd": 6.730053,
+   "n": 900
+  },
+  "card-add/greedy/heavy-hit/turns": {
+   "mean": -1.721111,
+   "sd": 1.728193,
+   "n": 900
+  },
+  "card-add/greedy/big-block/win": {
+   "mean": 0.011111,
+   "sd": 0.10488,
+   "n": 900
+  },
+  "card-add/greedy/big-block/hpLost": {
+   "mean": -5.331111,
+   "sd": 7.697661,
+   "n": 900
+  },
+  "card-add/greedy/big-block/turns": {
+   "mean": 0.156667,
+   "sd": 1.298973,
+   "n": 900
+  },
+  "card-add/greedy/quick-draw/win": {
+   "mean": -0.865556,
+   "sd": 0.341319,
+   "n": 900
+  },
+  "card-add/greedy/quick-draw/hpLost": {
+   "mean": 39.852222,
+   "sd": 20.514011,
+   "n": 900
+  },
+  "card-add/greedy/quick-draw/turns": {
+   "mean": 4.361111,
+   "sd": 5.755458,
+   "n": 900
+  },
+  "card-add/greedy/fortify/win": {
+   "mean": 0.011111,
+   "sd": 0.10488,
+   "n": 900
+  },
+  "card-add/greedy/fortify/hpLost": {
+   "mean": -4.155556,
+   "sd": 12.251636,
+   "n": 900
+  },
+  "card-add/greedy/fortify/turns": {
+   "mean": 4.134444,
+   "sd": 4.424214,
+   "n": 900
+  },
+  "card-add/greedy/weaken/win": {
+   "mean": -0.075556,
+   "sd": 0.272716,
+   "n": 900
+  },
+  "card-add/greedy/weaken/hpLost": {
+   "mean": 1.012222,
+   "sd": 5.814223,
+   "n": 900
+  },
+  "card-add/greedy/weaken/turns": {
+   "mean": 2.64,
+   "sd": 2.51212,
+   "n": 900
+  },
+  "card-add/greedy/expose/win": {
+   "mean": -0.077778,
+   "sd": 0.28409,
+   "n": 900
+  },
+  "card-add/greedy/expose/hpLost": {
+   "mean": 2.323333,
+   "sd": 6.102108,
+   "n": 900
+  },
+  "card-add/greedy/expose/turns": {
+   "mean": -0.885556,
+   "sd": 1.865682,
+   "n": 900
+  },
+  "card-add/greedy/sunder/win": {
+   "mean": -0.017778,
+   "sd": 0.181808,
+   "n": 900
+  },
+  "card-add/greedy/sunder/hpLost": {
+   "mean": 2.392222,
+   "sd": 6.034435,
+   "n": 900
+  },
+  "card-add/greedy/sunder/turns": {
+   "mean": -2.165556,
+   "sd": 2.001204,
+   "n": 900
+  },
+  "card-add/greedy/strengthen/win": {
+   "mean": -0.012222,
+   "sd": 0.159482,
+   "n": 900
+  },
+  "card-add/greedy/strengthen/hpLost": {
+   "mean": 0.658889,
+   "sd": 6.350031,
+   "n": 900
+  },
+  "card-add/greedy/strengthen/turns": {
+   "mean": -1.57,
+   "sd": 1.885071,
+   "n": 900
+  },
+  "ladder/smart/starter/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-a/hpLost": {
+   "mean": 7.1,
+   "sd": 2.354879,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-a/turns": {
+   "mean": 3.02,
+   "sd": 0.245361,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-d+enemy-d/hpLost": {
+   "mean": 5.6,
+   "sd": 3.354478,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-d+enemy-d/turns": {
+   "mean": 3.31,
+   "sd": 0.486069,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-b+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-b+enemy-d/hpLost": {
+   "mean": 9.71,
+   "sd": 4.038439,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-b+enemy-d/turns": {
+   "mean": 5.42,
+   "sd": 0.553775,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-c/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-c/hpLost": {
+   "mean": 14.77,
+   "sd": 4.896618,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-c/turns": {
+   "mean": 5.21,
+   "sd": 0.728843,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-a+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-a+enemy-d/hpLost": {
+   "mean": 15.3,
+   "sd": 3.76185,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-a+enemy-d/turns": {
+   "mean": 4.97,
+   "sd": 0.540389,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 16,
+   "sd": 4.380858,
+   "n": 100
+  },
+  "ladder/smart/starter/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 5.31,
+   "sd": 0.506423,
+   "n": 100
+  },
+  "ladder/smart/starter/elite-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/elite-a/hpLost": {
+   "mean": 31.71,
+   "sd": 7.436322,
+   "n": 100
+  },
+  "ladder/smart/starter/elite-a/turns": {
+   "mean": 5.91,
+   "sd": 0.533617,
+   "n": 100
+  },
+  "ladder/smart/starter/elite-b/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 100
+  },
+  "ladder/smart/starter/elite-b/hpLost": {
+   "mean": 29.98,
+   "sd": 6.397569,
+   "n": 100
+  },
+  "ladder/smart/starter/elite-b/turns": {
+   "mean": 6.76,
+   "sd": 0.588097,
+   "n": 100
+  },
+  "ladder/smart/starter/boss-a/win": {
+   "mean": 0.3,
+   "sd": 0.460566,
+   "n": 100
+  },
+  "ladder/smart/starter/boss-a/hpLost": {
+   "mean": 58.78,
+   "sd": 2.329347,
+   "n": 100
+  },
+  "ladder/smart/starter/boss-a/turns": {
+   "mean": 12.27,
+   "sd": 1.704747,
+   "n": 100
+  },
+  "ladder/smart/mid/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-a/hpLost": {
+   "mean": 8.146667,
+   "sd": 3.303766,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-a/turns": {
+   "mean": 3.113333,
+   "sd": 1.216039,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-d+enemy-d/win": {
+   "mean": 0.996667,
+   "sd": 0.057735,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-d+enemy-d/hpLost": {
+   "mean": 7.186667,
+   "sd": 4.985446,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-d+enemy-d/turns": {
+   "mean": 3.8,
+   "sd": 3.733604,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-b+enemy-d/win": {
+   "mean": 0.796667,
+   "sd": 0.403151,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-b+enemy-d/hpLost": {
+   "mean": 20.773333,
+   "sd": 20.364783,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-b+enemy-d/turns": {
+   "mean": 16.666667,
+   "sd": 22.513516,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-c/win": {
+   "mean": 0.883333,
+   "sd": 0.321559,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-c/hpLost": {
+   "mean": 20.326667,
+   "sd": 15.430715,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-c/turns": {
+   "mean": 11.456667,
+   "sd": 18.128346,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-a+enemy-d/win": {
+   "mean": 0.9,
+   "sd": 0.300501,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-a+enemy-d/hpLost": {
+   "mean": 20.1,
+   "sd": 14.477176,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-a+enemy-d/turns": {
+   "mean": 10.353333,
+   "sd": 17.042593,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 0.91,
+   "sd": 0.28666,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 19.746667,
+   "sd": 13.932319,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 10.283333,
+   "sd": 16.16066,
+   "n": 300
+  },
+  "ladder/smart/mid/elite-a/win": {
+   "mean": 0.81,
+   "sd": 0.392956,
+   "n": 300
+  },
+  "ladder/smart/mid/elite-a/hpLost": {
+   "mean": 31.013333,
+   "sd": 15.774747,
+   "n": 300
+  },
+  "ladder/smart/mid/elite-a/turns": {
+   "mean": 15.893333,
+   "sd": 21.954543,
+   "n": 300
+  },
+  "ladder/smart/mid/elite-b/win": {
+   "mean": 0.803333,
+   "sd": 0.398142,
+   "n": 300
+  },
+  "ladder/smart/mid/elite-b/hpLost": {
+   "mean": 29.216667,
+   "sd": 16.323744,
+   "n": 300
+  },
+  "ladder/smart/mid/elite-b/turns": {
+   "mean": 16.333333,
+   "sd": 22.21156,
+   "n": 300
+  },
+  "ladder/smart/mid/boss-a/win": {
+   "mean": 0.563333,
+   "sd": 0.496801,
+   "n": 300
+  },
+  "ladder/smart/mid/boss-a/hpLost": {
+   "mean": 51.433333,
+   "sd": 10.17533,
+   "n": 300
+  },
+  "ladder/smart/mid/boss-a/turns": {
+   "mean": 25.633333,
+   "sd": 25.056569,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a/hpLost": {
+   "mean": 6.146667,
+   "sd": 3.546889,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a/turns": {
+   "mean": 2.536667,
+   "sd": 0.619085,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-d+enemy-d/hpLost": {
+   "mean": 6.016667,
+   "sd": 3.566341,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-d+enemy-d/turns": {
+   "mean": 2.763333,
+   "sd": 0.612568,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-b+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-b+enemy-d/hpLost": {
+   "mean": 9.28,
+   "sd": 4.290645,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-b+enemy-d/turns": {
+   "mean": 4.593333,
+   "sd": 0.982092,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-c/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-c/hpLost": {
+   "mean": 11.286667,
+   "sd": 4.951722,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-c/turns": {
+   "mean": 3.936667,
+   "sd": 0.906677,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a+enemy-d/hpLost": {
+   "mean": 13.076667,
+   "sd": 4.874079,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a+enemy-d/turns": {
+   "mean": 3.84,
+   "sd": 0.838696,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-d+enemy-d+enemy-d/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-d+enemy-d+enemy-d/hpLost": {
+   "mean": 14.336667,
+   "sd": 4.567222,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-d+enemy-d+enemy-d/turns": {
+   "mean": 4.24,
+   "sd": 0.8355,
+   "n": 300
+  },
+  "ladder/smart/late/elite-a/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/elite-a/hpLost": {
+   "mean": 18.526667,
+   "sd": 6.599074,
+   "n": 300
+  },
+  "ladder/smart/late/elite-a/turns": {
+   "mean": 4.64,
+   "sd": 1.03633,
+   "n": 300
+  },
+  "ladder/smart/late/elite-b/win": {
+   "mean": 1,
+   "sd": 0,
+   "n": 300
+  },
+  "ladder/smart/late/elite-b/hpLost": {
+   "mean": 15.856667,
+   "sd": 6.155954,
+   "n": 300
+  },
+  "ladder/smart/late/elite-b/turns": {
+   "mean": 4.74,
+   "sd": 1.184798,
+   "n": 300
+  },
+  "ladder/smart/late/boss-a/win": {
+   "mean": 0.993333,
+   "sd": 0.081513,
+   "n": 300
+  },
+  "ladder/smart/late/boss-a/hpLost": {
+   "mean": 34.606667,
+   "sd": 9.565404,
+   "n": 300
+  },
+  "ladder/smart/late/boss-a/turns": {
+   "mean": 9.57,
+   "sd": 2.983528,
+   "n": 300
+  },
+  "card-add/smart/strike/win": {
+   "mean": 0.012222,
+   "sd": 0.202503,
+   "n": 900
+  },
+  "card-add/smart/strike/hpLost": {
+   "mean": -0.854444,
+   "sd": 6.136556,
+   "n": 900
+  },
+  "card-add/smart/strike/turns": {
+   "mean": -0.158889,
+   "sd": 0.998485,
+   "n": 900
+  },
+  "card-add/smart/defend/win": {
+   "mean": -0.014444,
+   "sd": 0.191046,
+   "n": 900
+  },
+  "card-add/smart/defend/hpLost": {
+   "mean": -1.164444,
+   "sd": 6.261245,
+   "n": 900
+  },
+  "card-add/smart/defend/turns": {
+   "mean": 0.266667,
+   "sd": 0.957379,
+   "n": 900
+  },
+  "card-add/smart/bolt/win": {
+   "mean": 0.013333,
+   "sd": 0.220829,
+   "n": 900
+  },
+  "card-add/smart/bolt/hpLost": {
+   "mean": -0.26,
+   "sd": 6.571009,
+   "n": 900
+  },
+  "card-add/smart/bolt/turns": {
+   "mean": -0.56,
+   "sd": 1.119033,
+   "n": 900
+  },
+  "card-add/smart/focus/win": {
+   "mean": -0.033333,
+   "sd": 0.179605,
+   "n": 900
+  },
+  "card-add/smart/focus/hpLost": {
+   "mean": 9.238889,
+   "sd": 9.954604,
+   "n": 900
+  },
+  "card-add/smart/focus/turns": {
+   "mean": 0.653333,
+   "sd": 1.699257,
+   "n": 900
+  },
+  "card-add/smart/jab/win": {
+   "mean": 0.058889,
+   "sd": 0.249312,
+   "n": 900
+  },
+  "card-add/smart/jab/hpLost": {
+   "mean": -3.757778,
+   "sd": 7.168495,
+   "n": 900
+  },
+  "card-add/smart/jab/turns": {
+   "mean": -0.452222,
+   "sd": 0.984273,
+   "n": 900
+  },
+  "card-add/smart/guarded-strike/win": {
+   "mean": 0.07,
+   "sd": 0.25961,
+   "n": 900
+  },
+  "card-add/smart/guarded-strike/hpLost": {
+   "mean": -5.531111,
+   "sd": 7.169653,
+   "n": 900
+  },
+  "card-add/smart/guarded-strike/turns": {
+   "mean": -0.311111,
+   "sd": 0.930803,
+   "n": 900
+  },
+  "card-add/smart/heavy-hit/win": {
+   "mean": 0.071111,
+   "sd": 0.257153,
+   "n": 900
+  },
+  "card-add/smart/heavy-hit/hpLost": {
+   "mean": -3.237778,
+   "sd": 6.473108,
+   "n": 900
+  },
+  "card-add/smart/heavy-hit/turns": {
+   "mean": -1.446667,
+   "sd": 1.2229,
+   "n": 900
+  },
+  "card-add/smart/big-block/win": {
+   "mean": 0.073333,
+   "sd": 0.260828,
+   "n": 900
+  },
+  "card-add/smart/big-block/hpLost": {
+   "mean": -6.367778,
+   "sd": 8.684257,
+   "n": 900
+  },
+  "card-add/smart/big-block/turns": {
+   "mean": 0.791111,
+   "sd": 1.40424,
+   "n": 900
+  },
+  "card-add/smart/quick-draw/win": {
+   "mean": -0.187778,
+   "sd": 0.390752,
+   "n": 900
+  },
+  "card-add/smart/quick-draw/hpLost": {
+   "mean": 13.122222,
+   "sd": 13.342438,
+   "n": 900
+  },
+  "card-add/smart/quick-draw/turns": {
+   "mean": 1.004444,
+   "sd": 2.55528,
+   "n": 900
+  },
+  "card-add/smart/fortify/win": {
+   "mean": 0.077778,
+   "sd": 0.26797,
+   "n": 900
+  },
+  "card-add/smart/fortify/hpLost": {
+   "mean": -2.694444,
+   "sd": 12.318943,
+   "n": 900
+  },
+  "card-add/smart/fortify/turns": {
+   "mean": 3.045556,
+   "sd": 4.282714,
+   "n": 900
+  },
+  "card-add/smart/weaken/win": {
+   "mean": -0.032222,
+   "sd": 0.182875,
+   "n": 900
+  },
+  "card-add/smart/weaken/hpLost": {
+   "mean": 0.067778,
+   "sd": 6.18269,
+   "n": 900
+  },
+  "card-add/smart/weaken/turns": {
+   "mean": 0.718889,
+   "sd": 1.05356,
+   "n": 900
+  },
+  "card-add/smart/expose/win": {
+   "mean": 0.004444,
+   "sd": 0.200062,
+   "n": 900
+  },
+  "card-add/smart/expose/hpLost": {
+   "mean": -0.297778,
+   "sd": 6.64131,
+   "n": 900
+  },
+  "card-add/smart/expose/turns": {
+   "mean": -1.156667,
+   "sd": 1.328606,
+   "n": 900
+  },
+  "card-add/smart/sunder/win": {
+   "mean": 0.02,
+   "sd": 0.215216,
+   "n": 900
+  },
+  "card-add/smart/sunder/hpLost": {
+   "mean": -0.427778,
+   "sd": 6.540054,
+   "n": 900
+  },
+  "card-add/smart/sunder/turns": {
+   "mean": -1.366667,
+   "sd": 1.431024,
+   "n": 900
+  },
+  "card-add/smart/strengthen/win": {
+   "mean": 0.071111,
+   "sd": 0.261443,
+   "n": 900
+  },
+  "card-add/smart/strengthen/hpLost": {
+   "mean": -0.326667,
+   "sd": 6.984805,
+   "n": 900
+  },
+  "card-add/smart/strengthen/turns": {
+   "mean": -1.344444,
+   "sd": 1.427219,
+   "n": 900
+  }
+ }
+}

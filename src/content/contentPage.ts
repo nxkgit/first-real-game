@@ -1,10 +1,10 @@
-import { cardText, describeEffect, describeOutcome, relicText } from '../game/describe';
+import { cardText, describeEffect, describeOutcome, describeTrigger, relicText } from '../game/describe';
 import type { EnemyMove } from '../game/types';
 import { DEFAULT_MAP_PARAMS } from '../game/actMap';
 import { baseCards, upgradedVersion } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';
-import { RELIC_POOL } from '../data/relics';
+import { RELICS, RELIC_POOL } from '../data/relics';
 import { ACT_CONTENT } from '../data/run';
 import { STATUSES } from '../data/statuses';
 import * as tunables from '../data/tunables';
@@ -23,7 +23,7 @@ function cardsTable(): Table {
     id: 'cards',
     title: 'Cards',
     note: 'Text is generated from each card\'s effects. "Upgrade" is what the card becomes at a rest stop.',
-    headers: ['Name', 'Type', 'Cost', 'Text', 'Upgraded text', 'Upgraded cost', 'Owner', 'Reward pool'],
+    headers: ['Name', 'Type', 'Cost', 'Text', 'Upgraded text', 'Upgraded cost', 'Owner', 'Reward pool', 'Tags', 'Exhaust', 'Triggers'],
     rows: baseCards().map((card) => {
       const up = upgradedVersion(card);
       return [
@@ -35,6 +35,9 @@ function cardsTable(): Table {
         up ? String(up.cost) : '',
         card.owner,
         card.inRewardPool ? 'yes' : 'no',
+        (card.tags ?? []).join(', '),
+        card.exhaust ? 'yes' : '',
+        (card.triggers ?? []).map(describeTrigger).join(' | '),
       ];
     }),
   };
@@ -44,8 +47,8 @@ function relicsTable(): Table {
   return {
     id: 'relics',
     title: 'Relics',
-    headers: ['Name', 'Text'],
-    rows: RELIC_POOL.map((relic) => [relic.name, relicText(relic)]),
+    headers: ['Name', 'Text', 'In relic pool'],
+    rows: Object.values(RELICS).map((relic) => [relic.name, relicText(relic), RELIC_POOL.includes(relic) ? 'yes' : 'no']),
   };
 }
 

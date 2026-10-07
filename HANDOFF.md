@@ -1,6 +1,6 @@
 # Session Handoff
 
-Context for picking this project up in a fresh Claude Code session. Last updated **2026-10-07** (end of session 2).
+Context for picking this project up in a fresh Claude Code session. Last updated **2026-10-07** (session 3: unattended-work process, synergy engine, balance tooling, test layers).
 
 Read order for a new session: `CLAUDE.md` (rules) → this file (where things stand) → `implementationplan.md` (scope) → `DESIGN_LOG.md` (why). This file is a snapshot. When it disagrees with those documents or the code, they win. Update this file at the end of each session.
 
@@ -11,7 +11,9 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 - **Live:** https://nxkgit.github.io/first-real-game/ (GitHub Pages; redeploys automatically on every push to `main`). Add `?dev` for the dev panel, `?seed=123` to pick a seed. The content browser is at `/content.html` on the same site.
 - **Repo:** https://github.com/nxkgit/first-real-game. `main` is the live branch. The older feature branches (`status-effects`, `shop-draft`, `architecture`, `playtest-tooling`) are all merged into it and can be deleted.
 - **Stage:** MVP 1 (one fight) and MVP 2 (chained fights) are done. Session 2 went on to build a **one-act demo**: a branching map of fights, elites, rests, shops and events leading to a boss. See "What the game does today".
-- **Health:** `npm test` passes 132 tests and `npm run build` is clean.
+- **Health:** `npm run verify` (typecheck, tests, build) is green: 531 tests pass, 6 are deliberate `it.fails` markers for known save-validation bugs and event-text bugs (they flip to "unexpectedly passing" when fixed; drop the `.fails` then), 1 is skipped.
+- **Session 3 added** (see `DESIGN_LOG.md` Session 3 for decisions): the synergy engine (`docs/SYNERGY_ENGINE.md`; 20 placeholder cards in `src/data/synergyCards.ts`, kept out of the reward pool), the balance toolkit (`docs/BALANCE.md`, `npm run balance:report|baseline|check`, `balance/`), invariant/fuzz and coverage test layers (`*.invariants.test.ts`, `*.coverage.test.ts`), a verified code audit (`docs/audits/2026-10-code-audit.md`), a PR/branch CI workflow, and the unattended-session playbook (`docs/AUTOMATION.md`). Gameplay rule changes: powers stay in play once played, hand cap 10, combat-start block survives turn 1.
+- **Played in a browser this session (2026-10-07):** map, a fight with real clicks, end turn and the enemy's attack, and a synergy combo (Power Up, Attack Echo, Strike doubled, Combo Strike scaled). Not played: exhaust cards, the other triggers, relic triggers, a full act.
 
 ### What the game does today
 - **The run is one act.**
@@ -49,6 +51,7 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 | `scenes/` | `BootScene` → `MapScene` → `CombatScene` / `RewardScene` / `RestScene` / `ShopScene` / `EventScene` → … → `RunEndScene`. `ui.ts` holds the shared pieces: card face, buttons, the status line and relic bar, the card-list viewer (deck and piles), the settings panel, and `enterCurrentNode()` (**every screen change goes through it**; it also saves the run). |
 | `scenes/combat/` | Pieces of the fight screen: `EnemyView` (one per enemy), `PlayerView`, `Targeting`, `Tooltips`, `StatusRow`, `drawings.ts`, `layout.ts`. `CombatScene` itself is wiring, the hand, and the animation queue. |
 | `storage.ts`, `session.ts`, `settings.ts` | Guarded browser storage (save, report history, clipboard), the current-run holder, and player settings. |
+| synergy engine (`game/` + `data/`) | Scaling, triggers, Empowered, exhaust and the new effects live in `CombatState` (`fireTriggers`, `scaledValue`), `Deck.exhaustPile` and `describe.ts`. Placeholder cards: `data/synergyCards.ts` (not in the reward pool); helper `allDraftableCards()` in `data/cards.ts`. Guide: `docs/SYNERGY_ENGINE.md`. Built unattended: **not played in a browser**. |
 | `dev/devPanel.ts` | The `?dev` panel (a separate chunk, loaded only with that flag): jump to any stop, custom fights, **kill all enemies instantly**, add cards/relics, gold/HP, seeded new run, copy reports. |
 | `content/` | The content browser page (`content.html` at the project root): every card, relic, enemy, status, event, and the act's settings, with Markdown/CSV copy. |
 | `sim/` | Headless simulator: `bot.ts` (greedy player), `simulate.ts`, `cli.ts`. |
@@ -58,6 +61,7 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 | `.github/workflows/deploy-pages.yml` | Tests, builds with the `/first-real-game/` base path, and deploys to Pages. |
 
 ### Patterns to keep (each one fixed a real bug)
+- **Synergy rules:** triggered effects are not card plays; trigger nesting is capped by `MAX_TRIGGER_DEPTH`; new events carry snapshot data. Details in `docs/SYNERGY_ENGINE.md`. Effect kinds are now 8, the plan's threshold for considering an effect registry.
 - **Cards, enemy moves, relics and events are data.** Cards and enemy moves are lists of `Effect`s (relics reuse them). To add an effect kind, extend the `Effect` union in `types.ts`, handle it in `CombatState` (`applyCardEffect` for cards, `runEnemyMove` for enemies), and add its text in `describe.ts`. Card/relic text and intent icons are generated; don't hand-write them. Each card needs `owner` and `inRewardPool`, and an `upgrade` block (or it can't be upgraded). A test checks that aimed cards are declared `target: 'enemy'`.
 - **Upgrades are registered cards.** `getCard('strike+')` is the upgraded Strike, generated from Strike's `upgrade` block. The deck is still a list of card definitions, so saves, reports and tests need nothing special.
 - **All randomness is one seeded stream per run** (`RunState.rng`). The map, rewards, shop stock, events, relic rolls and each fight's shuffle seed (`newCombatRng()`) all come from it, in a fixed order, so a seed replays exactly and a saved run resumes identically. Don't call `Math.random()` for gameplay.
