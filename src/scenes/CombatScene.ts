@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 import { CombatState } from '../game/CombatState';
 import type { CombatEventMap } from '../game/CombatState';
-import { buildStarterDeck } from '../data/cards';
-import { MVP1_ENEMY } from '../data/enemies';
-import type { CardInstance, EnemyMove } from '../game/types';
+import type { RunState } from '../game/RunState';
+import type { CardInstance, EnemyDefinition, EnemyMove } from '../game/types';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
+import { CARD_HEIGHT, CARD_WIDTH, addButton, addRunHud, buildCardFace, enterCurrentNode } from './ui';
 
 // Visuals here are built entirely from Phaser's drawing primitives (no art
 // assets / image generation available) — simple vector/geometric character
@@ -13,8 +13,6 @@ import { useLayoutCamera } from '../display';
 // and to make combat readable, not as finished art. Final character/art
 // identity is the user's to design — see CLAUDE.md.
 
-const CARD_WIDTH = 110;
-const CARD_HEIGHT = 150;
 const HAND_Y = 515;
 const DRAW_PILE_POS = { x: 40, y: 515 };
 const DISCARD_PILE_POS = { x: 760, y: 515 };
@@ -28,12 +26,6 @@ const ENEMY_Y = 250;
 const ENEMY_TARGET_AREA = new Phaser.Geom.Rectangle(ENEMY_X - 65, ENEMY_Y - 80, 130, 155);
 /** Pointer travel (px) after picking up a targeted card that turns it into a drag rather than a click. */
 const DRAG_THRESHOLD = 12;
-
-const TYPE_COLOR: Record<string, number> = {
-  attack: 0xd9534f,
-  skill: 0x4f8fd9,
-  power: 0xb07de0,
-};
 
 interface TrackedCard {
   container: Phaser.GameObjects.Container;
@@ -94,17 +86,32 @@ export class CombatScene extends Phaser.Scene {
   private hitParticles!: Phaser.GameObjects.Particles.ParticleEmitter;
   private blockParticles!: Phaser.GameObjects.Particles.ParticleEmitter;
 
+  private run!: RunState;
+  private enemy!: EnemyDefinition;
+
   constructor() {
     super('CombatScene');
+  }
+
+  /** Runs on every (re)start. Phaser reuses the scene instance, so per-fight state is reset here. */
+  init(data: { run: RunState }): void {
+    this.run = data.run;
+    const node = this.run.currentNode;
+    if (node.kind !== 'combat') throw new Error('CombatScene started on a non-combat node');
+    this.enemy = node.enemy;
+    this.handCards = new Map();
+    this.sequencer = null;
+    this.targeting = null;
   }
 
   create(): void {
     useLayoutCamera(this);
     this.createParticleEmitters();
     this.buildBackground();
+    addRunHud(this, this.run);
     this.playerContainer = this.buildMageCharacter();
     this.playerContainer.setPosition(PLAYER_X, PLAYER_Y);
-    this.enemyContainer = this.buildGoblinCharacter();
+    this.enemyContainer = this.buildGoblinCharacter(this.enemy.placeholderColor ?? 0x5c8143);
     this.enemyContainer.setPosition(ENEMY_X, ENEMY_Y);
     this.addIdleBob(this.playerContainer, PLAYER_Y);
     this.addIdleBob(this.enemyContainer, ENEMY_Y);
@@ -115,7 +122,7 @@ export class CombatScene extends Phaser.Scene {
     this.buildTooltips();
     this.buildOverlays();
 
-    this.combat = new CombatState(buildStarterDeck(), MVP1_ENEMY);
+    this.combat = new CombatState(this.run.deck, this.enemy, { hp: this.run.hp, maxHp: this.run.maxHp });
     this.wireCombatEvents();
     this.combat.start();
   }
@@ -272,17 +279,20 @@ export class CombatScene extends Phaser.Scene {
     return this.add.container(0, 0, [g, staffOrb]);
   }
 
-  /** A simple vector goblin: squat body, pointed ears, claws. Facing left. */
-  private buildGoblinCharacter(): Phaser.GameObjects.Container {
+  /** A simple vector goblin: squat body, pointed ears, claws. Facing left. `skin` sets the body
+   *  color (head a shade lighter, legs darker) so placeholder enemies can be told apart. */
+  private buildGoblinCharacter(skin: number): Phaser.GameObjects.Container {
     const g = this.add.graphics();
+    const head = Phaser.Display.Color.IntegerToColor(skin).lighten(8).color;
+    const legs = Phaser.Display.Color.IntegerToColor(skin).darken(12).color;
 
     // legs
-    g.fillStyle(0x47632e, 1);
+    g.fillStyle(legs, 1);
     g.fillRect(-24, 38, 14, 16);
     g.fillRect(10, 38, 14, 16);
 
     // body
-    g.fillStyle(0x5c8143, 1);
+    g.fillStyle(skin, 1);
     g.fillEllipse(0, 10, 72, 56);
 
     // loincloth
@@ -290,7 +300,7 @@ export class CombatScene extends Phaser.Scene {
     g.fillRect(-20, 26, 40, 14);
 
     // arms
-    g.fillStyle(0x5c8143, 1);
+    g.fillStyle(skin, 1);
     g.fillRect(-44, -4, 16, 32);
     g.fillRect(28, -4, 16, 32);
 
@@ -300,7 +310,7 @@ export class CombatScene extends Phaser.Scene {
     g.fillTriangle(28, 24, 44, 24, 36, 38);
 
     // head
-    g.fillStyle(0x6a9150, 1);
+    g.fillStyle(head, 1);
     g.fillCircle(0, -32, 24);
 
     // ears
@@ -671,41 +681,10 @@ export class CombatScene extends Phaser.Scene {
   }
 
   private buildCardVisual(card: CardInstance, canPlay: boolean): Phaser.GameObjects.Container {
-    const accent = TYPE_COLOR[card.definition.type] ?? 0x888888;
-
-    const g = this.add.graphics();
-    g.fillStyle(0x2c2c3c, 1);
-    g.fillRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 10);
-    g.lineStyle(2, accent, 1);
-    g.strokeRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 10);
-
-    const costBadge = this.add.circle(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, 13, accent);
-    const costText = this.add
-      .text(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, `${card.definition.cost}`, {
-        fontSize: '14px',
-        color: '#ffffff',
-        fontStyle: 'bold',
-      })
-      .setOrigin(0.5);
-
-    const nameText = this.add
-      .text(0, -52, card.definition.name, { fontSize: '14px', color: '#ffffff', fontStyle: 'bold' })
-      .setOrigin(0.5);
-    const typeText = this.add
-      .text(0, -30, card.definition.type.toUpperCase(), { fontSize: '10px', color: '#9a9aae' })
-      .setOrigin(0.5);
-    const descText = this.add
-      .text(0, 22, card.definition.description, {
-        fontSize: '11px',
-        color: '#d8d8e4',
-        wordWrap: { width: CARD_WIDTH - 16 },
-        align: 'center',
-      })
-      .setOrigin(0.5);
-
+    const container = buildCardFace(this, card.definition);
     const hitZone = this.add.rectangle(0, 0, CARD_WIDTH, CARD_HEIGHT, 0xffffff, 0);
 
-    const container = this.add.container(0, 0, [g, costBadge, costText, nameText, typeText, descText, hitZone]);
+    container.add(hitZone);
     container.setData('hitZone', hitZone);
 
     hitZone.on('pointerover', () => {
@@ -884,7 +863,7 @@ export class CombatScene extends Phaser.Scene {
     }
 
     this.refreshStatusBars();
-    this.pulseIntent(this.combat.currentEnemyMove);
+    if (this.combat.phase === 'playerTurn') this.pulseIntent(this.combat.currentEnemyMove);
   }
 
   private pulseIntent(move: EnemyMove): void {
@@ -922,10 +901,13 @@ export class CombatScene extends Phaser.Scene {
   private async animateCombatEnd(result: 'won' | 'lost'): Promise<void> {
     this.setHandInteractive(false);
     this.endTurnButton.disableInteractive().setAlpha(0.3);
+    this.intentContainer.setVisible(false); // no next move once the fight is over
     if (result === 'won') {
       this.resultText.setText('VICTORY').setColor('#ffe066').setScale(0.6).setAlpha(0);
       Sfx.victory();
       this.hitParticles.explode(30, ENEMY_X, ENEMY_Y);
+      this.tweens.killTweensOf(this.enemyContainer); // stop the idle bob before fading out
+      this.tweens.add({ targets: this.enemyContainer, alpha: 0, y: ENEMY_Y + 30, duration: 500, ease: 'Cubic.easeIn' });
       await this.tweenPromise({ targets: this.resultText, alpha: 1, scale: 1, duration: 400, ease: 'Back.Out' });
     } else {
       this.resultText.setText('DEFEAT').setColor('#ff6b6b').setScale(0.6).setAlpha(0);
@@ -933,6 +915,13 @@ export class CombatScene extends Phaser.Scene {
       this.cameras.main.shake(400, 0.01);
       await this.tweenPromise({ targets: this.resultText, alpha: 1, scale: 1, duration: 500, ease: 'Sine.easeOut' });
     }
+
+    const button = addButton(this, 400, 300, 'Continue', () => {
+      this.run.finishCombat(result, this.combat.playerHp);
+      enterCurrentNode(this, this.run);
+    });
+    button.setDepth(22).setAlpha(0);
+    this.tweens.add({ targets: button, alpha: 1, duration: 250 });
   }
 
   // ---------- shared small helpers ----------
