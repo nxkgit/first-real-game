@@ -3,6 +3,8 @@ import type { EvalConfig, MetricId } from './engine';
 import { DEFAULT_POLICIES, draftExperiment } from './drafts';
 import type { DraftPolicy } from './drafts';
 import { comboUniverse, combosExperiment, deckExperiment } from './combos';
+import { loopsExperiment } from './loops';
+import { dominanceExperiment } from './dominance';
 import type { ComboGoal } from './combos';
 import { cardsExperiment, ladderExperiment, lengthsExperiment, outlierExperiment, pairsExperiment } from './experiments';
 import { DEFAULT_OPTIONS } from './simulate';
@@ -40,7 +42,7 @@ export interface CommandResult {
   defaultOut?: string;
 }
 
-export const COMMANDS = ['cards', 'pairs', 'ladder', 'deck', 'combos', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench'] as const;
+export const COMMANDS = ['cards', 'pairs', 'ladder', 'deck', 'combos', 'loops', 'dominance', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench'] as const;
 export type Command = (typeof COMMANDS)[number];
 
 export const BASELINE_PATH = 'balance/baselines/baseline.json';
@@ -55,7 +57,9 @@ Commands
   drafts     whole-run comparison of draft / rest / path policies
   outliers   cards and fights far outside their cohort
   deck       run one exact deck (--cards a,b*2 | --set name) against the fights, plus raw output vs a Dummy
-  combos     adversarial random search for decks that kill fastest / deal most damage (--goal speed|damage)
+  dominance  strictly dominated cards (static arithmetic on the card data)
+  loops      exhaustive search of tiny decks for free-play loops (minimal loop cores)
+  combos     adversarial random search for decks that kill fastest / deal most damage (--goal damage|speed|stall)
   report     all of the above in one document
   baseline   write the committed baseline (${BASELINE_PATH})
   check      compare current content against the baseline (never fails on balance movement)
@@ -78,6 +82,7 @@ Common flags
   --pairs a+b,c+d  evaluate only these pairs (pairs; to confirm a lead with more seeds)
   --runs N         whole runs per policy (drafts; default 100)
   --reward card|gold|best --rest heal|smart --path random|smart   custom draft policy vs the default
+  --note text      baseline: replace the note stored in the baseline (state date, commit and what the content is)
   --out base       write base.md and base.json   (baseline: the JSON path; check: the Markdown path)
   --json           print JSON instead of Markdown`;
 
@@ -199,7 +204,7 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
       return { markdown: r.markdown, json: r.json };
     }
     case 'combos': {
-      const goal = oneOf<ComboGoal>(flags.goal, ['damage', 'speed'], 'damage', 'goal');
+      const goal = oneOf<ComboGoal>(flags.goal, ['damage', 'speed', 'stall'], 'damage', 'goal');
       const [lo, hi] = (flags.size ?? '8-20').split('-').map(Number);
       if (!Number.isInteger(lo) || !Number.isInteger(hi) || lo < 1 || hi < lo) throw new Error('--size must look like 8-20');
       const r = combosExperiment({
@@ -217,6 +222,23 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
         dummyTurns: num(flags, 'turns', 5),
         top: num(flags, 'top', 5),
         maxCopies: num(flags, 'max-copies', 3),
+        minAttackers: num(flags, 'min-attackers', 4),
+      });
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'dominance': {
+      const r = dominanceExperiment();
+      return { markdown: r.markdown, json: r.json };
+    }
+    case 'loops': {
+      const r = loopsExperiment({
+        cards: comboUniverse(flags.cardset),
+        maxSize: num(flags, 'max-size', 4),
+        maxCopies: num(flags, 'max-copies', 2),
+        threshold: num(flags, 'threshold', 20),
+        skill: oneOf<SkillLevel>(flags.skill, SKILL_LEVELS, 'smart', 'skill'),
+        seed: num(flags, 'seed', 1),
+        turns: num(flags, 'turns', 2),
       });
       return { markdown: r.markdown, json: r.json };
     }
@@ -270,6 +292,7 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
         pool: poolOf(flags),
       };
       const snap = buildSnapshot(config, today);
+      if (flags.note && flags.note !== 'true') snap.note = flags.note;
       return { markdown: `Baseline built: ${Object.keys(snap.metrics).length} metrics, content fingerprint ${snap.content.hash}.`, json: snap, defaultOut: BASELINE_PATH };
     }
     case 'check': {

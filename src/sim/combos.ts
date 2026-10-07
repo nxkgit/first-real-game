@@ -145,7 +145,8 @@ export function summarizeDeck(deck: CardDefinition[]): string {
 // adversarial search
 // =====================================================================================
 
-export type ComboGoal = 'damage' | 'speed';
+/** damage: most Dummy damage. speed: fewest turns to kill. stall: MOST turns to kill (finds decks that cannot finish a fight even though they hold real attackers). */
+export type ComboGoal = 'damage' | 'speed' | 'stall';
 
 export interface CombosOptions {
   goal: ComboGoal;
@@ -169,6 +170,8 @@ export interface CombosOptions {
   dummyTurns: number;
   top: number;
   maxCopies: number;
+  /** goal=stall: decks need at least this many damaging cards (a deck of Defends stalls trivially). */
+  minAttackers?: number;
 }
 
 export function comboUniverse(name: string | undefined): CardDefinition[] {
@@ -198,14 +201,18 @@ function scoreSeed(opts: CombosOptions, deck: CardDefinition[], seed: number): {
     turns += r.result === 'won' ? r.turns : 60;
     if (r.result === 'won') won++;
   }
-  // speed: fewer turns is better, so score = minus the mean turns
-  return { score: -turns / opts.fights.length, capped: false, turns: turns / opts.fights.length, won: won === opts.fights.length };
+  // speed: fewer turns is better, so score = minus the mean turns (stall: more is better)
+  return { score: (opts.goal === 'stall' ? 1 : -1) * (turns / opts.fights.length), capped: false, turns: turns / opts.fights.length, won: won === opts.fights.length };
 }
 
 function searchScore(opts: CombosOptions, deck: CardDefinition[], cache: Map<string, number>): number {
   const key = deckKey([...deck].sort((a, b) => a.id.localeCompare(b.id)));
   const hit = cache.get(key);
   if (hit !== undefined) return hit;
+  if (opts.goal === 'stall' && deck.filter((c) => (c.effects ?? []).some((e) => e.kind === 'damage')).length < (opts.minAttackers ?? 4)) {
+    cache.set(key, -Infinity);
+    return -Infinity;
+  }
   let total = 0;
   for (let i = 0; i < opts.searchSeeds; i++) total += scoreSeed(opts, deck, unitSeed(opts.baseSeed, 'search', i)).score;
   const s = total / opts.searchSeeds;
@@ -293,7 +300,7 @@ export function combosExperiment(opts: CombosOptions): ExperimentResult & { resu
       searchScore: searchScoreFor(deck),
       confirm: { mean: r6(ci.mean), lo: r6(ci.lo), hi: r6(ci.hi), min: Math.min(...scores), max: Math.max(...scores) },
       cappedRuns: capped,
-      winRate: opts.goal === 'speed' ? { p: r6(w.p), lo: r6(w.lo), hi: r6(w.hi) } : undefined,
+      winRate: opts.goal !== 'damage' ? { p: r6(w.p), lo: r6(w.lo), hi: r6(w.hi) } : undefined,
     };
   };
   const searchScoreFor = (deck: CardDefinition[]): number => searchScore(opts, deck, cache);
@@ -303,8 +310,9 @@ export function combosExperiment(opts: CombosOptions): ExperimentResult & { resu
   const typicalMeans = typicalDecks.map((r) => r.confirm.mean);
   const typical = { mean: r6(mean(typicalMeans)), lo: r6(Math.min(...typicalMeans)), hi: r6(Math.max(...typicalMeans)) };
 
-  const unit = opts.goal === 'damage' ? `damage dealt to a Dummy in ${opts.dummyTurns} turns (higher = more broken)` : `mean turns to kill ${opts.fights.map((f) => f.id).join(' + ')} (lower = more broken; a loss counts 60)`;
-  const shown = (x: number): string => (opts.goal === 'damage' ? fix(x, 0) : fix(-x, 2));
+  const unit = opts.goal === 'damage' ? `damage dealt to a Dummy in ${opts.dummyTurns} turns (higher = more broken)` : `mean turns to kill ${opts.fights.map((f) => f.id).join(' + ')} (${opts.goal === 'stall' ? 'higher = decks that cannot finish' : 'lower = more broken'}; a loss counts 60)`;
+  const sign = opts.goal === 'speed' ? -1 : 1; // speed stores minus the turns
+  const shown = (x: number): string => (opts.goal === 'damage' ? fix(x, 0) : fix(sign * x, 2));
   const markdown = [
     heading(2, `Adversarial search (${opts.goal})`),
     '',
@@ -317,9 +325,9 @@ export function combosExperiment(opts: CombosOptions): ExperimentResult & { resu
         i + 1,
         summarizeDeck(r.deck),
         r.deck.length,
-        opts.goal === 'damage' ? fmtCI({ mean: r.confirm.mean, lo: r.confirm.lo, hi: r.confirm.hi }, 0) : fmtCI({ mean: -r.confirm.mean, lo: -r.confirm.hi, hi: -r.confirm.lo }, 2),
-        opts.goal === 'damage' ? `${fix(r.confirm.max, 0)} / ${fix(r.confirm.min, 0)}` : `${fix(-r.confirm.max, 1)} / ${fix(-r.confirm.min, 1)}`,
-        opts.goal === 'speed' && r.winRate ? `${pct(r.winRate.p)} [${pct(r.winRate.lo)}, ${pct(r.winRate.hi)}]` : `${r.cappedRuns}/${opts.confirmSeeds}`,
+        opts.goal === 'damage' ? fmtCI({ mean: r.confirm.mean, lo: r.confirm.lo, hi: r.confirm.hi }, 0) : fmtCI(sign < 0 ? { mean: -r.confirm.mean, lo: -r.confirm.hi, hi: -r.confirm.lo } : { mean: r.confirm.mean, lo: r.confirm.lo, hi: r.confirm.hi }, 2),
+        opts.goal === 'damage' ? `${fix(r.confirm.max, 0)} / ${fix(r.confirm.min, 0)}` : `${fix(sign < 0 ? -r.confirm.max : r.confirm.max, 1)} / ${fix(sign < 0 ? -r.confirm.min : r.confirm.min, 1)}`,
+        opts.goal !== 'damage' && r.winRate ? `${pct(r.winRate.p)} [${pct(r.winRate.lo)}, ${pct(r.winRate.hi)}]` : `${r.cappedRuns}/${opts.confirmSeeds}`,
       ])
     ),
     '',

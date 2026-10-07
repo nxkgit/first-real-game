@@ -174,6 +174,13 @@ function enables(x: CardDefinition, s: Scaling): boolean {
   }
 }
 
+/**
+ * Once this many cards have been played in a turn, payoffs stop waiting for more enablers: a loop of
+ * free plays (0-cost cards that redraw themselves) would otherwise keep the bot enabling forever and
+ * hit its own 60-play safety cap without ever cashing in.
+ */
+export const DEFER_PLAY_LIMIT = 30;
+
 const isEffectKind = (e: Effect, kind: Effect['kind']): boolean => e.kind === kind;
 
 export function smartChoices(combat: CombatState): Choice[] {
@@ -370,7 +377,7 @@ export function smartChoices(combat: CombatState): Choice[] {
   // ---- payoff deferral: payoffs go after the playable cards that grow them, with energy kept back ----
   const nonPayoff = rows.filter((r) => !r.isPayoff);
   for (const r of rows) {
-    if (!r.isPayoff) continue;
+    if (!r.isPayoff || combat.stats.cardsPlayedThisTurn >= DEFER_PLAY_LIMIT) continue;
     const def = r.choice.card.definition;
     const budget = combat.energy - def.cost;
     const enablers = nonPayoff.filter((o) => o !== r && o.choice.card.definition.cost <= budget && o.normal >= 4.5 && r.growers.some((s) => enables(o.choice.card.definition, s)));
