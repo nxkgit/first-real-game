@@ -6,6 +6,7 @@ Guidance for working in this repository. This project is a learning/portfolio ex
 
 - `implementationplan.md` — current scope, decided systems, and what's explicitly deferred. This is the source of truth for "what are we building right now."
 - `DESIGN_LOG.md` — chronological record of *why* decisions were made, including ones that later changed. Consult it before assuming a past decision still holds if something seems inconsistent with current code.
+- `HANDOFF.md` — snapshot of where the project stands at the end of the last session: what's built, code map, open decisions, next steps, and working notes (tooling quirks, how to test in the browser). Read it at the start of a session; update it at the end.
 
 ## Creative boundary — important
 
