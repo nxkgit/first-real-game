@@ -15,7 +15,7 @@ Written 2026-10-07; index brought up to date the same day after the art pass, ma
 | [`ART.md`](ART.md) | The art pipeline: raw packs in the ignored `assets/` folder, `tools/prepareAssets.py` to `public/assets/`, the pairings in `src/data/art.ts`, how pictures are drawn and fall back, how to swap one, and the licence and credit rules. | You change or add pictures, or a picture is missing on screen. |
 | [`EFFECTS.md`](EFFECTS.md) | The effect registry: one entry per effect kind (resolve, enemy resolve, text, intent, scaling) and how to add a kind. | You add a new kind of effect. The effect table in `CONTENT_GUIDE.md` and `src/content/vocabulary.ts` need the new kind too (the guide test tells you). |
 | [`E2E.md`](E2E.md) | The browser tests: the `?e2e` hook and frame stepper, the harness helpers, how to add a test, and CI (a fast subset on pull requests, the whole suite nightly). | You change scenes or the map, or CI shows an end-to-end failure. |
-| `SCENARIOS.md` (being written on branch `auto/scenarios`; check the file exists) | Saving a fight state and loading it back: capture, load, tests. | You want to reproduce an exact fight situation. |
+| `SCENARIOS.md` (being written on an `auto/...` branch; check the file exists) | Saving a fight state and loading it back: capture, load, tests. | You want to reproduce an exact fight situation. |
 | [`AUTOMATION.md`](AUTOMATION.md) | Rules for unattended sessions: branch naming, no questions, placeholders, scope, reports, merging. | You are briefing or running an unattended session. |
 
 ## Tools (commands you will use)
