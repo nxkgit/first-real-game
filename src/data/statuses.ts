@@ -1,5 +1,5 @@
 import type { StatusDefinition, StatusId } from '../game/types';
-import { VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from './tunables';
+import { EMPOWERED_DAMAGE_MULT, VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from './tunables';
 
 // Mirrors the Slay the Spire trio (implementationplan.md: "mirror StS closely"). Names and the
 // badge look are placeholders; the numbers live in tunables.ts.
@@ -31,7 +31,16 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
     outgoingDamageAdd: (n) => n,
     badge: { symbol: 'S', color: 0xd9544f },
   },
+  empowered: {
+    id: 'empowered',
+    name: 'Empowered',
+    kind: 'intensity',
+    consumedByAttack: true,
+    describe: (n) => `Empowered ${n}: your next ${n === 1 ? 'attack deals' : `${n} attacks deal`} ${EMPOWERED_DAMAGE_MULT}x damage. Used up by playing an attack.`,
+    outgoingDamageMult: () => EMPOWERED_DAMAGE_MULT,
+    badge: { symbol: 'E', color: 0xc78fe8 },
+  },
 };
 
 /** Display order for badges. */
-export const STATUS_ORDER: StatusId[] = ['strength', 'weak', 'vulnerable'];
+export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable'];

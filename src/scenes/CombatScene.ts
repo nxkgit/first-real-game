@@ -299,6 +299,13 @@ export class CombatScene extends Phaser.Scene {
       if (payload.target === PLAYER_ID) this.queue(() => this.animatePlayerBlockGain(payload.amount));
     });
     this.combat.on('statusChanged', (payload) => this.queue(() => this.animateStatusChange(payload)));
+    // Synergy events: update the readouts from the event's own snapshot (not live state).
+    this.combat.on('energyChanged', ({ energy }) =>
+      this.queue(async () => this.playerView.setEnergy(energy, this.combat.maxEnergy))
+    );
+    this.combat.on('hpLost', ({ remainingHp }) =>
+      this.queue(async () => this.playerView.setHp(remainingHp, this.combat.player.maxHp))
+    );
     this.combat.on('combatEnded', ({ result }) => this.queue(() => this.animateCombatEnd(result)));
   }
 
