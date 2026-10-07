@@ -3,11 +3,14 @@
 Running status so another session can pick this up. Updated with each push.
 
 ## Done
-- src/sim/stats.ts (CIs, Wilson, paired/Welch diffs, verdicts, outlier flags)
-- src/sim/fightCore.ts (replay-based state reconstruction), src/sim/skills.ts (random/greedy/smart/expert bots)
+- src/sim/stats.ts, fightCore.ts (replay reconstruction), skills.ts (random/greedy/smart/expert), fight.ts, engine.ts (paired evaluator), suites.ts, targets.ts
+- experiments.ts (cards, pairs, ladder, lengths, outliers), drafts.ts, snapshot.ts (baseline + check), commands.ts, balanceCli.ts
+- package.json scripts: balance, balance:baseline, balance:check, balance:report
+- balance/baselines/baseline.json and balance/reports/sample.{md,json} generated
+- tests: src/sim/balance.test.ts (npm run verify passes)
 
 ## In progress
-- Typecheck of the above; fight runner, experiments, CLI
+- docs/BALANCE.md
 
 ## Next
-- fight.ts + suites/decks, experiments (cards, pairs, ladder, lengths, drafts, outliers), baseline/check, balanceCli.ts, package.json scripts, tests, docs/BALANCE.md, sample report in balance/reports/, PR report
+- final report in the PR description (gh CLI is not installed in this environment, so the PR may need opening by hand)
