@@ -314,7 +314,7 @@ function runCommandInner(command: string, flags: Record<string, string>, io: Com
       const header = [
         heading(1, 'Balance report'),
         '',
-        `Generated ${today} by \`npm run balance -- report\` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: ${skills.join(', ')}. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md.`,
+        `Generated ${today} by \`npm run balance -- report\` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: ${skills.join(', ')}. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md.${flags.note && flags.note !== 'true' ? ` ${flags.note}` : ''}`,
         '',
       ].join('\n');
       return { markdown: [header, ...parts.map((p) => p.markdown)].join('\n\n'), json: { generated: today, skills, ...Object.fromEntries(parts.map((p) => [p.name, p.json])) } };
