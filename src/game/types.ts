@@ -38,6 +38,8 @@ export interface EnemyDefinition {
   id: string;
   name: string;
   maxHp: number;
+  /** Body color for the shared placeholder enemy drawing, until enemies get real visuals. */
+  placeholderColor?: number;
   /** Fixed repeating sequence of moves. Index wraps around. */
   movePattern: EnemyMove[];
 }

@@ -50,3 +50,71 @@ export const FOCUS: CardDefinition = {
 export function buildStarterDeck(): CardDefinition[] {
   return [STRIKE, STRIKE, STRIKE, STRIKE, DEFEND, DEFEND, DEFEND, DEFEND, BOLT, FOCUS];
 }
+
+// ---- MVP 2 reward pool ----
+// PLACEHOLDER cards offered after winning a fight. Like the starter cards, these
+// are functional stand-ins using only the existing damage/block/draw effects, with
+// plain descriptive names — real card design is the user's (see CLAUDE.md). They
+// differ in cost/shape so the card-vs-gold choice has something to weigh.
+
+export const JAB: CardDefinition = {
+  id: 'jab',
+  name: 'Jab',
+  type: 'attack',
+  target: 'enemy',
+  cost: 0,
+  description: 'Deal 3 damage.',
+  effects: [{ kind: 'damage', value: 3 }],
+};
+
+export const GUARDED_STRIKE: CardDefinition = {
+  id: 'guarded-strike',
+  name: 'Guarded Strike',
+  type: 'attack',
+  target: 'enemy',
+  cost: 1,
+  description: 'Deal 5 damage. Gain 5 block.',
+  effects: [
+    { kind: 'damage', value: 5 },
+    { kind: 'block', value: 5 },
+  ],
+};
+
+export const HEAVY_HIT: CardDefinition = {
+  id: 'heavy-hit',
+  name: 'Heavy Hit',
+  type: 'attack',
+  target: 'enemy',
+  cost: 3,
+  description: 'Deal 24 damage.',
+  effects: [{ kind: 'damage', value: 24 }],
+};
+
+export const BIG_BLOCK: CardDefinition = {
+  id: 'big-block',
+  name: 'Big Block',
+  type: 'skill',
+  cost: 2,
+  description: 'Gain 13 block.',
+  effects: [{ kind: 'block', value: 13 }],
+};
+
+export const QUICK_DRAW: CardDefinition = {
+  id: 'quick-draw',
+  name: 'Quick Draw',
+  type: 'skill',
+  cost: 1,
+  description: 'Draw 2 cards.',
+  effects: [{ kind: 'draw', value: 2 }],
+};
+
+export const FORTIFY: CardDefinition = {
+  id: 'fortify',
+  name: 'Fortify',
+  type: 'power',
+  cost: 2,
+  description: 'At the start of each turn, gain 4 block.',
+  onTurnStartEffect: { kind: 'block', value: 4 },
+};
+
+export const REWARD_POOL: CardDefinition[] = [JAB, GUARDED_STRIKE, HEAVY_HIT, BIG_BLOCK, QUICK_DRAW, FORTIFY, BOLT];

@@ -1,0 +1,21 @@
+import type { RunNode } from '../game/RunState';
+import { RunState } from '../game/RunState';
+import { buildStarterDeck, REWARD_POOL } from './cards';
+import { ENEMY_A, ENEMY_B, ENEMY_C } from './enemies';
+
+// PLACEHOLDER MVP 2 path: a short fixed line of fights with one rest stop before
+// the final, tougher fight. Map structure, elites, and bosses are still deferred
+// (implementationplan.md) — this is just enough sequence to test fights chaining
+// with HP/deck carrying over and the card-vs-gold reward.
+export function buildRunPath(): RunNode[] {
+  return [
+    { kind: 'combat', enemy: ENEMY_A },
+    { kind: 'combat', enemy: ENEMY_B },
+    { kind: 'rest' },
+    { kind: 'combat', enemy: ENEMY_C },
+  ];
+}
+
+export function newRun(): RunState {
+  return new RunState(buildRunPath(), buildStarterDeck(), REWARD_POOL);
+}
