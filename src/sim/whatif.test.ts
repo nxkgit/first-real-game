@@ -18,17 +18,19 @@ describe('what-if tooling', () => {
     expect(JSON.stringify(getCard('strike'))).toBe(strike);
   });
 
-  it('a tweak that removes a loop is visible to the loop finder', () => {
+  it('a tweak that re-creates a loop is visible to the loop finder, and is undone afterwards', () => {
+    // Tag A Echo fires once per turn now (that removed the only loop the finder had found); undo that
+    // in memory and the loop must show up again.
     const universe = ['prime-a', 'tag-a-echo', 'strike'].map(getCard);
     const search = () => loopsExperiment({ cards: universe, maxSize: 3, maxCopies: 1, threshold: 20, skill: 'smart', seed: 1, turns: 2 });
-    expect(search().hits.map((h) => h.cards.join(','))).toContain('prime-a,tag-a-echo');
-    const restore = applyAssignments(getCard('tag-a-echo'), parseAssignments('triggers.0.oncePerTurn=true'));
+    expect(search().hits).toEqual([]);
+    const restore = applyAssignments(getCard('tag-a-echo'), parseAssignments('triggers.0.oncePerTurn=false'));
     try {
-      expect(search().hits).toEqual([]);
+      expect(search().hits.map((h) => h.cards.join(','))).toContain('prime-a,tag-a-echo');
     } finally {
       restore();
     }
-    expect(getCard('tag-a-echo').triggers?.[0].oncePerTurn).toBeUndefined();
+    expect(getCard('tag-a-echo').triggers?.[0].oncePerTurn).toBe(true);
   });
 
   it('tweak command reports before / after / change and can append an effect', () => {
