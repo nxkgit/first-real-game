@@ -155,3 +155,22 @@ test('(e) Exhaust Engine draws a card whenever one is exhausted', async ({ game 
   expect(t.exhaust).toBe(1);
   expect(t.hand.length, 'started with 5, played 2, drew 1').toBe(before.hand.length - 2 + 1);
 });
+
+test('(e) self-inflicted HP loss shows a floating number (audit R1)', async ({ game }) => {
+  await fight(game, ['pain-engine', 'blood-strike']);
+  await game.page.evaluate(() => {
+    const w = window as any;
+    const scene = w.__game.scene.getScenes(true)[0];
+    w.__floating = [];
+    const original = scene.spawnFloatingText.bind(scene);
+    scene.spawnFloatingText = (...args: unknown[]) => {
+      w.__floating.push(String(args[2]));
+      return original(...args);
+    };
+  });
+  await play(game, 'Pain Engine');
+  await play(game, 'Blood Strike');
+  const floating: string[] = await game.page.evaluate(() => (window as any).__floating);
+  expect(floating).toContain('-3'); // the 3 HP Blood Strike costs the player
+  game.check();
+});
