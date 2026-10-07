@@ -11,11 +11,30 @@ import type {
   EnemyMove,
   EnemyState,
   RelicDefinition,
+  Scaling,
   StatusId,
   Statuses,
+  Trigger,
+  TriggerOn,
 } from './types';
 import { STATUSES } from '../data/statuses';
-import { HAND_SIZE, MAX_ENERGY, PLAYER_MAX_HP } from '../data/tunables';
+import { HAND_SIZE, MAX_ENERGY, MAX_TRIGGER_DEPTH, PLAYER_MAX_HP } from '../data/tunables';
+
+/** Counters that scaling and the dev tools read. Per-turn ones reset as each player turn starts. */
+export interface CombatStats {
+  /** Cards played this turn so far (triggered effects are not card plays). */
+  cardsPlayedThisTurn: number;
+  attacksPlayedThisTurn: number;
+  /** Per tag: cards carrying it played this turn. */
+  taggedPlayedThisTurn: Record<string, number>;
+  /** Cards exhausted so far this combat (by any means). */
+  exhaustedThisCombat: number;
+}
+
+interface ActiveTrigger {
+  trigger: Trigger;
+  firedThisTurn: boolean;
+}
 
 export interface CombatOptions {
   /** HP the player brings in (a run carries it between fights); default is full HP. */
@@ -44,7 +63,13 @@ export interface CombatEventMap {
   /** Snapshot of the hand and pile sizes at the moment of the change. Listeners that animate
    *  later (the scene replays events in sequence) must use this, not the live deck, which may
    *  already have moved on — e.g. the next turn's draw happens before the discard is animated. */
-  handChanged: { hand: CardInstance[]; drawPile: number; discardPile: number };
+  handChanged: { hand: CardInstance[]; drawPile: number; discardPile: number; exhaustPile: number };
+  /** A card went to the exhaust pile. `exhaustPile` is the pile's size at that moment (snapshot). */
+  cardExhausted: { card: CardInstance; exhaustPile: number };
+  /** Energy changed because of an effect (not for paying a card's cost). `energy` is the new total. */
+  energyChanged: { energy: number; delta: number };
+  /** The player lost HP directly (a loseHp effect). Enemy hits report through enemyMoveResolved. */
+  hpLost: { target: CombatantId; amount: number; remainingHp: number };
   damageDealt: { target: CombatantId } & DamageResult;
   blockGained: { target: CombatantId; amount: number };
   /** Fired whenever stacks are added or tick down. `statuses` is a snapshot of that combatant's
@@ -78,9 +103,15 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** 1 on the first player turn, then counts up. */
   turnNumber = 0;
 
+  /** Synergy counters (see CombatStats). */
+  readonly stats: CombatStats = { cardsPlayedThisTurn: 0, attacksPlayedThisTurn: 0, taggedPlayedThisTurn: {}, exhaustedThisCombat: 0 };
+
   private readonly relics: RelicDefinition[];
   /** Power cards played so far this combat; their onTurnStartEffect fires every subsequent turn. */
   private activePowers: CardDefinition[] = [];
+  /** Reactive abilities in force, in firing order: relics (in relic order), then powers in the order played. */
+  private triggers: ActiveTrigger[] = [];
+  private triggerDepth = 0;
   /** "<combatant id>:<status id>" for statuses put on during the enemy phase of this round. They skip
    *  this round's end-of-round countdown, so "Weak 1" really lasts through the player's next turn
    *  (StS calls this "just applied"). */
@@ -91,6 +122,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     if (enemies.length === 0) throw new Error('a fight needs at least one enemy');
     const player = options.player ?? { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP };
     this.relics = options.relics ?? [];
+    for (const relic of this.relics) this.addTriggers(relic.triggers);
     this.deck = new Deck(deckCards, options.random ?? Math.random);
     this.player = { id: PLAYER_ID, name: 'Hero', hp: player.hp, maxHp: player.maxHp, block: 0, statuses: {} };
     this.enemies = enemies.map((definition, i) => ({
@@ -111,6 +143,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       for (const effect of relic.onCombatStart ?? []) this.applyCardEffect(effect, undefined);
     }
     this.startPlayerTurn(true);
+    this.checkWinLoss();
   }
 
   get livingEnemies(): EnemyState[] {
@@ -128,13 +161,19 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return pattern[enemy.moveIndex % pattern.length];
   }
 
-  /** Damage `attacker` would really deal for `base` to `defender`, after Strength, Weak and Vulnerable. */
-  calcDamage(base: number, attacker: Combatant, defender: Combatant): number {
+  /**
+   * Damage `attacker` would really deal for `base` to `defender`. Order: add (Strength), then
+   * multiply (Weak, Empowered), then the defender's multiplier (Vulnerable), rounded down once.
+   * `fromAttackCard` is false for damage that does not come from playing an attack card (a trigger,
+   * a skill's damage); statuses marked `consumedByAttack` (Empowered) then don't apply.
+   */
+  calcDamage(base: number, attacker: Combatant, defender: Combatant, fromAttackCard = true): number {
     let amount = base;
     for (const [id, stacks] of activeStatuses(attacker)) {
       amount += STATUSES[id].outgoingDamageAdd?.(stacks) ?? 0;
     }
     for (const [id, stacks] of activeStatuses(attacker)) {
+      if (STATUSES[id].consumedByAttack && !fromAttackCard) continue;
       amount *= STATUSES[id].outgoingDamageMult?.(stacks) ?? 1;
     }
     for (const [id, stacks] of activeStatuses(defender)) {
@@ -176,12 +215,26 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.deck.playCard(instanceId);
     this.emit('cardPlayed', { card: handCard, targetId: target?.id });
 
-    for (const effect of handCard.definition.effects ?? []) {
-      this.applyCardEffect(effect, target);
+    const definition = handCard.definition;
+    const isAttack = definition.type === 'attack';
+    for (const effect of definition.effects ?? []) {
+      this.applyCardEffect(effect, target, isAttack);
     }
 
-    if (handCard.definition.type === 'power') {
-      this.activePowers.push(handCard.definition);
+    // After the effects, so "earlier this turn" counts never include the card itself.
+    if (isAttack) this.consumeAttackStatuses();
+    this.stats.cardsPlayedThisTurn += 1;
+    if (isAttack) this.stats.attacksPlayedThisTurn += 1;
+    for (const tag of new Set(definition.tags ?? [])) {
+      this.stats.taggedPlayedThisTurn[tag] = (this.stats.taggedPlayedThisTurn[tag] ?? 0) + 1;
+    }
+    if (definition.exhaust) this.noteExhausted(this.deck.exhaustCard(handCard.instanceId));
+    this.fireTriggers('cardPlayed', definition);
+
+    // A power starts reacting after it is played, so it never triggers on its own play.
+    if (definition.type === 'power') {
+      this.activePowers.push(definition);
+      this.addTriggers(definition.triggers);
     }
 
     this.pushLog(`Played ${handCard.definition.name}.`);
@@ -203,6 +256,9 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
   endPlayerTurn(): void {
     if (this.phase !== 'playerTurn') return;
+    this.fireTriggers('turnEnd'); // before the hand is discarded, so hand-size scaling still sees it
+    this.checkWinLoss();
+    if (this.phase !== 'playerTurn') return;
     this.deck.discardHand();
     this.emitHandChanged();
     this.runEnemyTurn();
@@ -213,6 +269,10 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.turnNumber += 1;
     this.player.block = 0;
     this.energy = this.maxEnergy;
+    this.stats.cardsPlayedThisTurn = 0;
+    this.stats.attacksPlayedThisTurn = 0;
+    this.stats.taggedPlayedThisTurn = {};
+    for (const t of this.triggers) t.firedThisTurn = false;
     this.deck.draw(HAND_SIZE);
     for (const power of this.activePowers) {
       if (power.onTurnStartEffect) {
@@ -222,9 +282,11 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     for (const relic of this.relics) {
       for (const effect of relic.onTurnStart ?? []) this.applyCardEffect(effect, undefined);
     }
+    this.fireTriggers('turnStart');
     this.pushLog(isFirstTurn ? 'Combat start.' : 'Your turn.');
     this.emitHandChanged();
     this.emit('turnStarted', { isFirstTurn });
+    this.checkWinLoss();
   }
 
   private runEnemyTurn(): void {
@@ -256,10 +318,13 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     let damage: DamageResult | undefined;
     let blockGained: number | undefined;
     const statusEvents: CombatEventMap['statusChanged'][] = [];
+    const hpLosses: number[] = [];
 
     for (const effect of move.effects) {
       if (effect.kind === 'damage') {
+        const hpBefore = this.player.hp;
         const hit = this.dealDamage(this.player, this.calcDamage(effect.value, enemy, this.player));
+        if (this.player.hp < hpBefore) hpLosses.push(hpBefore - this.player.hp);
         damage = damage
           ? { amount: damage.amount + hit.amount, absorbed: damage.absorbed + hit.absorbed, remainingHp: hit.remainingHp }
           : hit;
@@ -281,34 +346,155 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
     this.emit('enemyMoveResolved', { enemyId: enemy.id, move, damage, blockGained });
     for (const event of statusEvents) this.emit('statusChanged', event);
+    // After the move is announced, so the scene replays the reaction after the hit that caused it.
+    for (let i = 0; i < hpLosses.length && this.player.hp > 0; i++) this.fireTriggers('hpLost');
   }
 
   /** Resolves one effect of a card the player played (or of one of their powers). `target` is the
    *  enemy the card was aimed at, if it has one. */
-  private applyCardEffect(effect: Effect, target: EnemyState | undefined): void {
+  private applyCardEffect(effect: Effect, target: EnemyState | undefined, fromAttackCard = false): void {
     switch (effect.kind) {
       case 'damage':
         if (target && target.hp > 0) {
-          const result = this.dealDamage(target, this.calcDamage(effect.value, this.player, target));
+          const base = this.scaledValue(effect, target);
+          const result = this.dealDamage(target, this.calcDamage(base, this.player, target, fromAttackCard));
           this.emit('damageDealt', { target: target.id, ...result });
-          if (target.hp <= 0) this.emit('enemyDied', { enemyId: target.id });
+          if (target.hp <= 0) {
+            this.emit('enemyDied', { enemyId: target.id });
+            this.fireTriggers('enemyDied');
+          }
         }
         break;
-      case 'block':
-        this.player.block += effect.value;
-        this.emit('blockGained', { target: this.player.id, amount: effect.value });
+      case 'block': {
+        const amount = this.scaledValue(effect, target);
+        this.player.block += amount;
+        this.emit('blockGained', { target: this.player.id, amount });
+        if (amount > 0) this.fireTriggers('blockGained');
         break;
+      }
       case 'draw':
-        this.deck.draw(effect.value);
+        this.deck.draw(this.scaledValue(effect, target));
         this.emitHandChanged();
         break;
       case 'applyStatus': {
         const recipient = effect.to === 'self' ? this.player : target;
         if (recipient && recipient.hp > 0) {
-          this.emit('statusChanged', this.addStatus(recipient, effect.status, effect.value));
+          this.emit('statusChanged', this.addStatus(recipient, effect.status, this.scaledValue(effect, target)));
         }
         break;
       }
+      case 'gainEnergy': {
+        const amount = this.scaledValue(effect, target);
+        this.energy += amount;
+        this.emit('energyChanged', { energy: this.energy, delta: amount });
+        break;
+      }
+      case 'loseHp': {
+        const lost = Math.min(this.player.hp, this.scaledValue(effect, target));
+        if (lost <= 0) break;
+        this.player.hp -= lost;
+        this.emit('hpLost', { target: this.player.id, amount: lost, remainingHp: this.player.hp });
+        if (this.player.hp > 0) this.fireTriggers('hpLost');
+        break;
+      }
+      case 'multiplyStatus': {
+        const recipient = effect.to === 'self' ? this.player : target;
+        const stacks = recipient?.statuses[effect.status] ?? 0;
+        if (!recipient || recipient.hp <= 0 || stacks <= 0) break;
+        const next = Math.floor(stacks * effect.factor);
+        if (next === stacks) break;
+        const event = this.addStatus(recipient, effect.status, next - stacks);
+        if (next <= 0) {
+          delete recipient.statuses[effect.status];
+          event.statuses = { ...recipient.statuses };
+        }
+        this.emit('statusChanged', event);
+        break;
+      }
+      case 'exhaustRandom':
+        for (let i = 0; i < effect.value; i++) {
+          const card = this.deck.exhaustRandomFromHand();
+          if (!card) break; // empty hand: nothing to exhaust
+          this.noteExhausted(card);
+        }
+        this.emitHandChanged();
+        break;
+    }
+  }
+
+  /** `effect.value`, plus its scaling (if any) times the live count; never below 0. */
+  private scaledValue(effect: { value: number; scaling?: Scaling }, target: EnemyState | undefined): number {
+    const scaling = effect.scaling;
+    if (!scaling) return effect.value;
+    return Math.max(0, effect.value + scaling.value * this.scaleCount(scaling, target));
+  }
+
+  private scaleCount(scaling: Scaling, target: EnemyState | undefined): number {
+    switch (scaling.per) {
+      case 'cardsPlayedThisTurn':
+        return this.stats.cardsPlayedThisTurn;
+      case 'attacksPlayedThisTurn':
+        return this.stats.attacksPlayedThisTurn;
+      case 'taggedPlayedThisTurn':
+        return this.stats.taggedPlayedThisTurn[scaling.tag ?? ''] ?? 0;
+      case 'block':
+        return this.player.block;
+      case 'strength':
+        return this.player.statuses.strength ?? 0;
+      case 'handSize':
+        return this.deck.hand.length;
+      case 'exhaustedThisCombat':
+        return this.stats.exhaustedThisCombat;
+      case 'targetVulnerable':
+        return target?.statuses.vulnerable ?? 0;
+    }
+  }
+
+  /** Announces a card that has just moved to the exhaust pile, counts it, and lets triggers react. */
+  private noteExhausted(card: CardInstance | undefined): void {
+    if (!card) return;
+    this.stats.exhaustedThisCombat += 1;
+    this.emit('cardExhausted', { card, exhaustPile: this.deck.exhaustPile.length });
+    this.fireTriggers('cardExhausted');
+  }
+
+  /** One stack of each "used up by playing an attack" status (Empowered) is spent. */
+  private consumeAttackStatuses(): void {
+    for (const [id, stacks] of activeStatuses(this.player)) {
+      if (!STATUSES[id].consumedByAttack) continue;
+      if (stacks <= 1) delete this.player.statuses[id];
+      else this.player.statuses[id] = stacks - 1;
+      this.emit('statusChanged', { target: this.player.id, status: id, delta: -1, statuses: { ...this.player.statuses } });
+    }
+  }
+
+  private addTriggers(triggers: Trigger[] | undefined): void {
+    for (const trigger of triggers ?? []) this.triggers.push({ trigger, firedThisTurn: false });
+  }
+
+  /**
+   * Runs every active trigger that reacts to `on`, in order. Triggered effects are NOT card plays
+   * (no counters, no 'cardPlayed'), and events they cause can fire further triggers only
+   * MAX_TRIGGER_DEPTH levels deep (the recursion guard). "target" for them is the first living enemy.
+   */
+  private fireTriggers(on: TriggerOn, played?: CardDefinition): void {
+    if (this.phase === 'won' || this.phase === 'lost') return;
+    if (this.triggerDepth >= MAX_TRIGGER_DEPTH) return;
+    this.triggerDepth += 1;
+    try {
+      for (const active of [...this.triggers]) {
+        const { trigger } = active;
+        if (trigger.on !== on) continue;
+        if (on === 'cardPlayed') {
+          if (trigger.cardType && played?.type !== trigger.cardType) continue;
+          if (trigger.tag && !played?.tags?.includes(trigger.tag)) continue;
+        }
+        if (trigger.oncePerTurn && active.firedThisTurn) continue;
+        active.firedThisTurn = true;
+        for (const effect of trigger.effects) this.applyCardEffect(effect, this.livingEnemies[0]);
+      }
+    } finally {
+      this.triggerDepth -= 1;
     }
   }
 
@@ -358,6 +544,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       hand: [...this.deck.hand],
       drawPile: this.deck.drawPile.length,
       discardPile: this.deck.discardPile.length,
+      exhaustPile: this.deck.exhaustPile.length,
     });
   }
 

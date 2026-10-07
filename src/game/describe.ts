@@ -1,4 +1,4 @@
-import type { CardDefinition, Effect, EventOutcome, RelicDefinition, RunEffect } from './types';
+import type { CardDefinition, Effect, EventOutcome, RelicDefinition, RunEffect, ScaleSource, Trigger } from './types';
 import { STATUSES } from '../data/statuses';
 import { getCard } from '../data/cards';
 import { getEnemy } from '../data/enemies';
@@ -11,18 +11,85 @@ const plural = (n: number, word: string): string => `${n} ${word}${n === 1 ? '' 
  * a draw is on top of the normal hand.
  */
 export function describeEffect(effect: Effect, opts: { atTurnStart?: boolean } = {}): string {
+  const scaling = 'scaling' in effect ? effect.scaling : undefined;
+  if (!scaling || !('value' in effect)) return plainEffect(effect, 'value' in effect ? effect.value : 0, opts);
+  const unit = SCALE_UNIT[scaling.per](scaling.tag);
+  // "Deal 4 damage. +3 for each card played earlier this turn." / "Deal 1 damage for each point of your block."
+  if (effect.value > 0) return `${plainEffect(effect, effect.value, opts)} +${scaling.value} for each ${unit}.`;
+  return `${plainEffect(effect, scaling.value, opts).replace(/\.$/, '')} for each ${unit}.`;
+}
+
+/** What one unit of each scaling source is called, for "for each ...". */
+const SCALE_UNIT: Record<ScaleSource, (tag?: string) => string> = {
+  cardsPlayedThisTurn: () => 'card played earlier this turn',
+  attacksPlayedThisTurn: () => 'attack played earlier this turn',
+  taggedPlayedThisTurn: (tag) => `${tag ?? '?'} card played earlier this turn`,
+  block: () => 'point of your block',
+  strength: () => 'point of your Strength',
+  handSize: () => 'card in your hand',
+  exhaustedThisCombat: () => 'card exhausted this combat',
+  targetVulnerable: () => 'stack of Vulnerable on the target',
+};
+
+/** One effect with its number filled in as `n` (the scaling is described separately). */
+function plainEffect(effect: Effect, n: number, opts: { atTurnStart?: boolean }): string {
   switch (effect.kind) {
     case 'damage':
-      return `Deal ${effect.value} damage.`;
+      return `Deal ${n} damage.`;
     case 'block':
-      return `Gain ${effect.value} block.`;
+      return `Gain ${n} block.`;
     case 'draw':
-      return opts.atTurnStart ? `Draw ${effect.value} additional ${effect.value === 1 ? 'card' : 'cards'}.` : `Draw ${plural(effect.value, 'card')}.`;
+      return opts.atTurnStart ? `Draw ${n} additional ${n === 1 ? 'card' : 'cards'}.` : `Draw ${plural(n, 'card')}.`;
     case 'applyStatus': {
       const name = STATUSES[effect.status].name;
-      return effect.to === 'self' ? `Gain ${effect.value} ${name}.` : `Apply ${effect.value} ${name}.`;
+      return effect.to === 'self' ? `Gain ${n} ${name}.` : `Apply ${n} ${name}.`;
     }
+    case 'gainEnergy':
+      return `Gain ${n} energy.`;
+    case 'loseHp':
+      return `Lose ${n} HP.`;
+    case 'multiplyStatus': {
+      const name = STATUSES[effect.status].name;
+      const whose = effect.to === 'self' ? 'your' : "the target's";
+      return effect.factor === 2 ? `Double ${whose} ${name}.` : `Multiply ${whose} ${name} by ${effect.factor}.`;
+    }
+    case 'exhaustRandom':
+      return `Exhaust ${plural(effect.value, 'random card')} from your hand.`;
   }
+}
+
+const lowerFirst = (text: string): string => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
+
+/** One trigger as a sentence, e.g. "Whenever you play an attack, gain 2 block. Once per turn." */
+export function describeTrigger(trigger: Trigger): string {
+  let when: string;
+  switch (trigger.on) {
+    case 'cardPlayed': {
+      const kind = trigger.cardType ? `${trigger.tag ? `${trigger.tag} ` : ''}${trigger.cardType}` : trigger.tag ? `${trigger.tag} card` : 'card';
+      when = `Whenever you play ${/^[aeiou]/.test(kind) ? 'an' : 'a'} ${kind}`;
+      break;
+    }
+    case 'cardExhausted':
+      when = 'Whenever a card is exhausted';
+      break;
+    case 'blockGained':
+      when = 'Whenever you gain block';
+      break;
+    case 'enemyDied':
+      when = 'Whenever an enemy dies';
+      break;
+    case 'hpLost':
+      when = 'Whenever you lose HP';
+      break;
+    case 'turnStart':
+      when = 'At the start of your turn';
+      break;
+    case 'turnEnd':
+      when = 'At the end of your turn, before you discard';
+      break;
+  }
+  const effects = trigger.effects.map((e) => lowerFirst(describeEffect(e, { atTurnStart: trigger.on === 'turnStart' }))).join(' ');
+  return `${when}, ${effects}${trigger.oncePerTurn ? ' Once per turn.' : ''}`;
 }
 
 /** The text on a card's face: its `description` if it has one, otherwise generated from its effects. */
@@ -33,6 +100,8 @@ export function cardText(card: CardDefinition): string {
     const text = describeEffect(card.onTurnStartEffect, { atTurnStart: true });
     parts.push(`At the start of each turn, ${text.charAt(0).toLowerCase()}${text.slice(1)}`);
   }
+  for (const trigger of card.triggers ?? []) parts.push(describeTrigger(trigger));
+  if (card.exhaust) parts.push('Exhaust.');
   return parts.join(' ');
 }
 
@@ -48,8 +117,6 @@ export function describeRunEffect(effect: RunEffect): string {
       return `Gain ${effect.value} gold.`;
   }
 }
-
-const lowerFirst = (text: string): string => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
 
 /** A relic's text: its `description` if it has one, otherwise generated from its effects. */
 export function relicText(relic: RelicDefinition): string {
@@ -67,6 +134,7 @@ export function relicText(relic: RelicDefinition): string {
       `At the start of each turn, ${relic.onTurnStart.map((e) => lowerFirst(describeEffect(e, { atTurnStart: true }))).join(' ')}`
     );
   }
+  for (const trigger of relic.triggers ?? []) parts.push(describeTrigger(trigger));
   return parts.join(' ');
 }
 

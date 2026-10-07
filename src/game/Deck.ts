@@ -11,6 +11,8 @@ export class Deck {
   drawPile: CardInstance[] = [];
   hand: CardInstance[] = [];
   discardPile: CardInstance[] = [];
+  /** Cards removed for the rest of this combat. Never reshuffled. */
+  exhaustPile: CardInstance[] = [];
 
   private readonly random: () => number;
 
@@ -46,6 +48,25 @@ export class Deck {
     const [card] = this.hand.splice(index, 1);
     this.discardPile.push(card);
     return card;
+  }
+
+  /** Removes a card from wherever it is (hand, discard or draw pile) and puts it in the exhaust pile. */
+  exhaustCard(instanceId: string): CardInstance | undefined {
+    for (const pile of [this.hand, this.discardPile, this.drawPile]) {
+      const index = pile.findIndex((c) => c.instanceId === instanceId);
+      if (index === -1) continue;
+      const [card] = pile.splice(index, 1);
+      this.exhaustPile.push(card);
+      return card;
+    }
+    return undefined;
+  }
+
+  /** Exhausts one random card from the hand (using the deck's own random source); undefined if the hand is empty. */
+  exhaustRandomFromHand(): CardInstance | undefined {
+    if (this.hand.length === 0) return undefined;
+    const pick = this.hand[Math.floor(this.random() * this.hand.length)];
+    return this.exhaustCard(pick.instanceId);
   }
 
   discardHand(): void {

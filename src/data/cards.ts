@@ -1,4 +1,5 @@
 import type { CardDefinition } from '../game/types';
+import { SYNERGY_CARDS } from './synergyCards';
 
 // PLACEHOLDER content. Names/numbers here are functional stand-ins to exercise the game's
 // systems — final card design, naming, and flavor are the user's to author (see CLAUDE.md).
@@ -210,6 +211,8 @@ const ALL_CARDS: CardDefinition[] = [
   EXPOSE,
   SUNDER,
   STRENGTHEN,
+  // placeholder synergy-test cards: registered, but never offered as rewards (see synergyCards.ts)
+  ...SYNERGY_CARDS,
 ];
 
 /**
@@ -256,6 +259,19 @@ export function getCard(id: string): CardDefinition {
 /** Cards a hero can be offered as rewards or in a shop: their own plus the neutral ones. */
 export function rewardPoolFor(heroId: string): CardDefinition[] {
   return ALL_CARDS.filter((card) => card.inRewardPool && (card.owner === heroId || card.owner === 'neutral'));
+}
+
+/**
+ * Every base card a deck for `heroId` could plausibly contain, for tools that build decks from the
+ * whole registry (the simulator, tests): the reward-pool cards plus the placeholder synergy cards,
+ * regardless of `inRewardPool`. Excludes the starter-only basics (Strike, Defend, Focus) and
+ * upgraded versions (use `upgradedVersion`). The live game never calls this; it uses `rewardPoolFor`.
+ */
+export function allDraftableCards(heroId: string = MAGE): CardDefinition[] {
+  const synergyIds = new Set(SYNERGY_CARDS.map((c) => c.id));
+  return ALL_CARDS.filter(
+    (card) => (card.inRewardPool || synergyIds.has(card.id)) && (card.owner === heroId || card.owner === 'neutral')
+  );
 }
 
 /** Placeholder starter deck (mirrors StS's starter-deck shape): every card type, and the cost/energy system. */
