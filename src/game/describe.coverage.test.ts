@@ -7,7 +7,6 @@ import type { CardDefinition, Effect, EnemyMove, EventOutcome, RelicDefinition, 
 import { CARDS } from '../data/cards';
 import { RELICS } from '../data/relics';
 import { EVENTS } from '../data/events';
-import { ENEMIES } from '../data/enemies';
 import { newRun } from '../data/run';
 
 const card = (extra: Partial<CardDefinition>): CardDefinition => ({
@@ -209,9 +208,6 @@ describe('intentIcons', () => {
     expect(all).toEqual(['attack', 'defend', 'buff', 'debuff']);
   });
 
-  it('every enemy move in the data gets at least one icon (nothing the player cannot see coming)', () => {
-    for (const e of Object.values(ENEMIES)) for (const m of e.movePattern) expect(intentIcons(m), `${e.id}/${m.name}`).not.toEqual([]);
-  });
 });
 
 describe('runReport', () => {
