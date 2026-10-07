@@ -144,7 +144,7 @@ describe('parseSavedRun / restoreRun', () => {
   // discarded, never a crash" (HANDOFF.md), but a save in the reward phase with no pending reward,
   // or with hp above maxHp, is accepted. The first leaves the player on a reward screen with
   // nothing to take (takeReward* throw 'no reward is pending').
-  it.fails('rejects a reward phase with no pending reward', () => {
+  it('rejects a reward phase with no pending reward', () => {
     const raw = mutate((s) => {
       s.position = s.map.nodes[0].id;
       s.visited = [s.position];
@@ -154,7 +154,7 @@ describe('parseSavedRun / restoreRun', () => {
     expect(restoreRun(raw, RUN_WORLD)).toBeNull();
   });
 
-  it.fails('rejects hp greater than maxHp', () => {
+  it('rejects hp greater than maxHp', () => {
     expect(restoreRun(mutate((s) => (s.hp = s.maxHp + 50)), RUN_WORLD)).toBeNull();
   });
 });

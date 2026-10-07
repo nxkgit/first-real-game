@@ -191,28 +191,26 @@ describe('parseSavedRun / restoreRun never throw', () => {
   });
 });
 
-// FINDINGS: saves that pass parseSavedRun but crash once played. Marked it.fails so verify stays
-// green; when the validator is fixed these start passing and vitest will flag them: then drop `.fails`.
+// Saves that used to pass parseSavedRun but crash once played (fixed: the validator now refuses them).
 describe('FINDINGS: saves that validate but cannot be played', () => {
   const base = (): Record<string, any> => validSaves(1)[0] as Record<string, any>;
 
-  it.fails('phase "reward" with no pendingReward should be refused (taking the reward throws "no reward is pending")', () => {
+  it('phase "reward" with no pendingReward should be refused (taking the reward throws "no reward is pending")', () => {
     const run = restoreSavedRun({ ...base(), phase: 'reward', pendingReward: null, position: base().map.nodes[0].id });
     expect(run).toBeNull();
   });
 
-  it.fails('eventFight.after entries are not validated (a null outcome crashes finishCombat in applyOutcome)', () => {
+  it('eventFight.after entries are not validated (a null outcome crashes finishCombat in applyOutcome)', () => {
     const s = { ...base(), eventFight: { enemies: ['enemy-a'], after: [null] }, position: base().map.nodes[0].id, phase: 'inNode' };
     const run = restoreSavedRun(s);
     expect(run).toBeNull();
   });
 
-  // Skipped, not fixed: this catch-all fuzz finds crashes by chance, and gameplay changes shifted which mutations it
-  // hits. The two specific it.fails above are the reproducible forms. Re-enable once parseSavedRun is hardened.
-  it.skip('every mutated save that is accepted can be played a few steps without throwing', () => {
+  // Catch-all fuzz: anything the validator accepts must be playable.
+  it('every mutated save that is accepted can be played a few steps without throwing', { timeout: 120000 }, () => {
     const saves = validSaves(60);
     const rng = new Rng(77);
-    for (let i = 0; i < 6000; i++) {
+    for (let i = 0; i < 30000; i++) {
       const run = restoreSavedRun(mutate(rng, pickOne(rng, saves)));
       if (!run) continue;
       for (let k = 0; k < 6 && !isRunOver(run); k++) stepRun(run, k + 1);
