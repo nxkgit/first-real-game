@@ -1,0 +1,243 @@
+{
+ "options": {
+  "runs": 300,
+  "baseSeed": 1,
+  "maxHp": 60
+ },
+ "policies": [
+  {
+   "policy": "smart bot, best-card drafting",
+   "win": 0.54,
+   "floors": [
+    {
+     "floor": 1,
+     "tier": "normal",
+     "fights": 300,
+     "hpLost": "5.8 [5.5, 6.1]"
+    },
+    {
+     "floor": 2,
+     "tier": "normal",
+     "fights": 235,
+     "hpLost": "5.7 [5.3, 6.2]"
+    },
+    {
+     "floor": 3,
+     "tier": "normal",
+     "fights": 247,
+     "hpLost": "5.7 [5.3, 6.1]"
+    },
+    {
+     "floor": 4,
+     "tier": "normal",
+     "fights": 225,
+     "hpLost": "9.9 [9.2, 10.6]"
+    },
+    {
+     "floor": 5,
+     "tier": "mixed",
+     "fights": 194,
+     "hpLost": "10.2 [9.4, 11.0]"
+    },
+    {
+     "floor": 6,
+     "tier": "mixed",
+     "fights": 218,
+     "hpLost": "9.9 [9.1, 10.7]"
+    },
+    {
+     "floor": 7,
+     "tier": "mixed",
+     "fights": 215,
+     "hpLost": "9.1 [8.3, 9.9]"
+    },
+    {
+     "floor": 8,
+     "tier": "mixed",
+     "fights": 177,
+     "hpLost": "8.2 [7.3, 9.1]"
+    },
+    {
+     "floor": 9,
+     "tier": "mixed",
+     "fights": 186,
+     "hpLost": "7.4 [6.5, 8.2]"
+    },
+    {
+     "floor": 10,
+     "tier": "mixed",
+     "fights": 153,
+     "hpLost": "7.7 [6.8, 8.5]"
+    },
+    {
+     "floor": 11,
+     "tier": "mixed",
+     "fights": 146,
+     "hpLost": "8.0 [7.0, 8.9]"
+    },
+    {
+     "floor": 13,
+     "tier": "boss",
+     "fights": 179,
+     "hpLost": "21.3 [19.9, 22.6]"
+    }
+   ]
+  },
+  {
+   "policy": "smart bot, random-card drafting",
+   "win": 0.29,
+   "floors": [
+    {
+     "floor": 1,
+     "tier": "normal",
+     "fights": 300,
+     "hpLost": "5.8 [5.5, 6.1]"
+    },
+    {
+     "floor": 2,
+     "tier": "normal",
+     "fights": 235,
+     "hpLost": "6.0 [5.6, 6.4]"
+    },
+    {
+     "floor": 3,
+     "tier": "normal",
+     "fights": 247,
+     "hpLost": "6.5 [6.1, 6.9]"
+    },
+    {
+     "floor": 4,
+     "tier": "normal",
+     "fights": 225,
+     "hpLost": "11.8 [11.1, 12.5]"
+    },
+    {
+     "floor": 5,
+     "tier": "mixed",
+     "fights": 189,
+     "hpLost": "12.7 [11.8, 13.5]"
+    },
+    {
+     "floor": 6,
+     "tier": "mixed",
+     "fights": 214,
+     "hpLost": "11.9 [11.1, 12.7]"
+    },
+    {
+     "floor": 7,
+     "tier": "mixed",
+     "fights": 200,
+     "hpLost": "11.0 [10.1, 11.9]"
+    },
+    {
+     "floor": 8,
+     "tier": "mixed",
+     "fights": 157,
+     "hpLost": "11.2 [10.0, 12.4]"
+    },
+    {
+     "floor": 9,
+     "tier": "mixed",
+     "fights": 143,
+     "hpLost": "9.9 [8.9, 11.0]"
+    },
+    {
+     "floor": 10,
+     "tier": "mixed",
+     "fights": 110,
+     "hpLost": "10.0 [8.7, 11.4]"
+    },
+    {
+     "floor": 11,
+     "tier": "mixed",
+     "fights": 102,
+     "hpLost": "10.3 [9.2, 11.4]"
+    },
+    {
+     "floor": 13,
+     "tier": "boss",
+     "fights": 122,
+     "hpLost": "26.9 [25.0, 28.8]"
+    }
+   ]
+  },
+  {
+   "policy": "greedy bot, best-card drafting",
+   "win": 0.923333,
+   "floors": [
+    {
+     "floor": 1,
+     "tier": "normal",
+     "fights": 300,
+     "hpLost": "1.6 [1.3, 1.8]"
+    },
+    {
+     "floor": 2,
+     "tier": "normal",
+     "fights": 235,
+     "hpLost": "1.6 [1.3, 1.9]"
+    },
+    {
+     "floor": 3,
+     "tier": "normal",
+     "fights": 247,
+     "hpLost": "1.9 [1.5, 2.2]"
+    },
+    {
+     "floor": 4,
+     "tier": "normal",
+     "fights": 225,
+     "hpLost": "5.4 [4.8, 6.0]"
+    },
+    {
+     "floor": 5,
+     "tier": "mixed",
+     "fights": 201,
+     "hpLost": "5.1 [4.4, 5.7]"
+    },
+    {
+     "floor": 6,
+     "tier": "mixed",
+     "fights": 223,
+     "hpLost": "5.1 [4.4, 5.8]"
+    },
+    {
+     "floor": 7,
+     "tier": "mixed",
+     "fights": 223,
+     "hpLost": "5.4 [4.7, 6.2]"
+    },
+    {
+     "floor": 8,
+     "tier": "mixed",
+     "fights": 208,
+     "hpLost": "5.0 [4.4, 5.7]"
+    },
+    {
+     "floor": 9,
+     "tier": "mixed",
+     "fights": 229,
+     "hpLost": "5.0 [4.4, 5.6]"
+    },
+    {
+     "floor": 10,
+     "tier": "mixed",
+     "fights": 211,
+     "hpLost": "4.7 [4.0, 5.4]"
+    },
+    {
+     "floor": 11,
+     "tier": "mixed",
+     "fights": 220,
+     "hpLost": "5.0 [4.4, 5.7]"
+    },
+    {
+     "floor": 13,
+     "tier": "boss",
+     "fights": 281,
+     "hpLost": "11.1 [10.2, 12.0]"
+    }
+   ]
+  }
+ ]
+}

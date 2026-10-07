@@ -1,0 +1,73 @@
+{
+ "options": {
+  "seeds": 20,
+  "baseSeed": 1,
+  "skill": "smart",
+  "samples": 8
+ },
+ "rows": [
+  {
+   "size": 6,
+   "hpLost": 18.183333,
+   "dHpLost": 1.194444,
+   "dWin": -0.094444,
+   "dTurns": 3.283333
+  },
+  {
+   "size": 8,
+   "hpLost": 15.688889,
+   "dHpLost": -1.3,
+   "dWin": 0.011111,
+   "dTurns": 0.422222
+  },
+  {
+   "size": 10,
+   "hpLost": 16.988889,
+   "dHpLost": 0,
+   "dWin": 0,
+   "dTurns": 0
+  },
+  {
+   "size": 12,
+   "hpLost": 16.571528,
+   "dHpLost": -0.417361,
+   "dWin": 0.009722,
+   "dTurns": -0.833333
+  },
+  {
+   "size": 14,
+   "hpLost": 14.871528,
+   "dHpLost": -2.117361,
+   "dWin": 0.015972,
+   "dTurns": -0.548611
+  },
+  {
+   "size": 16,
+   "hpLost": 15.18125,
+   "dHpLost": -1.807639,
+   "dWin": 0.016667,
+   "dTurns": -1.000694
+  },
+  {
+   "size": 20,
+   "hpLost": 13.938194,
+   "dHpLost": -3.050694,
+   "dWin": 0.016667,
+   "dTurns": -1.002778
+  },
+  {
+   "size": 25,
+   "hpLost": 13.124306,
+   "dHpLost": -3.864583,
+   "dWin": 0.016667,
+   "dTurns": -0.784722
+  },
+  {
+   "size": 30,
+   "hpLost": 13.430556,
+   "dHpLost": -3.558333,
+   "dWin": 0.016667,
+   "dTurns": -0.827778
+  }
+ ]
+}

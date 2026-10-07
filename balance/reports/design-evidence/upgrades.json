@@ -1,0 +1,121 @@
+{
+ "options": {
+  "seeds": 40,
+  "baseSeed": 1,
+  "skill": "smart"
+ },
+ "rows": [
+  {
+   "card": "strike",
+   "dHpLost": -0.909259,
+   "lo": -1.137328,
+   "hi": -0.68119,
+   "dWin": 0,
+   "addHpLost": null
+  },
+  {
+   "card": "defend",
+   "dHpLost": -1.825926,
+   "lo": -2.043037,
+   "hi": -1.608815,
+   "dWin": 0,
+   "addHpLost": null
+  },
+  {
+   "card": "bolt",
+   "dHpLost": -0.857407,
+   "lo": -1.071497,
+   "hi": -0.643318,
+   "dWin": 0,
+   "addHpLost": null
+  },
+  {
+   "card": "focus",
+   "dHpLost": -1.412963,
+   "lo": -1.656133,
+   "hi": -1.169793,
+   "dWin": 0,
+   "addHpLost": null
+  },
+  {
+   "card": "jab",
+   "dHpLost": -0.538889,
+   "lo": -0.710466,
+   "hi": -0.367311,
+   "dWin": 0,
+   "addHpLost": -0.902778
+  },
+  {
+   "card": "guarded-strike",
+   "dHpLost": -1.108333,
+   "lo": -1.299158,
+   "hi": -0.917509,
+   "dWin": 0,
+   "addHpLost": -1.875926
+  },
+  {
+   "card": "heavy-hit",
+   "dHpLost": -1.564815,
+   "lo": -1.821207,
+   "hi": -1.308423,
+   "dWin": 0,
+   "addHpLost": -0.102778
+  },
+  {
+   "card": "big-block",
+   "dHpLost": -0.597222,
+   "lo": -0.748974,
+   "hi": -0.445471,
+   "dWin": 0,
+   "addHpLost": -1.252778
+  },
+  {
+   "card": "quick-draw",
+   "dHpLost": -0.039815,
+   "lo": -0.218774,
+   "hi": 0.139144,
+   "dWin": -0.000926,
+   "addHpLost": -0.252778
+  },
+  {
+   "card": "fortify",
+   "dHpLost": -1.35463,
+   "lo": -1.479515,
+   "hi": -1.229745,
+   "dWin": 0,
+   "addHpLost": 0.276389
+  },
+  {
+   "card": "weaken",
+   "dHpLost": -0.658333,
+   "lo": -0.772889,
+   "hi": -0.543777,
+   "dWin": 0,
+   "addHpLost": 0
+  },
+  {
+   "card": "expose",
+   "dHpLost": -0.447222,
+   "lo": -0.631067,
+   "hi": -0.263378,
+   "dWin": 0,
+   "addHpLost": -1.138889
+  },
+  {
+   "card": "sunder",
+   "dHpLost": -1.397222,
+   "lo": -1.638997,
+   "hi": -1.155447,
+   "dWin": 0,
+   "addHpLost": 0.412963
+  },
+  {
+   "card": "strengthen",
+   "dHpLost": -0.75,
+   "lo": -0.937005,
+   "hi": -0.562995,
+   "dWin": 0,
+   "addHpLost": 0.469444
+  }
+ ]
+}

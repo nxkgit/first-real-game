@@ -1,0 +1,375 @@
+{
+ "fights": {
+  "options": {
+   "seeds": 30,
+   "baseSeed": 1,
+   "skill": "smart"
+  },
+  "rows": [
+   {
+    "relic": "strength-token",
+    "starter": {
+     "hpLost": 1.088889,
+     "win": 0.007407
+    },
+    "mid": {
+     "hpLost": -0.751852,
+     "win": 0
+    },
+    "late": {
+     "hpLost": -0.601235,
+     "win": 0
+    },
+    "synergy decks": {
+     "hpLost": -0.793981,
+     "win": 0.000463
+    },
+    "healPerWin": 0,
+    "maxHpGain": 0
+   },
+   {
+    "relic": "vitality-token",
+    "starter": {
+     "hpLost": 0.02963,
+     "win": 0.014815
+    },
+    "mid": {
+     "hpLost": -0.040741,
+     "win": 0
+    },
+    "late": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "synergy decks": {
+     "hpLost": 0.006944,
+     "win": 0.000463
+    },
+    "healPerWin": 0,
+    "maxHpGain": 10
+   },
+   {
+    "relic": "guard-token",
+    "starter": {
+     "hpLost": -3.274074,
+     "win": 0.014815
+    },
+    "mid": {
+     "hpLost": -3.67037,
+     "win": 0
+    },
+    "late": {
+     "hpLost": -3.82963,
+     "win": 0
+    },
+    "synergy decks": {
+     "hpLost": -3.452778,
+     "win": 0.000463
+    },
+    "healPerWin": 0,
+    "maxHpGain": 0
+   },
+   {
+    "relic": "recovery-token",
+    "starter": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "mid": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "late": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "synergy decks": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "healPerWin": 4,
+    "maxHpGain": 0
+   },
+   {
+    "relic": "draw-token",
+    "starter": {
+     "hpLost": -0.233333,
+     "win": 0.007407
+    },
+    "mid": {
+     "hpLost": -0.092593,
+     "win": 0
+    },
+    "late": {
+     "hpLost": -0.309877,
+     "win": 0
+    },
+    "synergy decks": {
+     "hpLost": -1.499074,
+     "win": 0
+    },
+    "healPerWin": 0,
+    "maxHpGain": 0
+   },
+   {
+    "relic": "exhaust-token",
+    "starter": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "mid": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "late": {
+     "hpLost": 0,
+     "win": 0
+    },
+    "synergy decks": {
+     "hpLost": -1.146296,
+     "win": 0.000463
+    },
+    "healPerWin": 0,
+    "maxHpGain": 0
+   },
+   {
+    "relic": "kill-token",
+    "starter": {
+     "hpLost": 0.111111,
+     "win": 0
+    },
+    "mid": {
+     "hpLost": 0.204938,
+     "win": 0
+    },
+    "late": {
+     "hpLost": -0.009877,
+     "win": 0
+    },
+    "synergy decks": {
+     "hpLost": -0.106019,
+     "win": 0
+    },
+    "healPerWin": 0,
+    "maxHpGain": 0
+   }
+  ]
+ },
+ "runs": {
+  "options": {
+   "runs": 300,
+   "baseSeed": 1,
+   "skill": "smart"
+  },
+  "rows": [
+   {
+    "name": "no relic",
+    "win": {
+     "p": 0.54,
+     "lo": 0.483452,
+     "hi": 0.595537
+    },
+    "dWin": null,
+    "floor": 11.306667,
+    "cost": {
+     "mean": 6.948194,
+     "lo": 6.642543,
+     "hi": 7.253846
+    },
+    "dCost": null,
+    "deck": 17.26,
+    "goldLeft": 10.166667,
+    "verdict": null
+   },
+   {
+    "name": "starts with strength-token",
+    "win": {
+     "p": 0.586667,
+     "lo": 0.530191,
+     "hi": 0.640951
+    },
+    "dWin": {
+     "mean": 0.046667,
+     "lo": 0.006674,
+     "hi": 0.086659
+    },
+    "floor": 11.52,
+    "cost": {
+     "mean": 6.444028,
+     "lo": 6.151556,
+     "hi": 6.7365
+    },
+    "dCost": {
+     "mean": -0.504167,
+     "lo": -0.705879,
+     "hi": -0.302454
+    },
+    "deck": 17.406667,
+    "goldLeft": 10.3,
+    "verdict": "better"
+   },
+   {
+    "name": "starts with vitality-token",
+    "win": {
+     "p": 0.693333,
+     "lo": 0.638984,
+     "hi": 0.742794
+    },
+    "dWin": {
+     "mean": 0.153333,
+     "lo": 0.111458,
+     "hi": 0.195209
+    },
+    "floor": 11.963333,
+    "cost": {
+     "mean": 6.738611,
+     "lo": 6.427891,
+     "hi": 7.049331
+    },
+    "dCost": {
+     "mean": -0.209583,
+     "lo": -0.363998,
+     "hi": -0.055168
+    },
+    "deck": 17.73,
+    "goldLeft": 9.833333,
+    "verdict": "better"
+   },
+   {
+    "name": "starts with guard-token",
+    "win": {
+     "p": 0.85,
+     "lo": 0.805182,
+     "hi": 0.885968
+    },
+    "dWin": {
+     "mean": 0.31,
+     "lo": 0.255968,
+     "hi": 0.364032
+    },
+    "floor": 12.526667,
+    "cost": {
+     "mean": 5.375833,
+     "lo": 5.139927,
+     "hi": 5.611739
+    },
+    "dCost": {
+     "mean": -1.572361,
+     "lo": -1.815481,
+     "hi": -1.329241
+    },
+    "deck": 18.126667,
+    "goldLeft": 11.5,
+    "verdict": "better"
+   },
+   {
+    "name": "starts with recovery-token",
+    "win": {
+     "p": 0.886667,
+     "lo": 0.845801,
+     "hi": 0.917755
+    },
+    "dWin": {
+     "mean": 0.346667,
+     "lo": 0.291158,
+     "hi": 0.402175
+    },
+    "floor": 12.666667,
+    "cost": {
+     "mean": 6.477222,
+     "lo": 6.169157,
+     "hi": 6.785288
+    },
+    "dCost": {
+     "mean": -0.470972,
+     "lo": -0.678032,
+     "hi": -0.263913
+    },
+    "deck": 18.25,
+    "goldLeft": 11.433333,
+    "verdict": "better"
+   },
+   {
+    "name": "starts with draw-token",
+    "win": {
+     "p": 0.58,
+     "lo": 0.523483,
+     "hi": 0.634494
+    },
+    "dWin": {
+     "mean": 0.04,
+     "lo": -0.010487,
+     "hi": 0.090487
+    },
+    "floor": 11.326667,
+    "cost": {
+     "mean": 5.039167,
+     "lo": 4.771553,
+     "hi": 5.306781
+    },
+    "dCost": {
+     "mean": -1.909028,
+     "lo": -2.161124,
+     "hi": -1.656932
+    },
+    "deck": 17.24,
+    "goldLeft": 9.733333,
+    "verdict": "inconclusive"
+   },
+   {
+    "name": "starts with exhaust-token",
+    "win": {
+     "p": 0.54,
+     "lo": 0.483452,
+     "hi": 0.595537
+    },
+    "dWin": {
+     "mean": 0,
+     "lo": 0,
+     "hi": 0
+    },
+    "floor": 11.306667,
+    "cost": {
+     "mean": 6.948194,
+     "lo": 6.642543,
+     "hi": 7.253846
+    },
+    "dCost": {
+     "mean": 0,
+     "lo": 0,
+     "hi": 0
+    },
+    "deck": 17.26,
+    "goldLeft": 10.166667,
+    "verdict": "negligible"
+   },
+   {
+    "name": "starts with kill-token",
+    "win": {
+     "p": 0.516667,
+     "lo": 0.460266,
+     "hi": 0.572646
+    },
+    "dWin": {
+     "mean": -0.023333,
+     "lo": -0.055947,
+     "hi": 0.00928
+    },
+    "floor": 11.25,
+    "cost": {
+     "mean": 6.875833,
+     "lo": 6.567425,
+     "hi": 7.184242
+    },
+    "dCost": {
+     "mean": -0.072361,
+     "lo": -0.189104,
+     "hi": 0.044381
+    },
+    "deck": 17.246667,
+    "goldLeft": 9.766667,
+    "verdict": "inconclusive"
+   }
+  ]
+ }
+}
