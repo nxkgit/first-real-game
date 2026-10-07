@@ -3,6 +3,8 @@ import { CombatState } from '../game/CombatState';
 import type { CombatEventMap } from '../game/CombatState';
 import type { RunState } from '../game/RunState';
 import type { CardInstance, EnemyDefinition, EnemyMove } from '../game/types';
+import { STATUSES } from '../data/statuses';
+import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
 import {
@@ -76,6 +78,11 @@ export class CombatScene extends Phaser.Scene {
   private intentSword!: Phaser.GameObjects.Graphics;
   private intentShield!: Phaser.GameObjects.Graphics;
   private intentValueText!: Phaser.GameObjects.Text;
+  private intentBadge!: Phaser.GameObjects.Container;
+  private intentBadgeDisc!: Phaser.GameObjects.Arc;
+  private intentBadgeLetter!: Phaser.GameObjects.Text;
+  private enemyStatusRow!: StatusRow;
+  private playerStatusRow!: StatusRow;
 
   /** True while an animation sequence is playing and the player can't act. */
   private inputLocked = false;
@@ -240,10 +247,18 @@ export class CombatScene extends Phaser.Scene {
     const c = (): CombatState => this.combat;
     add(ENEMY_X, 92, 70, 34, () => {
       const move = c().currentEnemyMove;
-      return move.kind === 'attack'
-        ? `Intends to attack for ${move.value} damage.`
-        : `Intends to gain ${move.value} block.`;
+      if (move.kind === 'attack') return `Intends to attack for ${c().currentEnemyAttackDamage} damage.`;
+      if (move.kind === 'defend') return `Intends to gain ${move.value} block.`;
+      const status = move.status && STATUSES[move.status.id];
+      if (!status) return null;
+      return move.status?.to === 'player'
+        ? `Intends to inflict ${move.value} ${status.name} on you.`
+        : `Intends to gain ${move.value} ${status.name}.`;
     });
+    for (let i = 0; i < 3; i++) {
+      add(this.enemyStatusRow.slotX(i), this.enemyStatusRow.y, STATUS_SLOT_WIDTH - 4, 28, () => this.enemyStatusRow.textAt(i));
+      add(this.playerStatusRow.slotX(i), this.playerStatusRow.y, STATUS_SLOT_WIDTH - 4, 28, () => this.playerStatusRow.textAt(i));
+    }
     add(ENEMY_X, 384, 50, 24, () =>
       c().enemyBlock > 0 ? `Block: absorbs the next ${c().enemyBlock} damage. Resets at the start of its turn.` : null
     );
@@ -394,7 +409,19 @@ export class CombatScene extends Phaser.Scene {
     this.intentValueText = this.add
       .text(4, 1, '', { fontSize: '20px', color: '#ffffff', fontStyle: 'bold', stroke: '#14141c', strokeThickness: 4 })
       .setOrigin(0, 0.5);
-    this.intentContainer = this.add.container(ENEMY_X, 92, [this.intentSword, this.intentShield, this.intentValueText]);
+    // Status moves (buff/debuff) show the status's own badge instead of a sword or shield.
+    this.intentBadgeDisc = this.add.circle(0, 0, 11, 0xffffff).setStrokeStyle(2, 0xffffff, 0.55);
+    this.intentBadgeLetter = this.add
+      .text(0, 0, '', { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' })
+      .setOrigin(0.5);
+    this.intentBadge = this.add.container(-12, 0, [this.intentBadgeDisc, this.intentBadgeLetter]);
+    this.intentContainer = this.add.container(ENEMY_X, 92, [
+      this.intentSword,
+      this.intentShield,
+      this.intentBadge,
+      this.intentValueText,
+    ]);
+    this.enemyStatusRow = new StatusRow(this, ENEMY_X - 40, 412);
 
     const barX = ENEMY_X - HP_BAR_WIDTH / 2;
     const barY = 345;
@@ -468,6 +495,8 @@ export class CombatScene extends Phaser.Scene {
     this.energyText = this.add
       .text(235, statY, '', { fontSize: '16px', color: '#3a2a0a', fontStyle: 'bold' })
       .setOrigin(0.5);
+
+    this.playerStatusRow = new StatusRow(this, PLAYER_X - 60, 412);
 
     this.statusText = this.add
       .text(400, 405, '', { fontSize: '13px', color: '#9a9aae', align: 'center' })
@@ -577,6 +606,7 @@ export class CombatScene extends Phaser.Scene {
     this.combat.on('blockGained', (payload) => {
       if (payload.target === 'player') this.queue(() => this.animatePlayerBlockGain(payload.amount));
     });
+    this.combat.on('statusChanged', (payload) => this.queue(() => this.animateStatusChange(payload)));
     this.combat.on('combatEnded', ({ result }) => this.queue(() => this.animateCombatEnd(result)));
   }
 
@@ -650,7 +680,7 @@ export class CombatScene extends Phaser.Scene {
     card: CardInstance,
     impactSteps: AnimStep[]
   ): Promise<void> {
-    if (card.definition.type === 'attack') {
+    if (card.definition.target === 'enemy') {
       Sfx.cardPlay();
       await this.tweenPromise({
         targets: container,
@@ -907,7 +937,7 @@ export class CombatScene extends Phaser.Scene {
       // enemy lunges toward the player as the windup/attack motion
       const lungeX = ENEMY_X - (ENEMY_X - PLAYER_X) * 0.22;
       await this.tweenPromise({ targets: this.enemyContainer, x: lungeX, duration: 140, ease: 'Sine.easeIn' });
-      this.cameras.main.shake(180, Phaser.Math.Clamp(move.value / 900, 0.004, 0.012));
+      this.cameras.main.shake(180, Phaser.Math.Clamp((damage?.amount ?? move.value) / 900, 0.004, 0.012));
       this.flashCharacter(PLAYER_X, PLAYER_Y);
       this.punchCharacter(this.playerContainer);
       Sfx.hitPlayer();
@@ -915,12 +945,18 @@ export class CombatScene extends Phaser.Scene {
         this.spawnFloatingText(PLAYER_X + 50, PLAYER_Y - 100, `-${damage.amount - damage.absorbed}`, '#ff6b6b');
       }
       await this.tweenPromise({ targets: this.enemyContainer, x: ENEMY_X, duration: 160, ease: 'Sine.easeOut' });
-    } else {
+    } else if (move.kind === 'defend') {
       await this.tweenPromise({ targets: this.enemyContainer, scale: 1.12, duration: 160, ease: 'Sine.easeOut' });
       this.flashCharacter(ENEMY_X, ENEMY_Y, 0x6fc3ff);
       this.blockParticles.explode(10, ENEMY_X, ENEMY_Y);
       Sfx.block();
       if (blockGained) this.spawnFloatingText(ENEMY_X, ENEMY_Y - 100, `+${blockGained}`, '#9fd3ff');
+      await this.tweenPromise({ targets: this.enemyContainer, scale: 1, duration: 160, ease: 'Sine.easeIn' });
+    } else {
+      // buff/debuff: the enemy gathers itself; the badge itself appears from the statusChanged event
+      await this.tweenPromise({ targets: this.enemyContainer, scale: 1.12, duration: 160, ease: 'Sine.easeOut' });
+      this.flashCharacter(ENEMY_X, ENEMY_Y, 0xb07de0);
+      Sfx.cast();
       await this.tweenPromise({ targets: this.enemyContainer, scale: 1, duration: 160, ease: 'Sine.easeIn' });
     }
 
@@ -941,11 +977,25 @@ export class CombatScene extends Phaser.Scene {
     this.playerBlockText.setText(block > 0 ? `${block}` : '');
   }
 
-  private pulseIntent(move: EnemyMove): void {
+  /** Draws the intent icon and number for `move`. Attack damage includes Strength/Weak/Vulnerable. */
+  private showIntent(move: EnemyMove): void {
     const isAttack = move.kind === 'attack';
+    const isStatus = move.kind === 'applyStatus';
     this.intentSword.setVisible(isAttack);
-    this.intentShield.setVisible(!isAttack);
-    this.intentValueText.setText(`${move.value}`).setColor(isAttack ? '#ff8f6b' : '#9fd3ff');
+    this.intentShield.setVisible(move.kind === 'defend');
+    this.intentBadge.setVisible(isStatus);
+    if (isStatus && move.status) {
+      const { symbol, color } = STATUSES[move.status.id].badge;
+      this.intentBadgeDisc.setFillStyle(color);
+      this.intentBadgeLetter.setText(symbol);
+    }
+    const value = isAttack ? this.combat.calcDamage(move.value, 'enemy') : move.value;
+    const color = isAttack ? '#ff8f6b' : isStatus ? '#d6b8f5' : '#9fd3ff';
+    this.intentValueText.setText(`${value}`).setColor(color);
+  }
+
+  private pulseIntent(move: EnemyMove): void {
+    this.showIntent(move);
     this.tweens.add({
       targets: this.intentContainer,
       scale: { from: 1.4, to: 1 },
@@ -963,6 +1013,18 @@ export class CombatScene extends Phaser.Scene {
     this.tweenHpBar(this.enemyHpBarFill, payload.remainingHp, this.combat.enemy.maxHp);
     this.punchCharacter(this.enemyContainer);
     await this.delay(230);
+  }
+
+  private async animateStatusChange(payload: CombatEventMap['statusChanged']): Promise<void> {
+    const { target, status, delta, statuses } = payload;
+    const row = target === 'enemy' ? this.enemyStatusRow : this.playerStatusRow;
+    row.set(statuses);
+    if (delta <= 0) return; // a tick down just updates the badges
+    const def = STATUSES[status];
+    const x = target === 'enemy' ? ENEMY_X : PLAYER_X;
+    const y = (target === 'enemy' ? ENEMY_Y : PLAYER_Y) - 125;
+    this.spawnFloatingText(x, y, `+${delta} ${def.name}`, `#${def.badge.color.toString(16).padStart(6, '0')}`);
+    await this.delay(160);
   }
 
   private async animatePlayerBlockGain(amount: number): Promise<void> {
@@ -1052,6 +1114,11 @@ export class CombatScene extends Phaser.Scene {
     this.setPlayerBlockDisplay(c.playerBlock);
 
     this.energyText.setText(`${c.energy}/${c.maxEnergy}`);
+
+    this.enemyStatusRow.set(c.enemyStatuses);
+    this.playerStatusRow.set(c.playerStatuses);
+    // attack damage on the intent changes with statuses (e.g. after you Weaken the enemy)
+    if (this.combat.phase === 'playerTurn') this.showIntent(c.currentEnemyMove);
 
     this.statusText.setText(c.log.slice(-2).map((e) => e.message).join('\n'));
 

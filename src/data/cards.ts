@@ -117,4 +117,62 @@ export const FORTIFY: CardDefinition = {
   onTurnStartEffect: { kind: 'block', value: 4 },
 };
 
-export const REWARD_POOL: CardDefinition[] = [JAB, GUARDED_STRIKE, HEAVY_HIT, BIG_BLOCK, QUICK_DRAW, FORTIFY, BOLT];
+// ---- status-effect cards (Weak / Vulnerable / Strength) ----
+// PLACEHOLDER, same caveat as above: plain descriptive names and rough numbers, just enough to
+// exercise the three statuses in play.
+
+export const WEAKEN: CardDefinition = {
+  id: 'weaken',
+  name: 'Weaken',
+  type: 'skill',
+  target: 'enemy',
+  cost: 1,
+  description: 'Apply 2 Weak.',
+  effects: [{ kind: 'applyStatus', status: 'weak', value: 2, to: 'enemy' }],
+};
+
+export const EXPOSE: CardDefinition = {
+  id: 'expose',
+  name: 'Expose',
+  type: 'skill',
+  target: 'enemy',
+  cost: 1,
+  description: 'Apply 2 Vulnerable.',
+  effects: [{ kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'enemy' }],
+};
+
+export const SUNDER: CardDefinition = {
+  id: 'sunder',
+  name: 'Sunder',
+  type: 'attack',
+  target: 'enemy',
+  cost: 2,
+  description: 'Deal 8 damage. Apply 2 Vulnerable.',
+  effects: [
+    { kind: 'damage', value: 8 },
+    { kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'enemy' },
+  ],
+};
+
+export const STRENGTHEN: CardDefinition = {
+  id: 'strengthen',
+  name: 'Strengthen',
+  type: 'power',
+  cost: 1,
+  description: 'Gain 2 Strength.',
+  effects: [{ kind: 'applyStatus', status: 'strength', value: 2, to: 'self' }],
+};
+
+export const REWARD_POOL: CardDefinition[] = [
+  JAB,
+  GUARDED_STRIKE,
+  HEAVY_HIT,
+  BIG_BLOCK,
+  QUICK_DRAW,
+  FORTIFY,
+  BOLT,
+  WEAKEN,
+  EXPOSE,
+  SUNDER,
+  STRENGTHEN,
+];

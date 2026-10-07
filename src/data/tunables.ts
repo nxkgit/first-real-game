@@ -6,6 +6,12 @@
 export const MAX_ENERGY = 4;
 export const HAND_SIZE = 5;
 
+// ---- statuses ----
+/** Weak: the holder's attacks deal this fraction of their damage. */
+export const WEAK_DAMAGE_MULT = 0.75;
+/** Vulnerable: the holder takes this multiple of attack damage. */
+export const VULNERABLE_DAMAGE_MULT = 1.5;
+
 // ---- run ----
 export const PLAYER_MAX_HP = 60;
 /** Fraction of max HP restored at a rest stop. */

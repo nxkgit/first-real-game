@@ -3,7 +3,8 @@ import type { EnemyDefinition } from '../game/types';
 // PLACEHOLDER enemies. HP/damage numbers and move patterns are rough stand-ins
 // to exercise the turn loop, intent telegraphing, and (MVP 2) a short run with
 // rising difficulty — final design, names, and visuals are the user's to author
-// (see CLAUDE.md). Each repeats a fixed move pattern. All three currently reuse
+// (see CLAUDE.md). B and C each include one status move (Weak on you / Strength on itself) as placeholders to exercise
+// statuses in play. Each repeats a fixed move pattern. All three currently reuse
 // the same placeholder goblin drawing, told apart only by `placeholderColor`.
 
 export const ENEMY_A: EnemyDefinition = {
@@ -26,6 +27,7 @@ export const ENEMY_B: EnemyDefinition = {
   movePattern: [
     { kind: 'defend', value: 8, name: 'Defend' },
     { kind: 'attack', value: 12, name: 'Attack' },
+    { kind: 'applyStatus', value: 1, name: 'Debuff', status: { id: 'weak', to: 'player' } },
     { kind: 'attack', value: 6, name: 'Attack' },
   ],
 };
@@ -38,8 +40,9 @@ export const ENEMY_C: EnemyDefinition = {
   placeholderColor: 0x7a3f6a,
   movePattern: [
     { kind: 'attack', value: 10, name: 'Attack' },
+    { kind: 'applyStatus', value: 2, name: 'Buff', status: { id: 'strength', to: 'self' } },
+    { kind: 'attack', value: 12, name: 'Heavy Attack' },
     { kind: 'defend', value: 10, name: 'Defend' },
-    { kind: 'attack', value: 16, name: 'Heavy Attack' },
     { kind: 'attack', value: 10, name: 'Attack' },
   ],
 };

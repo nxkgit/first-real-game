@@ -1,6 +1,16 @@
 import { Deck } from './Deck';
 import { EventEmitter } from './EventEmitter';
-import type { CardDefinition, CardEffect, CardInstance, EnemyDefinition, EnemyMove } from './types';
+import type {
+  CardDefinition,
+  CardEffect,
+  CardInstance,
+  EnemyDefinition,
+  EnemyMove,
+  Side,
+  StatusId,
+  Statuses,
+} from './types';
+import { STATUSES } from '../data/statuses';
 import { HAND_SIZE, MAX_ENERGY, PLAYER_MAX_HP } from '../data/tunables';
 
 export type CombatPhase = 'playerTurn' | 'enemyTurn' | 'won' | 'lost';
@@ -22,8 +32,12 @@ export interface CombatEventMap {
    *  later (the scene replays events in sequence) must use this, not the live deck, which may
    *  already have moved on — e.g. the next turn's draw happens before the discard is animated. */
   handChanged: { hand: CardInstance[]; drawPile: number; discardPile: number };
-  damageDealt: { target: 'enemy' | 'player' } & DamageResult;
-  blockGained: { target: 'enemy' | 'player'; amount: number };
+  damageDealt: { target: Side } & DamageResult;
+  blockGained: { target: Side; amount: number };
+  /** Fired whenever stacks are added or tick down. `statuses` is a snapshot of that side's full set
+   *  at the moment of the change (same replay-later reasoning as handChanged); `delta` is the change
+   *  to `status` (positive when applied, negative on a tick). */
+  statusChanged: { target: Side; status: StatusId; delta: number; statuses: Statuses };
   enemyTurnStarted: Record<string, never>;
   enemyMoveResolved: { move: EnemyMove; damage?: DamageResult; blockGained?: number };
   combatEnded: { result: 'won' | 'lost' };
@@ -48,6 +62,9 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   enemyHp: number;
   enemyBlock = 0;
   enemyMoveIndex = 0;
+
+  playerStatuses: Statuses = {};
+  enemyStatuses: Statuses = {};
 
   phase: CombatPhase = 'playerTurn';
   log: CombatLogEntry[] = [];
@@ -77,6 +94,31 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return this.enemy.movePattern[this.enemyMoveIndex % this.enemy.movePattern.length];
   }
 
+  statusesOf(side: Side): Statuses {
+    return side === 'player' ? this.playerStatuses : this.enemyStatuses;
+  }
+
+  /** Damage `attacker` would really deal for `base`, after Strength, Weak and the target's Vulnerable. */
+  calcDamage(base: number, attacker: Side): number {
+    const defender: Side = attacker === 'player' ? 'enemy' : 'player';
+    let amount = base;
+    for (const [id, stacks] of this.activeStatuses(attacker)) {
+      amount += STATUSES[id].outgoingDamageAdd?.(stacks) ?? 0;
+    }
+    for (const [id, stacks] of this.activeStatuses(attacker)) {
+      amount *= STATUSES[id].outgoingDamageMult?.(stacks) ?? 1;
+    }
+    for (const [id, stacks] of this.activeStatuses(defender)) {
+      amount *= STATUSES[id].incomingDamageMult?.(stacks) ?? 1;
+    }
+    return Math.max(0, Math.floor(amount));
+  }
+
+  /** The damage the enemy's current intent will deal right now (statuses included), for the intent readout. */
+  get currentEnemyAttackDamage(): number {
+    return this.calcDamage(this.currentEnemyMove.value, 'enemy');
+  }
+
   canPlay(card: CardInstance): boolean {
     return this.phase === 'playerTurn' && card.definition.cost <= this.energy;
   }
@@ -92,7 +134,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.emit('cardPlayed', { card: handCard });
 
     for (const effect of handCard.definition.effects ?? []) {
-      this.applyEffect(effect, effect.kind === 'damage' ? 'enemy' : 'self');
+      this.applyEffect(effect);
     }
 
     if (handCard.definition.type === 'power') {
@@ -119,7 +161,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.deck.draw(HAND_SIZE);
     for (const power of this.activePowers) {
       if (power.onTurnStartEffect) {
-        this.applyEffect(power.onTurnStartEffect, 'self');
+        this.applyEffect(power.onTurnStartEffect);
       }
     }
     this.pushLog(isFirstTurn ? 'Combat start.' : 'Your turn.');
@@ -133,16 +175,33 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.enemyBlock = 0; // mirrors the player's own "block resets at start of your turn" rule
     const move = this.currentEnemyMove;
 
+    // Anything the enemy puts on the player this turn skips the end-of-round tick below, so a
+    // "Weak 1" really does last through the player's next turn (StS calls this "just applied").
+    let skipPlayerTick: StatusId | undefined;
+
     if (move.kind === 'attack') {
-      const { absorbed, remainingHp } = this.dealDamageToPlayer(move.value, false);
-      this.pushLog(`Enemy uses ${move.name} for ${move.value} damage.`);
-      this.emit('enemyMoveResolved', { move, damage: { amount: move.value, absorbed, remainingHp } });
-    } else {
+      const amount = this.calcDamage(move.value, 'enemy');
+      const { absorbed, remainingHp } = this.dealDamageToPlayer(amount, false);
+      this.pushLog(`Enemy uses ${move.name} for ${amount} damage.`);
+      this.emit('enemyMoveResolved', { move, damage: { amount, absorbed, remainingHp } });
+    } else if (move.kind === 'defend') {
       this.gainEnemyBlock(move.value, false);
       this.pushLog(`Enemy uses ${move.name}, gaining ${move.value} block.`);
       this.emit('enemyMoveResolved', { move, blockGained: move.value });
+    } else if (move.status) {
+      const target: Side = move.status.to === 'player' ? 'player' : 'enemy';
+      this.pushLog(`Enemy uses ${move.name}.`);
+      this.emit('enemyMoveResolved', { move });
+      this.addStatus(target, move.status.id, move.value);
+      if (target === 'player') skipPlayerTick = move.status.id;
     }
     this.enemyMoveIndex += 1;
+
+    // End of round: durations count down on both sides.
+    if (this.phase === 'enemyTurn' && this.playerHp > 0 && this.enemyHp > 0) {
+      this.tickStatuses('enemy');
+      this.tickStatuses('player', skipPlayerTick);
+    }
 
     this.checkWinLoss();
     if (this.phase === 'enemyTurn') {
@@ -150,14 +209,42 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     }
   }
 
-  private applyEffect(effect: CardEffect, target: 'enemy' | 'self'): void {
-    if (effect.kind === 'damage' && target === 'enemy') {
-      this.dealDamageToEnemy(effect.value);
-    } else if (effect.kind === 'block' && target === 'self') {
-      this.gainPlayerBlock(effect.value);
-    } else if (effect.kind === 'draw' && target === 'self') {
-      this.deck.draw(effect.value);
-      this.emitHandChanged();
+  private activeStatuses(side: Side): [StatusId, number][] {
+    return (Object.entries(this.statusesOf(side)) as [StatusId, number][]).filter(([, stacks]) => stacks > 0);
+  }
+
+  private addStatus(side: Side, id: StatusId, stacks: number): void {
+    const statuses = this.statusesOf(side);
+    statuses[id] = (statuses[id] ?? 0) + stacks;
+    this.emit('statusChanged', { target: side, status: id, delta: stacks, statuses: { ...statuses } });
+  }
+
+  private tickStatuses(side: Side, skip?: StatusId): void {
+    const statuses = this.statusesOf(side);
+    for (const [id, stacks] of this.activeStatuses(side)) {
+      if (id === skip || STATUSES[id].kind !== 'duration') continue;
+      if (stacks <= 1) delete statuses[id];
+      else statuses[id] = stacks - 1;
+      this.emit('statusChanged', { target: side, status: id, delta: -1, statuses: { ...statuses } });
+    }
+  }
+
+  /** Resolves one effect of a card the player played (or of one of their powers). */
+  private applyEffect(effect: CardEffect): void {
+    switch (effect.kind) {
+      case 'damage':
+        this.dealDamageToEnemy(this.calcDamage(effect.value, 'player'));
+        break;
+      case 'block':
+        this.gainPlayerBlock(effect.value);
+        break;
+      case 'draw':
+        this.deck.draw(effect.value);
+        this.emitHandChanged();
+        break;
+      case 'applyStatus':
+        this.addStatus(effect.to === 'enemy' ? 'enemy' : 'player', effect.status, effect.value);
+        break;
     }
   }
 
