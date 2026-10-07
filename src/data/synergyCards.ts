@@ -85,7 +85,7 @@ export const TAG_A_ECHO: CardDefinition = {
   name: 'Tag A Echo',
   type: 'power',
   cost: 1,
-  triggers: [{ on: 'cardPlayed', tag: 'tag-a', effects: [{ kind: 'draw', value: 1 }] }],
+  triggers: [{ on: 'cardPlayed', tag: 'tag-a', oncePerTurn: true, effects: [{ kind: 'draw', value: 1 }] }],
   upgrade: { cost: 0 },
 };
 

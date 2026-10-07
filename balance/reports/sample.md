@@ -1,6 +1,6 @@
 # Balance report
 
-Generated 2026-10-07 by `npm run balance -- report` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: random, greedy, smart. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md. Commit fdde0fa, synergy decks included in the ladder, pool=reward.
+Generated 2026-10-07 by `npm run balance -- report` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: random, greedy, smart. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md.
 
 
 ## Fight difficulty ladder
@@ -22,9 +22,9 @@ Tier rollup (unweighted mean of the fights in the tier)
 | late | normal | 6 | 100.0% | 11.6 | 4.9 |
 | late | elite | 2 | 100.0% | 18.5 | 5.8 |
 | late | boss | 1 | 93.3% | 40.6 | 10.2 |
-| syn-tag | normal | 6 | 100.0% | 8.1 | 4.5 |
-| syn-tag | elite | 2 | 100.0% | 16.9 | 6.1 |
-| syn-tag | boss | 1 | 98.0% | 40.9 | 10.9 |
+| syn-tag | normal | 6 | 100.0% | 8.7 | 4.8 |
+| syn-tag | elite | 2 | 100.0% | 18.8 | 6.5 |
+| syn-tag | boss | 1 | 84.0% | 45.6 | 12.1 |
 | syn-exhaust | normal | 6 | 100.0% | 12.0 | 3.4 |
 | syn-exhaust | elite | 2 | 100.0% | 19.4 | 4.4 |
 | syn-exhaust | boss | 1 | 67.0% | 41.2 | 7.8 |
@@ -70,15 +70,15 @@ Tier rollup (unweighted mean of the fights in the tier)
 | elite-a | elite | late | 300 | 100.0% [98.7%, 100.0%] | 20.3 [19.3, 21.2] | 5.5 [5.4, 5.6] |  |
 | elite-b | elite | late | 300 | 100.0% [98.7%, 100.0%] | 16.8 [15.9, 17.6] | 6.1 [6.0, 6.3] |  |
 | boss-a | boss | late | 300 | 93.3% [89.9%, 95.6%] | 40.6 [39.4, 41.8] | 10.2 [10.0, 10.4] |  |
-| enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 2.5 [2.0, 3.1] | 3.1 [2.9, 3.2] |  |
-| enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 4.1 [3.5, 4.7] | 3.5 [3.4, 3.6] |  |
-| enemy-b+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 9.2 [8.1, 10.2] | 5.6 [5.5, 5.8] |  |
-| enemy-c | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 8.4 [7.5, 9.3] | 5.1 [5.0, 5.3] |  |
-| enemy-a+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 11.7 [10.3, 13.0] | 4.9 [4.7, 5.0] |  |
-| enemy-d+enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 12.5 [11.5, 13.5] | 5.1 [4.9, 5.2] |  |
-| elite-a | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 18.5 [17.1, 19.9] | 5.7 [5.6, 5.9] |  |
-| elite-b | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 15.4 [14.0, 16.8] | 6.5 [6.3, 6.7] |  |
-| boss-a | boss | syn-tag | 100 | 98.0% [93.0%, 99.4%] | 40.9 [39.2, 42.6] | 10.9 [10.6, 11.1] |  |
+| enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 2.4 [1.9, 2.9] | 3.1 [3.0, 3.2] |  |
+| enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 4.2 [3.6, 4.9] | 3.6 [3.5, 3.8] |  |
+| enemy-b+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 10.4 [9.3, 11.6] | 6.2 [6.0, 6.4] |  |
+| enemy-c | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 9.7 [8.7, 10.7] | 5.4 [5.2, 5.6] |  |
+| enemy-a+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 12.6 [11.3, 13.8] | 5.2 [5.0, 5.3] |  |
+| enemy-d+enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 12.9 [11.8, 13.9] | 5.4 [5.2, 5.5] |  |
+| elite-a | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 20.0 [18.3, 21.6] | 5.9 [5.8, 6.1] |  |
+| elite-b | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 17.6 [16.1, 19.0] | 7.1 [6.8, 7.3] |  |
+| boss-a | boss | syn-tag | 100 | 84.0% [75.6%, 89.9%] | 45.6 [44.0, 47.2] | 12.1 [11.8, 12.3] |  |
 | enemy-a | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 6.0 [5.3, 6.6] | 2.4 [2.3, 2.5] |  |
 | enemy-d+enemy-d | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 6.8 [6.0, 7.6] | 2.7 [2.6, 2.9] |  |
 | enemy-b+enemy-d | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 13.1 [12.0, 14.1] | 4.2 [4.0, 4.4] |  |
@@ -139,9 +139,9 @@ Tier rollup (unweighted mean of the fights in the tier)
 | late | normal | 6 | 100.0% | 8.5 | 4.8 |
 | late | elite | 2 | 100.0% | 12.8 | 5.5 |
 | late | boss | 1 | 100.0% | 24.5 | 9.1 |
-| syn-tag | normal | 6 | 100.0% | 4.3 | 4.2 |
-| syn-tag | elite | 2 | 100.0% | 12.7 | 5.6 |
-| syn-tag | boss | 1 | 98.0% | 36.5 | 10.6 |
+| syn-tag | normal | 6 | 100.0% | 4.8 | 4.5 |
+| syn-tag | elite | 2 | 100.0% | 15.3 | 6.2 |
+| syn-tag | boss | 1 | 92.0% | 42.3 | 11.5 |
 | syn-exhaust | normal | 6 | 100.0% | 10.8 | 4.4 |
 | syn-exhaust | elite | 2 | 100.0% | 28.3 | 6.4 |
 | syn-exhaust | boss | 1 | 17.0% | 55.6 | 10.0 |
@@ -187,15 +187,15 @@ Tier rollup (unweighted mean of the fights in the tier)
 | elite-a | elite | late | 300 | 100.0% [98.7%, 100.0%] | 14.2 [13.4, 14.9] | 5.4 [5.2, 5.5] |  |
 | elite-b | elite | late | 300 | 100.0% [98.7%, 100.0%] | 11.4 [10.7, 12.1] | 5.6 [5.5, 5.8] |  |
 | boss-a | boss | late | 300 | 100.0% [98.7%, 100.0%] | 24.5 [23.5, 25.5] | 9.1 [8.9, 9.3] |  |
-| enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 1.9 [1.4, 2.4] | 2.9 [2.8, 3.0] |  |
-| enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 1.8 [1.3, 2.3] | 3.2 [3.1, 3.3] |  |
-| enemy-b+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 4.0 [3.2, 4.8] | 5.3 [5.1, 5.4] |  |
-| enemy-c | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 6.4 [5.6, 7.2] | 4.8 [4.6, 5.0] |  |
-| enemy-a+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 5.7 [4.8, 6.6] | 4.5 [4.4, 4.7] |  |
-| enemy-d+enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 6.2 [5.6, 6.8] | 4.7 [4.6, 4.9] |  |
-| elite-a | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 14.0 [12.6, 15.4] | 5.3 [5.2, 5.5] |  |
-| elite-b | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 11.3 [10.0, 12.7] | 5.9 [5.7, 6.1] |  |
-| boss-a | boss | syn-tag | 100 | 98.0% [93.0%, 99.4%] | 36.5 [34.5, 38.4] | 10.6 [10.3, 10.8] |  |
+| enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 2.1 [1.6, 2.5] | 3.0 [2.9, 3.2] |  |
+| enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 1.8 [1.3, 2.3] | 3.5 [3.3, 3.6] |  |
+| enemy-b+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 4.5 [3.7, 5.3] | 5.8 [5.6, 5.9] |  |
+| enemy-c | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 7.2 [6.4, 8.0] | 5.0 [4.8, 5.2] |  |
+| enemy-a+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 6.4 [5.5, 7.4] | 4.8 [4.7, 4.9] |  |
+| enemy-d+enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 6.7 [6.1, 7.4] | 5.1 [4.9, 5.2] |  |
+| elite-a | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 16.5 [14.9, 18.0] | 5.7 [5.5, 5.9] |  |
+| elite-b | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 14.0 [12.7, 15.4] | 6.6 [6.4, 6.8] |  |
+| boss-a | boss | syn-tag | 100 | 92.0% [85.0%, 95.9%] | 42.3 [40.6, 44.0] | 11.5 [11.3, 11.8] |  |
 | enemy-a | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 7.2 [6.8, 7.7] | 3.1 [3.0, 3.2] |  |
 | enemy-d+enemy-d | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 4.7 [4.2, 5.2] | 3.1 [3.0, 3.2] |  |
 | enemy-b+enemy-d | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 8.8 [7.9, 9.7] | 5.3 [5.2, 5.5] |  |
@@ -256,9 +256,9 @@ Tier rollup (unweighted mean of the fights in the tier)
 | late | normal | 6 | 100.0% | 8.7 | 3.5 |
 | late | elite | 2 | 100.0% | 15.0 | 4.2 |
 | late | boss | 1 | 100.0% | 26.2 | 7.1 |
-| syn-tag | normal | 6 | 100.0% | 5.2 | 3.6 |
-| syn-tag | elite | 2 | 100.0% | 12.4 | 4.7 |
-| syn-tag | boss | 1 | 100.0% | 31.9 | 8.8 |
+| syn-tag | normal | 6 | 100.0% | 5.5 | 3.9 |
+| syn-tag | elite | 2 | 100.0% | 13.9 | 5.2 |
+| syn-tag | boss | 1 | 99.0% | 40.0 | 9.8 |
 | syn-exhaust | normal | 6 | 100.0% | 8.2 | 2.7 |
 | syn-exhaust | elite | 2 | 100.0% | 12.5 | 3.4 |
 | syn-exhaust | boss | 1 | 98.0% | 28.4 | 6.0 |
@@ -304,15 +304,15 @@ Tier rollup (unweighted mean of the fights in the tier)
 | elite-a | elite | late | 300 | 100.0% [98.7%, 100.0%] | 15.8 [15.1, 16.4] | 4.2 [4.1, 4.3] |  |
 | elite-b | elite | late | 300 | 100.0% [98.7%, 100.0%] | 14.2 [13.5, 14.8] | 4.3 [4.2, 4.4] |  |
 | boss-a | boss | late | 300 | 100.0% [98.7%, 100.0%] | 26.2 [25.2, 27.2] | 7.1 [7.0, 7.2] |  |
-| enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 2.3 [1.7, 2.8] | 2.6 [2.5, 2.7] |  |
-| enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 1.8 [1.3, 2.2] | 2.9 [2.8, 2.9] |  |
-| enemy-b+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 4.8 [4.0, 5.6] | 4.5 [4.4, 4.6] |  |
-| enemy-c | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 7.3 [6.5, 8.1] | 4.0 [3.9, 4.1] |  |
-| enemy-a+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 8.0 [7.3, 8.8] | 3.8 [3.6, 3.9] |  |
-| enemy-d+enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 6.9 [6.2, 7.6] | 3.9 [3.7, 4.0] |  |
-| elite-a | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 13.2 [12.2, 14.2] | 4.6 [4.5, 4.7] |  |
-| elite-b | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 11.5 [10.6, 12.4] | 4.9 [4.8, 5.0] |  |
-| boss-a | boss | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 31.9 [30.2, 33.7] | 8.8 [8.6, 9.0] |  |
+| enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 2.5 [1.9, 3.0] | 2.8 [2.6, 2.9] |  |
+| enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 1.8 [1.4, 2.2] | 3.0 [2.9, 3.1] |  |
+| enemy-b+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 5.0 [4.3, 5.8] | 4.9 [4.8, 5.0] |  |
+| enemy-c | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 8.1 [7.2, 8.9] | 4.3 [4.1, 4.4] |  |
+| enemy-a+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 8.4 [7.7, 9.2] | 4.1 [4.0, 4.3] |  |
+| enemy-d+enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 7.2 [6.5, 7.9] | 4.3 [4.1, 4.4] |  |
+| elite-a | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 14.9 [13.7, 16.1] | 4.9 [4.8, 5.1] |  |
+| elite-b | elite | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 13.0 [11.8, 14.2] | 5.5 [5.3, 5.6] |  |
+| boss-a | boss | syn-tag | 100 | 99.0% [94.6%, 99.8%] | 40.0 [38.3, 41.7] | 9.8 [9.6, 9.9] |  |
 | enemy-a | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 5.3 [4.7, 5.9] | 2.1 [2.0, 2.2] |  |
 | enemy-d+enemy-d | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 3.6 [3.0, 4.3] | 2.1 [2.0, 2.1] |  |
 | enemy-b+enemy-d | normal | syn-exhaust | 100 | 100.0% [96.3%, 100.0%] | 8.0 [7.1, 8.9] | 3.1 [3.0, 3.3] |  |
@@ -1005,7 +1005,7 @@ Of 120 pairs: 24 clearly synergistic, 6 clearly anti-synergistic, 6 negligible, 
 ### Negative (anti-synergistic) pairs
 | pair | synergy score | vs typical pair |
 | --- | --- | --- |
-| prime-a + tag-a-echo | -1.45 [-2.52, -0.38] | worse |
+| prime-a + tag-a-echo | -1.49 [-2.55, -0.43] | worse |
 | exhaust-engine + single-use-strike | -1.42 [-2.36, -0.48] | worse |
 | end-guard + blood-strike | -1.33 [-2.26, -0.40] | worse |
 | tag-a-echo + exhaust-payoff | -1.08 [-2.11, -0.06] | worse |

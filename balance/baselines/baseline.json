@@ -1,9 +1,9 @@
 {
  "version": 1,
  "generated": "2026-10-07",
- "note": "Generated 2026-10-07 from the code at commit fdde0fa (branch auto/balance-synergy) on the synergy-engine content with powers-stay-in-play, hand cap 10 and combat-start block rules. ALL CONTENT IS PLACEHOLDER (cards, enemies, numbers): this is a regression reference, not a statement about the real game. Regenerate with npm run balance:baseline.",
+ "note": "Content at the time was placeholder. Regenerate with `npm run balance:baseline`. See docs/BALANCE.md.",
  "content": {
-  "hash": "ef2efd31",
+  "hash": "8ef9f745",
   "cards": [
    "attack-echo",
    "attack-echo+",
@@ -519,13 +519,13 @@
    "n": 100
   },
   "ladder/random/syn-tag/enemy-a/hpLost": {
-   "mean": 2.52,
-   "sd": 2.858551,
+   "mean": 2.41,
+   "sd": 2.433333,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-a/turns": {
-   "mean": 3.06,
-   "sd": 0.6,
+   "mean": 3.12,
+   "sd": 0.590839,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-d+enemy-d/win": {
@@ -534,13 +534,13 @@
    "n": 100
   },
   "ladder/random/syn-tag/enemy-d+enemy-d/hpLost": {
-   "mean": 4.09,
-   "sd": 3.175331,
+   "mean": 4.23,
+   "sd": 3.262443,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-d+enemy-d/turns": {
-   "mean": 3.48,
-   "sd": 0.627324,
+   "mean": 3.65,
+   "sd": 0.770347,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-b+enemy-d/win": {
@@ -549,13 +549,13 @@
    "n": 100
   },
   "ladder/random/syn-tag/enemy-b+enemy-d/hpLost": {
-   "mean": 9.17,
-   "sd": 5.434746,
+   "mean": 10.43,
+   "sd": 5.934414,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-b+enemy-d/turns": {
-   "mean": 5.63,
-   "sd": 0.895048,
+   "mean": 6.21,
+   "sd": 0.987753,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-c/win": {
@@ -564,13 +564,13 @@
    "n": 100
   },
   "ladder/random/syn-tag/enemy-c/hpLost": {
-   "mean": 8.42,
-   "sd": 4.535338,
+   "mean": 9.69,
+   "sd": 4.918929,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-c/turns": {
-   "mean": 5.12,
-   "sd": 0.856113,
+   "mean": 5.41,
+   "sd": 0.933063,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-a+enemy-d/win": {
@@ -579,13 +579,13 @@
    "n": 100
   },
   "ladder/random/syn-tag/enemy-a+enemy-d/hpLost": {
-   "mean": 11.65,
-   "sd": 6.815572,
+   "mean": 12.55,
+   "sd": 6.317164,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-a+enemy-d/turns": {
-   "mean": 4.86,
-   "sd": 0.75237,
+   "mean": 5.18,
+   "sd": 0.80879,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-d+enemy-d+enemy-d/win": {
@@ -594,13 +594,13 @@
    "n": 100
   },
   "ladder/random/syn-tag/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 12.47,
-   "sd": 5.072116,
+   "mean": 12.89,
+   "sd": 5.287483,
    "n": 100
   },
   "ladder/random/syn-tag/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 5.07,
-   "sd": 0.831878,
+   "mean": 5.36,
+   "sd": 0.847098,
    "n": 100
   },
   "ladder/random/syn-tag/elite-a/win": {
@@ -609,13 +609,13 @@
    "n": 100
   },
   "ladder/random/syn-tag/elite-a/hpLost": {
-   "mean": 18.5,
-   "sd": 6.91872,
+   "mean": 19.98,
+   "sd": 8.310855,
    "n": 100
   },
   "ladder/random/syn-tag/elite-a/turns": {
-   "mean": 5.74,
-   "sd": 0.760383,
+   "mean": 5.94,
+   "sd": 0.83871,
    "n": 100
   },
   "ladder/random/syn-tag/elite-b/win": {
@@ -624,28 +624,28 @@
    "n": 100
   },
   "ladder/random/syn-tag/elite-b/hpLost": {
-   "mean": 15.39,
-   "sd": 7.072346,
+   "mean": 17.55,
+   "sd": 7.460841,
    "n": 100
   },
   "ladder/random/syn-tag/elite-b/turns": {
-   "mean": 6.47,
-   "sd": 0.999545,
+   "mean": 7.06,
+   "sd": 1.108461,
    "n": 100
   },
   "ladder/random/syn-tag/boss-a/win": {
-   "mean": 0.98,
-   "sd": 0.140705,
+   "mean": 0.84,
+   "sd": 0.368453,
    "n": 100
   },
   "ladder/random/syn-tag/boss-a/hpLost": {
-   "mean": 41.27,
-   "sd": 8.773071,
+   "mean": 47.89,
+   "sd": 8.583394,
    "n": 100
   },
   "ladder/random/syn-tag/boss-a/turns": {
-   "mean": 10.88,
-   "sd": 1.327868,
+   "mean": 12.06,
+   "sd": 1.187647,
    "n": 100
   },
   "ladder/random/syn-exhaust/enemy-a/win": {
@@ -2244,13 +2244,13 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-a/hpLost": {
-   "mean": 1.9,
-   "sd": 2.350586,
+   "mean": 2.06,
+   "sd": 2.308614,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-a/turns": {
-   "mean": 2.92,
-   "sd": 0.562821,
+   "mean": 3.04,
+   "sd": 0.650097,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-d+enemy-d/win": {
@@ -2259,13 +2259,13 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-d+enemy-d/hpLost": {
-   "mean": 1.81,
-   "sd": 2.485087,
+   "mean": 1.8,
+   "sd": 2.474108,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-d+enemy-d/turns": {
-   "mean": 3.22,
-   "sd": 0.628932,
+   "mean": 3.47,
+   "sd": 0.658357,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-b+enemy-d/win": {
@@ -2274,13 +2274,13 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-b+enemy-d/hpLost": {
-   "mean": 4,
-   "sd": 3.905448,
+   "mean": 4.48,
+   "sd": 4.174187,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-b+enemy-d/turns": {
-   "mean": 5.29,
-   "sd": 0.742573,
+   "mean": 5.76,
+   "sd": 0.877554,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-c/win": {
@@ -2289,13 +2289,13 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-c/hpLost": {
-   "mean": 6.41,
-   "sd": 3.879745,
+   "mean": 7.23,
+   "sd": 3.97684,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-c/turns": {
-   "mean": 4.8,
-   "sd": 0.932034,
+   "mean": 5.01,
+   "sd": 1.019952,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-a+enemy-d/win": {
@@ -2304,13 +2304,13 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-a+enemy-d/hpLost": {
-   "mean": 5.7,
-   "sd": 4.423308,
+   "mean": 6.44,
+   "sd": 4.940699,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-a+enemy-d/turns": {
-   "mean": 4.52,
-   "sd": 0.797471,
+   "mean": 4.81,
+   "sd": 0.630776,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-d+enemy-d+enemy-d/win": {
@@ -2319,13 +2319,13 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 6.24,
-   "sd": 3.078502,
+   "mean": 6.73,
+   "sd": 3.293259,
    "n": 100
   },
   "ladder/greedy/syn-tag/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 4.74,
-   "sd": 0.836298,
+   "mean": 5.09,
+   "sd": 0.779731,
    "n": 100
   },
   "ladder/greedy/syn-tag/elite-a/win": {
@@ -2334,13 +2334,13 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/elite-a/hpLost": {
-   "mean": 13.99,
-   "sd": 7.027356,
+   "mean": 16.48,
+   "sd": 7.766127,
    "n": 100
   },
   "ladder/greedy/syn-tag/elite-a/turns": {
-   "mean": 5.35,
-   "sd": 0.715979,
+   "mean": 5.72,
+   "sd": 0.8655,
    "n": 100
   },
   "ladder/greedy/syn-tag/elite-b/win": {
@@ -2349,28 +2349,28 @@
    "n": 100
   },
   "ladder/greedy/syn-tag/elite-b/hpLost": {
-   "mean": 11.33,
-   "sd": 6.722576,
+   "mean": 14.04,
+   "sd": 6.81638,
    "n": 100
   },
   "ladder/greedy/syn-tag/elite-b/turns": {
-   "mean": 5.91,
-   "sd": 1.035677,
+   "mean": 6.62,
+   "sd": 1.022771,
    "n": 100
   },
   "ladder/greedy/syn-tag/boss-a/win": {
-   "mean": 0.98,
-   "sd": 0.140705,
+   "mean": 0.92,
+   "sd": 0.27266,
    "n": 100
   },
   "ladder/greedy/syn-tag/boss-a/hpLost": {
-   "mean": 36.95,
-   "sd": 10.123854,
+   "mean": 43.7,
+   "sd": 9.371674,
    "n": 100
   },
   "ladder/greedy/syn-tag/boss-a/turns": {
-   "mean": 10.55,
-   "sd": 1.095215,
+   "mean": 11.51,
+   "sd": 1.226764,
    "n": 100
   },
   "ladder/greedy/syn-exhaust/enemy-a/win": {
@@ -3969,13 +3969,13 @@
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-a/hpLost": {
-   "mean": 2.25,
-   "sd": 2.641453,
+   "mean": 2.46,
+   "sd": 2.606984,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-a/turns": {
-   "mean": 2.63,
-   "sd": 0.562372,
+   "mean": 2.75,
+   "sd": 0.51981,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-d+enemy-d/win": {
@@ -3984,13 +3984,13 @@
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-d+enemy-d/hpLost": {
-   "mean": 1.77,
-   "sd": 2.26905,
+   "mean": 1.8,
+   "sd": 2.242834,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-d+enemy-d/turns": {
-   "mean": 2.85,
-   "sd": 0.435194,
+   "mean": 2.99,
+   "sd": 0.460457,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-b+enemy-d/win": {
@@ -3999,13 +3999,13 @@
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-b+enemy-d/hpLost": {
-   "mean": 4.8,
-   "sd": 3.83498,
+   "mean": 5.04,
+   "sd": 3.659552,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-b+enemy-d/turns": {
-   "mean": 4.49,
-   "sd": 0.627565,
+   "mean": 4.87,
+   "sd": 0.562372,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-c/win": {
@@ -4014,13 +4014,13 @@
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-c/hpLost": {
-   "mean": 7.3,
-   "sd": 4.28646,
+   "mean": 8.08,
+   "sd": 4.234729,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-c/turns": {
-   "mean": 3.98,
-   "sd": 0.531436,
+   "mean": 4.25,
+   "sd": 0.672324,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-a+enemy-d/win": {
@@ -4029,13 +4029,13 @@
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-a+enemy-d/hpLost": {
-   "mean": 8.02,
-   "sd": 3.832292,
+   "mean": 8.44,
+   "sd": 3.862066,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-a+enemy-d/turns": {
-   "mean": 3.77,
-   "sd": 0.694204,
+   "mean": 4.12,
+   "sd": 0.782124,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-d+enemy-d+enemy-d/win": {
@@ -4044,13 +4044,13 @@
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 6.88,
-   "sd": 3.409079,
+   "mean": 7.2,
+   "sd": 3.541956,
    "n": 100
   },
   "ladder/smart/syn-tag/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 3.89,
-   "sd": 0.737111,
+   "mean": 4.27,
+   "sd": 0.750151,
    "n": 100
   },
   "ladder/smart/syn-tag/elite-a/win": {
@@ -4059,13 +4059,13 @@
    "n": 100
   },
   "ladder/smart/syn-tag/elite-a/hpLost": {
-   "mean": 13.2,
-   "sd": 5.009083,
+   "mean": 14.87,
+   "sd": 6.038019,
    "n": 100
   },
   "ladder/smart/syn-tag/elite-a/turns": {
-   "mean": 4.56,
-   "sd": 0.53786,
+   "mean": 4.93,
+   "sd": 0.623691,
    "n": 100
   },
   "ladder/smart/syn-tag/elite-b/win": {
@@ -4074,28 +4074,28 @@
    "n": 100
   },
   "ladder/smart/syn-tag/elite-b/hpLost": {
-   "mean": 11.52,
-   "sd": 4.615477,
+   "mean": 12.97,
+   "sd": 6.046044,
    "n": 100
   },
   "ladder/smart/syn-tag/elite-b/turns": {
-   "mean": 4.9,
-   "sd": 0.731679,
+   "mean": 5.48,
+   "sd": 0.846621,
    "n": 100
   },
   "ladder/smart/syn-tag/boss-a/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.99,
+   "sd": 0.1,
    "n": 100
   },
   "ladder/smart/syn-tag/boss-a/hpLost": {
-   "mean": 31.93,
-   "sd": 8.766621,
+   "mean": 40.19,
+   "sd": 8.831412,
    "n": 100
   },
   "ladder/smart/syn-tag/boss-a/turns": {
-   "mean": 8.78,
-   "sd": 0.882833,
+   "mean": 9.75,
+   "sd": 0.988571,
    "n": 100
   },
   "ladder/smart/syn-exhaust/enemy-a/win": {
