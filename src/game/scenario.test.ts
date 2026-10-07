@@ -223,6 +223,13 @@ describe('restoring a scenario', () => {
     expect(spent.deck.drawPile.length).toBe(beforeSpent); // already used this turn: no draw
   });
 
+  it('a power already in play keeps its "at the start of each turn" effect', () => {
+    const s = mustParse(minimal({ piles: { hand: ['defend'], draw: ['strike', 'strike', 'strike', 'strike', 'strike', 'strike'], powers: ['fortify'] } }));
+    const run = runScenario(s, [{ endTurn: true }]);
+    expect(run.combat.turnNumber).toBe(2);
+    expect(run.combat.player.block).toBe(4); // Fortify: 4 block at the start of each turn
+  });
+
   it('restores relics, including their reactive abilities, but not their combat-start effects', () => {
     const s = mustParse(minimal({ relics: ['exhaust-token', 'guard-token'], piles: { hand: ['single-use-strike'] } }));
     const combat = restoreScenario(s);
