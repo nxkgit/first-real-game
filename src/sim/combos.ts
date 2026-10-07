@@ -320,7 +320,7 @@ export function combosExperiment(opts: CombosOptions): ExperimentResult & { resu
     `For scale: ten mid-ranked random decks scored (on the same fresh seeds) ${shown(typical.mean)} on average.`,
     '',
     table(
-      ['rank', 'cards', 'size', opts.goal === 'damage' ? 'damage [95% CI]' : 'turns [95% CI]', 'best / worst seed', opts.goal === 'speed' ? 'wins all fights [95% CI]' : 'loop-capped runs'],
+      ['rank', 'cards', 'size', opts.goal === 'damage' ? 'damage [95% CI]' : 'turns [95% CI]', 'best / worst seed', opts.goal !== 'damage' ? 'wins all fights [95% CI]' : 'loop-capped runs'],
       results.map((r, i) => [
         i + 1,
         summarizeDeck(r.deck),
