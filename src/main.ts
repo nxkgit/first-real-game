@@ -21,3 +21,8 @@ const game = new Phaser.Game({
 });
 
 fitGameToWindow(game);
+
+// the developer panel is a separate chunk, loaded only when the address has ?dev
+if (new URLSearchParams(window.location.search).has('dev')) {
+  void import('./dev/devPanel').then((m) => m.installDevPanel(game));
+}

@@ -49,3 +49,19 @@ export const ENEMY_D: EnemyDefinition = {
   placeholderColor: 0x4f7aa8,
   movePattern: [attack(5), attack(5), defend(5)],
 };
+
+// ---- registry ----
+
+const ALL_ENEMIES: EnemyDefinition[] = [ENEMY_A, ENEMY_B, ENEMY_C, ENEMY_D];
+
+export const ENEMIES: Readonly<Record<string, EnemyDefinition>> = Object.fromEntries(
+  ALL_ENEMIES.map((enemy): [string, EnemyDefinition] => [enemy.id, enemy])
+);
+
+if (Object.keys(ENEMIES).length !== ALL_ENEMIES.length) throw new Error('duplicate enemy id in ALL_ENEMIES');
+
+export function getEnemy(id: string): EnemyDefinition {
+  const enemy = ENEMIES[id];
+  if (!enemy) throw new Error(`unknown enemy id: ${id}`);
+  return enemy;
+}

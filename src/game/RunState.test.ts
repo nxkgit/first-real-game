@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { RunState, type RunNode } from './RunState';
+import { Rng } from './rng';
 import type { CardDefinition, EnemyDefinition } from './types';
 import {
   PLAYER_MAX_HP,
@@ -21,8 +22,8 @@ const rest: RunNode = { kind: 'rest' };
 const STARTER = [card('s1'), card('s2')];
 const POOL = [card('p1'), card('p2'), card('p3'), card('p4'), card('p5')];
 
-function run(nodes: RunNode[], random?: () => number): RunState {
-  return new RunState(nodes, STARTER, POOL, random);
+function run(nodes: RunNode[], rng?: Rng): RunState {
+  return new RunState(nodes, STARTER, POOL, rng);
 }
 
 describe('RunState', () => {
@@ -130,7 +131,7 @@ describe('RunState', () => {
   });
 
   it('a whole run: fight, reward, rest, final fight', () => {
-    const r = run([fight, rest, fight], () => 0);
+    const r = run([fight, rest, fight], new Rng(1));
     r.finishCombat('won', 30);
     r.takeRewardCard(0);
     r.rest();

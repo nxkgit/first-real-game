@@ -12,14 +12,17 @@ export class Deck {
   hand: CardInstance[] = [];
   discardPile: CardInstance[] = [];
 
-  constructor(cards: CardDefinition[]) {
+  private readonly random: () => number;
+
+  constructor(cards: CardDefinition[], random: () => number = Math.random) {
+    this.random = random;
     this.drawPile = cards.map((definition) => ({ instanceId: nextInstanceId(), definition }));
     this.shuffleDrawPile();
   }
 
   shuffleDrawPile(): void {
     for (let i = this.drawPile.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(this.random() * (i + 1));
       [this.drawPile[i], this.drawPile[j]] = [this.drawPile[j], this.drawPile[i]];
     }
   }

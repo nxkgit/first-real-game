@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { useLayoutCamera } from '../display';
 import { newRun } from '../data/run';
+import { buildRunReport, formatRunReport } from '../game/runReport';
+import { copyToClipboard } from '../storage';
 import { addButton, enterCurrentNode } from './ui';
 
 /** End of a run, won or lost: a short summary and a way to start over. */
@@ -42,6 +44,23 @@ export class RunEndScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
 
-    addButton(this, 400, 360, 'New Run', () => enterCurrentNode(this, newRun()));
+    this.add.text(400, 312, `Seed ${this.run.seed}`, { fontSize: '12px', color: '#777788' }).setOrigin(0.5);
+
+    addButton(this, 400, 370, 'New Run', () => enterCurrentNode(this, newRun()));
+
+    // the report is what a playtester sends back: where the run went, stop by stop
+    const note = this.add.text(400, 505, '', { fontSize: '12px', color: '#9a9aae' }).setOrigin(0.5);
+    addButton(
+      this,
+      400,
+      445,
+      'Copy run report',
+      () => {
+        void copyToClipboard(formatRunReport(buildRunReport(this.run))).then((ok) => {
+          note.setText(ok ? 'Copied. Paste it into a message to send it.' : "Couldn't copy on this device.");
+        });
+      },
+      { width: 200, height: 38, fontSize: 14, fill: 0x2a2a3a, stroke: 0x5a5a72, once: false }
+    );
   }
 }

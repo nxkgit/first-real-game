@@ -1,6 +1,8 @@
 import type { RunNode } from '../game/RunState';
 import { RunState } from '../game/RunState';
-import { MAGE, buildStarterDeck, rewardPoolFor } from './cards';
+import { Rng, randomSeed } from '../game/rng';
+import { restoreRun } from '../game/save';
+import { MAGE, buildStarterDeck, getCard, rewardPoolFor } from './cards';
 import { ENEMY_A, ENEMY_B, ENEMY_C, ENEMY_D } from './enemies';
 
 // PLACEHOLDER MVP 2 path: a short fixed line of fights with one rest stop before
@@ -17,6 +19,12 @@ export function buildRunPath(): RunNode[] {
   ];
 }
 
-export function newRun(): RunState {
-  return new RunState(buildRunPath(), buildStarterDeck(), rewardPoolFor(MAGE));
+/** A fresh run. The same seed always gives the same shuffles, rewards and shop stock. */
+export function newRun(seed: number = randomSeed()): RunState {
+  return new RunState(buildRunPath(), buildStarterDeck(), rewardPoolFor(MAGE), new Rng(seed));
+}
+
+/** Rebuilds a stored run, or null if the data is unusable (see game/save.ts). */
+export function restoreSavedRun(raw: unknown): RunState | null {
+  return restoreRun(raw, buildRunPath(), rewardPoolFor(MAGE), getCard);
 }

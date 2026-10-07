@@ -91,7 +91,14 @@ export class CombatScene extends Phaser.Scene {
     const hud = addRunHud(this, this.run);
     addDeckButton(this, this.run, hud.x + hud.width + 70, () => this.targeting?.cancel());
 
-    this.combat = new CombatState(this.run.deck, this.enemyDefinitions, { hp: this.run.hp, maxHp: this.run.maxHp });
+    // the fight's shuffles come from the run's seeded stream, so a replayed or resumed run is identical
+    const fightRng = this.run.newCombatRng();
+    this.combat = new CombatState(
+      this.run.deck,
+      this.enemyDefinitions,
+      { hp: this.run.hp, maxHp: this.run.maxHp },
+      () => fightRng.next()
+    );
     this.tooltips = new Tooltips(this);
     this.playerView = new PlayerView(this, this.combat, this.tooltips);
     const slots = enemySlots(this.combat.enemies.length);
@@ -587,7 +594,7 @@ export class CombatScene extends Phaser.Scene {
     }
 
     const button = addButton(this, 400, 300, 'Continue', () => {
-      this.run.finishCombat(result, this.combat.player.hp);
+      this.run.finishCombat(result, this.combat.player.hp, this.combat.turnNumber);
       enterCurrentNode(this, this.run);
     });
     button.setDepth(22).setAlpha(0);

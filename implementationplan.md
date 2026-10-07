@@ -42,6 +42,16 @@ A short linear sequence of a few fights plus non-combat nodes, deployed somewher
 
 **Still open for MVP 2:** shop contents and gold's value (a draft screen exists, nothing decided), non-combat events beyond the rest stop, and whether the path should become a branching map.
 
+### Tooling and playtest readiness (built 2026-10-07)
+
+Work that makes the MVP 2 build ready for friend playtesting and gives the later design and balance conversations evidence. None of it makes a gameplay or balance decision; all content stays placeholder.
+
+- **Seeded randomness.** A run has a seed; shuffles, rewards and shop stock all come from it, so a run replays exactly. A seed can be given in the page address (`?seed=123`).
+- **Save and resume.** The run is saved at every stop in the browser's local storage. On the next visit the player can continue or start over. A fight in progress restarts from its beginning (with the same shuffle, so refreshing cannot reroll it). Unusable saves are discarded, never a crash.
+- **Playtest report.** Each run keeps a stop-by-stop log (fights, turns, HP, card picks, rests, shop buys). The end screen has a "Copy run report" button; the last 20 finished runs are kept in the browser. No personal information is recorded.
+- **Dev panel.** Add `?dev` to the address: jump to any stop, start a fight with chosen enemies, add cards, change gold or HP, start a seeded run, copy reports. Loaded only with that flag.
+- **Balance simulator.** `npm run sim` plays whole runs (or one fight) headlessly with a simple greedy bot and reports win rates, fight lengths, HP lost and card picks. It measures; it does not decide. Its results are only meaningful as comparisons between versions of the content or tunables, since a real player is not this bot. This is a tool for the deferred "combat math/balance pass", not the pass itself.
+
 ## Architecture Principles
 
 (Engineering/structure guidance — not creative decisions. This is Claude Code's lane.)
@@ -86,7 +96,7 @@ Decision: **very similar to StS** — an icon above the enemy showing its next m
 - Multiple heroes/archetypes (ranger, fighter, etc.) — MVP 1 is Mage only
 - Magic-school/tribe synergy system — deprioritized in favor of single-hero depth for now
 - Full status-effect roster beyond MVP 1's minimal set
-- Combat math/balance pass (HP/damage scale, target fight length in turns)
+- Combat math/balance pass (HP/damage scale, target fight length in turns). A simulator now exists to support it (see "Tooling and playtest readiness"); the pass itself is still deferred
 - Enemy roster beyond the three placeholder enemies, enemy AI variety
 
 ## Open Questions

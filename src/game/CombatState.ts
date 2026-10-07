@@ -65,6 +65,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
   phase: CombatPhase = 'playerTurn';
   log: CombatLogEntry[] = [];
+  /** 1 on the first player turn, then counts up. */
+  turnNumber = 0;
 
   /** Power cards played so far this combat; their onTurnStartEffect fires every subsequent turn. */
   private activePowers: CardDefinition[] = [];
@@ -73,15 +75,17 @@ export class CombatState extends EventEmitter<CombatEventMap> {
    *  (StS calls this "just applied"). */
   private freshStatuses = new Set<string>();
 
-  /** `player` carries HP between fights in a run; a standalone fight starts at full HP. */
+  /** `player` carries HP between fights in a run; a standalone fight starts at full HP. `random`
+   *  drives the shuffles (pass a seeded one to replay a fight). */
   constructor(
     deckCards: CardDefinition[],
     enemies: EnemyDefinition[],
-    player: { hp: number; maxHp: number } = { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP }
+    player: { hp: number; maxHp: number } = { hp: PLAYER_MAX_HP, maxHp: PLAYER_MAX_HP },
+    random: () => number = Math.random
   ) {
     super();
     if (enemies.length === 0) throw new Error('a fight needs at least one enemy');
-    this.deck = new Deck(deckCards);
+    this.deck = new Deck(deckCards, random);
     this.player = { id: PLAYER_ID, name: 'Hero', hp: player.hp, maxHp: player.maxHp, block: 0, statuses: {} };
     this.enemies = enemies.map((definition, i) => ({
       id: `enemy-${i}`,
@@ -185,6 +189,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
   private startPlayerTurn(isFirstTurn = false): void {
     this.phase = 'playerTurn';
+    this.turnNumber += 1;
     this.player.block = 0;
     this.energy = this.maxEnergy;
     this.deck.draw(HAND_SIZE);

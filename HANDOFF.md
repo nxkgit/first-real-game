@@ -11,8 +11,8 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 - **Live:** https://nxkgit.github.io/first-real-game/ (GitHub Pages; redeploys automatically on every push to `main`)
 - **Repo:** https://github.com/nxkgit/first-real-game. Everything is merged and pushed, and `main` is the only branch.
 - **Stage:** MVP 1 (a single fight) is **done**. MVP 2 (chained fights) has its **first build done**; see "Open decisions" for what's left.
-- **Health:** `npm test` passes 72 tests and `npm run build` is clean (on the `architecture` branch).
-- **Unmerged local work (session 2), three stacked branches, nothing pushed:** `status-effects` (Weak/Vulnerable/Strength) -> `shop-draft` (a rough shop screen and a shop stop on the path; a visual only, drop it if unwanted) -> `architecture` (multiple enemies per fight, shared effects for cards and enemy moves, generated card text, card registry, `CombatScene` split). `main` still has none of this, so the live site is the old build. To publish all of it: merge `architecture` (it contains the other two).
+- **Health:** `npm test` passes 89 tests and `npm run build` is clean (on the `playtest-tooling` branch).
+- **Unmerged work (session 2), four stacked branches:** `status-effects` (Weak/Vulnerable/Strength) -> `shop-draft` (a rough shop screen and a shop stop on the path; a visual only, drop it if unwanted) -> `architecture` (multiple enemies per fight, shared effects for cards and enemy moves, generated card text, card registry, `CombatScene` split; pushed to GitHub) -> `playtest-tooling` (seeded randomness, save/resume, run reports, dev panel, simulator; local until pushed). `main` has none of this, so the live site is the old build. To publish all of it: merge `playtest-tooling` (it contains the others).
 
 ### What the game does today
 - **The run:** a fixed path of fight → fight → rest stop → final fight. HP, deck and gold carry between stops. Losing ends the run; winning the last fight wins it. The end screen has a **New Run** button.
@@ -24,6 +24,7 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
   - **turn order on screen:** discard → enemy acts → draw
 - **Rewards:** after each win except the last, pick 1 of 3 cards **or** take 25 gold. Gold is saved but has nothing to buy yet.
 - **Rest stop:** heals 30% of max HP (capped at max).
+- **Run persistence:** the run saves to local storage at every stop; the next visit offers Continue or New Run. A fight in progress restarts from its start (same shuffle). The end screen shows the seed and a "Copy run report" button.
 - **Interface:**
   - hover tooltips (tap on touch screens)
   - draw/discard pile counts
@@ -42,6 +43,10 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 | `game/` | **Plain game logic, no Phaser.** `CombatState` (fight rules plus a typed event emitter; holds `player` and `enemies[]` as `Combatant`s with ids `'player'`, `'enemy-0'`, ...), `Deck`, `RunState` (run progress, rewards, rest, draft shop), `types.ts` (the shared `Effect` type used by cards **and** enemy moves), `describe.ts` (card text generated from effects), `intent.ts` (intent icons derived from a move's effects). Unit-tested (`*.test.ts`). |
 | `data/` | `tunables.ts` (**every balance number**), `cards.ts` (cards, the `CARDS` registry, `getCard(id)`, `rewardPoolFor(heroId)`, starter deck), `enemies.ts`, `statuses.ts` (status definitions with damage-modifier hooks), `run.ts` (the path, and `newRun()`) |
 | `scenes/` | `BootScene` → `CombatScene` / `RewardScene` / `RestScene` / `ShopScene` (draft) / `RunEndScene`. `ui.ts` holds the shared pieces: card face, buttons, the floor/gold status line, deck viewer, `onKeyPress`, and `enterCurrentNode()` (**every screen change goes through it**). |
+| `game/rng.ts`, `save.ts`, `runReport.ts` | Seedable `Rng`; validating `restoreRun`; the playtest report. `RunState` holds `rng`, a `history` log, `toSaved()` / `fromSaved()`, and `newCombatRng()` (**fights draw their shuffle seed from the run's stream**). |
+| `storage.ts`, `session.ts` | Browser storage (save, report history, clipboard; every access guarded) and the current-run holder. `enterCurrentNode()` saves the run and records finished runs. |
+| `dev/devPanel.ts` | The `?dev` panel (dynamic import, separate chunk). |
+| `sim/` | Headless simulator: `bot.ts` (greedy player), `simulate.ts`, `cli.ts`. |
 | `scenes/combat/` | Pieces of the fight screen: `EnemyView` (one per enemy), `PlayerView`, `Targeting` (card aiming), `Tooltips`, `StatusRow`, `drawings.ts` (placeholder art), `layout.ts` (positions; `enemySlots(n)`). `CombatScene` itself is just wiring, the hand, and the animation queue. |
 | `display.ts` | Fits the 800×600 layout to the window. **Every scene calls `useLayoutCamera(this)` first in `create()`.** |
 | `audio/Sfx.ts` | Generated sound effects (Web Audio). |
@@ -84,7 +89,8 @@ These are gameplay and creative calls. Per `CLAUDE.md`, ask rather than pick.
 - **Git:** the user pushes. Auto mode blocks Claude from pushing to the public repo, so commit locally and give the user the `git push` command. Branch first; never commit straight to `main`, and check the current branch before committing, since the user switches branches between turns.
 - **Commit messages:** PowerShell 5.1 mangles double quotes inside here-strings passed to `git commit -m`. Write the message to a file in the scratchpad and use `git commit -F <file>` (the scratchpad folder may need `mkdir -p` first).
 - **Node in PowerShell:** if `npm` isn't found, the shell's PATH is stale. Prefix commands with `$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User');`
-- **Dev server:** `npx vite` (run it in the background) → http://localhost:5173/
+- **Dev server:** `npx vite` (run it in the background) → http://localhost:5173/ (add `?dev` for the panel, `?seed=123` to pick a seed)
+- **Simulator:** `npm run sim -- --runs 500 --reward card|gold` (whole runs) or `npm run sim -- --fight enemy-b,enemy-d --runs 500`. It builds with Vite's server build into `.sim/` (git-ignored), so it needs no extra tools. The bot is simple; compare versions, don't read absolute numbers.
 - **Browser testing** (claude-in-chrome; the user picked **"Browser 2" (Windows)**):
   - The automated tab counts as *hidden*, so Chrome throttles it almost completely. Temporarily add `(window as unknown as { __game: Phaser.Game }).__game = game;` to `main.ts`, then step frames by hand from the page with `__game.step(t, 16)` in a loop. Yield between steps with a `MessageChannel`, because `setTimeout` is throttled too. **Remove the hook before committing.**
   - The first click or key press after loading a page is used up by browser focus; click an empty spot first.

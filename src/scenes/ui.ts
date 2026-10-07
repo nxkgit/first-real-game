@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import type { CardDefinition } from '../game/types';
 import { cardText } from '../game/describe';
 import type { RunNode, RunState } from '../game/RunState';
+import { setCurrentRun } from '../session';
+import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
 
 // Small UI pieces shared by the run's scenes. Placeholder look, like the rest of the visuals.
 
@@ -84,6 +86,9 @@ export function addButton(
  */
 export function onKeyPress(scene: Phaser.Scene, handler: (key: string) => void): void {
   const listener = (event: KeyboardEvent): void => {
+    // typing in the dev panel's boxes must not play cards
+    const target = event.target;
+    if (target instanceof HTMLElement && /^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName)) return;
     if (!event.repeat) handler(event.key.toLowerCase());
   };
   window.addEventListener('keydown', listener);
@@ -164,13 +169,26 @@ export function addRunHud(scene: Phaser.Scene, run: RunState, opts: { showHp?: b
   return scene.add.text(20, 22, parts.join('    '), { fontSize: '14px', color: '#c8c8d8' }).setOrigin(0, 0.5);
 }
 
+/** Runs whose report has already been stored, so re-entering the end screen doesn't store it twice. */
+const reportedRuns = new WeakSet<RunState>();
+
 const NODE_SCENE: Record<RunNode['kind'], string> = { combat: 'CombatScene', rest: 'RestScene', shop: 'ShopScene' };
 
 /** Starts whichever scene matches where the run is now. Every scene transition goes through here. */
 export function enterCurrentNode(scene: Phaser.Scene, run: RunState): void {
+  setCurrentRun(run);
   if (run.phase === 'won' || run.phase === 'lost') {
+    // the run is over: keep its report for the playtester and forget the save
+    if (!reportedRuns.has(run)) {
+      reportedRuns.add(run);
+      recordFinishedRun(run);
+    }
+    clearSavedRun();
     scene.scene.start('RunEndScene', { run });
-  } else if (run.phase === 'reward') {
+    return;
+  }
+  saveRun(run); // every stop is a save point
+  if (run.phase === 'reward') {
     scene.scene.start('RewardScene', { run });
   } else {
     scene.scene.start(NODE_SCENE[run.currentNode.kind], { run });
