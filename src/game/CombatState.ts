@@ -1,6 +1,8 @@
-import { Deck } from './Deck';
+﻿import { Deck } from './Deck';
 import { EventEmitter } from './EventEmitter';
 import { PLAYER_ID } from './types';
+import { intentBlockOf, intentDamageOf, resolveEnemyEffect, resolvePlayerEffect } from './effects';
+import type { EffectHost, EnemyMoveOutcome } from './effects';
 import type {
   CardDefinition,
   CardInstance,
@@ -62,7 +64,7 @@ export interface CombatEventMap {
   cardPlayed: { card: CardInstance; targetId?: CombatantId };
   /** Snapshot of the hand and pile sizes at the moment of the change. Listeners that animate
    *  later (the scene replays events in sequence) must use this, not the live deck, which may
-   *  already have moved on — e.g. the next turn's draw happens before the discard is animated. */
+   *  already have moved on â€” e.g. the next turn's draw happens before the discard is animated. */
   handChanged: { hand: CardInstance[]; drawPile: number; discardPile: number; exhaustPile: number };
   /** A card went to the exhaust pile. `exhaustPile` is the pile's size at that moment (snapshot). */
   cardExhausted: { card: CardInstance; exhaustPile: number };
@@ -88,7 +90,7 @@ export interface CombatEventMap {
  * Pure game-state/rules layer, independent of Phaser, per implementationplan.md's
  * architecture principles. The Phaser scene subscribes to its events and calls its
  * methods; it does not own any game state itself. Construct, attach listeners, then
- * call start() — this ordering guarantees the scene never misses the opening draw.
+ * call start() â€” this ordering guarantees the scene never misses the opening draw.
  */
 export class CombatState extends EventEmitter<CombatEventMap> {
   deck: Deck;
@@ -116,6 +118,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
    *  this round's end-of-round countdown, so "Weak 1" really lasts through the player's next turn
    *  (StS calls this "just applied"). */
   private freshStatuses = new Set<string>();
+  /** The few things effects (see effects.ts) may do to this fight. */
+  private readonly host: EffectHost;
 
   constructor(deckCards: CardDefinition[], enemies: EnemyDefinition[], options: CombatOptions = {}) {
     super();
@@ -135,6 +139,20 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       definition,
       moveIndex: 0,
     }));
+    this.host = {
+      player: this.player,
+      deck: this.deck,
+      emit: (event, payload) => this.emit(event, payload),
+      calcDamage: (base, attacker, defender, fromAttackCard) => this.calcDamage(base, attacker, defender, fromAttackCard),
+      dealDamage: (target, amount) => this.dealDamage(target, amount),
+      addStatus: (target, id, stacks) => this.addStatus(target, id, stacks),
+      scaledValue: (effect, target) => this.scaledValue(effect, target),
+      gainEnergy: (amount) => (this.energy += amount),
+      noteExhausted: (card) => this.noteExhausted(card),
+      fireTriggers: (on) => this.fireTriggers(on),
+      emitHandChanged: () => this.emitHandChanged(),
+      markFresh: (target, id) => void this.freshStatuses.add(`${target.id}:${id}`),
+    };
   }
 
   start(): void {
@@ -185,15 +203,15 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** Total damage the enemy's next move will deal the player right now (statuses included), or
    *  undefined if that move doesn't attack. For the intent readout. */
   intentDamage(enemy: EnemyState): number | undefined {
-    const hits = this.nextMove(enemy).effects.filter((e) => e.kind === 'damage');
+    const hits = this.nextMove(enemy).effects.map(intentDamageOf).filter((base) => base !== undefined);
     if (hits.length === 0) return undefined;
-    return hits.reduce((sum, e) => sum + this.calcDamage(e.value, enemy, this.player), 0);
+    return hits.reduce((sum, base) => sum + this.calcDamage(base, enemy, this.player), 0);
   }
 
   /** Total block the enemy's next move will give it, or undefined if it gives none. */
   intentBlock(enemy: EnemyState): number | undefined {
-    const gains = this.nextMove(enemy).effects.filter((e) => e.kind === 'block');
-    return gains.length === 0 ? undefined : gains.reduce((sum, e) => sum + e.value, 0);
+    const gains = this.nextMove(enemy).effects.map(intentBlockOf).filter((amount) => amount !== undefined);
+    return gains.length === 0 ? undefined : gains.reduce((sum, amount) => sum + amount, 0);
   }
 
   canPlay(card: CardInstance): boolean {
@@ -316,29 +334,10 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   }
 
   private runEnemyMove(enemy: EnemyState, move: EnemyMove): void {
-    let damage: DamageResult | undefined;
-    let blockGained: number | undefined;
-    const statusEvents: CombatEventMap['statusChanged'][] = [];
-    const hpLosses: number[] = [];
-
-    for (const effect of move.effects) {
-      if (effect.kind === 'damage') {
-        const hpBefore = this.player.hp;
-        const hit = this.dealDamage(this.player, this.calcDamage(effect.value, enemy, this.player));
-        if (this.player.hp < hpBefore) hpLosses.push(hpBefore - this.player.hp);
-        damage = damage
-          ? { amount: damage.amount + hit.amount, absorbed: damage.absorbed + hit.absorbed, remainingHp: hit.remainingHp }
-          : hit;
-      } else if (effect.kind === 'block') {
-        enemy.block += effect.value;
-        blockGained = (blockGained ?? 0) + effect.value;
-      } else if (effect.kind === 'applyStatus') {
-        const recipient = effect.to === 'self' ? enemy : this.player;
-        statusEvents.push(this.addStatus(recipient, effect.status, effect.value));
-        this.freshStatuses.add(`${recipient.id}:${effect.status}`);
-      }
-      // 'draw' means nothing to an enemy
-    }
+    // Effect kinds that are player-only (no `resolveEnemy` in the registry) do nothing here.
+    const out: EnemyMoveOutcome = { statusEvents: [], hpLosses: [] };
+    for (const effect of move.effects) resolveEnemyEffect(effect, this.host, enemy, out);
+    const { damage, blockGained, statusEvents, hpLosses } = out;
 
     const parts = [`${enemy.name} uses ${move.name}`];
     if (damage) parts.push(` for ${damage.amount} damage`);
@@ -354,73 +353,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** Resolves one effect of a card the player played (or of one of their powers). `target` is the
    *  enemy the card was aimed at, if it has one. */
   private applyCardEffect(effect: Effect, target: EnemyState | undefined, fromAttackCard = false): void {
-    switch (effect.kind) {
-      case 'damage':
-        if (target && target.hp > 0) {
-          const base = this.scaledValue(effect, target);
-          const result = this.dealDamage(target, this.calcDamage(base, this.player, target, fromAttackCard));
-          this.emit('damageDealt', { target: target.id, ...result });
-          if (target.hp <= 0) {
-            this.emit('enemyDied', { enemyId: target.id });
-            this.fireTriggers('enemyDied');
-          }
-        }
-        break;
-      case 'block': {
-        const amount = this.scaledValue(effect, target);
-        this.player.block += amount;
-        this.emit('blockGained', { target: this.player.id, amount });
-        if (amount > 0) this.fireTriggers('blockGained');
-        break;
-      }
-      case 'draw':
-        this.deck.draw(this.scaledValue(effect, target));
-        this.emitHandChanged();
-        break;
-      case 'applyStatus': {
-        const recipient = effect.to === 'self' ? this.player : target;
-        if (recipient && recipient.hp > 0) {
-          this.emit('statusChanged', this.addStatus(recipient, effect.status, this.scaledValue(effect, target)));
-        }
-        break;
-      }
-      case 'gainEnergy': {
-        const amount = this.scaledValue(effect, target);
-        this.energy += amount;
-        this.emit('energyChanged', { energy: this.energy, delta: amount });
-        break;
-      }
-      case 'loseHp': {
-        const lost = Math.min(this.player.hp, this.scaledValue(effect, target));
-        if (lost <= 0) break;
-        this.player.hp -= lost;
-        this.emit('hpLost', { target: this.player.id, amount: lost, remainingHp: this.player.hp });
-        if (this.player.hp > 0) this.fireTriggers('hpLost');
-        break;
-      }
-      case 'multiplyStatus': {
-        const recipient = effect.to === 'self' ? this.player : target;
-        const stacks = recipient?.statuses[effect.status] ?? 0;
-        if (!recipient || recipient.hp <= 0 || stacks <= 0) break;
-        const next = Math.floor(stacks * effect.factor);
-        if (next === stacks) break;
-        const event = this.addStatus(recipient, effect.status, next - stacks);
-        if (next <= 0) {
-          delete recipient.statuses[effect.status];
-          event.statuses = { ...recipient.statuses };
-        }
-        this.emit('statusChanged', event);
-        break;
-      }
-      case 'exhaustRandom':
-        for (let i = 0; i < effect.value; i++) {
-          const card = this.deck.exhaustRandomFromHand();
-          if (!card) break; // empty hand: nothing to exhaust
-          this.noteExhausted(card);
-        }
-        this.emitHandChanged();
-        break;
-    }
+    resolvePlayerEffect(effect, this.host, target, fromAttackCard);
   }
 
   /** `effect.value`, plus its scaling (if any) times the live count; never below 0. */
