@@ -23,6 +23,18 @@ test('(a) boots into a seeded run, draws the map and enters a fight', async ({ g
   expect((await game.run()).phase).toBe('inNode');
 });
 
+test('the test hook is inert without ?e2e, and the game runs on its own loop', async ({ game }) => {
+  await game.page.goto('/?seed=123');
+  await game.page.waitForTimeout(1500); // real time: nothing steps this game but its own loop
+  const exposed = await game.page.evaluate(() => ({
+    game: typeof (window as unknown as Record<string, unknown>).__game,
+    step: typeof (window as unknown as Record<string, unknown>).__step,
+    canvas: document.querySelectorAll('canvas').length,
+  }));
+  expect(exposed).toEqual({ game: 'undefined', step: 'undefined', canvas: 1 });
+  game.check();
+});
+
 test('the same seed gives the same map', async ({ game }) => {
   await game.open('seed=123');
   await game.waitForScene('MapScene');
