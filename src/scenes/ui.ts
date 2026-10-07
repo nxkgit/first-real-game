@@ -7,6 +7,7 @@ import { setCurrentRun } from '../session';
 import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
 import { RELIC_ICON } from '../data/art';
 import { addBorder, addIcon } from './art';
+import { toggleCredits } from './credits';
 import { gameKeyFrom } from './keyFilter';
 
 // Small UI pieces shared by the run's scenes. Placeholder look, like the rest of the visuals.
@@ -338,7 +339,17 @@ export function addSettingsButton(scene: Phaser.Scene): void {
       updateSettings({ reducedMotion: !s.reducedMotion });
       open();
     });
-    parts.push(addButton(scene, 400, 410, 'Close', close, { width: 140, height: 36, fontSize: 15, once: false }));
+    parts.push(
+      addButton(scene, 330, 410, 'Credits', () => toggleCredits(scene), {
+        width: 120,
+        height: 36,
+        fontSize: 15,
+        fill: 0x2a2a3a,
+        stroke: 0x5a5a72,
+        once: false,
+      })
+    );
+    parts.push(addButton(scene, 470, 410, 'Close', close, { width: 120, height: 36, fontSize: 15, once: false }));
     panel = scene.add.container(0, 0, parts).setDepth(200);
   };
 

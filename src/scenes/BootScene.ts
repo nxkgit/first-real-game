@@ -3,7 +3,8 @@ import { newRun } from '../data/run';
 import { useLayoutCamera } from '../display';
 import { seedFromUrl } from '../session';
 import { clearSavedRun, loadSavedRun } from '../storage';
-import { preloadArt } from './art';
+import { addScreenBackdrop, preloadArt } from './art';
+import { toggleCredits } from './credits';
 import { addButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /** First scene: starts a fresh run, or offers to continue the one saved in this browser. */
@@ -25,6 +26,7 @@ export class BootScene extends Phaser.Scene {
 
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addScreenBackdrop(this, 'start');
     addSettingsButton(this);
     this.add.text(400, 150, 'Run in progress', { fontSize: '30px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     this.add
@@ -51,5 +53,6 @@ export class BootScene extends Phaser.Scene {
       },
       { fill: 0x2a2a3a, stroke: 0x5a5a72 }
     );
+    addButton(this, 400, 450, 'Credits', () => toggleCredits(this), { width: 140, height: 34, fontSize: 14, fill: 0x2a2a3a, stroke: 0x5a5a72, once: false });
   }
 }

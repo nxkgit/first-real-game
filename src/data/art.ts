@@ -61,7 +61,11 @@ export function backgroundFor(tier: FightTier, floor: number): BackgroundName {
 
 /** The backdrop behind each full-screen stop. PLACEHOLDER pairing; dimmed harder than fights
  *  because these screens are full of text and cards. */
-export const SCREEN_BACKDROPS: Readonly<Record<'map' | 'rest' | 'shop' | 'event' | 'reward', { name: BackgroundName; dim: number }>> = {
+export const SCREEN_BACKDROPS: Readonly<
+  Record<'map' | 'rest' | 'shop' | 'event' | 'reward' | 'start' | 'end', { name: BackgroundName; dim: number }>
+> = {
+  start: { name: 'castles', dim: 0.6 },
+  end: { name: 'fall', dim: 0.6 },
   map: { name: 'forest', dim: 0.7 },
   rest: { name: 'fall', dim: 0.6 },
   shop: { name: 'desert', dim: 0.65 },
