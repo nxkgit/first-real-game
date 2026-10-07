@@ -598,7 +598,8 @@ export class CombatScene extends Phaser.Scene {
     const { damage, blockGained } = payload;
 
     if (damage) {
-      // enemy lunges toward the player as the windup/attack motion
+      // enemy lunges toward the player as the windup/attack motion (and plays its own attack frames, if any)
+      view.playAttack();
       const lungeX = view.x - (view.x - PLAYER_X) * 0.22;
       await this.tweenPromise({ targets: view.container, x: lungeX, duration: 140, ease: 'Sine.easeIn' });
       shakeCamera(this, 180, Phaser.Math.Clamp(damage.amount / 900, 0.004, 0.012));

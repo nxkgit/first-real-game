@@ -6,17 +6,51 @@ import type { MapNodeKind } from '../game/actMap';
 import type { FightTier } from '../game/RunState';
 import { MAP_EARLY_FLOORS, MAP_LATE_FLOORS_FROM } from './tunables';
 
-/** Enemy id -> picture. An enemy with no entry falls back to the drawn goblin. */
+/** Enemy id -> a still picture (ENEMY_PICTURES) or an animated pixel sheet (ENEMY_SHEETS), by name.
+ *  An enemy with no entry falls back to the drawn goblin. PLACEHOLDER pairing: some painted,
+ *  some pixel, so both kinds are on screen. */
 export const ENEMY_ART: Readonly<Record<string, string>> = {
   'enemy-a': 'goblin',
-  'enemy-b': 'skeleton',
+  'enemy-b': 'disciple',
   'enemy-c': 'fighter',
-  'enemy-d': 'brute',
+  'enemy-d': 'gnu',
   'elite-a': 'brute',
-  'elite-b': 'fighter',
+  'elite-b': 'minion',
   'boss-a': 'brute',
 };
 export const ENEMY_PICTURES = ['skeleton', 'goblin', 'fighter', 'brute'] as const;
+/** An animated pixel-art enemy: one sheet (public/assets/pixel/<name>.png), cut into equal frames
+ *  numbered left to right, top to bottom. Idle loops; attack (optional) plays when the enemy acts;
+ *  death (optional) plays when it falls, and the usual fade follows. Frame lists are by eye. */
+export interface EnemySheet {
+  frameWidth: number;
+  frameHeight: number;
+  /** Whole-number zoom, so the pixels stay square (the sheets are drawn at 1x). */
+  scale: number;
+  /** Empty rows of pixels under the feet in the frame, so the feet land on the ground line. */
+  feetPad: number;
+  idle: { frames: readonly number[]; frameRate: number; yoyo?: boolean };
+  attack?: { frames: readonly number[]; frameRate: number };
+  death?: { frames: readonly number[]; frameRate: number };
+}
+
+export const ENEMY_SHEETS: Readonly<Record<string, EnemySheet>> = {
+  // hooded figure; dissolves into dust when it falls (no attack frames)
+  disciple: { frameWidth: 45, frameHeight: 51, scale: 3, feetPad: 0, idle: { frames: [0, 1, 2, 3], frameRate: 5 }, death: { frames: [4, 5, 6, 7, 8, 9, 10], frameRate: 8 } },
+  // horned figure with a staff; the staff flourish doubles as its attack, and it topples over
+  gnu: {
+    frameWidth: 120,
+    frameHeight: 100,
+    scale: 2,
+    feetPad: 5,
+    idle: { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8], frameRate: 6, yoyo: true },
+    attack: { frames: [9, 10, 9], frameRate: 10 },
+    death: { frames: [9, 10, 11, 12, 13, 14, 15, 16], frameRate: 7 },
+  },
+  // tentacled head; idle only (it just fades when it falls)
+  minion: { frameWidth: 45, frameHeight: 66, scale: 2, feetPad: 0, idle: { frames: [0, 1, 2, 3, 4, 5], frameRate: 6, yoyo: true } },
+};
+
 /** On-screen height of an enemy picture at scale 1 (the pictures are 200px tall). */
 export const ENEMY_DISPLAY_HEIGHT = 150;
 
@@ -61,7 +95,11 @@ export function backgroundFor(tier: FightTier, floor: number): BackgroundName {
 
 /** The backdrop behind each full-screen stop. PLACEHOLDER pairing; dimmed harder than fights
  *  because these screens are full of text and cards. */
-export const SCREEN_BACKDROPS: Readonly<Record<'map' | 'rest' | 'shop' | 'event' | 'reward', { name: BackgroundName; dim: number }>> = {
+export const SCREEN_BACKDROPS: Readonly<
+  Record<'map' | 'rest' | 'shop' | 'event' | 'reward' | 'start' | 'end', { name: BackgroundName; dim: number }>
+> = {
+  start: { name: 'castles', dim: 0.6 },
+  end: { name: 'fall', dim: 0.6 },
   map: { name: 'forest', dim: 0.7 },
   rest: { name: 'fall', dim: 0.6 },
   shop: { name: 'desert', dim: 0.65 },

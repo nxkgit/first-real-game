@@ -4,6 +4,8 @@ import { useLayoutCamera } from '../display';
 import { newRun } from '../data/run';
 import { buildRunReport, formatRunReport } from '../game/runReport';
 import { copyToClipboard } from '../storage';
+import { addScreenBackdrop } from './art';
+import { toggleCredits } from './credits';
 import { addButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /** End of a run, won or lost: a short summary and a way to start over. */
@@ -21,6 +23,7 @@ export class RunEndScene extends Phaser.Scene {
   create(): void {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
+    addScreenBackdrop(this, 'end');
     addSettingsButton(this);
 
     const won = this.run.phase === 'won';
@@ -49,8 +52,10 @@ export class RunEndScene extends Phaser.Scene {
 
     addButton(this, 400, 370, 'New Run', () => enterCurrentNode(this, newRun()));
 
+    addButton(this, 400, 540, 'Credits', () => toggleCredits(this), { width: 140, height: 34, fontSize: 14, fill: 0x2a2a3a, stroke: 0x5a5a72, once: false });
+
     // the report is what a playtester sends back: where the run went, stop by stop
-    const note = this.add.text(400, 505, '', { fontSize: '12px', color: '#9a9aae' }).setOrigin(0.5);
+    const note = this.add.text(400, 485, '', { fontSize: '12px', color: '#9a9aae' }).setOrigin(0.5);
     addButton(
       this,
       400,

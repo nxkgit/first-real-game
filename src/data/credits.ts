@@ -1,0 +1,66 @@
+// Who made the art the game uses. The single source for the in-game Credits screen; the same
+// list is written out in public/assets/CREDITS.md (a test keeps the two in step). Add a row here
+// whenever a new pack's files go into public/assets (tools/prepareAssets.py).
+
+export interface Credit {
+  /** What the art is used for, in the game's words. */
+  usedFor: string;
+  /** The pack's name. */
+  source: string;
+  /** Where the pack came from. */
+  url: string;
+  author: string;
+  licence: string;
+}
+
+export const CREDITS: readonly Credit[] = [
+  {
+    usedFor: 'Hero (idle, attack and death frames)',
+    source: 'Free Animated Fantasy Character Vector 2D',
+    url: 'https://opengameart.org/content/free-animated-fantasy-character-vector-2d',
+    author: 'rgsdev',
+    licence: 'CC-BY 4.0',
+  },
+  {
+    usedFor: 'Painted enemies (four characters)',
+    source: 'Fantasy Character',
+    url: 'https://opengameart.org/content/fantasy-character',
+    author: 'Nikolai Bird (dicingdangers.com)',
+    licence: 'CC-BY 4.0',
+  },
+  {
+    usedFor: 'Pixel enemies (animated)',
+    source: 'Dark Fantasy Platformer Bestiary',
+    url: 'https://opengameart.org/content/dark-fantasy-platformer-bestiary',
+    author: 'Stephen "Redshrike" Challener, Ansimuz, Calciumtrice, Balmer, Surt',
+    licence: 'CC-BY 4.0',
+  },
+  {
+    usedFor: 'Relic, heart and other icons',
+    source: 'Fantasy Icon Pack by Ravenmore',
+    url: 'https://opengameart.org/content/fantasy-icon-pack-by-ravenmore-0',
+    author: 'Ravenmore (ravenmore.itch.io)',
+    licence: 'CC-BY 3.0',
+  },
+  {
+    usedFor: 'Map stop icons',
+    source: 'Cartography Pack',
+    url: 'https://kenney.nl/assets/cartography-pack',
+    author: 'Kenney',
+    licence: 'CC0',
+  },
+  {
+    usedFor: 'Card and button borders',
+    source: 'Fantasy UI Borders',
+    url: 'https://kenney.nl/assets/fantasy-ui-borders',
+    author: 'Kenney',
+    licence: 'CC0',
+  },
+  {
+    usedFor: 'Fight and screen backdrops',
+    source: 'Background Elements Remastered',
+    url: 'https://kenney.nl/assets/background-elements-remastered',
+    author: 'Kenney',
+    licence: 'CC0',
+  },
+];
