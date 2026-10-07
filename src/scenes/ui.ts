@@ -5,6 +5,8 @@ import type { RunNode, RunState } from '../game/RunState';
 import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from '../settings';
 import { setCurrentRun } from '../session';
 import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
+import { RELIC_ICON } from '../data/art';
+import { addBorder, addIcon } from './art';
 import { gameKeyFrom } from './keyFilter';
 
 // Small UI pieces shared by the run's scenes. Placeholder look, like the rest of the visuals.
@@ -25,8 +27,11 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
   const g = scene.add.graphics();
   g.fillStyle(0x2c2c3c, 1);
   g.fillRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 10);
-  g.lineStyle(2, accent, 1);
-  g.strokeRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 10);
+  const border = addBorder(scene, CARD_WIDTH, CARD_HEIGHT, accent);
+  if (!border) {
+    g.lineStyle(2, accent, 1);
+    g.strokeRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 10);
+  }
 
   const costBadge = scene.add.circle(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, 13, accent);
   const costText = scene.add
@@ -53,7 +58,7 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     })
     .setOrigin(0.5);
 
-  const face = scene.add.container(0, 0, [g, costBadge, costText, nameText, typeText, descText]);
+  const face = scene.add.container(0, 0, [g, ...(border ? [border] : []), costBadge, costText, nameText, typeText, descText]);
   face.setData('descText', descText);
   return face;
 }
@@ -97,7 +102,8 @@ export function addButton(
   const { width = 180, height = 46, fontSize = 16, fill = 0x2b6b3d, stroke = 0x4fae6f, once = true } = opts;
   const bg = scene.add.rectangle(0, 0, width, height, fill).setStrokeStyle(2, stroke);
   const text = scene.add.text(0, 0, label, { fontSize: `${fontSize}px`, color: '#ffffff' }).setOrigin(0.5);
-  const button = scene.add.container(x, y, [bg, text]);
+  const border = addBorder(scene, width, height, stroke, 10);
+  const button = scene.add.container(x, y, border ? [bg, border, text] : [bg, text]);
 
   bg.setInteractive({ useHandCursor: true });
   bg.on('pointerover', () => scene.tweens.add({ targets: button, scale: 1.05, duration: 100 }));
@@ -245,13 +251,17 @@ function addRelicBar(scene: Phaser.Scene, run: RunState): void {
     const x = 32 + i * 30;
     const y = 54;
     const hash = [...relic.id].reduce((n, ch) => n + ch.charCodeAt(0), 0);
+    const icon = RELIC_ICON[relic.id] ? addIcon(scene, RELIC_ICON[relic.id], 24) : null;
     const badge = scene.add
-      .rectangle(x, y, 24, 24, RELIC_COLORS[hash % RELIC_COLORS.length])
-      .setStrokeStyle(2, 0xffffff, 0.6)
+      .rectangle(x, y, 26, 26, icon ? 0x23232f : RELIC_COLORS[hash % RELIC_COLORS.length])
+      .setStrokeStyle(2, icon ? 0x8a8aa2 : 0xffffff, 0.6)
       .setInteractive({ useHandCursor: true });
-    scene.add
-      .text(x, y, relic.name.charAt(0).toUpperCase(), { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' })
-      .setOrigin(0.5);
+    if (icon) icon.setPosition(x, y);
+    else {
+      scene.add
+        .text(x, y, relic.name.charAt(0).toUpperCase(), { fontSize: '13px', color: '#ffffff', fontStyle: 'bold' })
+        .setOrigin(0.5);
+    }
     badge.on('pointerover', (pointer: Phaser.Input.Pointer) => {
       bubbleText.setText(`${relic.name}\n${relicText(relic)}`);
       bubbleBg.setSize(bubbleText.width + 16, bubbleText.height + 12);

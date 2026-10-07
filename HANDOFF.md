@@ -46,6 +46,7 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 - **Interface:** hover tooltips (tap on touch screens), a **Deck (N)** viewer, keys `1`–`9` and `0` play cards 1–10, `E` ends the turn, `D` opens the deck, `Esc` cancels/closes. The user said keyboard targeting with several enemies can stay as is (number keys aim at the first living enemy).
 - **Display:** fits any window size at full device resolution. Phones held upright see a "turn sideways" message.
 - **Sound:** fantasy-styled sound effects, generated in code with no audio files.
+- **Art (first pass, 2026-10-07):** hero, enemy, map-icon, relic-icon and card/button-border pictures from free packs; mapping in `src/data/art.ts`, files in `public/assets/` built by `tools/prepareAssets.py` from `assets/` (git-ignored raw packs), credits in `public/assets/CREDITS.md`. The pairings are placeholders and the styles deliberately clash. Unused so far: `spritesheets.zip` (animated pixel enemies). Art loads in `BootScene.preload`; the e2e harness waits for it.
 - **Content:** all placeholder (enemies A–D, two elites, a boss, 11 reward cards each with an upgrade, 5 relics, 4 events, every number). Real content is the user's to design.
 
 ---

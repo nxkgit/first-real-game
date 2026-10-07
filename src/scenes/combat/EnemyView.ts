@@ -7,7 +7,8 @@ import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { ENEMY_Y } from './layout';
-import { addIdleBob, buildGoblinCharacter, drawArrow, drawShield, drawSword } from './drawings';
+import { buildEnemySprite } from '../art';
+import { addIdleBob, drawArrow, drawShield, drawSword } from './drawings';
 
 const INTENT_Y = 92;
 const NAME_Y = 130;
@@ -53,7 +54,7 @@ export class EnemyView {
     const half = crowded ? 58 : 65;
     this.targetArea = new Phaser.Geom.Rectangle(x - half, ENEMY_Y - 80, half * 2, 155);
 
-    this.container = buildGoblinCharacter(scene, state.definition.placeholderColor ?? 0x5c8143);
+    this.container = buildEnemySprite(scene, state.definition);
     this.baseScale = state.definition.placeholderScale ?? 1;
     this.container.setPosition(x, ENEMY_Y).setScale(this.baseScale);
     addIdleBob(scene, this.container, ENEMY_Y);

@@ -408,6 +408,7 @@ export class CombatScene extends Phaser.Scene {
       this.powersText.setText(`Powers: ${this.powersPlayed}`).setVisible(true);
     }
 
+    if (card.definition.type === 'attack') this.playerView.hero?.attack();
     this.lockInput(true);
     const impactSteps: AnimStep[] = [];
     this.sequencer = impactSteps;
@@ -665,6 +666,7 @@ export class CombatScene extends Phaser.Scene {
     } else {
       this.resultText.setText('DEFEAT').setColor('#ff6b6b').setScale(0.6).setAlpha(0);
       Sfx.defeat();
+      this.playerView.hero?.die();
       shakeCamera(this, 400, 0.01);
       await this.tweenPromise({ targets: this.resultText, alpha: 1, scale: 1, duration: 500, ease: 'Sine.easeOut' });
     }

@@ -3,12 +3,17 @@ import { newRun } from '../data/run';
 import { useLayoutCamera } from '../display';
 import { seedFromUrl } from '../session';
 import { clearSavedRun, loadSavedRun } from '../storage';
+import { preloadArt } from './art';
 import { addButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /** First scene: starts a fresh run, or offers to continue the one saved in this browser. */
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('BootScene');
+  }
+
+  preload(): void {
+    preloadArt(this);
   }
 
   create(): void {

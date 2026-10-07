@@ -3,6 +3,7 @@ import type { MapNode, MapNodeKind } from '../game/actMap';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
+import { addMapIcon } from './art';
 import { mapLayout } from './mapLayout';
 import {
   addDeckButton,
@@ -83,16 +84,18 @@ export class MapScene extends Phaser.Scene {
 
   private drawNode(node: MapNode, open: boolean, visited: boolean, hover: Phaser.GameObjects.Text): void {
     const style = MAP_STYLE[node.kind];
-    const radius = node.kind === 'boss' ? 21 : 14;
+    const radius = node.kind === 'boss' ? 24 : 18;
     const here = node.id === this.run.position;
     const layout = mapLayout(this.run.map.floors, this.run.map.lanes);
     const x = layout.x(node.lane);
     const y = layout.y(node.floor);
 
     const disc = this.add.circle(0, 0, radius, style.color).setStrokeStyle(open || here ? 3 : 2, open ? 0xffffff : here ? 0xd8b23c : 0x1b1b24);
-    const symbol = this.add
-      .text(0, 0, style.symbol, { fontSize: node.kind === 'boss' ? '20px' : '15px', color: '#ffffff', fontStyle: 'bold' })
-      .setOrigin(0.5);
+    const symbol =
+      addMapIcon(this, node.kind, node.kind === 'boss' ? 38 : 28) ??
+      this.add
+        .text(0, 0, style.symbol, { fontSize: node.kind === 'boss' ? '20px' : '15px', color: '#ffffff', fontStyle: 'bold' })
+        .setOrigin(0.5);
     const container = this.add.container(x, y, [disc, symbol]);
     container.setAlpha(open || here ? 1 : visited ? 0.4 : 0.6);
 
@@ -115,8 +118,10 @@ export class MapScene extends Phaser.Scene {
     (Object.keys(MAP_STYLE) as MapNodeKind[]).forEach((kind, i) => {
       const y = 140 + i * 28;
       const style = MAP_STYLE[kind];
-      this.add.circle(702, y, 9, style.color);
-      this.add.text(702, y, style.symbol, { fontSize: '11px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+      this.add.circle(702, y, 11, style.color);
+      const icon = addMapIcon(this, kind, 16);
+      if (icon) icon.setPosition(702, y);
+      else this.add.text(702, y, style.symbol, { fontSize: '11px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
       this.add.text(718, y, style.label, { fontSize: '12px', color: '#c8c8d8' }).setOrigin(0, 0.5);
     });
   }

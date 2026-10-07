@@ -79,6 +79,8 @@ export class Harness {
 
   private async afterLoad(): Promise<void> {
     await this.page.waitForFunction(() => (window as Any).__game?.isBooted === true);
+    // the art files load over the network in real time, which stepped frames cannot speed up
+    await this.page.waitForFunction(() => (window as Any).__game.textures.exists('ui-border'));
     await this.page.evaluate(() => (window as Any).__game.loop.stop());
     await this.step(10);
   }

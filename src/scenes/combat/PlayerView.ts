@@ -4,6 +4,8 @@ import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { PLAYER_X, PLAYER_Y } from './layout';
+import { addIcon, buildHeroSprite } from '../art';
+import type { HeroSprite } from '../art';
 import { addIdleBob, buildMageCharacter } from './drawings';
 
 const STAT_Y = 360;
@@ -15,6 +17,8 @@ const STATUS_Y = 412;
 export class PlayerView {
   readonly container: Phaser.GameObjects.Container;
   readonly statusRow: StatusRow;
+  /** The animated hero picture, or null when the drawn placeholder is in use. */
+  readonly hero: HeroSprite | null;
 
   private readonly scene: Phaser.Scene;
   private readonly hpText: Phaser.GameObjects.Text;
@@ -26,17 +30,23 @@ export class PlayerView {
 
   constructor(scene: Phaser.Scene, combat: CombatState, tooltips: Tooltips) {
     this.scene = scene;
-    this.container = buildMageCharacter(scene);
+    this.hero = buildHeroSprite(scene);
+    this.container = this.hero?.container ?? buildMageCharacter(scene);
     this.container.setPosition(PLAYER_X, PLAYER_Y);
-    addIdleBob(scene, this.container, PLAYER_Y);
+    if (!this.hero) addIdleBob(scene, this.container, PLAYER_Y);
 
     scene.add.text(PLAYER_X, 130, 'HERO', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
 
-    const heart = scene.add.graphics();
-    heart.fillStyle(0xd94f4f, 1);
-    heart.fillCircle(55, STAT_Y - 4, 7);
-    heart.fillCircle(69, STAT_Y - 4, 7);
-    heart.fillTriangle(47, STAT_Y - 1, 77, STAT_Y - 1, 62, STAT_Y + 13);
+    const heartIcon = addIcon(scene, 'heart', 34);
+    if (heartIcon) {
+      heartIcon.setPosition(62, STAT_Y + 2);
+    } else {
+      const heart = scene.add.graphics();
+      heart.fillStyle(0xd94f4f, 1);
+      heart.fillCircle(55, STAT_Y - 4, 7);
+      heart.fillCircle(69, STAT_Y - 4, 7);
+      heart.fillTriangle(47, STAT_Y - 1, 77, STAT_Y - 1, 62, STAT_Y + 13);
+    }
     this.hpText = scene.add
       .text(90, STAT_Y + 3, '', { fontSize: '15px', color: '#ffffff', fontStyle: 'bold' })
       .setOrigin(0, 0.5);
