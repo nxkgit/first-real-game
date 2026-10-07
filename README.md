@@ -2,7 +2,7 @@
 
 A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built with TypeScript and Phaser. This is a learning/portfolio project — an exercise in building a real, working game end-to-end with Claude Code.
 
-Currently at **MVP 1**: a single, fully playable combat encounter — draw a hand, play cards, manage energy, watch the enemy telegraph and resolve its move, win or lose. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.
+Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.
 
 All visuals are built from Phaser's drawing primitives (shapes, not image assets) — a simple vector mage and goblin, card UI with tweened animation, particle effects, and procedurally-generated sound. Placeholder-quality by design; final art direction is a separate, later pass.
 
@@ -74,16 +74,19 @@ npm test         # unit tests for the game-logic layer (src/game), via Vitest
 
 ## How to play
 
-Click a skill or power card to play it. Attack cards are aimed: drag one onto the enemy, or click it and then click the enemy. Right-click (or click anywhere else) to put a picked-up card back. The icon above the enemy shows its next move — a sword is an attack for that much damage, a shield is that much block.
+Click a skill or power card to play it. Attack cards are aimed: drag one onto the enemy, or click it and then click the enemy. Right-click (or click anywhere else) to put a picked-up card back. The icon above the enemy shows its next move — a sword is an attack for that much damage, a shield is that much block. Hover the icons, energy orb, or card piles for a short explanation.
+
+Win a fight and you choose a reward: add one of three cards to your deck, or take gold (saved for a shop that isn't built yet). The rest stop heals you before the final fight. Lose any fight and the run is over.
 
 ## Project structure
 
 ```
 src/
-  game/        # Pure TypeScript game logic (deck, combat state, rules) — no Phaser dependency, unit-testable in isolation
-  data/        # Data-driven card and enemy definitions
-  scenes/      # Phaser scene(s): rendering, input, animation
+  game/        # Pure TypeScript game logic (deck, combat, run state, rules) — no Phaser dependency, unit-testable in isolation
+  data/        # Data-driven cards, enemies, the run's path, and tunables.ts (all balance numbers in one place)
+  scenes/      # Phaser scenes: boot, combat, reward, rest, run end; ui.ts holds shared UI pieces
   audio/       # Procedural sound effects (Web Audio API, no audio files)
+  display.ts   # Fits the 800x600 layout to the window at full device resolution
   main.ts      # Phaser game entry point
 ```
 

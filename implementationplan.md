@@ -10,7 +10,9 @@ Creative/aesthetic/narrative content (hero identity, art, flavor, names) is auth
 
 ## Build Staging
 
-### MVP 1 — Single Combat (current target)
+### MVP 1 — Single Combat (done)
+
+**Status (2026-10-06):** complete. First playtest verdict: the core loop "seems fine"; it led to two changes — attack cards are now aimed at the enemy (drag, or click card then enemy) instead of click-to-play, and the enemy's intent/block readouts are icons instead of words. Followed by playtest-friendly polish: scale-to-window (phones included) at full device resolution, draw/discard pile counts, and hover tooltips on icon readouts. Unit tests (Vitest, `npm test`) cover the logic layer.
 
 **Goal:** prove out the core combat loop's feel and visuals. Nothing beyond one fight.
 
@@ -24,9 +26,19 @@ Creative/aesthetic/narrative content (hero identity, art, flavor, names) is auth
 
 **Definition of done:** the full loop (draw → play → end turn → enemy turn → win/loss) runs in a browser, is playable with mouse/click, and feels responsive enough to evaluate "does this feel good" before building anything further.
 
-### MVP 2 — Chained Combats + Non-Combat Events (next target, scope not finalized)
+### MVP 2 — Chained Combats + Non-Combat Events (current target)
 
-A short linear sequence of a few fights plus non-combat nodes (likely including a shop), deployed somewhere shareable (GitHub Pages/Netlify) for friend playtesting. Everything in this stage is still open and expected to change — see Deferred section.
+A short linear sequence of a few fights plus non-combat nodes, deployed somewhere shareable for friend playtesting.
+
+**Decided and built (2026-10-06), all numbers provisional:**
+- **Run skeleton:** a fixed linear path — fight, fight, rest, fight (`src/data/run.ts`). HP, deck, and gold carry between fights. Losing any fight ends the run; winning the last one wins it. Run-end screen offers a new run.
+- **Reward after each won fight (except the last):** pick 1 of 3 cards from a reward pool, *or* take gold. Gold is banked and shown but has nothing to spend on yet — the shop is still deferred, and gold's value vs. a card is still an open question.
+- **Rest stop:** heals 30% of max HP (capped at max), then moves on.
+- **Placeholder content:** Enemies A/B/C with rising difficulty (same placeholder drawing, different colors) and a 7-card reward pool built only from the existing damage/block/draw effects. Final cards/enemies are the user's to design.
+- **Starting/MVP 1 numbers kept as provisional placeholders** (user's call, 2026-10-06): enemy HP/damage/patterns, starter deck, Block as the only status effect.
+- **Deployment:** GitHub Actions workflow publishes to GitHub Pages on every push to `main` (needs Pages source set to "GitHub Actions" in repo settings).
+
+**Still open for MVP 2:** shop (and with it, gold's value), non-combat events beyond the rest stop, Weak/Vulnerable/Strength, and whether the path should become a branching map.
 
 ## Architecture Principles
 
@@ -64,16 +76,16 @@ Decision: **very similar to StS** — an icon above the enemy showing its next m
 
 ## Deferred (explicitly not MVP 1 — do not build yet)
 
-- Shop system (gold economy, shop contents, exchange rate between a card reward and gold)
+- Shop system (shop contents, prices, exchange rate between a card reward and gold) — gold itself now exists and is banked, but has no use yet
 - Relics
-- Non-combat event node design (rest/event/other node types beyond combat)
-- Map/run structure beyond a single fight (sequencing, elite placement, boss)
+- Non-combat event node design beyond the rest stop (narrative events, other node types)
+- Map/run structure beyond MVP 2's fixed linear path (branching map, elite placement, boss)
 - Card rarity tiers and reward-pool weighting
 - Multiple heroes/archetypes (ranger, fighter, etc.) — MVP 1 is Mage only
 - Magic-school/tribe synergy system — deprioritized in favor of single-hero depth for now
 - Full status-effect roster beyond MVP 1's minimal set
 - Combat math/balance pass (HP/damage scale, target fight length in turns)
-- Enemy roster beyond MVP 1's single enemy, enemy AI variety
+- Enemy roster beyond the three placeholder enemies, enemy AI variety
 
 ## Open Questions
 
