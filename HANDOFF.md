@@ -1,6 +1,6 @@
 # Session Handoff
 
-Context for picking this project up in a fresh Claude Code session. Last updated **2026-10-07** (session 3: unattended-work process, synergy engine, balance tooling, test layers; then, the same day with the user back at their PC: live card numbers, map variety, every-route-has-an-elite, all synergy cards in the pool, a first art pass and backdrops; three more pieces of work were still in progress on branches, see "In progress on branches").
+Context for picking this project up in a fresh Claude Code session. Last updated **2026-10-07** (session 3: unattended-work process, synergy engine, balance tooling, test layers; then, the same day with the user back at their PC: live card numbers, map variety, every-route-has-an-elite, all synergy cards in the pool, a first art pass and backdrops; then a second wave: scenarios, credits, pixel enemies, card-face numbers and tags, docs and CI, see "Second wave").
 
 Read order for a new session: `CLAUDE.md` (rules) → this file (where things stand) → `implementationplan.md` (scope) → `DESIGN_LOG.md` (why). This file is a snapshot. When it disagrees with those documents or the code, they win. Update this file at the end of each session.
 
@@ -11,7 +11,7 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 - **Live:** https://nxkgit.github.io/first-real-game/ (GitHub Pages; redeploys automatically on every push to `main`). Add `?dev` for the dev panel, `?seed=123` to pick a seed. The content browser is at `/content.html` on the same site.
 - **Repo:** https://github.com/nxkgit/first-real-game. `main` is the live branch. The older feature branches (`status-effects`, `shop-draft`, `architecture`, `playtest-tooling`) are all merged into it and can be deleted.
 - **Stage:** MVP 1 (one fight) and MVP 2 (chained fights) are done. Session 2 went on to build a **one-act demo**: a branching map of fights, elites, rests, shops and events leading to a boss. See "What the game does today".
-- **Health:** `npm run verify` (typecheck, tests, build) is green: 677 tests on `main` at `71e4500`. `npm run e2e` (real-browser suite, 20 tests, about 5 minutes, separate from verify) passed on the same build. CI: `verify` on pull requests and `auto/**`/`integration/**` pushes; browser tests there run as a fast subset (everything but the whole-act test), with the whole suite nightly (see `docs/E2E.md`; that split was written on branch `auto/docs-ci` and could not be run on GitHub when written).
+- **Health:** `npm run verify` (typecheck, tests, build) is green: 794 tests on `main` after the second-wave merge (two heavy tests, `run.invariants` and `balance`, time out when the machine is busy and pass when run alone: rerun before suspecting a bug). `npm run e2e` (real-browser suite, 23 tests, about 5.5 minutes, separate from verify) passed on the merged build. CI: `verify` on pull requests and `auto/**`/`integration/**` pushes; browser tests there run as a fast subset (everything but the whole-act test), with the whole suite nightly (see `docs/E2E.md`; that split was written on branch `auto/docs-ci` and could not be run on GitHub when written).
 - **Session 3 added** (decisions in `DESIGN_LOG.md` Session 3; the document index is `docs/README.md`):
   - **Synergy engine** (`docs/SYNERGY_ENGINE.md`): scaling values, Empowered multiplier, triggers on powers/relics, tags, exhaust, energy, self-damage. 20 placeholder cards in `src/data/synergyCards.ts`, **now in the reward pool** (since 2026-10-07, the user wants every placeholder offered to testers; flip `base.inRewardPool` in that file to take them out).
   - **Effect registry** (`src/game/effects.ts`, `docs/EFFECTS.md`): one entry per effect kind (resolve, enemy resolve, text, intent, scaling). Adding a kind = one entry. Proven behaviour-identical by golden hashes and byte-identical sim reports.
@@ -122,16 +122,15 @@ These are gameplay and creative calls. Per `CLAUDE.md`, ask rather than pick. Ev
 9. **Rarity tiers and reward weighting.** Still deferred.
 10. **A real phone-upright layout**, instead of the "turn sideways" message.
 
-## In progress on branches (launched 2026-10-07; this section is to be corrected by the orchestrator at merge)
+## Second wave, merged to main (2026-10-07)
 
-The user's three original queued requests (live damage numbers, map variety, elites and synergy cards in the pool) are **done and on `main`** (see "Added after that, the same day"). The user then approved this next wave, run as background agents in local worktrees (rules: `docs/AUTOMATION.md`; they never push or touch `main`):
+Built by four background agents in local worktrees (rules: `docs/AUTOMATION.md`), merged by the orchestrator, `npm run verify` green (794 tests) and the e2e suite run on the merged build (see the Health line):
 
-- **Scenario system** (an `auto/...` branch; doc `docs/SCENARIOS.md` once it exists): capture a fight's exact state (enemies with HP/statuses/next move, the player's HP/block/energy/statuses, relics, draw/hand/discard/exhaust piles and powers, turn, and the random stream position) and load it back from the dev panel; usable as test scenarios. The engine's random generator is one 32-bit number with a position getter and `Rng.restore`, so a fight replays exactly; the order you play cards in does matter for random effects because each takes the next number.
-- **Credits screen, start/end-screen backdrops, animated pixel enemies** (from `spritesheets.zip`).
-- **Card faces:** live numbers for block/draw scaling and for the enemy under the aiming arrow, and tags shown on cards (`docs/EFFECTS.md` may be touched).
-- **Docs and CI** (branch `auto/docs-ci`, this handoff's author): `docs/ART.md`, the content guide, E2E doc and index brought up to date, stale banners on the old balance evidence, and the nightly e2e split.
-
-Check `git branch --list "auto/*"` and each branch's `docs/progress-<topic>.md` for the real state; then merge through `integration/<wave>` and update this file.
+- **Scenario system** (`docs/SCENARIOS.md`, `src/game/scenario.ts`, example scenarios in `scenarios/`, `e2e/scenario.e2e.ts`): capture a fight's exact state (enemies with HP/statuses/next move, the player's HP/block/energy/statuses, relics, draw/hand/discard/exhaust piles in order and powers, turn, counters, and the random stream `{seed, position}`) and load it back from the `?dev` panel (**Capture this fight**, **Load scenario**). `CombatState` has `exportState`, a `restore` option and an `rng` option. Usable as test scenarios (`runScenario`). A loaded fight uses the dev panel's stand-in-fight path: the run is untouched, no reward. The random generator is one 32-bit number, so a fight replays exactly; the order cards are played in matters for random effects because each takes the next number. A possible later "lethal puzzle" mode would be built on this (the user wants **no randomness in puzzles**; the mode's rules are undecided).
+- **Credits, backdrops, pixel enemies:** an in-game Credits overlay (start screen, run-end screen, Settings; list in `src/data/credits.ts`, mirrored by `public/assets/CREDITS.md` and tested), backdrops on the start and end screens, and animated pixel enemies from `spritesheets.zip` (Enemy B, Enemy D and Elite B; the others keep the painted pictures; pairings are placeholders in `src/data/art.ts`). **Unconfirmed:** where `spritesheets.zip` came from (it had no licence file; credited as the OpenGameArt "Dark Fantasy Platformer Bestiary", CC-BY 4.0).
+- **Card faces:** live numbers now work for every effect kind (each effect-registry entry can supply a `preview`; `docs/EFFECTS.md`), follow the enemy under the aiming arrow, and tags show on card faces.
+- **Docs and CI:** `docs/ART.md`, content guide, E2E guide and index brought up to date; the e2e workflow runs a fast subset on PRs and the whole suite nightly (not yet run on GitHub: check the first Actions run).
+- **Not yet done from this wave:** the play-through check of the 20 synergy cards and the untested-by-eye animations (audit R1), to be done with scenarios.
 
 **Waiting on the user (ask before acting on any):**
 - The map agent's three open questions: should the map show a route's theme (a label or tint) or are the stop icons enough; is a minimum of 3 elites right (the every-route rule already gives about 4.6); should elites drop better rewards now that they are common (rewards were left unchanged).
@@ -140,13 +139,22 @@ Check `git branch --list "auto/*"` and each branch's `docs/progress-<topic>.md` 
 
 ## Next steps that don't need decisions
 
+**Start here in a new session** (the user asked for these in this order of interest; none needs a design decision):
+1. **Play the 20 synergy cards and the untested animations in a real browser, using the scenario system** (`docs/SCENARIOS.md`, `scenarios/*.json`, dev panel **Load scenario**): set up each combo exactly instead of waiting for draws; check readouts, live numbers, tags, animations and the audit-R1 paths (enemy `blockGained`, self-inflicted `damageDealt`/`hpLost` on the player); fix what is broken, report what looks wrong.
+2. **Fight-panel overhang:** the painted skeleton picture overhangs the right edge of the fight panel when two enemies share it (found by the card-faces agent; check the other pictures at 3 enemies too).
+3. **Wait for / ask the user about** the open items under "Waiting on the user" (route theme label on the map, elite minimum, elite rewards, the arrow bug details, where `spritesheets.zip` came from, whether hiding the scaling note under a live number is fine, tag display names).
+4. The user is deliberating on **card design and gameplay decisions**; they said not to worry about balance now. Do not build anything from the plan's Deferred list.
+
+Working style the user has settled on: they give a goal, you use whatever workflow is most efficient (parallel background agents in worktrees for independent pieces, merged by you through a verify run), you push to `main` when the checks pass and tell them plainly what was seen in a browser versus only tested. They have said to push (it deploys the live site).
+
+
 - **Faster first load:** Phaser is now its own chunk (`vite.config.ts`, `rolldownOptions.output.codeSplitting`), so game updates don't bust its cache. First-load size is unchanged (~357 KB gzip for Phaser); the build still warns because Phaser alone is over 500 KB. Note: Vite 8 ignores `rollupOptions` when `rolldownOptions` is set, so the two-page `input` lives in `rolldownOptions` too. Only build-, test- and curl-checked (chunks and `content.html` serve), not played in a browser.
-- **Art leftovers:** no pictures yet for statuses and enemy intents (still drawn shapes); the in-game credits screen (CC-BY packs need credit; today only `public/assets/CREDITS.md`); `docs/design/EVIDENCE.md` measurements describe the old map and 11-card pool.
+- **Art leftovers:** no pictures yet for statuses and enemy intents (still drawn shapes); `docs/design/EVIDENCE.md` measurements describe the old map and 11-card pool.
 - **Test on a real phone.** Touch was only tested with simulated events, and not at all since the act, map and settings were added.
 - **Use the simulator** (below) when numbers change, to see what they did.
-- **The e2e workflow** runs a fast subset (all but the whole-act test) on PRs and `auto/**`/`integration/**` pushes and the whole suite nightly and on demand (written on `auto/docs-ci`, not yet run on GitHub: check the first Actions run after merging). The e2e harness waits only for the `ui-border` texture; waiting for every art key would close a small race.
+- **The e2e workflow** runs a fast subset (all but the whole-act test) on PRs and `auto/**`/`integration/**` pushes and the whole suite nightly and on demand (written on `auto/docs-ci`, not yet run on GitHub: check the first Actions run after merging). The e2e harness now waits for the last-loaded art textures. Run the e2e on a spare port (`E2E_PORT=5301`) when another checkout may have a dev server up; Playwright otherwise reuses it.
 - **Toolkit follow-ups** (from the balance session): give the `expert` bot a stored-value term (Strength, Empowered, counters) so it can bound synergy decks; a synergy-seeking draft policy; card removal and shops in the run simulator; re-set the win-rate bands once real enemies exist.
-- **UI follow-ups:** tags are not shown on card faces and live numbers cover damage only (both in progress on a branch, see above); the scene's event handling for `blockGained` on enemies / `damageDealt` on the player (audit R1) is untested by eye; touch/phone layouts are unchecked.
+- **UI follow-ups:** the scene's event handling for `blockGained` on enemies / `damageDealt` on the player (audit R1) is untested by eye; touch/phone layouts are unchecked.
 - **Proposed number tweaks** from the synergy analysis (`docs/balance/synergy-findings-2026-10.md` section 10) are waiting on real content; only the Tag A Echo once-per-turn fix was applied.
 - **Deferred on purpose (do when needed, not before):** a `HeroDefinition` record (when the second hero starts).
 
