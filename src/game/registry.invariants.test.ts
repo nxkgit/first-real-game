@@ -39,7 +39,8 @@ function effectProblems(effect: Effect): string[] {
   const e = effect as unknown as Record<string, unknown>;
   if (!e || typeof e !== 'object' || typeof e.kind !== 'string') return ['effect has no kind'];
   for (const [p, n] of numbersIn(effect)) if (!Number.isFinite(n)) problems.push(`${p} is not finite`);
-  if (typeof e.value === 'number' && (!Number.isInteger(e.value) || e.value < 1)) problems.push(`value ${e.value} is not a positive integer`);
+  // a scaled effect may have a base of 0 (its whole value comes from the scaling)
+  if (typeof e.value === 'number' && (!Number.isInteger(e.value) || (e.value < 1 && !(e.value === 0 && e.scaling)))) problems.push(`value ${e.value} is not a positive integer`);
   if (e.kind === 'applyStatus') {
     if (!(e.status as string in STATUSES)) problems.push(`unknown status ${String(e.status)}`);
     if (e.to !== 'target' && e.to !== 'self') problems.push(`bad "to": ${String(e.to)}`);
@@ -63,9 +64,10 @@ function cardProblems(card: CardDefinition): string[] {
   if (card.target !== undefined && card.target !== 'enemy') p.push(`target ${String(card.target)}`);
   for (const e of card.effects ?? []) p.push(...effectProblems(e));
   if (card.onTurnStartEffect) p.push(...effectProblems(card.onTurnStartEffect));
-  if (card.type === 'power' && !card.effects?.length && !card.onTurnStartEffect) p.push('a power that does nothing');
+  for (const t of card.triggers ?? []) for (const e of t.effects) p.push(...effectProblems(e));
+  if (card.type === 'power' && !card.effects?.length && !card.onTurnStartEffect && !card.triggers?.length) p.push('a power that does nothing');
   if (card.type !== 'power' && card.onTurnStartEffect) p.push('only powers have onTurnStartEffect');
-  if (!(card.effects?.length || card.onTurnStartEffect || card.description)) p.push('does nothing');
+  if (!(card.effects?.length || card.onTurnStartEffect || card.triggers?.length || card.description)) p.push('does nothing');
   for (const [path, n] of numbersIn(card)) if (!Number.isFinite(n)) p.push(`${path} not finite`);
   return p;
 }
@@ -131,7 +133,7 @@ describe('cards', () => {
   it('upgrade blocks change something', () => {
     for (const base of baseCards.filter((c) => c.upgrade)) {
       const up = CARDS[`${base.id}+`];
-      const strip = (c: CardDefinition): string => JSON.stringify({ cost: c.cost, effects: c.effects, t: c.onTurnStartEffect, d: c.description });
+      const strip = (c: CardDefinition): string => JSON.stringify({ cost: c.cost, effects: c.effects, t: c.onTurnStartEffect, d: c.description, tr: c.triggers, ex: c.exhaust, tg: c.tags });
       expect(strip(up), `${base.id}: upgrade is identical to the base`).not.toBe(strip(base));
     }
   });
@@ -266,7 +268,7 @@ describe('relics', () => {
     for (const r of relics) {
       expect(nonEmpty(r.name), r.id).toBe(true);
       expect(nonEmpty(relicText(r)), `${r.id} text`).toBe(true);
-      const hooks = [r.onPickup, r.onVictory, r.onCombatStart, r.onTurnStart].filter((h) => h && h.length > 0);
+      const hooks = [r.onPickup, r.onVictory, r.onCombatStart, r.onTurnStart, r.triggers].filter((h) => h && h.length > 0);
       expect(hooks.length, `${r.id} does nothing`).toBeGreaterThan(0);
       for (const eff of [...(r.onPickup ?? []), ...(r.onVictory ?? [])]) {
         expect(['maxHp', 'heal', 'gold']).toContain(eff.kind);

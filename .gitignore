@@ -4,3 +4,4 @@ dist
 *.log
 .sim
 coverage
+.claude/worktrees

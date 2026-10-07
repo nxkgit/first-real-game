@@ -111,7 +111,9 @@ describe('cards registry and upgrades', () => {
       const changed =
         up!.cost !== base.cost ||
         JSON.stringify(up!.effects) !== JSON.stringify(base.effects) ||
-        JSON.stringify(up!.onTurnStartEffect) !== JSON.stringify(base.onTurnStartEffect);
+        JSON.stringify(up!.onTurnStartEffect) !== JSON.stringify(base.onTurnStartEffect) ||
+        JSON.stringify(up!.triggers) !== JSON.stringify(base.triggers) ||
+        up!.exhaust !== base.exhaust;
       expect(changed, `${base.id}+ is identical to ${base.id}`).toBe(true);
     }
   });
@@ -165,13 +167,14 @@ describe('cards registry and upgrades', () => {
     for (const c of Object.values(CARDS)) {
       expect(Number.isInteger(c.cost), c.id).toBe(true);
       expect(c.cost, c.id).toBeGreaterThanOrEqual(0);
-      for (const e of effectsOf(c)) if ('value' in e) expect(e.value, c.id).toBeGreaterThan(0);
+      // a scaled effect may have a base of 0
+      for (const e of effectsOf(c)) if ('value' in e && !('scaling' in e && e.scaling)) expect(e.value, c.id).toBeGreaterThan(0);
     }
   });
 
   it('power cards have something to do (an immediate effect or a turn-start effect)', () => {
     for (const c of Object.values(CARDS)) {
-      if (c.type === 'power') expect(effectsOf(c).length, c.id).toBeGreaterThan(0);
+      if (c.type === 'power') expect(effectsOf(c).length + (c.triggers?.length ?? 0), c.id).toBeGreaterThan(0);
     }
   });
 });
@@ -204,10 +207,11 @@ describe('enemies, relics, events, statuses', () => {
     for (const [id, r] of Object.entries(RELICS)) {
       expect(r.id).toBe(id);
       expect(getRelic(id)).toBe(r);
-      expect(RELIC_POOL).toContain(r);
-      const hooks = [r.onPickup, r.onVictory, r.onCombatStart, r.onTurnStart].filter((h) => h && h.length);
+      const hooks = [r.onPickup, r.onVictory, r.onCombatStart, r.onTurnStart, r.triggers].filter((h) => h && h.length);
       expect(hooks.length, id).toBeGreaterThan(0);
     }
+    // the random-relic pool is a subset of the registry (some relics are kept out of it on purpose)
+    for (const r of RELIC_POOL) expect(RELICS[r.id]).toBe(r);
     expect(() => getRelic('nope')).toThrow();
   });
 
