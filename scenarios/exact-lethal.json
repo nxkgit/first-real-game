@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "name": "Exactly lethal, if played in the right order",
+  "note": "Enemy A has 36 HP and no block. Expose first (Vulnerable), then Opportunist (scales with Vulnerable) and Bolt: 18 + 18 = 36 with exactly 4 energy. Playing Bolt before Expose leaves it at 6 HP. No randomness is involved.",
+  "enemies": [{ "id": "enemy-a", "hp": 36 }],
+  "piles": {
+    "hand": ["bolt", "expose", "opportunist", "strike", "defend"],
+    "draw": ["defend", "defend", "strike", "defend", "strike"]
+  }
+}

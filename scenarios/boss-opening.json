@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "Boss A, opening turn",
+  "note": "The first turn of the boss fight with a chosen hand and a chosen draw order (the first entry is drawn next). Strength Token's +1 Strength is written in by hand because combat-start effects are not run again when a scenario loads.",
+  "rng": { "seed": 1234 },
+  "player": { "hp": 60, "maxHp": 60, "statuses": { "strength": 1 } },
+  "relics": ["strength-token"],
+  "enemies": [{ "id": "boss-a" }],
+  "piles": {
+    "hand": ["strike", "strike", "defend", "bolt", "focus"],
+    "draw": ["defend", "defend", "strike", "defend", "strike", "bolt", "defend", "strike"]
+  }
+}

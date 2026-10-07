@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "Cull with Exhaust Engine",
+  "note": "Cull exhausts one random card from the hand (the pick comes from the fight's random stream at rng.position) and then exhausts itself; Exhaust Engine, already in play, draws a card for each exhaust. Loading this always gives the same pick.",
+  "rng": { "seed": 4242, "position": 99999 },
+  "enemies": [{ "id": "enemy-b" }],
+  "piles": {
+    "hand": ["cull", "strike", "defend", "bolt", "jab", "single-use-strike"],
+    "draw": ["defend", "strike", "exhaust-payoff", "defend"],
+    "powers": ["exhaust-engine"]
+  }
+}
