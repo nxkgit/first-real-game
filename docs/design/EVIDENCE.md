@@ -112,7 +112,7 @@ One removal (taking the best card out) is worth 0.92-2.55 HP/fight in mid decks 
 | exhaust-token (3 block per exhaust) | 0 | 0 | 0 | -1.15 [-1.25, -1.04] | |
 | kill-token (draw on a kill) | +0.11 | +0.20 | -0.01 | -0.11 | |
 
-(The Strength Token costing HP on the starter deck is a property of the `smart` bot, which spends the strength on speed; `greedy` shows -0.7 HP.)
+(The Strength Token costing HP on the starter deck is a property of the `smart` bot, which spends the strength on speed; `greedy` shows -2.07 HP there, -1.08 mid, -0.88 late.)
 
 *Whole act, starting with the relic* (upper bound on its value; paired runs):
 
@@ -128,7 +128,20 @@ One removal (taking the best card out) is worth 0.92-2.55 HP/fight in mid decks 
 
 With `greedy` (already winning 92%): strength +3.0, vitality +6.0, guard +7.3, recovery +7.0, draw +6.0 points (ceiling effect).
 
-HPBUDGET
+*The conversion: how many win points is one HP of budget?* (`relics` also runs this; starting max HP changed in memory, smart bot, 300 paired runs):
+
+| starting max HP | win rate | win vs 60 (paired) |
+|---|---|---|
+| 40 (-20) | 26.0% | -28.0 [-33.3, -22.7] |
+| 50 (-10) | 40.3% | -13.7 [-17.9, -9.5] |
+| 55 (-5) | 48.3% | -5.7 [-8.9, -2.5] |
+| **60** | 54.0% | base |
+| 65 (+5) | 63.0% | +9.0 [+5.5, +12.5] |
+| 70 (+10) | 68.7% | +14.7 [+10.7, +18.7] |
+| 80 (+20) | 80.3% | +26.3 [+21.3, +31.4] |
+| 90 (+30) | 87.7% | +33.7 [+28.2, +39.1] |
+
+Near the current 54% one HP of budget is worth about **1.3-1.8 win points** (diminishing above +20). The relic results line up with it: Guard and Recovery (~30 HP) +31 and +35 points are about what +25 to +30 max HP gives; Strength (~6 HP) +4.7 is about +5 HP.
 
 *HP-equivalents per act* (per-fight value x ~8.6 fights on a path): guard ~30 HP, recovery 4 x ~7.6 won fights = ~30 HP, vitality 10 HP, strength ~6 HP, draw 1-2 HP (about 13 in synergy decks), exhaust 0 (10 in an exhaust deck).
 
@@ -226,7 +239,7 @@ Whole-act policies (smart / greedy win rate): always heal 54.3% / 92.3% (equal t
 
 ## 6. Relic/event/shop decisions in one currency
 
-Put together, the same HP currency prices most things (smart bot; one HP of budget is about 1-1.5 win points near a 50% win rate):
+Put together, the same HP currency prices most things (smart bot; one HP of budget is about 1.3-1.8 win points near a 50% win rate):
 
 | item | HP-equivalent over an act |
 |---|---|
@@ -239,7 +252,7 @@ Put together, the same HP currency prices most things (smart bot; one HP of budg
 | 25 gold | ~0 now; up to ~one card pick if a shop is certain and P <= 30 |
 | event B rest | 15; event D | +8 max HP ~ 10-12 |
 
-HPBUDGETNOTE
+Conversion used: 1 HP of budget = 1.3-1.8 win points near a 50% win rate (`relics`, HP-budget table in section 2).
 
 ## 7. The pressure curve: HP lost per fight by floor
 
@@ -284,7 +297,7 @@ Tiers: normal 7.6 HP and 4.2 turns (in band); elite 12.8 HP, 5.9 turns (bottom o
 | 20 | -3.05 [-3.52, -2.58] | +1.26 [+0.79, +1.73] |
 | 30 | -3.56 [-4.06, -3.05] | +3.25 [+2.75, +3.76] |
 
-Add and remove together (smart; cards added x basic cards removed): +3 cards: -1.47 with none removed, -0.96 with 2 removed, -0.42 with 4 removed; +10 cards: -3.36 / -3.00 / -2.93. So removing basics after adding cards *costs* `smart` a little; the reverse holds for the card-quality-sensitive `greedy` (`decksize-greedy.md`). In the earlier tool (`picks`), removing the *best single* card helps both bots 0.9-2.6 HP per fight, so it is *which* card leaves that matters.
+Add and remove together (smart; cards added x basic cards removed): +3 cards: -1.47 with none removed, -0.96 with 2 removed, -0.42 with 4 removed; +10 cards: -3.36 / -3.00 / -2.93. So removing basics after adding cards *costs* `smart` a little. For `greedy` removing 2 basics from the plain starter helps (-1.26) but removing 4 hurts (+1.91), and adding random cards mostly hurts it (+10 cards: +1.72 / +2.77 / +3.74 with 0 / 2 / 4 basics removed): its results are non-monotone, which is itself a sign the answer depends on how the deck is played (`decksize-greedy.md`). In the earlier tool (`picks`), removing the *best single* card helps both bots 0.9-2.6 HP per fight, so it is *which* card leaves that matters.
 
 **(c) Knobs.** Which cards are removed and what is added (these are *random reward cards*, not a drafted deck, so drafted decks do better), and the bot's play. **(d) Cannot say:** consistency, repetition, "the deck I built", variance. **(e) Consequences.** If thin decks are a design goal, removal prices must be tuned against a player who plays well, and the current bots cannot tell the owner whether thinning is net-good. This is the clearest case for a real playtest.
 
