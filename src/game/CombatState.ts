@@ -18,7 +18,10 @@ export interface DamageResult {
 export interface CombatEventMap {
   turnStarted: { isFirstTurn: boolean };
   cardPlayed: { card: CardInstance };
-  handChanged: Record<string, never>;
+  /** Snapshot of the hand and pile sizes at the moment of the change. Listeners that animate
+   *  later (the scene replays events in sequence) must use this, not the live deck, which may
+   *  already have moved on — e.g. the next turn's draw happens before the discard is animated. */
+  handChanged: { hand: CardInstance[]; drawPile: number; discardPile: number };
   damageDealt: { target: 'enemy' | 'player' } & DamageResult;
   blockGained: { target: 'enemy' | 'player'; amount: number };
   enemyTurnStarted: Record<string, never>;
@@ -97,7 +100,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     }
 
     this.pushLog(`Played ${handCard.definition.name}.`);
-    this.emit('handChanged', {});
+    this.emitHandChanged();
     this.checkWinLoss();
     return true;
   }
@@ -105,7 +108,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   endPlayerTurn(): void {
     if (this.phase !== 'playerTurn') return;
     this.deck.discardHand();
-    this.emit('handChanged', {});
+    this.emitHandChanged();
     this.runEnemyTurn();
   }
 
@@ -120,7 +123,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       }
     }
     this.pushLog(isFirstTurn ? 'Combat start.' : 'Your turn.');
-    this.emit('handChanged', {});
+    this.emitHandChanged();
     this.emit('turnStarted', { isFirstTurn });
   }
 
@@ -154,7 +157,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       this.gainPlayerBlock(effect.value);
     } else if (effect.kind === 'draw' && target === 'self') {
       this.deck.draw(effect.value);
-      this.emit('handChanged', {});
+      this.emitHandChanged();
     }
   }
 
@@ -196,6 +199,14 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       this.pushLog('Defeat.');
       this.emit('combatEnded', { result: 'lost' });
     }
+  }
+
+  private emitHandChanged(): void {
+    this.emit('handChanged', {
+      hand: [...this.deck.hand],
+      drawPile: this.deck.drawPile.length,
+      discardPile: this.deck.discardPile.length,
+    });
   }
 
   private pushLog(message: string): void {

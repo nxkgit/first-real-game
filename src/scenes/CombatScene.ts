@@ -88,6 +88,8 @@ export class CombatScene extends Phaser.Scene {
   private playerHpText!: Phaser.GameObjects.Text;
   private playerBlockIcon!: Phaser.GameObjects.Polygon;
   private playerBlockText!: Phaser.GameObjects.Text;
+  /** Block currently shown, which can lag the live value while animations replay. */
+  private shownPlayerBlock = 0;
   private energyText!: Phaser.GameObjects.Text;
   private statusText!: Phaser.GameObjects.Text;
   private drawCountText!: Phaser.GameObjects.Text;
@@ -118,6 +120,7 @@ export class CombatScene extends Phaser.Scene {
     this.sequencer = null;
     this.targeting = null;
     this.inputLocked = false;
+    this.shownPlayerBlock = 0;
   }
 
   create(): void {
@@ -249,9 +252,9 @@ export class CombatScene extends Phaser.Scene {
     );
     add(235, 360, 44, 44, () => `Energy: spent to play cards. Refills to ${c().maxEnergy} each turn.`);
     add(DRAW_PILE_POS.x, DRAW_PILE_POS.y, 54, 76, () =>
-      `Draw pile: ${c().deck.drawPile.length} cards. When it runs out, the discard pile is shuffled back in.`
+      `Draw pile: ${this.drawCountText.text} cards. When it runs out, the discard pile is shuffled back in.`
     );
-    add(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, 54, 76, () => `Discard pile: ${c().deck.discardPile.length} cards.`);
+    add(DISCARD_PILE_POS.x, DISCARD_PILE_POS.y, 54, 76, () => `Discard pile: ${this.discardCountText.text} cards.`);
   }
 
   /** A simple vector wizard: robe, pointed hood, and a glowing staff. Facing right. */
@@ -559,7 +562,7 @@ export class CombatScene extends Phaser.Scene {
 
   private wireCombatEvents(): void {
     this.combat.on('cardPlayed', ({ card }) => this.handleCardPlayed(card));
-    this.combat.on('handChanged', () => this.queue(() => this.syncHand()));
+    this.combat.on('handChanged', (snapshot) => this.queue(() => this.syncHand(snapshot)));
     this.combat.on('turnStarted', ({ isFirstTurn }) =>
       this.queue(async () => {
         this.refreshStatusBars();
@@ -674,14 +677,12 @@ export class CombatScene extends Phaser.Scene {
     if (this.combat.phase === 'playerTurn') this.lockInput(false);
   }
 
-  private updatePileCounts(): void {
-    this.drawCountText.setText(`${this.combat.deck.drawPile.length}`);
-    this.discardCountText.setText(`${this.combat.deck.discardPile.length}`);
-  }
-
-  private syncHand(): Promise<void> {
-    this.updatePileCounts();
-    const hand = this.combat.deck.hand;
+  /** Lays the hand out to match `snapshot` — the hand as it was when that change happened, not
+   *  the live deck, which by now may be further along (see CombatEventMap['handChanged']). */
+  private syncHand(snapshot: CombatEventMap['handChanged']): Promise<void> {
+    this.drawCountText.setText(`${snapshot.drawPile}`);
+    this.discardCountText.setText(`${snapshot.discardPile}`);
+    const hand = snapshot.hand;
     const totalWidth = hand.length * (CARD_WIDTH + 10);
     const startX = 400 - totalWidth / 2 + CARD_WIDTH / 2;
 
@@ -923,8 +924,21 @@ export class CombatScene extends Phaser.Scene {
       await this.tweenPromise({ targets: this.enemyContainer, scale: 1, duration: 160, ease: 'Sine.easeIn' });
     }
 
-    this.refreshStatusBars();
+    // Show only what this move changed. The rules have already started your next turn (energy
+    // refilled, block reset, cards drawn); those appear when the turn-start events replay next.
+    if (damage) {
+      this.playerHpText.setText(`${damage.remainingHp}/${this.combat.playerMaxHp}`);
+      this.setPlayerBlockDisplay(Math.max(0, this.shownPlayerBlock - damage.absorbed));
+    }
+    this.enemyBlockIcon.setVisible(this.combat.enemyBlock > 0);
+    this.enemyBlockText.setText(this.combat.enemyBlock > 0 ? `${this.combat.enemyBlock}` : '');
     if (this.combat.phase === 'playerTurn') this.pulseIntent(this.combat.currentEnemyMove);
+  }
+
+  private setPlayerBlockDisplay(block: number): void {
+    this.shownPlayerBlock = block;
+    this.playerBlockIcon.setVisible(block > 0);
+    this.playerBlockText.setText(block > 0 ? `${block}` : '');
   }
 
   private pulseIntent(move: EnemyMove): void {
@@ -1035,11 +1049,9 @@ export class CombatScene extends Phaser.Scene {
     this.enemyBlockText.setText(c.enemyBlock > 0 ? `${c.enemyBlock}` : '');
 
     this.playerHpText.setText(`${c.playerHp}/${c.playerMaxHp}`);
-    this.playerBlockIcon.setVisible(c.playerBlock > 0);
-    this.playerBlockText.setText(c.playerBlock > 0 ? `${c.playerBlock}` : '');
+    this.setPlayerBlockDisplay(c.playerBlock);
 
     this.energyText.setText(`${c.energy}/${c.maxEnergy}`);
-    this.updatePileCounts();
 
     this.statusText.setText(c.log.slice(-2).map((e) => e.message).join('\n'));
 

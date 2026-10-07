@@ -132,6 +132,37 @@ describe('CombatState', () => {
     expect(combat.enemyHp).toBe(28);
   });
 
+  it('ending the turn runs discard, then the enemy move, then the draw, each with its own hand snapshot', () => {
+    const combat = new CombatState(Array(12).fill(GUARD), enemy());
+    const events: string[] = [];
+    combat.on('handChanged', ({ hand, drawPile, discardPile }) =>
+      events.push(`hand:${hand.length} draw:${drawPile} discard:${discardPile}`)
+    );
+    combat.on('enemyTurnStarted', () => events.push('enemyTurn'));
+    combat.on('enemyMoveResolved', ({ move }) => events.push(`enemy:${move.kind}`));
+    combat.on('turnStarted', () => events.push('yourTurn'));
+    combat.start();
+    events.length = 0;
+
+    combat.endPlayerTurn();
+    expect(events).toEqual([
+      'hand:0 draw:7 discard:5', // your hand is discarded first
+      'enemyTurn',
+      'enemy:attack',
+      'hand:5 draw:2 discard:5', // only then is the next hand drawn
+      'yourTurn',
+    ]);
+  });
+
+  it('hand snapshots are copies, unaffected by later changes to the live hand', () => {
+    const combat = new CombatState(Array(12).fill(GUARD), enemy());
+    const snapshots: CardInstance[][] = [];
+    combat.on('handChanged', ({ hand }) => snapshots.push(hand));
+    combat.start();
+    combat.endPlayerTurn();
+    expect(snapshots.map((h) => h.length)).toEqual([5, 0, 5]);
+  });
+
   it('cycles through the enemy move pattern and exposes the upcoming move', () => {
     const combat = started(
       Array(10).fill(GUARD),
