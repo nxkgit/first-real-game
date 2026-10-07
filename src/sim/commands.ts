@@ -25,6 +25,7 @@ import type { DeckSet } from './suites';
 import { buildStarterDeck, getCard } from '../data/cards';
 import type { CardDefinition } from '../game/types';
 import type { CardSet } from './experiments';
+import { EVIDENCE_COMMANDS, EVIDENCE_USAGE, runEvidenceCommand } from './evidenceCommands';
 
 /**
  * The balance command line, minus the file system: `runCommand` turns a subcommand and its flags
@@ -44,7 +45,7 @@ export interface CommandResult {
   defaultOut?: string;
 }
 
-export const COMMANDS = ['cards', 'pairs', 'ladder', 'deck', 'combos', 'loops', 'dominance', 'tweak', 'ablate', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench'] as const;
+export const COMMANDS = ['cards', 'pairs', 'ladder', 'deck', 'combos', 'loops', 'dominance', 'tweak', 'ablate', 'lengths', 'drafts', 'outliers', 'report', 'baseline', 'check', 'bench', ...EVIDENCE_COMMANDS] as const;
 export type Command = (typeof COMMANDS)[number];
 
 export const BASELINE_PATH = 'balance/baselines/baseline.json';
@@ -89,7 +90,9 @@ Common flags
   --note text      baseline: replace the note stored in the baseline (state date, commit and what the content is)
   --tweak spec     run any command with in-memory card changes: card:path=value,path=value;card2:path=value (nothing on disk changes)
   --out base       write base.md and base.json   (baseline: the JSON path; check: the Markdown path)
-  --json           print JSON instead of Markdown`;
+  --json           print JSON instead of Markdown
+
+${EVIDENCE_USAGE}`;
 
 const num = (flags: Record<string, string>, name: string, fallback: number): number => {
   const v = flags[name];
@@ -196,6 +199,7 @@ export function runCommand(command: string, flags: Record<string, string>, io: C
 }
 
 function runCommandInner(command: string, flags: Record<string, string>, io: CommandIO, today: string): CommandResult {
+  if ((EVIDENCE_COMMANDS as readonly string[]).includes(command)) return runEvidenceCommand(command, flags);
   const skills = parseSkills(flags.skills);
   switch (command) {
     case 'cards': {

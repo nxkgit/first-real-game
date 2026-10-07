@@ -1,7 +1,7 @@
 import type { CombatState } from '../game/CombatState';
 import { Rng } from '../game/rng';
 import type { CardInstance } from '../game/types';
-import { HAND_SIZE } from '../data/tunables';
+import { EMPOWERED_DAMAGE_MULT, HAND_SIZE } from '../data/tunables';
 import { playBotTurn } from './bot';
 import { reconstruct } from './fightCore';
 import { smartChoices, threat } from './smart';
@@ -133,6 +133,39 @@ function outputGuess(combat: CombatState): number {
   return Math.max(6, perCard * Math.min(HAND_SIZE, cards.length) * 0.7);
 }
 
+/** Scales the stored-value term of evaluate() (0 switches it off). PROVISIONAL: a bot-tuning knob, not a game number. */
+export const STORED_VALUE_WEIGHT = 1;
+/** How many further turns the player's Strength is assumed to keep paying out. */
+export const STORED_HORIZON = 3;
+
+/**
+ * What the player is HOLDING that HP and enemy HP do not show: Strength (extra damage on every hit
+ * for the rest of the fight) and Empowered (the next attacks do more). Converted to HP-equivalents
+ * through what one point of enemy HP is worth right now (`costPerHp`), so a Strength engine is
+ * worth more against a big, dangerous enemy than a small one. Public state only.
+ */
+export function storedValue(combat: CombatState, costPerHp: number): number {
+  const cards = [...combat.deck.hand, ...combat.deck.drawPile, ...combat.deck.discardPile];
+  if (cards.length === 0 || costPerHp <= 0) return 0;
+  let hits = 0;
+  let damage = 0;
+  for (const c of cards) {
+    for (const e of c.definition.effects ?? []) {
+      if (e.kind === 'damage') {
+        hits++;
+        damage += e.value;
+      }
+    }
+  }
+  if (hits === 0) return 0;
+  const hitsPerTurn = (hits / cards.length) * Math.min(HAND_SIZE, cards.length) * 0.7;
+  const avgHit = damage / hits;
+  const strength = Math.max(0, combat.player.statuses.strength ?? 0);
+  const empowered = Math.max(0, combat.player.statuses.empowered ?? 0);
+  const extra = strength * hitsPerTurn * STORED_HORIZON + empowered * avgHit * (EMPOWERED_DAMAGE_MULT - 1);
+  return STORED_VALUE_WEIGHT * extra * costPerHp;
+}
+
 /**
  * How good a position is, in HP-equivalents: the player's HP, minus what the living enemies are
  * still going to cost (their HP, converted to turns of fighting at our damage rate, times the
@@ -148,7 +181,8 @@ export function evaluate(combat: CombatState): number {
   }
   if (combat.phase === 'won') return 1000 + combat.player.hp - combat.turnNumber * 0.1;
   if (combat.phase === 'lost') return -1000 - cost;
-  return combat.player.hp - cost;
+  const totalHp = living.reduce((n, e) => n + e.hp, 0);
+  return combat.player.hp - cost + storedValue(combat, totalHp > 0 ? cost / totalHp : 0);
 }
 
 function rollout(combat: CombatState, turns: number): number {

@@ -14,6 +14,7 @@
     "balance": "vite build --ssr src/sim/balanceCli.ts --outDir .sim/balance --emptyOutDir --logLevel warn && node .sim/balance/balanceCli.js",
     "balance:baseline": "npm run balance -- baseline",
     "balance:check": "npm run balance -- check",
+    "balance:evidence": "npm run balance -- evidence --out balance/reports/design-evidence/all",
     "balance:report": "npm run balance -- report --out balance/reports/sample",
     "content:check": "vite build --ssr src/content/checkCli.ts --outDir .sim/content --emptyOutDir --logLevel warn && node .sim/content/checkCli.js",
     "e2e": "playwright test",

@@ -1,0 +1,115 @@
+{
+ "options": {
+  "runs": 300,
+  "baseSeed": 1,
+  "skill": "greedy"
+ },
+ "rows": [
+  {
+   "name": "every draftable card offered, random pick",
+   "win": {
+    "p": 0.463333,
+    "lo": 0.407726,
+    "hi": 0.519868
+   },
+   "dWin": null,
+   "floor": 11.703333,
+   "cost": {
+    "mean": 18.482917,
+    "lo": 17.969449,
+    "hi": 18.996384
+   },
+   "dCost": null,
+   "deck": 17.59,
+   "goldLeft": 11.133333,
+   "verdict": null
+  },
+  {
+   "name": "every draftable card offered, best by trial fights",
+   "win": {
+    "p": 0.846667,
+    "lo": 0.801534,
+    "hi": 0.883034
+   },
+   "dWin": {
+    "mean": 0.383333,
+    "lo": 0.324466,
+    "hi": 0.4422
+   },
+   "floor": 12.623333,
+   "cost": {
+    "mean": 10.502778,
+    "lo": 10.029845,
+    "hi": 10.97571
+   },
+   "dCost": {
+    "mean": -7.980139,
+    "lo": -8.513471,
+    "hi": -7.446807
+   },
+   "deck": 18.173333,
+   "goldLeft": 11.066667,
+   "verdict": "better"
+  },
+  {
+   "name": "every draftable card offered, synergy-seeking (trial + mechanism overlap)",
+   "win": {
+    "p": 0.843333,
+    "lo": 0.797892,
+    "hi": 0.880093
+   },
+   "dWin": {
+    "mean": 0.38,
+    "lo": 0.321219,
+    "hi": 0.438781
+   },
+   "floor": 12.616667,
+   "cost": {
+    "mean": 10.503472,
+    "lo": 10.028405,
+    "hi": 10.978539
+   },
+   "dCost": {
+    "mean": -7.979444,
+    "lo": -8.514438,
+    "hi": -7.444451
+   },
+   "deck": 18.17,
+   "goldLeft": 11.066667,
+   "verdict": "better"
+  },
+  {
+   "name": "reward pool only, best by trial fights (the live game's cards)",
+   "win": {
+    "p": 0.913333,
+    "lo": 0.876044,
+    "hi": 0.940171
+   },
+   "dWin": {
+    "mean": 0.45,
+    "lo": 0.387146,
+    "hi": 0.512854
+   },
+   "floor": 12.853333,
+   "cost": {
+    "mean": 11.342639,
+    "lo": 10.99423,
+    "hi": 11.691048
+   },
+   "dCost": {
+    "mean": -7.140278,
+    "lo": -7.732547,
+    "hi": -6.548009
+   },
+   "deck": 18.39,
+   "goldLeft": 11.133333,
+   "verdict": "better"
+  }
+ ],
+ "concentration": [
+  1.803333,
+  1.826667,
+  1.916667,
+  1.256667
+ ]
+}

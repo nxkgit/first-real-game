@@ -1,0 +1,121 @@
+{
+ "options": {
+  "seeds": 40,
+  "baseSeed": 1,
+  "skill": "greedy"
+ },
+ "rows": [
+  {
+   "card": "strike",
+   "dHpLost": -0.650926,
+   "lo": -0.815191,
+   "hi": -0.486661,
+   "dWin": 0.000926,
+   "addHpLost": null
+  },
+  {
+   "card": "defend",
+   "dHpLost": -1.722222,
+   "lo": -1.890505,
+   "hi": -1.55394,
+   "dWin": 0,
+   "addHpLost": null
+  },
+  {
+   "card": "bolt",
+   "dHpLost": -0.8,
+   "lo": -0.955729,
+   "hi": -0.644271,
+   "dWin": 0.000926,
+   "addHpLost": null
+  },
+  {
+   "card": "focus",
+   "dHpLost": -1.061111,
+   "lo": -1.2337,
+   "hi": -0.888522,
+   "dWin": 0,
+   "addHpLost": null
+  },
+  {
+   "card": "jab",
+   "dHpLost": -0.518519,
+   "lo": -0.640768,
+   "hi": -0.396269,
+   "dWin": 0,
+   "addHpLost": -2.216667
+  },
+  {
+   "card": "guarded-strike",
+   "dHpLost": -1.102778,
+   "lo": -1.270304,
+   "hi": -0.935252,
+   "dWin": 0,
+   "addHpLost": -2.362037
+  },
+  {
+   "card": "heavy-hit",
+   "dHpLost": 0.560185,
+   "lo": 0.257144,
+   "hi": 0.863226,
+   "dWin": 0,
+   "addHpLost": -1.872222
+  },
+  {
+   "card": "big-block",
+   "dHpLost": -0.688889,
+   "lo": -0.823948,
+   "hi": -0.55383,
+   "dWin": 0.000926,
+   "addHpLost": -4.447222
+  },
+  {
+   "card": "quick-draw",
+   "dHpLost": 1.061111,
+   "lo": 0.682468,
+   "hi": 1.439754,
+   "dWin": -0.00463,
+   "addHpLost": 1.063889
+  },
+  {
+   "card": "fortify",
+   "dHpLost": -1.419444,
+   "lo": -1.606594,
+   "hi": -1.232294,
+   "dWin": 0.000926,
+   "addHpLost": 0.359722
+  },
+  {
+   "card": "weaken",
+   "dHpLost": -0.47037,
+   "lo": -0.564451,
+   "hi": -0.376289,
+   "dWin": 0.000926,
+   "addHpLost": -1.616667
+  },
+  {
+   "card": "expose",
+   "dHpLost": -0.206481,
+   "lo": -0.299539,
+   "hi": -0.113424,
+   "dWin": 0,
+   "addHpLost": 0.234722
+  },
+  {
+   "card": "sunder",
+   "dHpLost": -1.234259,
+   "lo": -1.439109,
+   "hi": -1.02941,
+   "dWin": 0,
+   "addHpLost": 2.836111
+  },
+  {
+   "card": "strengthen",
+   "dHpLost": -0.6,
+   "lo": -0.735324,
+   "hi": -0.464676,
+   "dWin": 0,
+   "addHpLost": 0.425
+  }
+ ]
+}

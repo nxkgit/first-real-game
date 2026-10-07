@@ -1,0 +1,73 @@
+{
+ "options": {
+  "seeds": 20,
+  "baseSeed": 1,
+  "skill": "greedy",
+  "samples": 8
+ },
+ "rows": [
+  {
+   "size": 6,
+   "hpLost": 8.022222,
+   "dHpLost": -2.972222,
+   "dWin": 0,
+   "dTurns": 5.95
+  },
+  {
+   "size": 8,
+   "hpLost": 6.222222,
+   "dHpLost": -4.772222,
+   "dWin": 0,
+   "dTurns": 0.977778
+  },
+  {
+   "size": 10,
+   "hpLost": 10.994444,
+   "dHpLost": 0,
+   "dWin": 0,
+   "dTurns": 0
+  },
+  {
+   "size": 12,
+   "hpLost": 10.947917,
+   "dHpLost": -0.046528,
+   "dWin": -0.004167,
+   "dTurns": -0.7125
+  },
+  {
+   "size": 14,
+   "hpLost": 9.729861,
+   "dHpLost": -1.264583,
+   "dWin": -0.000694,
+   "dTurns": -0.677778
+  },
+  {
+   "size": 16,
+   "hpLost": 11.134028,
+   "dHpLost": 0.139583,
+   "dWin": 0,
+   "dTurns": -0.817361
+  },
+  {
+   "size": 20,
+   "hpLost": 12.254167,
+   "dHpLost": 1.259722,
+   "dWin": 0,
+   "dTurns": -0.899306
+  },
+  {
+   "size": 25,
+   "hpLost": 12.897222,
+   "dHpLost": 1.902778,
+   "dWin": 0,
+   "dTurns": -0.66875
+  },
+  {
+   "size": 30,
+   "hpLost": 14.249306,
+   "dHpLost": 3.254861,
+   "dWin": 0,
+   "dTurns": -0.798611
+  }
+ ]
+}

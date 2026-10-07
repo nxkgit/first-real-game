@@ -1,0 +1,342 @@
+{
+ "options": {
+  "runs": 300,
+  "baseSeed": 1,
+  "skill": "greedy",
+  "heals": [
+   0.2,
+   0.3,
+   0.4,
+   0.5
+  ]
+ },
+ "byFloor": [
+  {
+   "floor": 5,
+   "n": 29,
+   "missing": 12.37931,
+   "heal": 11.758621,
+   "bestUpgrade": 1.895115,
+   "avgUpgrade": 0.955268,
+   "fightsLeft": 4.908364
+  },
+  {
+   "floor": 6,
+   "n": 23,
+   "missing": 14.347826,
+   "heal": 12.956522,
+   "bestUpgrade": 1.626812,
+   "avgUpgrade": 0.813675,
+   "fightsLeft": 4.296382
+  },
+  {
+   "floor": 7,
+   "n": 17,
+   "missing": 16,
+   "heal": 12.352941,
+   "bestUpgrade": 1.392157,
+   "avgUpgrade": 0.540235,
+   "fightsLeft": 3.612392
+  },
+  {
+   "floor": 8,
+   "n": 32,
+   "missing": 22.53125,
+   "heal": 14.90625,
+   "bestUpgrade": 1.165365,
+   "avgUpgrade": 0.442284,
+   "fightsLeft": 2.967097
+  },
+  {
+   "floor": 9,
+   "n": 20,
+   "missing": 27.7,
+   "heal": 16.15,
+   "bestUpgrade": 1.304167,
+   "avgUpgrade": 0.483703,
+   "fightsLeft": 2.323134
+  },
+  {
+   "floor": 10,
+   "n": 30,
+   "missing": 23.533333,
+   "heal": 15.3,
+   "bestUpgrade": 1.127778,
+   "avgUpgrade": 0.38626,
+   "fightsLeft": 1.686296
+  },
+  {
+   "floor": 12,
+   "n": 283,
+   "missing": 27.084806,
+   "heal": 16.045936,
+   "bestUpgrade": 1.026943,
+   "avgUpgrade": 0.330788,
+   "fightsLeft": 1
+  }
+ ],
+ "rows": [
+  {
+   "name": "smart (heal under 70% HP, else upgrade a random card)",
+   "win": {
+    "p": 0.923333,
+    "lo": 0.88759,
+    "hi": 0.948372
+   },
+   "dWin": null,
+   "floor": 12.8,
+   "cost": {
+    "mean": 6.506528,
+    "lo": 6.208069,
+    "hi": 6.804987
+   },
+   "dCost": null,
+   "deck": 18.33,
+   "goldLeft": 11.3,
+   "verdict": null
+  },
+  {
+   "name": "always heal",
+   "win": {
+    "p": 0.923333,
+    "lo": 0.88759,
+    "hi": 0.948372
+   },
+   "dWin": {
+    "mean": 0,
+    "lo": 0,
+    "hi": 0
+   },
+   "floor": 12.8,
+   "cost": {
+    "mean": 6.750833,
+    "lo": 6.458919,
+    "hi": 7.042748
+   },
+   "dCost": {
+    "mean": 0.244306,
+    "lo": 0.151043,
+    "hi": 0.337568
+   },
+   "deck": 18.313333,
+   "goldLeft": 10.9,
+   "verdict": "negligible"
+  },
+  {
+   "name": "always upgrade a random card",
+   "win": {
+    "p": 0.78,
+    "lo": 0.729747,
+    "hi": 0.823173
+   },
+   "dWin": {
+    "mean": -0.143333,
+    "lo": -0.183052,
+    "hi": -0.103615
+   },
+   "floor": 12.73,
+   "cost": {
+    "mean": 6.221667,
+    "lo": 5.927861,
+    "hi": 6.515472
+   },
+   "dCost": {
+    "mean": -0.284861,
+    "lo": -0.381494,
+    "hi": -0.188229
+   },
+   "deck": 18.253333,
+   "goldLeft": 12.1,
+   "verdict": "worse"
+  },
+  {
+   "name": "always upgrade the best card",
+   "win": {
+    "p": 0.806667,
+    "lo": 0.758216,
+    "hi": 0.847363
+   },
+   "dWin": {
+    "mean": -0.116667,
+    "lo": -0.153054,
+    "hi": -0.08028
+   },
+   "floor": 12.72,
+   "cost": {
+    "mean": 5.938194,
+    "lo": 5.661797,
+    "hi": 6.214592
+   },
+   "dCost": {
+    "mean": -0.568333,
+    "lo": -0.6936,
+    "hi": -0.443067
+   },
+   "deck": 18.253333,
+   "goldLeft": 12.233333,
+   "verdict": "worse"
+  },
+  {
+   "name": "heal under 50% HP, else upgrade the best card",
+   "win": {
+    "p": 0.916667,
+    "lo": 0.879878,
+    "hi": 0.942919
+   },
+   "dWin": {
+    "mean": -0.006667,
+    "lo": -0.015891,
+    "hi": 0.002557
+   },
+   "floor": 12.786667,
+   "cost": {
+    "mean": 6.22875,
+    "lo": 5.929658,
+    "hi": 6.527842
+   },
+   "dCost": {
+    "mean": -0.277778,
+    "lo": -0.389133,
+    "hi": -0.166422
+   },
+   "deck": 18.296667,
+   "goldLeft": 12.5,
+   "verdict": "negligible"
+  },
+  {
+   "name": "heal under 80% HP, else upgrade the best card",
+   "win": {
+    "p": 0.923333,
+    "lo": 0.88759,
+    "hi": 0.948372
+   },
+   "dWin": {
+    "mean": 0,
+    "lo": 0,
+    "hi": 0
+   },
+   "floor": 12.8,
+   "cost": {
+    "mean": 6.53625,
+    "lo": 6.238267,
+    "hi": 6.834233
+   },
+   "dCost": {
+    "mean": 0.029722,
+    "lo": -0.072447,
+    "hi": 0.131891
+   },
+   "deck": 18.32,
+   "goldLeft": 11.466667,
+   "verdict": "negligible"
+  },
+  {
+   "name": "smart rest with heal fraction 0.2",
+   "win": {
+    "p": 0.906667,
+    "lo": 0.868415,
+    "hi": 0.934636
+   },
+   "dWin": {
+    "mean": -0.016667,
+    "lo": -0.031177,
+    "hi": -0.002156
+   },
+   "floor": 12.786667,
+   "cost": {
+    "mean": 6.509583,
+    "lo": 6.211882,
+    "hi": 6.807285
+   },
+   "dCost": {
+    "mean": 0.003056,
+    "lo": -0.008365,
+    "hi": 0.014477
+   },
+   "deck": 18.323333,
+   "goldLeft": 11.3,
+   "verdict": "worse"
+  },
+  {
+   "name": "smart rest with heal fraction 0.3",
+   "win": {
+    "p": 0.923333,
+    "lo": 0.88759,
+    "hi": 0.948372
+   },
+   "dWin": {
+    "mean": 0,
+    "lo": 0,
+    "hi": 0
+   },
+   "floor": 12.8,
+   "cost": {
+    "mean": 6.506528,
+    "lo": 6.208069,
+    "hi": 6.804987
+   },
+   "dCost": {
+    "mean": 0,
+    "lo": 0,
+    "hi": 0
+   },
+   "deck": 18.33,
+   "goldLeft": 11.3,
+   "verdict": "negligible"
+  },
+  {
+   "name": "smart rest with heal fraction 0.4",
+   "win": {
+    "p": 0.936667,
+    "lo": 0.903209,
+    "hi": 0.959083
+   },
+   "dWin": {
+    "mean": 0.013333,
+    "lo": 0.000333,
+    "hi": 0.026334
+   },
+   "floor": 12.806667,
+   "cost": {
+    "mean": 6.500833,
+    "lo": 6.201642,
+    "hi": 6.800025
+   },
+   "dCost": {
+    "mean": -0.005694,
+    "lo": -0.024299,
+    "hi": 0.01291
+   },
+   "deck": 18.34,
+   "goldLeft": 11.3,
+   "verdict": "better"
+  },
+  {
+   "name": "smart rest with heal fraction 0.5",
+   "win": {
+    "p": 0.94,
+    "lo": 0.907161,
+    "hi": 0.961714
+   },
+   "dWin": {
+    "mean": 0.016667,
+    "lo": 0.002156,
+    "hi": 0.031177
+   },
+   "floor": 12.806667,
+   "cost": {
+    "mean": 6.491389,
+    "lo": 6.192023,
+    "hi": 6.790755
+   },
+   "dCost": {
+    "mean": -0.015139,
+    "lo": -0.036577,
+    "hi": 0.006299
+   },
+   "deck": 18.336667,
+   "goldLeft": 11.3,
+   "verdict": "better"
+  }
+ ]
+}

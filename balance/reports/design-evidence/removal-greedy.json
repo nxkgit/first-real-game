@@ -1,0 +1,195 @@
+{
+ "options": {
+  "runs": 300,
+  "baseSeed": 1,
+  "skill": "greedy",
+  "removalPrices": [
+   25,
+   50,
+   75
+  ]
+ },
+ "rows": [
+  {
+   "name": "gold + shops, no removal service",
+   "win": {
+    "p": 0.81,
+    "lo": 0.761796,
+    "hi": 0.850365
+   },
+   "dWin": null,
+   "floor": 12.84,
+   "cost": {
+    "mean": 11.505833,
+    "lo": 11.050744,
+    "hi": 11.960923
+   },
+   "dCost": null,
+   "deck": 10.936667,
+   "goldLeft": 168.633333,
+   "verdict": null
+  },
+  {
+   "name": "removal at 25 gold, removes the best card",
+   "win": {
+    "p": 0.82,
+    "lo": 0.772567,
+    "hi": 0.859342
+   },
+   "dWin": {
+    "mean": 0.01,
+    "lo": -0.004589,
+    "hi": 0.024589
+   },
+   "floor": 12.843333,
+   "cost": {
+    "mean": 10.882917,
+    "lo": 10.384578,
+    "hi": 11.381256
+   },
+   "dCost": {
+    "mean": -0.622917,
+    "lo": -0.797877,
+    "hi": -0.447957
+   },
+   "deck": 10.606667,
+   "goldLeft": 161.416667,
+   "verdict": "negligible"
+  },
+  {
+   "name": "removal at 25 gold, removes a Strike-like starter card",
+   "win": {
+    "p": 0.823333,
+    "lo": 0.776168,
+    "hi": 0.862323
+   },
+   "dWin": {
+    "mean": 0.013333,
+    "lo": -0.002625,
+    "hi": 0.029292
+   },
+   "floor": 12.86,
+   "cost": {
+    "mean": 10.898611,
+    "lo": 10.389916,
+    "hi": 11.407306
+   },
+   "dCost": {
+    "mean": -0.607222,
+    "lo": -0.761121,
+    "hi": -0.453324
+   },
+   "deck": 10.573333,
+   "goldLeft": 160.3,
+   "verdict": "negligible"
+  },
+  {
+   "name": "removal at 50 gold, removes the best card",
+   "win": {
+    "p": 0.816667,
+    "lo": 0.768971,
+    "hi": 0.856355
+   },
+   "dWin": {
+    "mean": 0.006667,
+    "lo": -0.0064,
+    "hi": 0.019733
+   },
+   "floor": 12.843333,
+   "cost": {
+    "mean": 11.2125,
+    "lo": 10.736799,
+    "hi": 11.688201
+   },
+   "dCost": {
+    "mean": -0.293333,
+    "lo": -0.409794,
+    "hi": -0.176873
+   },
+   "deck": 10.743333,
+   "goldLeft": 159.966667,
+   "verdict": "negligible"
+  },
+  {
+   "name": "removal at 50 gold, removes a Strike-like starter card",
+   "win": {
+    "p": 0.816667,
+    "lo": 0.768971,
+    "hi": 0.856355
+   },
+   "dWin": {
+    "mean": 0.006667,
+    "lo": -0.0064,
+    "hi": 0.019733
+   },
+   "floor": 12.85,
+   "cost": {
+    "mean": 11.1325,
+    "lo": 10.643884,
+    "hi": 11.621116
+   },
+   "dCost": {
+    "mean": -0.373333,
+    "lo": -0.492689,
+    "hi": -0.253978
+   },
+   "deck": 10.72,
+   "goldLeft": 158.8,
+   "verdict": "negligible"
+  },
+  {
+   "name": "removal at 75 gold, removes the best card",
+   "win": {
+    "p": 0.82,
+    "lo": 0.772567,
+    "hi": 0.859342
+   },
+   "dWin": {
+    "mean": 0.01,
+    "lo": -0.001278,
+    "hi": 0.021278
+   },
+   "floor": 12.85,
+   "cost": {
+    "mean": 11.253889,
+    "lo": 10.78209,
+    "hi": 11.725688
+   },
+   "dCost": {
+    "mean": -0.251944,
+    "lo": -0.35948,
+    "hi": -0.144409
+   },
+   "deck": 10.8,
+   "goldLeft": 158.066667,
+   "verdict": "negligible"
+  },
+  {
+   "name": "removal at 75 gold, removes a Strike-like starter card",
+   "win": {
+    "p": 0.816667,
+    "lo": 0.768971,
+    "hi": 0.856355
+   },
+   "dWin": {
+    "mean": 0.006667,
+    "lo": -0.0064,
+    "hi": 0.019733
+   },
+   "floor": 12.85,
+   "cost": {
+    "mean": 11.228611,
+    "lo": 10.749966,
+    "hi": 11.707257
+   },
+   "dCost": {
+    "mean": -0.277222,
+    "lo": -0.379845,
+    "hi": -0.1746
+   },
+   "deck": 10.793333,
+   "goldLeft": 157.95,
+   "verdict": "negligible"
+  }
+ ]
+}

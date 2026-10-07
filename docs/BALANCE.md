@@ -136,6 +136,37 @@ Run the checklist below. The card is picked up automatically from `baseCards()`.
 4. Before proposing a number change, measure it: `tweak --card <id> --set path=value`, or `--tweak "card:path=value;card2:path=value"` on any command (nothing on disk changes). Re-run `loops` under the tweak when it touches cost, draw or energy.
 5. The `smart` bot treats any effect kind it has no rule for as setup. If a card's value depends on sequencing, add the rule to `smart.ts` (see "Extending the tooling") and a constructed-deck test like those in `src/sim/smart.test.ts` (a hand that is exactly the deck: a 5-card deck is the opening hand, so the turn is deterministic).
 
+## Design-evidence commands (whole acts, shops, relics, events, maps)
+
+Added 2026-10-07 for the decisions the owner has not made yet (`docs/design/EVIDENCE.md` is the briefing built from them). They measure what a decision *does*; they never edit `src/data` or `src/game`. Every knob is an in-memory parameter of the simulator (`src/sim/runsim.ts`): shop price and stock size, a card-removal service, gold per reward, rest heal fraction, map shape (any `MapParams` field: floors, lanes, climbs, kind weights, first floors), starting relics/gold/max HP, and the draft pool. `RunState` is driven through its public API only (the shop's `price` and the reward's `gold` are plain fields the simulator sets).
+
+```
+npm run balance -- gold --runs 300            # card vs gold: price grid, reward-gold grid, price x shop frequency
+npm run balance -- removal --runs 300         # card removal as a shop service
+npm run balance -- rests --runs 300           # heal vs upgrade by floor; rest policies; heal fraction sweep
+npm run balance -- events --runs 300          # each placeholder event choice (add --rich for gold spent at shops)
+npm run balance -- relics --runs 300          # each relic: fight level, whole run, and the HP-budget calibration
+npm run balance -- maps --runs 300 --maps 300 # path statistics and shape sweeps (--no-runs: static columns only)
+npm run balance -- paths --runs 600           # does path choice matter?
+npm run balance -- pressure --runs 300        # HP lost per fight by floor vs the provisional bands
+npm run balance -- picks --seeds 40           # what a card pick / shop buy / removal is worth, by deck stage
+npm run balance -- decksize --seeds 20        # thin vs fat decks
+npm run balance -- upgrades --seeds 40        # what one upgrade is worth, per card
+npm run balance -- synergy --runs 300         # does a synergy-seeking draft assemble an engine?
+npm run balance -- runs --gold always --path shop --shop-price 30   # any one policy vs the defaults
+npm run balance:evidence                      # everything, to balance/reports/design-evidence/all.{md,json} (--quick for a small run)
+```
+
+Common flags: `--runs N` (whole runs per row, default 200), `--seeds N` (paired seeds per fight, default 20), `--skill smart|greedy|...` (the bot that plays the fights in run experiments; the defaults mean `smart`), `--seed S`, `--out base`. The `runs` command takes the policy flags listed in `npm run balance` (`--pick`, `--gold`, `--rest`, `--path`, `--shop-price`, `--removal-price`, `--heal-fraction`, `--draft-pool`, `--map-floors` ...).
+
+How they differ from the older experiments:
+- **A run policy is a record** (`RunPolicy`): reward rule (`never` / `always` / `shop-ahead` / take gold when no card adds a given HP per fight), card pick (`random`, `best` by paired trial fights, `synergy` = trial gain plus mechanism overlap with the deck), shop buy rule, removal service, rest rule, upgrade pick, path style (`random`, `smart`, `safe`, `elite`, `shop`, `fight`), event rule (random, leave, or a forced choice per event id). `playRunEx(seed, policy)` is deterministic; the bot's own choices use a separate stream, so two policies that differ late share the run's randomness until they diverge. With default parameters the map is identical to the game's (a test pins it); the old `playRun` in `simulate.ts` is untouched, so the baseline and `drafts` do not move.
+- **Final deck cost** (`deckCost`): HP lost per fight, against four reference fights, of the deck a run ends with, on seeds shared by every policy. It is a far less noisy outcome than win/loss for judging "did this policy build a better deck", and it is in the same unit as the card-level tools (`picks`), so card value, shop price and rest value can be compared.
+- **Paired by run seed.** Rows are compared with the first row on the same seeds, with paired 95% intervals. Map-shape rows change the map itself, so their pairing is loose; read those as comparisons between rows' own intervals.
+- **Skill matters a lot at run level.** On the placeholder content the `greedy` bot loses far fewer HP than `smart` on ordinary decks (see "smart trades HP for speed" above), so run win rates differ by tens of points between them. The evidence document is built on `smart` and repeats the tables for `greedy` to say which findings hold for both.
+- **The `expert` bot has a stored-value term** (`storedValue` in `skills.ts`): Strength and Empowered it holds are worth HP-equivalents in its position value (`STORED_VALUE_WEIGHT`, a bot knob; 0 switches it off). On the placeholder synergy decks the change was within noise (the one deck it applies to, `syn-mult`, moved 34.9 to 35.3 HP lost to the boss); `expert` is still worse than `smart` on the exhaust and block-trigger decks, so it is still not a proven upper bound there.
+- Maps: `src/sim/mapstats.ts` (static path statistics: kinds per path, best and worst path counts, number of paths; overrides merge with the defaults: `mergeMapParams`). To switch a stop kind off set its first floor beyond the map or its weight to 0.
+
 ## How many runs?
 
 Units needed for a 95% half-width `h` is about `(1.96 * sd / h)^2`. Rough sd of a per-unit paired difference seen in the placeholder content: HP lost ~8, turns ~1.7, win ~0.2. A fight-suite of N fights times S seeds gives N*S units.

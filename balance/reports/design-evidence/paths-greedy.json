@@ -1,0 +1,163 @@
+{
+ "options": {
+  "runs": 300,
+  "baseSeed": 1,
+  "skill": "greedy"
+ },
+ "rows": [
+  {
+   "name": "random path (the baseline)",
+   "win": {
+    "p": 0.946667,
+    "lo": 0.915131,
+    "hi": 0.966908
+   },
+   "dWin": null,
+   "floor": 12.86,
+   "cost": {
+    "mean": 6.85125,
+    "lo": 6.533301,
+    "hi": 7.169199
+   },
+   "dCost": null,
+   "deck": 17.733333,
+   "goldLeft": 15.833333,
+   "verdict": null
+  },
+  {
+   "name": "smart (rest when hurt, shop with gold, elites when strong)",
+   "win": {
+    "p": 0.923333,
+    "lo": 0.88759,
+    "hi": 0.948372
+   },
+   "dWin": {
+    "mean": -0.023333,
+    "lo": -0.060833,
+    "hi": 0.014167
+   },
+   "floor": 12.8,
+   "cost": {
+    "mean": 6.506528,
+    "lo": 6.208069,
+    "hi": 6.804987
+   },
+   "dCost": {
+    "mean": -0.344722,
+    "lo": -0.692979,
+    "hi": 0.003534
+   },
+   "deck": 18.33,
+   "goldLeft": 11.3,
+   "verdict": "inconclusive"
+  },
+  {
+   "name": "safe (never elites, rest more)",
+   "win": {
+    "p": 0.92,
+    "lo": 0.883727,
+    "hi": 0.945653
+   },
+   "dWin": {
+    "mean": -0.026667,
+    "lo": -0.064705,
+    "hi": 0.011372
+   },
+   "floor": 12.793333,
+   "cost": {
+    "mean": 6.606944,
+    "lo": 6.304804,
+    "hi": 6.909085
+   },
+   "dCost": {
+    "mean": -0.244306,
+    "lo": -0.59141,
+    "hi": 0.102799
+   },
+   "deck": 18.28,
+   "goldLeft": 11.3,
+   "verdict": "inconclusive"
+  },
+  {
+   "name": "elite-seeking",
+   "win": {
+    "p": 0.943333,
+    "lo": 0.911134,
+    "hi": 0.964323
+   },
+   "dWin": {
+    "mean": -0.003333,
+    "lo": -0.038573,
+    "hi": 0.031906
+   },
+   "floor": 12.856667,
+   "cost": {
+    "mean": 6.369028,
+    "lo": 6.073586,
+    "hi": 6.66447
+   },
+   "dCost": {
+    "mean": -0.482222,
+    "lo": -0.817252,
+    "hi": -0.147192
+   },
+   "deck": 17.89,
+   "goldLeft": 15.2,
+   "verdict": "inconclusive"
+  },
+  {
+   "name": "fight-seeking",
+   "win": {
+    "p": 0.92,
+    "lo": 0.883727,
+    "hi": 0.945653
+   },
+   "dWin": {
+    "mean": -0.026667,
+    "lo": -0.064705,
+    "hi": 0.011372
+   },
+   "floor": 12.793333,
+   "cost": {
+    "mean": 6.583333,
+    "lo": 6.280917,
+    "hi": 6.88575
+   },
+   "dCost": {
+    "mean": -0.267917,
+    "lo": -0.616126,
+    "hi": 0.080293
+   },
+   "deck": 18.323333,
+   "goldLeft": 11.266667,
+   "verdict": "inconclusive"
+  },
+  {
+   "name": "shop-seeking (with gold taken)",
+   "win": {
+    "p": 0.93,
+    "lo": 0.895364,
+    "hi": 0.953763
+   },
+   "dWin": {
+    "mean": -0.016667,
+    "lo": -0.053054,
+    "hi": 0.01972
+   },
+   "floor": 12.846667,
+   "cost": {
+    "mean": 7.303472,
+    "lo": 6.936237,
+    "hi": 7.670708
+   },
+   "dCost": {
+    "mean": 0.452222,
+    "lo": 0.02534,
+    "hi": 0.879104
+   },
+   "deck": 15.68,
+   "goldLeft": 50.166667,
+   "verdict": "inconclusive"
+  }
+ ]
+}
