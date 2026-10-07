@@ -69,7 +69,12 @@ Other scripts:
 ```bash
 npm run build    # type-check + production build, output to dist/
 npm run preview  # serve the production build locally, for a final sanity check
+npm test         # unit tests for the game-logic layer (src/game), via Vitest
 ```
+
+## How to play
+
+Click a skill or power card to play it. Attack cards are aimed: drag one onto the enemy, or click it and then click the enemy. Right-click (or click anywhere else) to put a picked-up card back. The icon above the enemy shows its next move — a sword is an attack for that much damage, a shield is that much block.
 
 ## Project structure
 
