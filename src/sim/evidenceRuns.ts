@@ -8,7 +8,7 @@ import type { ExperimentResult } from './report';
 import { DEFAULT_RUN_POLICY, playRuns, withPolicy } from './runsim';
 import type { RunPolicy, RunRecord } from './runsim';
 import { KINDS, fightsRemainingByFloor, shapeStats } from './mapstats';
-import { fix, fmtCI, fmtDiff, meanCI, pairedDiff, pct, quantile, verdict, wilson } from './stats';
+import { fix, fmtCI, fmtDiff, meanCI, pairedDiff, pct, verdict, wilson } from './stats';
 import type { Interval } from './stats';
 import { hpLostBand, turnsBand, bandMark, bandStatus } from './targets';
 

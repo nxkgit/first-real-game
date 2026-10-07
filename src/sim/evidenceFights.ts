@@ -10,7 +10,7 @@ import { rngStartFromSeed } from './fightCore';
 import { heading, r6, table } from './report';
 import type { ExperimentResult } from './report';
 import type { SkillLevel } from './skills';
-import { fix, fmtCI, fmtDiff, meanCI, pairedDiff, pct, wilson } from './stats';
+import { fix, fmtCI, fmtDiff, meanCI, pairedDiff, pct } from './stats';
 import type { Interval } from './stats';
 import { actFights, referenceDeckSets, starterIds } from './suites';
 import type { DeckSet, FightDef } from './suites';
