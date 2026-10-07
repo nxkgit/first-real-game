@@ -29,6 +29,7 @@ export class Targeting {
   private readonly arrow: Phaser.GameObjects.Graphics;
   private readonly reticles = new Map<string, Phaser.GameObjects.Graphics>();
   private held: Held | null = null;
+  private over: EnemyView | undefined;
 
   constructor(
     scene: Phaser.Scene,
@@ -74,6 +75,11 @@ export class Targeting {
     return this.held?.card ?? null;
   }
 
+  /** The living enemy the pointer is over while a card is picked up (what the arrow is aimed at), if any. */
+  get hoveredEnemyId(): string | undefined {
+    return this.held ? this.over?.id : undefined;
+  }
+
   isHolding(container: Phaser.GameObjects.Container): boolean {
     return this.held?.container === container;
   }
@@ -112,6 +118,7 @@ export class Targeting {
 
   private clear(): void {
     this.held = null;
+    this.over = undefined;
     this.arrow.clear();
     for (const reticle of this.reticles.values()) reticle.setVisible(false);
   }
@@ -143,6 +150,7 @@ export class Targeting {
     const held = this.held;
     if (!held) return;
     const over = this.enemyAt(pointer);
+    this.over = over;
     for (const view of this.enemies) this.reticles.get(view.id)?.setAlpha(view === over ? 1 : 0.35);
 
     const sx = held.container.x;

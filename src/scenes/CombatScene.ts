@@ -63,6 +63,8 @@ export class CombatScene extends Phaser.Scene {
   private sequencer: AnimStep[] | null = null;
   /** True while an animation sequence is playing and the player can't act. */
   private inputLocked = false;
+  /** `previewKey()` as of the last card-number refresh. */
+  private shownPreview = '';
 
   private statusText!: Phaser.GameObjects.Text;
   private drawCountText!: Phaser.GameObjects.Text;
@@ -97,6 +99,7 @@ export class CombatScene extends Phaser.Scene {
     this.enemyViews = [];
     this.sequencer = null;
     this.inputLocked = false;
+    this.shownPreview = '';
   }
 
   create(): void {
@@ -137,6 +140,8 @@ export class CombatScene extends Phaser.Scene {
 
   update(): void {
     this.targeting?.update(this.input.activePointer);
+    // aiming a card at a different enemy changes its numbers (never while animations are replaying)
+    if (!this.sequencer && !this.inputLocked && this.previewKey() !== this.shownPreview) this.refreshCardNumbers();
   }
 
   private viewFor(enemyId: string): EnemyView {
@@ -733,18 +738,27 @@ export class CombatScene extends Phaser.Scene {
     this.refreshCardNumbers();
   }
 
-  /** Shows each hand card's damage as it would really land now, against the first living enemy
-   *  (the one the number keys aim at). Reads live state, so call it only when animations are done. */
+  /** Shows what each hand card would really do now: against the first living enemy (the one the
+   *  number keys aim at), or, for the card being aimed, the enemy under the arrow. Reads live
+   *  state, so call it only when animations are done. */
   private refreshCardNumbers(): void {
-    const target = this.combat.livingEnemies[0];
+    const first = this.combat.livingEnemies[0];
+    const aimedAt = this.targeting?.hoveredEnemyId;
+    const hovered = aimedAt ? this.combat.livingEnemies.find((e) => e.id === aimedAt) : undefined;
     for (const card of this.combat.deck.hand) {
       const tracked = this.handCards.get(card.instanceId);
       if (!tracked) continue;
-      const live =
-        target && card.definition.target === 'enemy'
-          ? (e: Effect) => (e.kind === 'damage' ? this.combat.previewCardDamage(card.definition, e, target) : undefined)
-          : undefined;
-      setCardLiveText(tracked.container, card.definition, live);
+      const target = card === this.targeting?.heldCard && hovered ? hovered : first;
+      const aimed = card.definition.target === 'enemy';
+      setCardLiveText(tracked.container, card.definition, (e: Effect) =>
+        this.combat.previewCardEffect(card.definition, e, aimed ? target : undefined)
+      );
     }
+    this.shownPreview = this.previewKey();
+  }
+
+  /** What the card numbers currently depend on besides game state: which card is held, and over whom. */
+  private previewKey(): string {
+    return `${this.targeting?.heldCard?.instanceId ?? ''}:${this.targeting?.hoveredEnemyId ?? ''}`;
   }
 }

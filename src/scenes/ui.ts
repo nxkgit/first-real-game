@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { CardDefinition, Effect } from '../game/types';
-import { cardText, relicText } from '../game/describe';
+import { cardTagsText, cardText, relicText } from '../game/describe';
+import { lowerIsBetterFor } from '../game/effects';
 import type { RunNode, RunState } from '../game/RunState';
 import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from '../settings';
 import { setCurrentRun } from '../session';
@@ -58,36 +59,68 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     })
     .setOrigin(0.5);
 
-  const face = scene.add.container(0, 0, [g, ...(border ? [border] : []), costBadge, costText, nameText, typeText, descText]);
+  // tags: a small line along the bottom edge; the description makes room for it
+  const tagsLine = cardTagsText(card);
+  const tagsText = scene.add
+    .text(0, CARD_HEIGHT / 2 - 5, tagsLine, { fontSize: '9px', color: '#7f8fa8', wordWrap: { width: CARD_WIDTH - 14 }, align: 'center' })
+    .setOrigin(0.5, 1)
+    .setVisible(tagsLine !== '');
+  fitDescription(descText, tagsLine === '' ? null : tagsText);
+
+  const face = scene.add.container(0, 0, [g, ...(border ? [border] : []), costBadge, costText, nameText, typeText, descText, tagsText]);
   face.setData('descText', descText);
+  face.setData('tagsText', tagsText);
   return face;
 }
 
+/** Space for the description: just under the type line down to the bottom edge (or the tags line). */
+const DESC_TOP = -10;
+const DESC_BOTTOM = CARD_HEIGHT / 2 - 5;
+
+/** Centers the description on its usual spot, nudging it up (and shrinking the font, down to 9px)
+ *  if it would run into the tags line or off the card. */
+function fitDescription(desc: Phaser.GameObjects.Text, tags: Phaser.GameObjects.Text | null): void {
+  const bottom = tags ? tags.y - tags.height - 2 : DESC_BOTTOM;
+  for (let size = 11; size >= 9; size--) {
+    desc.setFontSize(size);
+    if (desc.height <= bottom - DESC_TOP) break;
+  }
+  const center = Math.min(28, bottom - desc.height / 2);
+  desc.setY(Math.max(center, DESC_TOP + desc.height / 2));
+}
+
 /**
- * Re-writes a card face's text with live damage numbers. `liveDamage` gives what a damage effect
- * would really deal now; the text turns green if the card's total is above its printed total and
- * red if below. Cards without damage keep their normal text and colour.
+ * Re-writes a card face's text with live numbers. `liveValue` gives what an effect would really do
+ * now (see `CombatState.previewCardEffect`); the text turns green if the card ends up better than
+ * printed and red if worse. Effects that show no number, and cards with none, keep their normal
+ * text and colour; a card with both better and worse numbers also keeps the normal colour.
  */
 export function setCardLiveText(
   face: Phaser.GameObjects.Container,
   card: CardDefinition,
-  liveDamage: ((effect: Effect) => number | undefined) | undefined
+  liveValue: ((effect: Effect) => number | undefined) | undefined
 ): void {
   const desc = face.getData('descText') as Phaser.GameObjects.Text | undefined;
   if (!desc) return;
-  let printed = 0;
-  let live = 0;
+  const tags = (face.getData('tagsText') as Phaser.GameObjects.Text | undefined) ?? null;
+  let better = false;
+  let worse = false;
   const tracked = (effect: Effect): number | undefined => {
-    const n = liveDamage?.(effect);
-    if (n !== undefined && effect.kind === 'damage') {
-      printed += effect.value;
-      live += n;
+    const n = liveValue?.(effect);
+    if (n !== undefined) {
+      const printed = 'value' in effect ? effect.value : n;
+      const delta = lowerIsBetterFor(effect) ? printed - n : n - printed;
+      if (delta > 0) better = true;
+      else if (delta < 0) worse = true;
     }
     return n;
   };
   const text = cardText(card, tracked);
-  if (desc.text !== text) desc.setText(text);
-  desc.setColor(live > printed ? '#7fe08a' : live < printed ? '#ff7b7b' : '#d8d8e4');
+  if (desc.text !== text) {
+    desc.setText(text);
+    fitDescription(desc, tags?.visible ? tags : null);
+  }
+  desc.setColor(better && !worse ? '#7fe08a' : worse && !better ? '#ff7b7b' : '#d8d8e4');
 }
 
 /** A clickable rectangle button with a hover grow. Returns its container. */
