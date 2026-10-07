@@ -41,6 +41,7 @@ export interface CombatTruth {
 export class Harness {
   readonly errors: string[] = [];
   private clock = 0;
+  private initScriptAdded = false;
 
   constructor(readonly page: Page) {
     page.on('console', (msg) => {
@@ -58,11 +59,24 @@ export class Harness {
 
   /** Loads the game with the test hook on, stops the real loop, and runs the first frames. */
   async open(query = 'seed=123'): Promise<void> {
-    await this.page.addInitScript(() => {
-      (window as Any).__imp = (path: string) => import(/* @vite-ignore */ path);
-      window.addEventListener('unhandledrejection', (e) => console.error(`unhandledrejection: ${String(e.reason)}`));
-    });
+    if (!this.initScriptAdded) {
+      this.initScriptAdded = true;
+      await this.page.addInitScript(() => {
+        (window as Any).__imp = (path: string) => import(/* @vite-ignore */ path);
+        window.addEventListener('unhandledrejection', (e) => console.error(`unhandledrejection: ${String(e.reason)}`));
+      });
+    }
     await this.page.goto(`/?${query ? `${query}&` : ''}e2e`);
+    await this.afterLoad();
+  }
+
+  /** Reloads the page (browser storage survives), as a player refreshing the tab would. */
+  async reload(): Promise<void> {
+    await this.page.reload();
+    await this.afterLoad();
+  }
+
+  private async afterLoad(): Promise<void> {
     await this.page.waitForFunction(() => (window as Any).__game?.isBooted === true);
     await this.page.evaluate(() => (window as Any).__game.loop.stop());
     await this.step(10);
@@ -277,6 +291,14 @@ export class Harness {
       if (calm >= 2) return;
     }
     throw new Error(`fight animations never settled (scene ${await this.scene()})`);
+  }
+
+  /** Wins the fight at once (CombatState.devKillAllEnemies, what the dev panel's button calls) and clicks Continue. */
+  async winFightQuickly(): Promise<void> {
+    await this.page.evaluate(async () => (await (window as Any).__imp('/src/session.ts')).getCurrentCombat().devKillAllEnemies());
+    await this.settle();
+    expect(await this.hasText('VICTORY')).toBe(true);
+    await this.clickText('Continue');
   }
 
   /** Where a card in the hand is drawn, by card name. */
