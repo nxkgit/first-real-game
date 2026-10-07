@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
-import { ENEMY_ART, ENEMY_DISPLAY_HEIGHT, ENEMY_PICTURES, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
+import { BACKGROUNDS, ENEMY_ART, ENEMY_DISPLAY_HEIGHT, ENEMY_PICTURES, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
+import type { BackgroundName } from '../data/art';
 import type { EnemyDefinition } from '../game/types';
 import { buildGoblinCharacter } from './combat/drawings';
 
@@ -14,6 +15,7 @@ export function preloadArt(scene: Phaser.Scene): void {
   for (const kind of MAP_ICON_KINDS) scene.load.image(`map-${kind}`, `map/${kind}.png`);
   for (const name of ICON_FILES) scene.load.image(`icon-${name}`, `icons/${name}.png`);
   scene.load.image('ui-border', 'ui/border.png');
+  for (const name of BACKGROUNDS) scene.load.image(`bg-${name}`, `backgrounds/${name}.png`);
 }
 
 /** Registers the hero's animations once (they are global to the game). */
@@ -100,4 +102,24 @@ export function addBorder(
   if (!scene.textures.exists('ui-border')) return null;
   const s = Math.min(slice, Math.floor(width / 2) - 1, Math.floor(height / 2) - 1);
   return scene.add.nineslice(0, 0, 'ui-border', undefined, width, height, s, s, s, s).setTint(color);
+}
+
+/** Fills a rectangle with a landscape picture, cropped to fit (never stretched) and darkened by
+ *  `dim` (0 to 1) so the white text on top stays readable. Returns false if the picture did not load. */
+export function addBackdrop(
+  scene: Phaser.Scene,
+  name: BackgroundName,
+  rect: { x: number; y: number; width: number; height: number },
+  dim = 0.45
+): boolean {
+  const key = `bg-${name}`;
+  if (!scene.textures.exists(key)) return false;
+  const image = scene.add.image(rect.x, rect.y, key).setOrigin(0, 0);
+  const source = image.width; // the pictures are square
+  const scale = rect.width / source;
+  const bandHeight = rect.height / scale;
+  const top = Math.min(source - bandHeight, source * 0.25); // the band that holds the horizon
+  image.setScale(scale).setCrop(0, top, source, bandHeight).setY(rect.y - top * scale);
+  scene.add.rectangle(rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width, rect.height, 0x0c0a14, dim);
+  return true;
 }

@@ -25,6 +25,8 @@ import {
   toggleCardView,
   toggleDeckView,
 } from './ui';
+import { addBackdrop } from './art';
+import { backgroundFor } from '../data/art';
 import { EnemyView } from './combat/EnemyView';
 import { PlayerView } from './combat/PlayerView';
 import { Targeting } from './combat/Targeting';
@@ -174,7 +176,9 @@ export class CombatScene extends Phaser.Scene {
 
   private buildBackground(): void {
     this.add.rectangle(400, 300, 800, 600, 0x14141c).setOrigin(0.5);
-    this.add.rectangle(400, 220, 680, 300, 0x201a28, 0.6).setOrigin(0.5);
+    if (!addBackdrop(this, backgroundFor(this.tier, Math.max(0, this.run.floor - 1)), { x: 60, y: 70, width: 680, height: 300 })) {
+      this.add.rectangle(400, 220, 680, 300, 0x201a28, 0.6).setOrigin(0.5);
+    }
     // ground line to give the characters something to stand on
     this.add.rectangle(400, 340, 680, 2, 0x35304a).setOrigin(0.5);
 

@@ -16,6 +16,7 @@ OUT = os.path.join(ROOT, 'public', 'assets')
 # which pack file stands in for what (placeholder choices; change freely)
 MAP_ICONS = {'combat': 'flag', 'elite': 'skull', 'rest': 'campfire', 'shop': 'houseChimney', 'event': 'runis', 'boss': 'castle'}
 ICONS = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger', 'coin', 'tome', 'wand']
+BACKGROUNDS = {'grass': 'backgroundColorGrass', 'forest': 'backgroundColorForest', 'fall': 'backgroundColorFall', 'desert': 'backgroundColorDesert', 'castles': 'backgroundCastles'}
 # painted characters sheet: quadrants, in reading order
 ENEMIES = ['skeleton', 'goblin', 'fighter', 'brute']
 ENEMY_MAX_HEIGHT = 200
@@ -41,6 +42,9 @@ def main() -> None:
     for name in ICONS:
         save(zip_image('RavenmoreIconPack.02.2014.zip', f'64/{name}.png'), 'icons', f'{name}.png')
     save(zip_image('kenney_fantasy-ui-borders.zip', 'PNG/Default/Border/panel-border-009.png'), 'ui', 'border.png')
+
+    for name, file in BACKGROUNDS.items():
+        save(zip_image('kenney_background-elements-remastered.zip', f'Backgrounds/{file}.png').convert('RGB'), 'backgrounds', f'{name}.png')
 
     sheet = Image.open(os.path.join(RAW, 'characters.png')).convert('RGBA')
     w, h = sheet.size

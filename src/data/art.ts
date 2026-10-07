@@ -3,6 +3,8 @@
 // Files live in public/assets (built by tools/prepareAssets.py; sources in public/assets/CREDITS.md).
 
 import type { MapNodeKind } from '../game/actMap';
+import type { FightTier } from '../game/RunState';
+import { MAP_EARLY_FLOORS, MAP_LATE_FLOORS_FROM } from './tunables';
 
 /** Enemy id -> picture. An enemy with no entry falls back to the drawn goblin. */
 export const ENEMY_ART: Readonly<Record<string, string>> = {
@@ -43,3 +45,16 @@ export const HERO_SHEET = {
   /** On-screen scale; the hero stands about 145px tall. */
   scale: 0.68,
 } as const;
+
+export const BACKGROUNDS = ['grass', 'forest', 'fall', 'desert', 'castles'] as const;
+export type BackgroundName = (typeof BACKGROUNDS)[number];
+
+/** The fight backdrop: the boss gets the castles, elites the desert, ordinary fights change with
+ *  how far into the act you are. PLACEHOLDER pairing. `floor` counts from 0 at the bottom. */
+export function backgroundFor(tier: FightTier, floor: number): BackgroundName {
+  if (tier === 'boss') return 'castles';
+  if (tier === 'elite') return 'desert';
+  if (floor <= MAP_EARLY_FLOORS) return 'grass';
+  if (floor >= MAP_LATE_FLOORS_FROM) return 'fall';
+  return 'forest';
+}
