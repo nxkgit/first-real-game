@@ -11,7 +11,7 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 - **Live:** https://nxkgit.github.io/first-real-game/ (GitHub Pages; redeploys automatically on every push to `main`). Add `?dev` for the dev panel, `?seed=123` to pick a seed. The content browser is at `/content.html` on the same site.
 - **Repo:** https://github.com/nxkgit/first-real-game. `main` is the live branch. The older feature branches (`status-effects`, `shop-draft`, `architecture`, `playtest-tooling`) are all merged into it and can be deleted.
 - **Stage:** MVP 1 (one fight) and MVP 2 (chained fights) are done. Session 2 went on to build a **one-act demo**: a branching map of fights, elites, rests, shops and events leading to a boss. See "What the game does today".
-- **Health:** `npm test` passes 130 tests and `npm run build` is clean.
+- **Health:** `npm test` passes 132 tests and `npm run build` is clean.
 
 ### What the game does today
 - **The run is one act.**
@@ -69,6 +69,13 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 - **TypeScript config:** `erasableSyntaxOnly` is on, so no constructor parameter properties (`constructor(private x)`).
 
 ---
+
+## Decisions already made (don't re-ask)
+
+- **No server or database for now.** The game is a static site: content is in `src/data/`, a player's run lives in their browser. If cloud saves, accounts, leaderboards or central playtest reports are ever wanted, look at the most cost-effective option then (the user's words). The smallest step up would be a way for playtest reports to arrive without being copied by hand.
+- **Keyboard targeting with several enemies stays as is** (number keys aim at the first living enemy; mouse picks any).
+- **Git flow is relaxed for now:** commit to `main` and push.
+- **Phone layout and load-speed work are skipped for now.**
 
 ## Open decisions (the user's to make)
 
