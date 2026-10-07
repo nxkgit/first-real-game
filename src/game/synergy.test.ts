@@ -379,8 +379,8 @@ describe('triggers', () => {
     c.endPlayerTurn();
     // end of turn saw the 2 cards still in hand (block 2); the new turn's block reset the player to 0 first
     expect(order[0]).toBe('block2');
-    expect(order[1]).toBe('block3'); // turn start: all 3 cards drawn back
-    expect(c.player.block).toBe(3);
+    expect(order[1]).toBe('block2'); // turn start: the 2 other cards drawn back (the power stays in play)
+    expect(c.player.block).toBe(2);
   });
 
   it('an end-of-turn trigger that wins the fight ends it', () => {

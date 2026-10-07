@@ -267,7 +267,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   private startPlayerTurn(isFirstTurn = false): void {
     this.phase = 'playerTurn';
     this.turnNumber += 1;
-    this.player.block = 0;
+    // the first turn keeps any block that combat-start effects (relics) just gave
+    if (!isFirstTurn) this.player.block = 0;
     this.energy = this.maxEnergy;
     this.stats.cardsPlayedThisTurn = 0;
     this.stats.attacksPlayedThisTurn = 0;

@@ -5,6 +5,8 @@
 // ---- combat ----
 export const MAX_ENERGY = 4;
 export const HAND_SIZE = 5;
+/** Most cards the hand can hold. A card drawn into a full hand goes straight to the discard pile (as in StS). PROVISIONAL. */
+export const MAX_HAND_SIZE = 10;
 
 /**
  * How many levels deep triggered effects may set off further triggers (a trigger's effect gaining

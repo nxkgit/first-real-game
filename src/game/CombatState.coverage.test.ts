@@ -4,7 +4,7 @@ import { Deck } from './Deck';
 import { Rng } from './rng';
 import type { CardDefinition, CardInstance, EnemyDefinition, EnemyMove, RelicDefinition } from './types';
 import { ENEMIES } from '../data/enemies';
-import { HAND_SIZE, MAX_ENERGY, VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from '../data/tunables';
+import { HAND_SIZE, MAX_ENERGY, MAX_HAND_SIZE, VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from '../data/tunables';
 
 // Coverage tests for the combat rules, written against the documented behaviour (HANDOFF.md:
 // Weak/Vulnerable/Strength, "one an enemy puts on you skips that round's countdown", turn order).
@@ -87,11 +87,12 @@ describe('Deck edge cases', () => {
     expect(new Set(d.hand.map((c) => c.instanceId)).size).toBe(4);
   });
 
-  it('drawing more than exist draws everything once and stops (no duplicates, no cap on hand size)', () => {
+  it('drawing more than exist draws everything once and stops (no duplicates); a full hand sends extra draws to the discard', () => {
     const d = new Deck(cards(12), rng());
     d.draw(50);
-    expect(d.hand).toHaveLength(12);
-    expect(new Set(d.hand.map((c) => c.instanceId)).size).toBe(12);
+    expect(d.hand).toHaveLength(MAX_HAND_SIZE);
+    expect(d.discardPile).toHaveLength(12 - MAX_HAND_SIZE);
+    expect(new Set([...d.hand, ...d.discardPile].map((c) => c.instanceId)).size).toBe(12);
     expect(d.drawPile).toHaveLength(0);
   });
 
@@ -665,10 +666,11 @@ describe('powers and relic hooks in combat', () => {
     expect(d.deck.hand).toHaveLength(HAND_SIZE + 2);
   });
 
-  it('powers go to the discard pile after being played, like any card', () => {
+  it('a played power stays in play for the rest of the fight: it never goes to the discard pile or comes back', () => {
     const c = fight([FORT]);
     play(c, 'fort');
-    expect(c.deck.discardPile.map((x) => x.definition.id)).toEqual(['fort']);
+    expect(c.deck.discardPile).toEqual([]);
+    expect(c.deck.powerPile.map((x) => x.definition.id)).toEqual(['fort']);
   });
 
   it('a power is active for the rest of the fight even if its card is reshuffled and drawn again (fires per copy played, not per draw)', () => {
@@ -695,10 +697,8 @@ describe('powers and relic hooks in combat', () => {
     expect(c.player.statuses.strength).toBe(2); // not re-applied on later turns
   });
 
-  // FINDING: HANDOFF.md describes the Guard Token as "6 block at combat start". start() applies
-  // onCombatStart effects and THEN startPlayerTurn(true) sets player.block = 0, so a combat-start
-  // block is wiped before the player can use it in turn 1.
-  it.fails('block from an onCombatStart relic is still there on the first player turn', () => {
+  // (Was an audit finding: startPlayerTurn(true) used to wipe the block a combat-start relic gave. Fixed.)
+  it('block from an onCombatStart relic is still there on the first player turn', () => {
     const relic = RELIC({ onCombatStart: [{ kind: 'block', value: 6 }] });
     const c = new CombatState([HIT], [foe()], { random: rng(), relics: [relic] });
     c.start();
@@ -723,8 +723,8 @@ describe('powers and relic hooks in combat', () => {
   it('the first turn draws first, so a draw power cannot starve on an empty pile at turn start', () => {
     const c = fight([INSIGHT], [foe({ movePattern: [{ name: 'Idle', effects: [] }] })]);
     play(c, 'insight');
-    c.endPlayerTurn(); // pile empty -> reshuffles the discard (hand was discarded) and draws; nothing breaks
-    expect(c.deck.hand.length).toBeGreaterThanOrEqual(1);
+    c.endPlayerTurn(); // the power stays in play and there is nothing to draw: nothing breaks
+    expect(c.deck.hand).toHaveLength(0);
     expect(c.phase).toBe('playerTurn');
   });
 });

@@ -1,6 +1,6 @@
 # Session Handoff
 
-Context for picking this project up in a fresh Claude Code session. Last updated **2026-10-07** (end of session 2).
+Context for picking this project up in a fresh Claude Code session. Last updated **2026-10-07** (session 3: unattended-work process, synergy engine, balance tooling, test layers).
 
 Read order for a new session: `CLAUDE.md` (rules) → this file (where things stand) → `implementationplan.md` (scope) → `DESIGN_LOG.md` (why). This file is a snapshot. When it disagrees with those documents or the code, they win. Update this file at the end of each session.
 
@@ -11,7 +11,9 @@ Read order for a new session: `CLAUDE.md` (rules) → this file (where things st
 - **Live:** https://nxkgit.github.io/first-real-game/ (GitHub Pages; redeploys automatically on every push to `main`). Add `?dev` for the dev panel, `?seed=123` to pick a seed. The content browser is at `/content.html` on the same site.
 - **Repo:** https://github.com/nxkgit/first-real-game. `main` is the live branch. The older feature branches (`status-effects`, `shop-draft`, `architecture`, `playtest-tooling`) are all merged into it and can be deleted.
 - **Stage:** MVP 1 (one fight) and MVP 2 (chained fights) are done. Session 2 went on to build a **one-act demo**: a branching map of fights, elites, rests, shops and events leading to a boss. See "What the game does today".
-- **Health:** `npm test` passes 132 tests and `npm run build` is clean.
+- **Health:** `npm run verify` (typecheck, tests, build) is green: 531 tests pass, 6 are deliberate `it.fails` markers for known save-validation bugs and event-text bugs (they flip to "unexpectedly passing" when fixed; drop the `.fails` then), 1 is skipped.
+- **Session 3 added** (see `DESIGN_LOG.md` Session 3 for decisions): the synergy engine (`docs/SYNERGY_ENGINE.md`; 20 placeholder cards in `src/data/synergyCards.ts`, kept out of the reward pool), the balance toolkit (`docs/BALANCE.md`, `npm run balance:report|baseline|check`, `balance/`), invariant/fuzz and coverage test layers (`*.invariants.test.ts`, `*.coverage.test.ts`), a verified code audit (`docs/audits/2026-10-code-audit.md`), a PR/branch CI workflow, and the unattended-session playbook (`docs/AUTOMATION.md`). Gameplay rule changes: powers stay in play once played, hand cap 10, combat-start block survives turn 1.
+- **Played in a browser this session (2026-10-07):** map, a fight with real clicks, end turn and the enemy's attack, and a synergy combo (Power Up, Attack Echo, Strike doubled, Combo Strike scaled). Not played: exhaust cards, the other triggers, relic triggers, a full act.
 
 ### What the game does today
 - **The run is one act.**
