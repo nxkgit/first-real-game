@@ -13,8 +13,10 @@ import { RELIC_POOL, getRelic } from './relics';
 // stand-ins to build the shape of an act (a map of fights, elites, rests, shops and events leading
 // to a boss); real encounter design is the user's. Each fight is a list of enemy ids.
 export const ACT_CONTENT: MapContent = {
-  earlyEncounters: [['enemy-a'], ['enemy-d', 'enemy-d']],
-  encounters: [['enemy-b', 'enemy-d'], ['enemy-c'], ['enemy-a', 'enemy-d'], ['enemy-d', 'enemy-d', 'enemy-d']],
+  earlyEncounters: [['enemy-a'], ['enemy-d', 'enemy-d'], ['enemy-b']],
+  encounters: [['enemy-b', 'enemy-d'], ['enemy-c'], ['enemy-a', 'enemy-d'], ['enemy-d', 'enemy-d', 'enemy-d'], ['enemy-a', 'enemy-b']],
+  // upper floors: PLACEHOLDER mixes for variety only (not tuned for difficulty)
+  lateEncounters: [['enemy-c', 'enemy-d'], ['enemy-b', 'enemy-d', 'enemy-d'], ['enemy-a', 'enemy-b', 'enemy-d'], ['enemy-b', 'enemy-c']],
   elites: [['elite-a'], ['elite-b']],
   bosses: [['boss-a']],
   events: Object.keys(EVENTS),

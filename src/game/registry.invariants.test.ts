@@ -342,7 +342,7 @@ describe('events', () => {
 
 describe('the act content', () => {
   it('only names enemies and events that exist', () => {
-    const lists = [ACT_CONTENT.earlyEncounters, ACT_CONTENT.encounters, ACT_CONTENT.elites, ACT_CONTENT.bosses];
+    const lists = [ACT_CONTENT.earlyEncounters, ACT_CONTENT.encounters, ACT_CONTENT.lateEncounters ?? [], ACT_CONTENT.elites, ACT_CONTENT.bosses];
     for (const list of lists) {
       expect(list.length).toBeGreaterThan(0);
       for (const group of list) {

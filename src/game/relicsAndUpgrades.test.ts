@@ -129,6 +129,7 @@ describe('placeholder act content', () => {
     const ids = [
       ...ACT_CONTENT.earlyEncounters,
       ...ACT_CONTENT.encounters,
+      ...(ACT_CONTENT.lateEncounters ?? []),
       ...ACT_CONTENT.elites,
       ...ACT_CONTENT.bosses,
     ].flat();

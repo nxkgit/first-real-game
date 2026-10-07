@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_MAP_PARAMS, generateActMap } from './actMap';
+import { DEFAULT_MAP_PARAMS, encounterPoolFor, generateActMap } from './actMap';
 import type { ActMap, MapContent, MapNode, MapParams } from './actMap';
 import { Rng } from './rng';
 import { ACT_CONTENT } from '../data/run';
@@ -57,7 +57,7 @@ function checkMap(map: ActMap, params: MapParams, content: MapContent, label: st
     }
     // content
     if (n.kind === 'combat' || n.kind === 'elite' || n.kind === 'boss') {
-      const pool = n.kind === 'boss' ? content.bosses : n.kind === 'elite' ? content.elites : n.floor <= params.earlyFloors ? content.earlyEncounters : content.encounters;
+      const pool = n.kind === 'boss' ? content.bosses : n.kind === 'elite' ? content.elites : encounterPoolFor(n.floor, content, params);
       if (!n.enemies || n.enemies.length === 0) fail(`${n.id} has no enemies`);
       if (!pool.some((p) => key(p) === key(n.enemies))) fail(`${n.id} enemies ${key(n.enemies)} aren't from the right list`);
       if (n.eventId !== undefined) fail(`${n.id} fight has an eventId`);
@@ -126,6 +126,32 @@ describe('map generator invariants', () => {
         }
       }
     }
+  });
+
+  it('every map has at least minElites elite stops, and fights on the upper floors come from the late list', () => {
+    let elites = 0;
+    for (let seed = 0; seed < SEEDS; seed++) {
+      const map = generateActMap(new Rng(seed), ACT_CONTENT);
+      const count = map.nodes.filter((n) => n.kind === 'elite').length;
+      expect(count, `seed ${seed}`).toBeGreaterThanOrEqual(DEFAULT_MAP_PARAMS.minElites);
+      elites += count;
+      for (const n of map.nodes) {
+        if (n.kind === 'combat' && n.floor >= DEFAULT_MAP_PARAMS.lateFloorsFrom) {
+          expect(ACT_CONTENT.lateEncounters!.map(key)).toContain(key(n.enemies));
+        }
+      }
+    }
+    expect(elites / SEEDS, 'average elite stops per map').toBeGreaterThan(2.5);
+  });
+
+  it('routes differ: across seeds, maps have a spread of stop-kind mixes (not every map the same shape)', () => {
+    const mixes = new Set<string>();
+    for (let seed = 0; seed < 300; seed++) {
+      const map = generateActMap(new Rng(seed), ACT_CONTENT);
+      const count = (kind: string): number => map.nodes.filter((n) => n.kind === kind).length;
+      mixes.add(`${count('event')}-${count('elite')}-${count('shop')}-${count('rest')}`);
+    }
+    expect(mixes.size).toBeGreaterThan(20);
   });
 
   it('holds on other map shapes too (lanes, floors and path counts around the defaults)', () => {
