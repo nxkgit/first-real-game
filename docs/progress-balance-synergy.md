@@ -1,6 +1,6 @@
 # Progress: balance process on the synergy content (branch `auto/balance-synergy`)
 
-Unattended session, 2026-10-07. This file is the PR description. Status: finished; `npm run verify` passed (see "Verified"). **Nothing was played in a browser.** All of this is simulator, tests and docs.
+Unattended session, 2026-10-07. This file is the PR description. Status: finished; see "Verified" (one slow test outside my files exceeds the default timeout here). **Nothing was played in a browser.** All of this is simulator, tests and docs.
 
 ## What was built
 
@@ -12,7 +12,7 @@ Unattended session, 2026-10-07. This file is the PR description. Status: finishe
 
 ## Verified
 
-- `npm run verify` (typecheck, tests, build) passes. New tests: `src/sim/smart.test.ts` (smart bot behaviours with constructed 5-card hands, smart vs greedy on constructed decks, every bot finishes on every synergy deck deterministically, expert still wins, reference-deck stability, commands) and `src/sim/whatif.test.ts` (tweak restores, loop disappears under a tweak, ablate, dominance, pair centring). No existing test was weakened or removed.
+- Typecheck and build pass, and all 553 tests pass **with `--testTimeout=30000`**. With the default 5 s timeout one test outside my files fails on this machine, alone and in the full run: `src/game/save.invariants.test.ts` "never throws on mutated genuine saves" takes 7-9 s here (it is slow, not wrong; I did not touch it or `src/game`). So `npm run verify` as written reports that one timeout; the orchestrator should check whether it also does on its machine. New tests: `src/sim/smart.test.ts` (smart bot behaviours with constructed 5-card hands, smart vs greedy on constructed decks, every bot finishes on every synergy deck deterministically, expert still wins, reference-deck stability, commands) and `src/sim/whatif.test.ts` (tweak restores, loop disappears under a tweak, ablate, dominance, pair centring). No existing test was weakened or removed.
 - `npm run balance:check` clean right after the baseline.
 - Not played in a browser. The session touched only `src/sim`, `balance/`, `docs/`.
 
