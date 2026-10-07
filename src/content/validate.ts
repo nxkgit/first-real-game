@@ -409,7 +409,7 @@ const moveDamage = (move: EnemyMove): number => move.effects.reduce((s, e) => s 
 function checkEnemies(world: ContentWorld, out: Collector): void {
   const enemies = Object.values(world.enemies);
   const actIds = new Set<string>();
-  const lists = [world.act.earlyEncounters, world.act.encounters, world.act.elites, world.act.bosses];
+  const lists = [world.act.earlyEncounters, world.act.encounters, world.act.lateEncounters ?? [], world.act.elites, world.act.bosses];
   for (const list of lists) for (const fight of list) for (const eid of fight) actIds.add(eid);
   for (const e of Object.values(world.events)) for (const c of e.choices) for (const o of c.outcomes) if (o.kind === 'fight') for (const eid of o.enemies) actIds.add(eid);
 
@@ -526,6 +526,7 @@ function checkAct(world: ContentWorld, out: Collector): void {
   const lists: [string, string[][]][] = [
     ['earlyEncounters', world.act.earlyEncounters],
     ['encounters', world.act.encounters],
+    ['lateEncounters', world.act.lateEncounters ?? world.act.encounters],
     ['elites', world.act.elites],
     ['bosses', world.act.bosses],
   ];

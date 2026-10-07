@@ -29,6 +29,7 @@ export function actFights(): FightDef[] {
   };
   add(ACT_CONTENT.earlyEncounters, 'normal');
   add(ACT_CONTENT.encounters, 'normal');
+  add(ACT_CONTENT.lateEncounters ?? [], 'normal');
   add(ACT_CONTENT.elites, 'elite');
   add(ACT_CONTENT.bosses, 'boss');
   return [...out.values()];

@@ -3,6 +3,7 @@ import { CombatState } from '../game/CombatState';
 import { Rng } from '../game/rng';
 import { DEFAULT_MAP_PARAMS } from '../game/actMap';
 import { buildStarterDeck, getCard } from '../data/cards';
+import { SYNERGY_CARDS } from '../data/synergyCards';
 import { getEnemy } from '../data/enemies';
 import { ACT_CONTENT, newRun } from '../data/run';
 import * as tunables from '../data/tunables';
@@ -101,7 +102,7 @@ describe('the run simulator', () => {
   it('a draft from every draftable card can take synergy cards, and the synergy policy finishes', () => {
     const rs = playRuns(10, 40, withPolicy(FAST, { draftPool: 'all', pick: 'synergy', skill: 'smart' }));
     const ids = new Set(rs.flatMap((r) => r.finalDeck));
-    expect([...ids].some((id) => getCard(id).owner === 'neutral' && !getCard(id).inRewardPool)).toBe(true);
+    expect([...ids].some((id) => SYNERGY_CARDS.some((c) => c.id === id))).toBe(true);
   }, 30000);
 
   it('paired comparison of a policy with itself is exactly zero', () => {

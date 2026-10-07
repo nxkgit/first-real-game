@@ -5,7 +5,10 @@ import {
   MAP_FLOORS,
   MAP_KIND_WEIGHTS,
   MAP_LANES,
+  MAP_LATE_FLOORS_FROM,
+  MAP_MIN_ELITES,
   MAP_PATHS,
+  MAP_ROUTE_THEMES,
 } from '../data/tunables';
 
 export type MapNodeKind = 'combat' | 'elite' | 'rest' | 'shop' | 'event' | 'boss';
@@ -36,6 +39,8 @@ export interface ActMap {
 export interface MapContent {
   earlyEncounters: string[][];
   encounters: string[][];
+  /** Fights for the upper floors (from `lateFloorsFrom`); the ordinary list is used if this is left out. */
+  lateEncounters?: string[][];
   elites: string[][];
   bosses: string[][];
   events: string[];
@@ -49,6 +54,11 @@ export interface MapParams {
   weights: Partial<Record<MapNodeKind, number>>;
   firstFloor: Partial<Record<MapNodeKind, number>>;
   earlyFloors: number;
+  lateFloorsFrom: number;
+  /** Per-route multipliers on `weights` (see MAP_ROUTE_THEMES). Each climb gets one theme. */
+  routeThemes: Record<string, Partial<Record<MapNodeKind, number>>>;
+  /** Fewest elite stops the map may have. */
+  minElites: number;
 }
 
 export const DEFAULT_MAP_PARAMS: MapParams = {
@@ -58,7 +68,17 @@ export const DEFAULT_MAP_PARAMS: MapParams = {
   weights: MAP_KIND_WEIGHTS,
   firstFloor: MAP_FIRST_FLOOR,
   earlyFloors: MAP_EARLY_FLOORS,
+  lateFloorsFrom: MAP_LATE_FLOORS_FROM,
+  routeThemes: MAP_ROUTE_THEMES,
+  minElites: MAP_MIN_ELITES,
 };
+
+/** The list an ordinary fight on `floor` is drawn from. */
+export function encounterPoolFor(floor: number, content: MapContent, params: Pick<MapParams, 'earlyFloors' | 'lateFloorsFrom'>): string[][] {
+  if (floor <= params.earlyFloors) return content.earlyEncounters;
+  if (floor >= params.lateFloorsFrom && content.lateEncounters && content.lateEncounters.length > 0) return content.lateEncounters;
+  return content.encounters;
+}
 
 const pick = <T>(rng: Rng, items: readonly T[]): T => items[Math.floor(rng.next() * items.length)];
 
@@ -83,9 +103,24 @@ export function generateActMap(rng: Rng, content: MapContent, params: MapParams 
   for (let i = 0; i < paths; i++) starts.push(Math.floor(rng.next() * lanes));
   if (new Set(starts).size < 2 && starts.length > 1) starts[1] = (starts[0] + 1 + Math.floor(rng.next() * (lanes - 1))) % lanes;
 
-  for (const start of starts) {
+  // each climb gets a route theme (shuffled, so which climb is which varies by seed)
+  const themeNames = Object.keys(params.routeThemes);
+  for (let i = themeNames.length - 1; i > 0; i--) {
+    const j = Math.floor(rng.next() * (i + 1));
+    [themeNames[i], themeNames[j]] = [themeNames[j], themeNames[i]];
+  }
+  const themesAt = new Map<string, Set<string>>(); // stop id -> themes of the climbs that pass through it
+  const touch = (stop: string, theme: string | undefined): void => {
+    if (theme === undefined) return;
+    if (!themesAt.has(stop)) themesAt.set(stop, new Set());
+    themesAt.get(stop)!.add(theme);
+  };
+
+  for (const [climb, start] of starts.entries()) {
+    const theme = themeNames.length > 0 ? themeNames[climb % themeNames.length] : undefined;
     let lane = start;
     present.add(id(0, lane));
+    touch(id(0, lane), theme);
     for (let floor = 0; floor < floors - 1; floor++) {
       const options = [lane - 1, lane, lane + 1].filter((l) => l >= 0 && l < lanes);
       const crossCount = (b: number): number => edges[floor].filter(([c, d]) => crosses(lane, b, c, d)).length;
@@ -94,6 +129,7 @@ export function generateActMap(rng: Rng, content: MapContent, params: MapParams 
       if (!edges[floor].some(([c, d]) => c === lane && d === next)) edges[floor].push([lane, next]);
       lane = next;
       present.add(id(floor + 1, lane));
+      touch(id(floor + 1, lane), theme);
     }
   }
 
@@ -125,12 +161,18 @@ export function generateActMap(rng: Rng, content: MapContent, params: MapParams 
       if (floor === 0) kind = 'combat';
       else if (floor === floors - 1) kind = 'rest';
       else {
-        const allowed = (Object.entries(params.weights) as [MapNodeKind, number][]).filter(([k]) => {
-          if (floor < (params.firstFloor[k] ?? 0)) return false;
-          if ((k === 'elite' || k === 'rest' || k === 'shop') && parentKinds.includes(k)) return false;
-          if (k === 'rest' && floor === floors - 2) return false; // the floor above is the guaranteed rest
-          return true;
-        });
+        // a stop on several climbs takes one of their themes at random
+        const themes = [...(themesAt.get(id(floor, lane)) ?? [])].sort();
+        const theme = themes.length > 0 ? themes[Math.floor(rng.next() * themes.length)] : undefined;
+        const mult = (k: MapNodeKind): number => (theme !== undefined ? (params.routeThemes[theme]?.[k] ?? 1) : 1);
+        const allowed = (Object.entries(params.weights) as [MapNodeKind, number][])
+          .filter(([k]) => {
+            if (floor < (params.firstFloor[k] ?? 0)) return false;
+            if ((k === 'elite' || k === 'rest' || k === 'shop') && parentKinds.includes(k)) return false;
+            if (k === 'rest' && floor === floors - 2) return false; // the floor above is the guaranteed rest
+            return true;
+          })
+          .map(([k, w]): [MapNodeKind, number] => [k, w * mult(k)]);
         const total = allowed.reduce((sum, [, w]) => sum + w, 0);
         let roll = rng.next() * total;
         kind = allowed[allowed.length - 1][0];
@@ -144,11 +186,33 @@ export function generateActMap(rng: Rng, content: MapContent, params: MapParams 
       }
 
       const node: MapNode = { id: id(floor, lane), floor, lane, kind, next: [] };
-      if (kind === 'combat') node.enemies = pick(rng, floor <= params.earlyFloors ? content.earlyEncounters : content.encounters);
+      if (kind === 'combat') node.enemies = pick(rng, encounterPoolFor(floor, content, params));
       if (kind === 'elite') node.enemies = pick(rng, content.elites);
       if (kind === 'event') node.eventId = nextEvent();
       nodes.set(node.id, node);
     }
+  }
+
+  // make sure enough elites made it onto the map: turn fights into elites where the floor rules allow
+  // (no elite right next to another on a path), preferring stops on the risky route
+  const eliteFloor = params.firstFloor.elite ?? 0;
+  const neighbours = (n: MapNode): MapNode[] => {
+    const out: MapNode[] = [];
+    for (const [a, b] of edges[n.floor] ?? []) if (a === n.lane) out.push(nodes.get(id(n.floor + 1, b))!);
+    for (const [a, b] of edges[n.floor - 1] ?? []) if (b === n.lane) out.push(nodes.get(id(n.floor - 1, a))!);
+    return out.filter(Boolean);
+  };
+  const eliteCount = (): number => [...nodes.values()].filter((n) => n.kind === 'elite').length;
+  const elitesEnabled = (params.weights.elite ?? 0) > 0 && eliteFloor < floors - 1; // an experiment that turns elites off stays off
+  while (elitesEnabled && eliteCount() < params.minElites && content.elites.length > 0) {
+    const candidates = [...nodes.values()].filter(
+      (n) => n.kind === 'combat' && n.floor >= eliteFloor && n.floor < floors - 1 && !neighbours(n).some((m) => m.kind === 'elite')
+    );
+    if (candidates.length === 0) break;
+    const risky = candidates.filter((n) => themesAt.get(n.id)?.has('risky'));
+    const chosen = pick(rng, risky.length > 0 ? risky : candidates);
+    chosen.kind = 'elite';
+    chosen.enemies = pick(rng, content.elites);
   }
 
   // wire the steps up, then the boss on top

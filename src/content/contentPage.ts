@@ -104,6 +104,7 @@ function actTable(): Table {
       ['Earliest floors', firstFloor],
       ['Easy fights (floors up to ' + (DEFAULT_MAP_PARAMS.earlyFloors + 1) + ')', names(ACT_CONTENT.earlyEncounters)],
       ['Normal fights', names(ACT_CONTENT.encounters)],
+      ['Late fights (floor ' + (DEFAULT_MAP_PARAMS.lateFloorsFrom + 1) + ' and up)', names(ACT_CONTENT.lateEncounters ?? ACT_CONTENT.encounters)],
       ['Elite fights', names(ACT_CONTENT.elites)],
       ['Boss', names(ACT_CONTENT.bosses)],
     ],

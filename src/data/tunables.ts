@@ -56,3 +56,18 @@ export const MAP_KIND_WEIGHTS = { combat: 55, event: 22, elite: 8, rest: 10, sho
 export const MAP_FIRST_FLOOR = { event: 1, shop: 3, elite: 4, rest: 4 } as const;
 /** Floors up to and including this one use the easier list of fights. */
 export const MAP_EARLY_FLOORS = 2;
+/** First floor that uses the late list of fights (a harder mix than the middle floors). PROVISIONAL. */
+export const MAP_LATE_FLOORS_FROM = 8;
+/**
+ * Route themes: each climb on the map gets one theme, which multiplies the chance of each kind of
+ * stop on that climb, so choosing a path is choosing an experience. A stop shared by several climbs
+ * takes the theme of one of them at random. The multipliers are PROVISIONAL map-feel dials, not balance.
+ */
+export const MAP_ROUTE_THEMES = {
+  risky: { elite: 8, event: 1, rest: 0.6, shop: 0.5, combat: 1 },
+  events: { event: 3, combat: 0.6, elite: 0.5 },
+  safe: { rest: 3, shop: 3, combat: 0.7, elite: 0.1 },
+  fights: { combat: 1.5, event: 0.5, rest: 0.7, shop: 0.5, elite: 1 },
+} as const;
+/** The map always has at least this many elite stops (the generator turns fights into elites if it rolled fewer). */
+export const MAP_MIN_ELITES = 3;

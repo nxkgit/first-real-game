@@ -492,12 +492,12 @@ describe('determinism and upgraded cards', () => {
 });
 
 describe('placeholder synergy content', () => {
-  it('is registered but never offered by the live game', () => {
+  it('is registered and offered by the live game (user, 2026-10-07: every placeholder is in the pool for testing)', () => {
     for (const card of SYNERGY_CARDS) {
       expect(CARDS[card.id]).toBe(card);
-      expect(card.inRewardPool).toBe(false);
+      expect(card.inRewardPool).toBe(true);
     }
-    expect(rewardPoolFor('mage').some((c) => SYNERGY_CARDS.includes(c))).toBe(false);
+    for (const card of SYNERGY_CARDS) expect(rewardPoolFor('mage')).toContain(card);
     expect(RELIC_POOL.map((r) => r.id)).not.toContain('exhaust-token');
     expect(RELICS['kill-token']).toBeDefined();
   });
@@ -549,9 +549,9 @@ describe('runs with synergy content', () => {
     expect(restored!.relics.map((r) => r.id)).toContain('exhaust-token');
   });
 
-  it('the live game is unchanged: starter deck and reward pool contain no synergy cards', () => {
+  it('the starter deck has no synergy cards; the reward pool is the 11 original cards plus all of them', () => {
     const run = newRun(5);
     expect(run.deck.some((c) => SYNERGY_CARDS.includes(c))).toBe(false);
-    expect(rewardPoolFor('mage').length).toBe(11);
+    expect(rewardPoolFor('mage').length).toBe(11 + SYNERGY_CARDS.length);
   });
 });

@@ -6,6 +6,7 @@ import { PLAYER_MAX_HP } from '../data/tunables';
 import { heading, r6, table } from './report';
 import type { ExperimentResult } from './report';
 import { getCard } from '../data/cards';
+import { SYNERGY_CARDS } from '../data/synergyCards';
 import { DEFAULT_RUN_POLICY, mechanismsOf, playRuns, withPolicy } from './runsim';
 import type { RunPolicy, RunRecord } from './runsim';
 import { KINDS, fightsRemainingByFloor, shapeStats } from './mapstats';
@@ -579,7 +580,7 @@ export function synergyDraftExperiment(o: RunExpOptions): ExperimentResult {
   ];
   const rows = compareRuns(o.runs, o.baseSeed, entries);
   const conc = rows.map((r) => meanCI(r.records.map((x) => concentration(x.finalDeck))));
-  const syn = rows.map((r) => pct(r.records.filter((x) => x.finalDeck.some((id) => getCard(id).owner === 'neutral' && !getCard(id).inRewardPool)).length / r.records.length, 0));
+  const syn = rows.map((r) => pct(r.records.filter((x) => x.finalDeck.some((id) => SYNERGY_CARDS.some((c) => c.id === id))).length / r.records.length, 0));
   const markdown = [
     heading(2, 'Does a synergy-seeking draft assemble an engine?'),
     '',

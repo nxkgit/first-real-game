@@ -78,9 +78,10 @@ describe('card registry', () => {
   it('offers a hero only its own reward cards (and never starter-only ones)', () => {
     const pool = rewardPoolFor(MAGE);
     expect(pool.length).toBeGreaterThan(0);
-    expect(pool.every((c) => c.inRewardPool && c.owner === MAGE)).toBe(true);
+    expect(pool.every((c) => c.inRewardPool && (c.owner === MAGE || c.owner === 'neutral'))).toBe(true);
     expect(pool).not.toContain(getCard('strike'));
-    expect(rewardPoolFor('someone-else')).toEqual([]);
+    // another hero is offered only the neutral cards (the synergy placeholders)
+    for (const c of rewardPoolFor('someone-else')) expect(c.owner).toBe('neutral');
   });
 
   it('every card is declared consistently: aimed exactly when an effect needs a target', () => {
