@@ -5,6 +5,7 @@ import type { RunNode, RunState } from '../game/RunState';
 import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from '../settings';
 import { setCurrentRun } from '../session';
 import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
+import { gameKeyFrom } from './keyFilter';
 
 // Small UI pieces shared by the run's scenes. Placeholder look, like the rest of the visuals.
 
@@ -91,7 +92,8 @@ export function onKeyPress(scene: Phaser.Scene, handler: (key: string) => void):
     // typing in the dev panel's boxes must not play cards
     const target = event.target;
     if (target instanceof HTMLElement && /^(INPUT|SELECT|TEXTAREA)$/.test(target.tagName)) return;
-    if (!event.repeat) handler(event.key.toLowerCase());
+    const key = gameKeyFrom(event);
+    if (key !== null) handler(key);
   };
   window.addEventListener('keydown', listener);
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => window.removeEventListener('keydown', listener));

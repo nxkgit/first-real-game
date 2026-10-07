@@ -27,10 +27,12 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Same typecheck + tests as `npm run verify`; only the build step differs (the --base below).
+      - run: npx tsc
       - run: npm test
       # Pages serves the site under /<repo-name>/, so asset URLs need that base path.
       # Passed here rather than in a Vite config so local dev and Docker still serve from /.
-      - run: npx tsc && npx vite build --base=/${{ github.event.repository.name }}/
+      - run: npx vite build --base=/${{ github.event.repository.name }}/
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

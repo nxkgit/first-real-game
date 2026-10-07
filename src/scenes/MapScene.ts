@@ -3,6 +3,7 @@ import type { MapNode, MapNodeKind } from '../game/actMap';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
+import { mapLayout } from './mapLayout';
 import {
   addDeckButton,
   addRunHud,
@@ -23,8 +24,8 @@ export const MAP_STYLE: Record<MapNodeKind, { symbol: string; color: number; lab
   boss: { symbol: 'B', color: 0x5a3a8a, label: 'Boss' },
 };
 
-const LANE_X = (lane: number): number => 200 + lane * 100;
-const FLOOR_Y = (floor: number): number => 548 - floor * 35;
+
+
 
 /** Between stops: the act's map. Pick one of the glowing stops to go there next. */
 export class MapScene extends Phaser.Scene {
@@ -53,6 +54,7 @@ export class MapScene extends Phaser.Scene {
 
     this.add.text(400, 62, 'Choose your path', { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
 
+    const layout = mapLayout(this.run.map.floors, this.run.map.lanes);
     const choices = new Set(this.run.mapChoices.map((n) => n.id));
     const visited = new Set(this.run.visited);
     const byId = new Map(this.run.map.nodes.map((n) => [n.id, n]));
@@ -65,12 +67,12 @@ export class MapScene extends Phaser.Scene {
         const walked = visited.has(node.id) && visited.has(nextId);
         const open = node.id === this.run.position && choices.has(nextId);
         lines.lineStyle(walked ? 4 : 2, walked ? 0xd8b23c : open ? 0xe8e8f0 : 0x3a3a50, 1);
-        lines.lineBetween(LANE_X(node.lane), FLOOR_Y(node.floor), LANE_X(next.lane), FLOOR_Y(next.floor));
+        lines.lineBetween(layout.x(node.lane), layout.y(node.floor), layout.x(next.lane), layout.y(next.floor));
       }
     }
     // before the first stop, every bottom stop is open: draw a faint "start" marker beneath them
     if (this.run.position === null) {
-      this.add.text(400, FLOOR_Y(0) + 34, 'Start here', { fontSize: '12px', color: '#777788' }).setOrigin(0.5);
+      this.add.text(400, layout.y(0) + 34, 'Start here', { fontSize: '12px', color: '#777788' }).setOrigin(0.5);
     }
 
     const hover = this.add.text(400, 586, '', { fontSize: '13px', color: '#c8c8d8' }).setOrigin(0.5);
@@ -83,8 +85,9 @@ export class MapScene extends Phaser.Scene {
     const style = MAP_STYLE[node.kind];
     const radius = node.kind === 'boss' ? 21 : 14;
     const here = node.id === this.run.position;
-    const x = LANE_X(node.lane);
-    const y = FLOOR_Y(node.floor);
+    const layout = mapLayout(this.run.map.floors, this.run.map.lanes);
+    const x = layout.x(node.lane);
+    const y = layout.y(node.floor);
 
     const disc = this.add.circle(0, 0, radius, style.color).setStrokeStyle(open || here ? 3 : 2, open ? 0xffffff : here ? 0xd8b23c : 0x1b1b24);
     const symbol = this.add

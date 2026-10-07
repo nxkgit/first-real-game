@@ -479,6 +479,7 @@ export class RunState {
       if (n.eventId) world.event(n.eventId);
     }
     run.eventFight?.enemies.forEach((id) => world.enemy(id));
+    run.eventFight?.after.forEach((o) => o.kind === 'card' && world.card(o.cardId));
     return run;
   }
 
@@ -519,13 +520,15 @@ export class RunState {
         const before = this.gold;
         this.gold = Math.max(0, this.gold + outcome.value);
         const change = this.gold - before;
-        return change >= 0 ? `Gained ${change} gold.` : `Lost ${-change} gold.`;
+        if (change === 0) return outcome.value < 0 ? 'Lost no gold (you had none).' : 'Gained no gold.';
+        return change > 0 ? `Gained ${change} gold.` : `Lost ${-change} gold.`;
       }
       case 'hp': {
         const before = this.hp;
         this.hp = Math.min(this.maxHp, Math.max(1, this.hp + outcome.value));
         const change = this.hp - before;
-        return change >= 0 ? `Healed ${change} HP.` : `Lost ${-change} HP.`;
+        if (change === 0) return outcome.value < 0 ? 'Lost no HP (already at the minimum).' : 'Healed no HP.';
+        return change > 0 ? `Healed ${change} HP.` : `Lost ${-change} HP.`;
       }
       case 'maxHp':
         this.applyRunEffects([{ kind: 'maxHp', value: outcome.value }]);

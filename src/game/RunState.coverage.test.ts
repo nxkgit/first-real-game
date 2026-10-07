@@ -245,14 +245,14 @@ describe('RunState event outcomes', () => {
   // FINDING: when a loss is fully absorbed by the floor (already at 1 HP, or 0 gold) the line says
   // "Healed 0 HP." / "Gained 0 gold." because the sign test is on the actual change (0), not on the
   // outcome's value. It is misleading text for a loss.
-  it.fails('a loss absorbed by the HP floor is not described as healing', () => {
+  it('a loss absorbed by the HP floor is not described as healing', () => {
     const r = atEvent([{ label: 'x', outcomes: [{ kind: 'hp', value: -5 }] }]);
     r.hp = 1;
     const [line] = r.chooseEventOption(0).lines;
     expect(line).not.toMatch(/^Healed/);
   });
 
-  it.fails('a gold loss with 0 gold is not described as a gain', () => {
+  it('a gold loss with 0 gold is not described as a gain', () => {
     const r = atEvent([{ label: 'x', outcomes: [{ kind: 'gold', value: -50 }] }]);
     r.gold = 0;
     const [line] = r.chooseEventOption(0).lines;

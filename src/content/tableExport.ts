@@ -7,7 +7,8 @@ export interface Table {
   rows: string[][];
 }
 
-const escapeCell = (text: string): string => text.replace(/\|/g, '\|').replace(/\n/g, ' ');
+/** Markdown cell text: backslashes and pipes escaped (a pipe would end the cell), line breaks flattened to spaces. */
+const escapeCell = (text: string): string => text.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\r\n|\r|\n/g, ' ');
 
 /** A Markdown table with a heading, ready to paste into a document. */
 export function toMarkdown(table: Table): string {
