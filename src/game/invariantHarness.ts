@@ -11,7 +11,6 @@ import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
 import { STATUSES } from '../data/statuses';
-import { MAX_ENERGY } from '../data/tunables';
 import type { CardDefinition, CardInstance, EnemyDefinition, RelicDefinition } from './types';
 
 // ---------- small utilities ----------
@@ -58,8 +57,8 @@ const registryMentionsEnergy = (): boolean =>
     JSON.stringify([Object.values(CARDS), Object.values(RELICS), Object.values(ENEMIES)], (k, v) => (k === 'name' ? undefined : v))
   );
 
-/** Documented cap: MAX_ENERGY is the per-turn refill, so energy can't exceed it unless some content gains energy. */
-const ENERGY_CAP = (): number => (registryMentionsEnergy() ? 999 : MAX_ENERGY);
+/** Documented cap: maxEnergy (MAX_ENERGY) is the per-turn refill, so energy can't exceed it unless some content gains energy. */
+const ENERGY_CAP = (): number => (registryMentionsEnergy() ? 999 : 0);
 let energyCap: number | undefined;
 
 // ---------- the invariants ----------
@@ -83,7 +82,8 @@ export function checkCombatInvariants(c: CombatState, expectedCards: number): vo
   }
   for (const e of c.enemies) if (!Number.isInteger(e.moveIndex) || e.moveIndex < 0) fail(`${e.id} moveIndex ${e.moveIndex}`);
   if (!Number.isInteger(c.energy) || c.energy < 0) fail(`energy ${c.energy}`);
-  if (c.energy > energyCap!) fail(`energy ${c.energy} above cap ${energyCap}`);
+  const cap = energyCap! > 0 ? energyCap! : c.maxEnergy;
+  if (c.energy > cap) fail(`energy ${c.energy} above cap ${cap}`);
   assertFiniteDeep(c.player, 'player');
   assertFiniteDeep(c.enemies, 'enemies');
   for (const [k, v] of Object.entries(c)) if (typeof v === 'number' && !Number.isFinite(v)) fail(`combat.${k} is ${v}`);
