@@ -6,7 +6,8 @@ import type { CardInstance, Effect, EnemyDefinition } from '../game/types';
 import { PLAYER_ID } from '../game/types';
 import { Sfx } from '../audio/Sfx';
 import { useLayoutCamera } from '../display';
-import { setCurrentCombat } from '../session';
+import { setCurrentCombat, takePendingScenario } from '../session';
+import { restoreScenario } from '../game/scenario';
 import { STATUSES } from '../data/statuses';
 import {
   CARD_HEIGHT,
@@ -107,13 +108,19 @@ export class CombatScene extends Phaser.Scene {
     addDeckButton(this, this.run, hud.x + hud.width + 70, () => this.targeting?.cancel());
     addSettingsButton(this);
 
-    // the fight's shuffles come from the run's seeded stream, so a replayed or resumed run is identical
-    const fightRng = this.run.newCombatRng();
-    this.combat = new CombatState(this.run.deck, this.enemyDefinitions, {
-      player: { hp: this.run.hp, maxHp: this.run.maxHp },
-      random: () => fightRng.next(),
-      relics: this.run.relics,
-    });
+    const scenario = takePendingScenario();
+    if (scenario) {
+      // a fight picked up from a dev-panel scenario: its own piles, stream and state (the run's stream is left alone)
+      this.combat = restoreScenario(scenario);
+      this.powersPlayed = this.combat.deck.powerPile.length;
+    } else {
+      // the fight's shuffles come from the run's seeded stream, so a replayed or resumed run is identical
+      this.combat = new CombatState(this.run.deck, this.enemyDefinitions, {
+        player: { hp: this.run.hp, maxHp: this.run.maxHp },
+        rng: this.run.newCombatRng(),
+        relics: this.run.relics,
+      });
+    }
     setCurrentCombat(this.combat);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => setCurrentCombat(null));
     this.tooltips = new Tooltips(this);
@@ -129,6 +136,7 @@ export class CombatScene extends Phaser.Scene {
       this.combat.playCard(card.instanceId, enemyId)
     );
     this.buildOverlays();
+    if (this.powersPlayed > 0) this.powersText.setText(`Powers: ${this.powersPlayed}`).setVisible(true);
 
     this.wireCombatEvents();
     this.bindKeys();
