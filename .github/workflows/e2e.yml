@@ -1,0 +1,42 @@
+# Browser end-to-end smoke tests (Playwright, headless Chromium). See docs/E2E.md.
+# NON-BLOCKING for now: continue-on-error keeps a red run from failing the PR's checks. Promote it
+# later by removing `continue-on-error` (and, if wanted, listing it as a required check).
+name: E2E
+
+on:
+  pull_request:
+  push:
+    branches: ['auto/**', 'integration/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # the suite itself runs against the dev server; the build catches bundling problems first
+      - run: npm run build
+      - run: npm run e2e
+      - name: Upload Playwright traces and report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14

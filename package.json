@@ -16,10 +16,12 @@
     "balance:check": "npm run balance -- check",
     "balance:report": "npm run balance -- report --out balance/reports/sample",
     "e2e": "playwright test",
-    "e2e:install": "playwright install --with-deps chromium"
+    "e2e:install": "playwright install --with-deps chromium",
+    "e2e:typecheck": "tsc -p e2e/tsconfig.json"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.4",
     "@vitest/coverage-v8": "^5.0.3",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",

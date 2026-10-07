@@ -40,8 +40,9 @@ export interface CombatTruth {
 
 export class Harness {
   readonly errors: string[] = [];
-  private clock = 0;
   private initScriptAdded = false;
+  /** Milliseconds of game time per frame while waiting for animations (bigger = fewer frames to wait). */
+  settleDt = 33;
 
   constructor(readonly page: Page) {
     page.on('console', (msg) => {
@@ -85,7 +86,7 @@ export class Harness {
   /** Runs frames and fails if the active scene's clock did not advance (the loop or scene is stuck). */
   async step(frames = 1, dtMs = 16): Promise<void> {
     const before = await this.sceneClock();
-    this.clock = await this.page.evaluate(([n, dt]) => (window as Any).__step(n, dt), [frames, dtMs] as const);
+    await this.page.evaluate(([n, dt]) => (window as Any).__step(n, dt), [frames, dtMs] as const);
     const after = await this.sceneClock();
     if (before && after && before.key === after.key && after.now === before.now) {
       throw new Error(`scene ${after.key} stopped advancing (clock ${before.now} -> ${after.now})`);
@@ -277,7 +278,7 @@ export class Harness {
   async settle(maxFrames = 1500): Promise<void> {
     let calm = 0;
     for (let spent = 0; spent < maxFrames; spent += 5) {
-      await this.step(5, 33);
+      await this.step(5, this.settleDt);
       const busy = await this.page.evaluate(async () => {
         const game = (window as Any).__game;
         const scene = game.scene.getScene('CombatScene');
