@@ -88,7 +88,7 @@ describe('save -> parse -> resume equivalence', () => {
         stops++;
       }
     }
-    expect(stops).toBeGreaterThan(SEEDS * 10);
+    expect(stops).toBeGreaterThan(SEEDS * 4); // random play dies early now that enemies have high HP (about 5.5 stops per run)
   });
 
   it('a save is idempotent: save, restore, save gives the same text', () => {

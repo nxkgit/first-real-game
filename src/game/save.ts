@@ -84,6 +84,8 @@ function validMap(raw: unknown): boolean {
   const nodes = raw.nodes as { id: string; floor: number; kind: string; next: string[] }[];
   const byId = new Map(nodes.map((n) => [n.id, n]));
   if (!nodes.some((n) => n.floor === 0)) return false; // somewhere to start
+  // a stop below the top floor must lead somewhere, or the run is stuck on the map
+  if (nodes.some((n) => n.floor < (raw.floors as number) - 1 && n.next.length === 0)) return false;
   // every link must lead somewhere that exists and goes up
   return nodes.every((n) => n.next.every((id) => (byId.get(id)?.floor ?? -1) > n.floor));
 }

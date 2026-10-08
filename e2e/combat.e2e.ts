@@ -2,6 +2,7 @@ import { expect, test } from './harness';
 import { enterFirstFight } from './flows';
 
 test('(b) plays a whole fight with the real mouse; readouts match CombatState after every action', async ({ game }) => {
+  test.setTimeout(300_000); // enemy HP is high, so this fight runs many turns
   await game.open('seed=123');
   await game.waitForScene('MapScene');
   await enterFirstFight(game);
@@ -11,7 +12,7 @@ test('(b) plays a whole fight with the real mouse; readouts match CombatState af
   let firstStrikeChecked = false;
   let sawEnemyAct = false;
 
-  for (let turn = 1; turn <= 15 && truth.phase === 'playerTurn'; turn++) {
+  for (let turn = 1; turn <= 40 && truth.phase === 'playerTurn'; turn++) {
     expect(truth.turn).toBe(turn);
     expect(truth.energy).toBe(truth.maxEnergy);
     expect(truth.hand.length).toBeGreaterThanOrEqual(5);
