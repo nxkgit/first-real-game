@@ -20,34 +20,34 @@ const buffSelf = (status: 'strength', value: number): EnemyMove => ({
 export const ENEMY_A: EnemyDefinition = {
   id: 'enemy-a',
   name: 'Enemy A',
-  maxHp: 160,
-  movePattern: [attack(8), attack(8), defend(6), attack(14, 'Heavy Attack')],
+  maxHp: 96,
+  movePattern: [attack(11), attack(11), defend(6), attack(20, 'Heavy Attack')],
 };
 
 export const ENEMY_B: EnemyDefinition = {
   id: 'enemy-b',
   name: 'Enemy B',
-  maxHp: 192,
+  maxHp: 115,
   placeholderColor: 0x8a6a3c,
-  movePattern: [defend(8), attack(12), debuffPlayer('weak', 1), attack(6)],
+  movePattern: [defend(8), attack(17), debuffPlayer('weak', 1), attack(8)],
 };
 
 /** Final fight of the run: tougher than the first two. */
 export const ENEMY_C: EnemyDefinition = {
   id: 'enemy-c',
   name: 'Enemy C',
-  maxHp: 280,
+  maxHp: 168,
   placeholderColor: 0x7a3f6a,
-  movePattern: [attack(10), buffSelf('strength', 2), attack(12, 'Heavy Attack'), defend(10), attack(10)],
+  movePattern: [attack(14), buffSelf('strength', 2), attack(17, 'Heavy Attack'), defend(10), attack(14)],
 };
 
 /** A small enemy that fights alongside another, to exercise multi-enemy fights. */
 export const ENEMY_D: EnemyDefinition = {
   id: 'enemy-d',
   name: 'Enemy D',
-  maxHp: 80,
+  maxHp: 48,
   placeholderColor: 0x4f7aa8,
-  movePattern: [attack(5), attack(5), defend(5)],
+  movePattern: [attack(7), attack(7), defend(5)],
 };
 
 // ---- elites and the boss (PLACEHOLDER, larger drawings of the same goblin) ----
@@ -64,34 +64,34 @@ const attackAndDebuff = (value: number, status: 'weak' | 'vulnerable', stacks: n
 export const ELITE_A: EnemyDefinition = {
   id: 'elite-a',
   name: 'Elite A',
-  maxHp: 340,
+  maxHp: 204,
   placeholderColor: 0x9a3c3c,
   placeholderScale: 1.25,
-  movePattern: [attack(12), buffSelf('strength', 2), attack(16, 'Heavy Attack'), debuffPlayer('vulnerable', 2)],
+  movePattern: [attack(17), buffSelf('strength', 2), attack(22, 'Heavy Attack'), debuffPlayer('vulnerable', 2)],
 };
 
 export const ELITE_B: EnemyDefinition = {
   id: 'elite-b',
   name: 'Elite B',
-  maxHp: 280,
+  maxHp: 168,
   placeholderColor: 0x3c6a9a,
   placeholderScale: 1.2,
-  movePattern: [attackAndDebuff(8, 'weak', 1, 'Sap'), defend(12), attack(18, 'Heavy Attack')],
+  movePattern: [attackAndDebuff(11, 'weak', 1, 'Sap'), defend(12), attack(25, 'Heavy Attack')],
 };
 
 export const BOSS_A: EnemyDefinition = {
   id: 'boss-a',
   name: 'Boss A',
-  maxHp: 600,
+  maxHp: 360,
   placeholderColor: 0x4a3a5a,
   placeholderScale: 1.5,
   movePattern: [
-    attack(14),
+    attack(20),
     debuffPlayer('weak', 2),
-    attack(20, 'Heavy Attack'),
+    attack(28, 'Heavy Attack'),
     buffSelf('strength', 2),
     defend(15),
-    attackAndDebuff(10, 'vulnerable', 1, 'Crush'),
+    attackAndDebuff(14, 'vulnerable', 1, 'Crush'),
   ],
 };
 
