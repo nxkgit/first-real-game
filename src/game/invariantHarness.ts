@@ -185,7 +185,7 @@ export function fuzzFight(o: FightFuzzOptions): FightFuzzResult {
   });
 
   const check = (): void => {
-    checkCombatInvariants(combat, expected);
+    checkCombatInvariants(combat, expected + combat.stats.cardsAddedThisCombat);
     if (sawTerminal && combat.phase !== sawTerminal) throw new Error(`terminal phase ${sawTerminal} changed to ${combat.phase}`);
     if (combat.phase === 'won' || combat.phase === 'lost') sawTerminal = combat.phase;
     if (combat.phase === 'enemyTurn') throw new Error('enemyTurn is visible between actions');

@@ -92,6 +92,11 @@ An effect is `{ kind: '...', ... }`. Cards, relics and enemy moves all use the s
 | `loseHp` | `value` | The player loses HP directly. Block does not help; it can kill. | yes | no |
 | `multiplyStatus` | `status`, `factor`, `to` | Multiply the stacks already there (`factor: 2` doubles). Does nothing at 0 stacks. | no | no |
 | `exhaustRandom` | `value` | Exhaust that many random cards from your hand. | no | no |
+| `discardRandom` | `value` | Discard that many random cards from your hand (can be reshuffled, unlike exhaust). | no | no |
+| `damageAll` | `value` | Deal damage to every living enemy; no `target: 'enemy'` needed on the card. | yes | no |
+| `adjustTemperature` | `value` | Mage only: shift Temperature (negative cools down), clamped to its range. | no | no |
+| `addCardToHand` | `cardId`, `value` | Put that many copies of a specific card straight into the hand (overflow discards, like a draw into a full hand). | yes | no |
+| `gainEnergizedTurns` | `value` | Gain 1 extra energy at the start of your turn for that many of your next turns (this turn not counted). | no | no |
 <!-- /names -->
 
 "Target" is the enemy the card was aimed at (for a trigger: the first living enemy). "Self" is whoever plays it. Triggered effects are not card plays: they do not count towards "cards played this turn".
@@ -128,6 +133,8 @@ Add `scaling` to a damage, block, draw, applyStatus, gainEnergy or loseHp effect
 | `handSize` | Cards in your hand when the effect resolves (the played card has left it). |
 | `exhaustedThisCombat` | Cards exhausted so far this fight. |
 | `targetVulnerable` | Vulnerable stacks on the target. |
+| `targetFreeze` | Mage only: Freeze stacks on the target. |
+| `temperature` | Mage only: the current Temperature. |
 <!-- /names -->
 
 Scaling is part of the base number: Strength, Weak and the rest apply after it. Scaling on `multiplyStatus`, `exhaustRandom` or on an enemy move does nothing; the content check reports it.
@@ -338,6 +345,7 @@ The existing statuses (a status id must be one of these; adding one needs a code
 | `vulnerable` | Duration. The holder takes more attack damage. |
 | `strength` | Intensity. The holder's attacks deal N more damage for the whole fight. |
 | `empowered` | Intensity. The next attack card(s) deal a damage multiple; one stack per attack card. |
+| `freeze` | Intensity, Mage only. Never counts down on its own; every `FREEZE_STUN_THRESHOLD` stacks stuns the holder for one move and removes those stacks. |
 <!-- /names -->
 
 ## The act's map

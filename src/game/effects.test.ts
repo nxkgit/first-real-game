@@ -24,6 +24,11 @@ const SAMPLES: Record<EffectKind, Effect> = {
   loseHp: { kind: 'loseHp', value: 2 },
   multiplyStatus: { kind: 'multiplyStatus', status: 'strength', factor: 2, to: 'self' },
   exhaustRandom: { kind: 'exhaustRandom', value: 1 },
+  discardRandom: { kind: 'discardRandom', value: 1 },
+  damageAll: { kind: 'damageAll', value: 3 },
+  adjustTemperature: { kind: 'adjustTemperature', value: 1 },
+  addCardToHand: { kind: 'addCardToHand', cardId: 'strike', value: 1 },
+  gainEnergizedTurns: { kind: 'gainEnergizedTurns', value: 2 },
 };
 const KINDS = Object.keys(SAMPLES) as EffectKind[];
 
@@ -53,7 +58,7 @@ describe('effect registry', () => {
   it('scaling: value-carrying kinds accept every source, the rest accept none', () => {
     for (const kind of KINDS) {
       const scales = EFFECTS[kind].scales;
-      if (kind === 'multiplyStatus' || kind === 'exhaustRandom') expect(scales, kind).toEqual([]);
+      if (['multiplyStatus', 'exhaustRandom', 'discardRandom', 'adjustTemperature', 'gainEnergizedTurns'].includes(kind)) expect(scales, kind).toEqual([]);
       else expect([...scales].sort(), kind).toEqual([...ALL_SCALE_SOURCES].sort());
       expect(acceptsScaling(SAMPLES[kind]), kind).toBe(scales.length > 0);
     }
@@ -80,7 +85,18 @@ describe('effect registry', () => {
     expect(intentIconOf(SAMPLES.block)).toBe('defend');
     expect(intentIconOf({ kind: 'applyStatus', status: 'weak', value: 1, to: 'self' })).toBe('buff');
     expect(intentIconOf(SAMPLES.applyStatus)).toBe('debuff');
-    for (const kind of ['draw', 'gainEnergy', 'loseHp', 'multiplyStatus', 'exhaustRandom'] as EffectKind[]) {
+    for (const kind of [
+      'draw',
+      'gainEnergy',
+      'loseHp',
+      'multiplyStatus',
+      'exhaustRandom',
+      'discardRandom',
+      'damageAll',
+      'adjustTemperature',
+      'addCardToHand',
+      'gainEnergizedTurns',
+    ] as EffectKind[]) {
       expect(intentIconOf(SAMPLES[kind]), kind).toBeUndefined();
     }
     expect(intentIcons({ name: 'm', effects: KINDS.map((k) => SAMPLES[k]) })).toEqual(['attack', 'defend', 'debuff']);

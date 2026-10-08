@@ -13,6 +13,7 @@ import type {
   EnemyDefinition,
   EnemyMove,
   EnemyState,
+  HeroPowerDefinition,
   RelicDefinition,
   Scaling,
   StatusId,
@@ -21,7 +22,16 @@ import type {
   TriggerOn,
 } from './types';
 import { STATUSES } from '../data/statuses';
-import { HAND_SIZE, MAX_ENERGY, MAX_HAND_SIZE, MAX_TRIGGER_DEPTH, PLAYER_MAX_HP } from '../data/tunables';
+import {
+  FREEZE_STUN_THRESHOLD,
+  HAND_SIZE,
+  MAX_ENERGY,
+  MAX_HAND_SIZE,
+  MAX_TRIGGER_DEPTH,
+  PLAYER_MAX_HP,
+  TEMPERATURE_MAX,
+  TEMPERATURE_MIN,
+} from '../data/tunables';
 
 /** Counters that scaling and the dev tools read. Per-turn ones reset as each player turn starts. */
 export interface CombatStats {
@@ -32,6 +42,9 @@ export interface CombatStats {
   taggedPlayedThisTurn: Record<string, number>;
   /** Cards exhausted so far this combat (by any means). */
   exhaustedThisCombat: number;
+  /** Cards materialized straight into the hand so far this combat (addCardToHand; Mage-only). The
+   *  deck's total card count is not fixed once this is above 0 (see invariantHarness.ts). */
+  cardsAddedThisCombat: number;
 }
 
 interface ActiveTrigger {
@@ -46,6 +59,8 @@ export interface CombatOptions {
   random?: () => number;
   /** Relics the player has: their combat-start and turn-start effects apply. */
   relics?: RelicDefinition[];
+  /** The hero's once-per-turn active ability, if they have one (see CombatState.useHeroPower). */
+  heroPower?: HeroPowerDefinition;
   /** A seeded stream to draw the fight's randomness from (instead of `random`). Needed to capture
    *  the fight exactly (see `exportState`). */
   rng?: Rng;
@@ -67,13 +82,17 @@ export interface CombatSnapshot {
   energy: number;
   maxEnergy: number;
   player: { hp: number; maxHp: number; block: number; statuses: Statuses };
-  enemies: { definition: EnemyDefinition; hp: number; block: number; statuses: Statuses; moveIndex: number }[];
+  enemies: { definition: EnemyDefinition; hp: number; block: number; statuses: Statuses; moveIndex: number; stunnedTurns?: number }[];
   relics: RelicDefinition[];
   /** Cards by pile. `draw` is in drawing order (index 0 is drawn next). */
   piles: { draw: CardDefinition[]; hand: CardDefinition[]; discard: CardDefinition[]; exhaust: CardDefinition[]; powers: CardDefinition[] };
   stats: CombatStats;
   /** Whether each reactive ability has already fired this turn, in firing order (relics, then powers in the order played). */
   triggersFired: boolean[];
+  /** Mage-only mechanics (optional so older snapshots/scenarios without them still load as 0/false). */
+  temperature?: number;
+  energizedTurnsRemaining?: number;
+  heroPowerUsedThisTurn?: boolean;
 }
 
 export type CombatPhase = 'playerTurn' | 'enemyTurn' | 'won' | 'lost';
@@ -113,6 +132,14 @@ export interface CombatEventMap {
   enemyMoveResolved: { enemyId: CombatantId; move: EnemyMove; damage?: DamageResult; blockGained?: number };
   enemyDied: { enemyId: CombatantId };
   combatEnded: { result: 'won' | 'lost' };
+  /** Mage-only: Temperature shifted (adjustTemperature). */
+  temperatureChanged: { temperature: number; delta: number };
+  /** Mage-only: the hero power was used. */
+  heroPowerUsed: Record<string, never>;
+  /** Mage-only: an enemy's Freeze stacks crossed FREEZE_STUN_THRESHOLD and it owes a stunned move. */
+  enemyStunned: { enemyId: CombatantId };
+  /** Mage-only: an enemy skipped its move because it was stunned. */
+  enemyTurnSkipped: { enemyId: CombatantId };
 }
 
 /**
@@ -134,8 +161,17 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** 1 on the first player turn, then counts up. */
   turnNumber = 0;
 
+  /** Mage-only "Temperature" mechanic (implementationplan.md "Mage — Core Mechanics"): clamped to
+   *  [TEMPERATURE_MIN, TEMPERATURE_MAX], starts at 0. Fire cards push it up, frost cards pull it down. */
+  temperature = 0;
+  /** The hero's once-per-turn active ability, if they have one. */
+  readonly heroPower?: HeroPowerDefinition;
+  heroPowerUsedThisTurn = false;
+  /** Turns left (including this one, once startPlayerTurn grants it) of the hero power's +1 energy. */
+  private energizedTurnsRemaining = 0;
+
   /** Synergy counters (see CombatStats). */
-  readonly stats: CombatStats = { cardsPlayedThisTurn: 0, attacksPlayedThisTurn: 0, taggedPlayedThisTurn: {}, exhaustedThisCombat: 0 };
+  readonly stats: CombatStats = { cardsPlayedThisTurn: 0, attacksPlayedThisTurn: 0, taggedPlayedThisTurn: {}, exhaustedThisCombat: 0, cardsAddedThisCombat: 0 };
 
   /** The stream the fight's randomness comes from, if it was given one (see CombatOptions.rng). */
   readonly rng: Rng | null;
@@ -180,6 +216,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       definition,
       moveIndex: 0,
     }));
+    this.heroPower = options.heroPower;
     this.restored = snapshot !== undefined;
     if (snapshot) this.applySnapshot(snapshot);
     this.host = {
@@ -195,6 +232,10 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       fireTriggers: (on) => this.fireTriggers(on),
       emitHandChanged: () => this.emitHandChanged(),
       markFresh: (target, id) => void this.freshStatuses.add(`${target.id}:${id}`),
+      livingEnemies: () => this.livingEnemies,
+      adjustTemperature: (delta) => this.adjustTemperature(delta),
+      gainEnergizedTurns: (turns) => (this.energizedTurnsRemaining += turns),
+      addCardsToHand: (definition, count) => this.addCardsToHand(definition, count),
     };
   }
 
@@ -212,11 +253,16 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       enemy.block = from.block;
       enemy.statuses = { ...from.statuses };
       enemy.moveIndex = from.moveIndex;
+      enemy.stunnedTurns = from.stunnedTurns ?? 0;
     });
+    this.temperature = s.temperature ?? 0;
+    this.energizedTurnsRemaining = s.energizedTurnsRemaining ?? 0;
+    this.heroPowerUsedThisTurn = s.heroPowerUsedThisTurn ?? false;
     this.stats.cardsPlayedThisTurn = s.stats.cardsPlayedThisTurn;
     this.stats.attacksPlayedThisTurn = s.stats.attacksPlayedThisTurn;
     this.stats.taggedPlayedThisTurn = { ...s.stats.taggedPlayedThisTurn };
     this.stats.exhaustedThisCombat = s.stats.exhaustedThisCombat;
+    this.stats.cardsAddedThisCombat = s.stats.cardsAddedThisCombat;
     // powers already in play: their reactive abilities follow the relics', in the order they were played
     for (const power of s.piles.powers) {
       this.activePowers.push(power);
@@ -246,8 +292,12 @@ export class CombatState extends EventEmitter<CombatEventMap> {
         block: e.block,
         statuses: { ...e.statuses },
         moveIndex: e.moveIndex,
+        stunnedTurns: e.stunnedTurns ?? 0,
       })),
       relics: [...this.relics],
+      temperature: this.temperature,
+      energizedTurnsRemaining: this.energizedTurnsRemaining,
+      heroPowerUsedThisTurn: this.heroPowerUsedThisTurn,
       piles: {
         draw: definitions(this.deck.drawPile).reverse(),
         hand: definitions(this.deck.hand),
@@ -371,6 +421,26 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return this.phase === 'playerTurn' && card.definition.cost <= this.energy;
   }
 
+  canUseHeroPower(): boolean {
+    return (
+      this.phase === 'playerTurn' && !!this.heroPower && !this.heroPowerUsedThisTurn && this.heroPower.cost <= this.energy
+    );
+  }
+
+  /** Uses the hero's once-per-turn ability (not a card: no hand/discard/exhaust involvement). */
+  useHeroPower(): boolean {
+    if (!this.heroPower || !this.canUseHeroPower()) return false;
+    const power = this.heroPower;
+    this.energy -= power.cost;
+    this.heroPowerUsedThisTurn = true;
+    for (const effect of power.effects) this.applyCardEffect(effect, this.livingEnemies[0]);
+    this.pushLog(`Used ${power.name}.`);
+    this.emit('energyChanged', { energy: this.energy, delta: -power.cost });
+    this.emit('heroPowerUsed', {});
+    this.checkWinLoss();
+    return true;
+  }
+
   /** Cards with definition.target === 'enemy' are rejected unless `targetId` is a living enemy. */
   playCard(instanceId: string, targetId?: CombatantId): boolean {
     const handCard = this.deck.hand.find((c) => c.instanceId === instanceId);
@@ -441,6 +511,12 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     // the first turn keeps any block that combat-start effects (relics) just gave
     if (!isFirstTurn) this.player.block = 0;
     this.energy = this.maxEnergy;
+    this.heroPowerUsedThisTurn = false;
+    if (this.energizedTurnsRemaining > 0) {
+      this.energizedTurnsRemaining -= 1;
+      this.energy += 1;
+      this.emit('energyChanged', { energy: this.energy, delta: 1 });
+    }
     this.stats.cardsPlayedThisTurn = 0;
     this.stats.attacksPlayedThisTurn = 0;
     this.stats.taggedPlayedThisTurn = {};
@@ -448,7 +524,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.deck.draw(HAND_SIZE);
     for (const power of this.activePowers) {
       if (power.onTurnStartEffect) {
-        this.applyCardEffect(power.onTurnStartEffect, undefined);
+        // first living enemy, like a trigger's effects (undefined targets are self-only anyway)
+        this.applyCardEffect(power.onTurnStartEffect, this.livingEnemies[0]);
       }
     }
     for (const relic of this.relics) {
@@ -470,6 +547,14 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       if (enemy.hp <= 0) continue;
       if (this.player.hp <= 0) break;
       enemy.block = 0; // mirrors the player's own "block resets at start of your turn" rule
+      // Mage-only Freeze: a stunned enemy skips this move entirely (moveIndex does not advance,
+      // so it still intends the same move once the stun wears off).
+      if (enemy.stunnedTurns && enemy.stunnedTurns > 0) {
+        enemy.stunnedTurns -= 1;
+        this.pushLog(`${enemy.name} is frozen solid and skips its turn.`);
+        this.emit('enemyTurnSkipped', { enemyId: enemy.id });
+        continue;
+      }
       this.runEnemyMove(enemy, this.nextMove(enemy));
       enemy.moveIndex += 1;
     }
@@ -534,6 +619,10 @@ export class CombatState extends EventEmitter<CombatEventMap> {
         return this.stats.exhaustedThisCombat;
       case 'targetVulnerable':
         return target?.statuses.vulnerable ?? 0;
+      case 'targetFreeze':
+        return target?.statuses.freeze ?? 0;
+      case 'temperature':
+        return this.temperature;
     }
   }
 
@@ -596,7 +685,38 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** Adds stacks and returns the matching event for the caller to emit. */
   private addStatus(target: Combatant, id: StatusId, stacks: number): CombatEventMap['statusChanged'] {
     target.statuses[id] = (target.statuses[id] ?? 0) + stacks;
+    if (id === 'freeze' && stacks > 0) this.checkFreezeStun(target);
     return { target: target.id, status: id, delta: stacks, statuses: { ...target.statuses } };
+  }
+
+  /** Mage-only Freeze: every FREEZE_STUN_THRESHOLD stacks on an enemy stuns it for one move and
+   *  removes those stacks (a big single application can cross the threshold more than once). */
+  private checkFreezeStun(target: Combatant): void {
+    const enemy = this.enemies.find((e) => e.id === target.id);
+    if (!enemy) return; // only enemies can be stunned; freeze cards are all aimed at enemies
+    while ((enemy.statuses.freeze ?? 0) >= FREEZE_STUN_THRESHOLD) {
+      const next = (enemy.statuses.freeze ?? 0) - FREEZE_STUN_THRESHOLD;
+      if (next <= 0) delete enemy.statuses.freeze; // never leave a 0-stack status key behind
+      else enemy.statuses.freeze = next;
+      enemy.stunnedTurns = (enemy.stunnedTurns ?? 0) + 1;
+      this.pushLog(`${enemy.name} is frozen solid!`);
+      this.emit('enemyStunned', { enemyId: enemy.id });
+    }
+  }
+
+  /** Shifts Temperature by `delta`, clamped to [TEMPERATURE_MIN, TEMPERATURE_MAX], and returns the new value. */
+  private adjustTemperature(delta: number): number {
+    this.temperature = Math.min(TEMPERATURE_MAX, Math.max(TEMPERATURE_MIN, this.temperature + delta));
+    return this.temperature;
+  }
+
+  /** Mage-only: materializes new cards straight into the hand (Molten Core). Counted in
+   *  `stats.cardsAddedThisCombat` since it breaks the usual "the deck's total card count is fixed"
+   *  assumption (see invariantHarness.ts). */
+  private addCardsToHand(definition: CardDefinition, count: number): number {
+    const added = this.deck.addCopiesToHand(definition, count);
+    this.stats.cardsAddedThisCombat += count;
+    return added;
   }
 
   private tickStatuses(target: Combatant): void {

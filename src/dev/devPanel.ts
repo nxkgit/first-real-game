@@ -5,6 +5,7 @@ import { CARDS, getCard } from '../data/cards';
 import { ENEMIES, getEnemy } from '../data/enemies';
 import { RELICS, getRelic } from '../data/relics';
 import { newRun } from '../data/run';
+import { DECK_PRESETS } from './deckPresets';
 import { enterCurrentNode } from '../scenes/ui';
 import { getCurrentCombat, getCurrentRun, setPendingScenario } from '../session';
 import { copyToClipboard, loadReportHistory } from '../storage';
@@ -107,6 +108,7 @@ export function installDevPanel(game: Phaser.Game): void {
 
   const cardPick = select(Object.values(CARDS).map((c) => [c.id, `${c.name} (${c.cost})`]));
   const relicPick = select(Object.values(RELICS).map((r) => [r.id, r.name]));
+  const deckPresetPick = select(Object.entries(DECK_PRESETS).map(([id, preset]) => [id, preset.label]));
   const seedInput = document.createElement('input');
   seedInput.placeholder = 'seed (blank = random)';
   seedInput.style.cssText = 'font:inherit;width:130px;background:#1b1b24;color:#fff;border:1px solid #5a5a72;';
@@ -162,6 +164,16 @@ export function installDevPanel(game: Phaser.Game): void {
       })
     ),
     row(cardPick, button('Add card', () => withRun((run) => run.deck.push(getCard(cardPick.value)), false))),
+    row(
+      deckPresetPick,
+      button('Load deck preset', () =>
+        withRun((run) => {
+          const preset = DECK_PRESETS[deckPresetPick.value];
+          run.deck = preset.cardIds.map(getCard);
+          say(`Deck replaced: ${preset.label} (${run.deck.length} cards). Pick enemies and Fight these here.`);
+        }, false)
+      )
+    ),
     row(
       relicPick,
       button('Give relic', () =>

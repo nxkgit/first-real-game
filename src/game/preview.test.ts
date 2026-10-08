@@ -30,6 +30,8 @@ const HELPERS: Record<string, CardDefinition> = {
   flex: mk('flex', { effects: [{ kind: 'applyStatus', status: 'strength', value: 2, to: 'self' }] }),
   expose: mk('expose', { type: 'attack', target: 'enemy', effects: [{ kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'target' }] }),
   burn: mk('burn', { exhaust: true }),
+  chill: mk('chill', { type: 'skill', target: 'enemy', effects: [{ kind: 'applyStatus', status: 'freeze', value: 1, to: 'target' }] }),
+  heatUp: mk('heatUp', { effects: [{ kind: 'adjustTemperature', value: 1 }] }),
 };
 
 /** For each scaling source: which helper cards to play first so its count is above zero. */
@@ -42,6 +44,8 @@ const SETUP: Record<ScaleSource, string[]> = {
   handSize: [],
   exhaustedThisCombat: ['burn', 'burn'],
   targetVulnerable: ['expose'],
+  targetFreeze: ['chill'],
+  temperature: ['heatUp'],
 };
 
 type ScalingArg = { per: ScaleSource; value: number; tag?: string };
@@ -167,6 +171,11 @@ describe('live numbers on card faces: preview matches playing the card', () => {
       loseHp: true,
       multiplyStatus: false,
       exhaustRandom: false,
+      discardRandom: false,
+      damageAll: false,
+      adjustTemperature: false,
+      addCardToHand: false,
+      gainEnergizedTurns: false,
     };
     for (const [kind, lower] of Object.entries(kinds)) {
       const effect = { kind, value: 1, status: 'strength', to: 'self', factor: 2 } as unknown as Effect;

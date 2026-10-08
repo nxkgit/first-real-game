@@ -22,6 +22,14 @@ export const EMPOWERED_DAMAGE_MULT = 2;
 export const WEAK_DAMAGE_MULT = 0.75;
 /** Vulnerable: the holder takes this multiple of attack damage. */
 export const VULNERABLE_DAMAGE_MULT = 1.5;
+/** Freeze (Mage-only): every this many stacks, the holder is stunned for one move and loses the stacks. PROVISIONAL. */
+export const FREEZE_STUN_THRESHOLD = 5;
+
+// ---- Mage: Temperature (name, range and thresholds are all PROVISIONAL placeholders) ----
+export const TEMPERATURE_MIN = -5;
+export const TEMPERATURE_MAX = 5;
+/** How many turns the Mage's hero power's extra energy lasts. PROVISIONAL. */
+export const HERO_POWER_ENERGIZED_TURNS = 2;
 
 // ---- run ----
 export const PLAYER_MAX_HP = 60;

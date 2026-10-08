@@ -26,6 +26,11 @@ export const EFFECT_KINDS: Record<Effect['kind'], EffectKindInfo> = {
   loseHp: { scales: true, enemyMove: false, intentIcon: false, hasValue: true, summary: 'The player loses HP directly; block does not help. Player only.' },
   multiplyStatus: { scales: false, enemyMove: false, intentIcon: false, hasValue: false, summary: 'Multiply the stacks of a status already present (nothing at 0 stacks).' },
   exhaustRandom: { scales: false, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Exhaust random cards from the hand. Player only.' },
+  discardRandom: { scales: false, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Discard random cards from the hand (they can be reshuffled, unlike exhaust). Player only.' },
+  damageAll: { scales: true, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Deal damage to every living enemy. Player only; no `target: "enemy"` needed.' },
+  adjustTemperature: { scales: false, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Mage only: shift Temperature (negative cools down), clamped to its range. Player only.' },
+  addCardToHand: { scales: true, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Put copies of a specific card (`cardId`) straight into the hand. Player only.' },
+  gainEnergizedTurns: { scales: false, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Gain 1 extra energy at the start of your turn for that many turns (not counting this one). Player only.' },
 };
 
 export const SCALE_SOURCES: Record<ScaleSource, string> = {
@@ -37,6 +42,8 @@ export const SCALE_SOURCES: Record<ScaleSource, string> = {
   handSize: 'Cards in your hand when the effect resolves.',
   exhaustedThisCombat: 'Cards exhausted so far this fight.',
   targetVulnerable: 'Vulnerable stacks on the target.',
+  targetFreeze: 'Mage only: Freeze stacks on the target.',
+  temperature: 'Mage only: the current Temperature.',
 };
 
 export const TRIGGER_EVENTS: Record<TriggerOn, string> = {
@@ -54,6 +61,7 @@ export const STATUS_IDS: Record<StatusId, string> = {
   vulnerable: 'Duration. The holder takes more attack damage.',
   strength: "Intensity. The holder's attacks deal N more damage for the whole fight.",
   empowered: 'Intensity. The next attack card(s) deal a damage multiple; one stack used per attack card.',
+  freeze: 'Intensity, Mage only. Never counts down on its own; every FREEZE_STUN_THRESHOLD stacks stuns the holder for one move and removes those stacks.',
 };
 
 export const CARD_TYPES: Record<CardType, string> = {

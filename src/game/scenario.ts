@@ -1,11 +1,11 @@
 import { CombatState } from './CombatState';
 import type { CombatSnapshot, CombatStats } from './CombatState';
-import type { CardDefinition, EnemyDefinition, RelicDefinition, StatusId, Statuses } from './types';
+import type { CardDefinition, EnemyDefinition, HeroPowerDefinition, RelicDefinition, StatusId, Statuses } from './types';
 import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
 import { STATUSES, STATUS_ORDER } from '../data/statuses';
-import { MAX_ENERGY, MAX_HAND_SIZE, PLAYER_MAX_HP } from '../data/tunables';
+import { MAX_ENERGY, MAX_HAND_SIZE, PLAYER_MAX_HP, TEMPERATURE_MAX, TEMPERATURE_MIN } from '../data/tunables';
 
 // A scenario is an exact fight state as plain JSON: capture one from a running fight, or write one
 // by hand, and load it back to get the same situation every time. Everything refers to content by
@@ -28,8 +28,8 @@ export interface Scenario {
   player: { hp: number; maxHp: number; block: number; statuses: Statuses };
   /** Relic ids, in order. Their combat-start effects are NOT run again; their reactive abilities are. */
   relics: string[];
-  /** In fight order (they become enemy-0, enemy-1, ...). */
-  enemies: { id: string; hp: number; block: number; statuses: Statuses; moveIndex: number }[];
+  /** In fight order (they become enemy-0, enemy-1, ...). `stunnedTurns` is Mage-only (Freeze). */
+  enemies: { id: string; hp: number; block: number; statuses: Statuses; moveIndex: number; stunnedTurns?: number }[];
   /** Card ids by pile. `draw` is in drawing order: the first entry is drawn next. */
   piles: { draw: string[]; hand: string[]; discard: string[]; exhaust: string[]; powers: string[] };
   /** Counters for "for each card played earlier this turn" style scaling. */
@@ -37,6 +37,10 @@ export interface Scenario {
   /** Whether each reactive ability already fired this turn, in firing order: relics' first, then
    *  powers' in the order played. Normally all false at the start of a turn. */
   triggersFired: boolean[];
+  /** Mage-only mechanics. Left out (default 0/false) unless non-default. */
+  temperature?: number;
+  energizedTurnsRemaining?: number;
+  heroPowerUsedThisTurn?: boolean;
 }
 
 /** What a scenario's ids are looked up in. The default is the game's real content. */
@@ -52,7 +56,24 @@ export type ScenarioResult = { ok: true; scenario: Scenario } | { ok: false; err
 
 // ---- reading (validation) ----
 
-const TOP_KEYS = ['version', 'name', 'note', 'rng', 'turn', 'energy', 'maxEnergy', 'player', 'relics', 'enemies', 'piles', 'stats', 'triggersFired'];
+const TOP_KEYS = [
+  'version',
+  'name',
+  'note',
+  'rng',
+  'turn',
+  'energy',
+  'maxEnergy',
+  'player',
+  'relics',
+  'enemies',
+  'piles',
+  'stats',
+  'triggersFired',
+  'temperature',
+  'energizedTurnsRemaining',
+  'heroPowerUsedThisTurn',
+];
 const PILES = ['draw', 'hand', 'discard', 'exhaust', 'powers'] as const;
 const MAX_PILE = 500;
 const MAX_ENEMIES = 8;
@@ -175,17 +196,19 @@ function readScenario(raw: unknown, world: ScenarioWorld): Scenario {
   const enemies = enemyList.map((entry, i) => {
     const where = `enemies[${i}]`;
     if (!isRecord(entry)) return bad(`${where}: expected an object like {"id": "enemy-a"}`);
-    onlyKeys(entry, ['id', 'hp', 'block', 'statuses', 'moveIndex'], where);
+    onlyKeys(entry, ['id', 'hp', 'block', 'statuses', 'moveIndex', 'stunnedTurns'], where);
     const id = entry.id;
     if (typeof id !== 'string') return bad(`${where}.id: expected an enemy id (text)`);
     const definition = world.enemies[id];
     if (!definition) return bad(`${where}.id: unknown enemy "${id}"${suggest(id, Object.keys(world.enemies))}`);
+    const stunnedTurns = int(entry.stunnedTurns ?? 0, `${where}.stunnedTurns`, 0, 1000);
     return {
       id,
       hp: int(entry.hp ?? definition.maxHp, `${where}.hp`, 0, definition.maxHp),
       block: int(entry.block ?? 0, `${where}.block`, 0, 100000),
       statuses: statuses(entry.statuses, `${where}.statuses`),
       moveIndex: int(entry.moveIndex ?? 0, `${where}.moveIndex`, 0, 1000000),
+      ...(stunnedTurns ? { stunnedTurns } : {}),
     };
   });
   if (enemies.every((e) => e.hp === 0)) bad('enemies: every enemy is already at 0 HP, so there is no fight left to play');
@@ -210,7 +233,7 @@ function readScenario(raw: unknown, world: ScenarioWorld): Scenario {
   const statsRaw = raw.stats ?? {};
   if (!isRecord(statsRaw)) bad('stats: expected an object');
   const sr = statsRaw as Record<string, unknown>;
-  onlyKeys(sr, ['cardsPlayedThisTurn', 'attacksPlayedThisTurn', 'taggedPlayedThisTurn', 'exhaustedThisCombat'], 'stats');
+  onlyKeys(sr, ['cardsPlayedThisTurn', 'attacksPlayedThisTurn', 'taggedPlayedThisTurn', 'exhaustedThisCombat', 'cardsAddedThisCombat'], 'stats');
   const tagged: Record<string, number> = {};
   if (sr.taggedPlayedThisTurn !== undefined) {
     if (!isRecord(sr.taggedPlayedThisTurn)) bad('stats.taggedPlayedThisTurn: expected an object like {"A": 2}');
@@ -223,6 +246,7 @@ function readScenario(raw: unknown, world: ScenarioWorld): Scenario {
     attacksPlayedThisTurn: int(sr.attacksPlayedThisTurn ?? 0, 'stats.attacksPlayedThisTurn', 0, 100000),
     taggedPlayedThisTurn: tagged,
     exhaustedThisCombat: int(sr.exhaustedThisCombat ?? piles.exhaust.length, 'stats.exhaustedThisCombat', 0, 100000),
+    cardsAddedThisCombat: int(sr.cardsAddedThisCombat ?? 0, 'stats.cardsAddedThisCombat', 0, 100000),
   };
 
   // reactive abilities: one flag per ability the relics and powers give
@@ -244,6 +268,14 @@ function readScenario(raw: unknown, world: ScenarioWorld): Scenario {
   const scenario: Scenario = { version: SCENARIO_VERSION, rng: { seed, position }, turn, energy, maxEnergy, player, relics, enemies, piles, stats, triggersFired };
   if (typeof raw.name === 'string') scenario.name = raw.name;
   if (typeof raw.note === 'string') scenario.note = raw.note;
+  if (raw.temperature !== undefined) scenario.temperature = int(raw.temperature, 'temperature', TEMPERATURE_MIN, TEMPERATURE_MAX);
+  if (raw.energizedTurnsRemaining !== undefined) {
+    scenario.energizedTurnsRemaining = int(raw.energizedTurnsRemaining, 'energizedTurnsRemaining', 0, 1000);
+  }
+  if (raw.heroPowerUsedThisTurn !== undefined) {
+    if (typeof raw.heroPowerUsedThisTurn !== 'boolean') bad('heroPowerUsedThisTurn: expected true or false');
+    scenario.heroPowerUsedThisTurn = raw.heroPowerUsedThisTurn as boolean;
+  }
   return scenario;
 }
 
@@ -286,6 +318,7 @@ export function scenarioToSnapshot(scenario: Scenario, world: ScenarioWorld = GA
       block: e.block,
       statuses: { ...e.statuses },
       moveIndex: e.moveIndex,
+      stunnedTurns: e.stunnedTurns ?? 0,
     })),
     relics: scenario.relics.map((id) => world.relics[id] ?? bad(`unknown relic "${id}"`)),
     piles: {
@@ -297,6 +330,9 @@ export function scenarioToSnapshot(scenario: Scenario, world: ScenarioWorld = GA
     },
     stats: { ...scenario.stats, taggedPlayedThisTurn: { ...scenario.stats.taggedPlayedThisTurn } },
     triggersFired: [...scenario.triggersFired],
+    temperature: scenario.temperature ?? 0,
+    energizedTurnsRemaining: scenario.energizedTurnsRemaining ?? 0,
+    heroPowerUsedThisTurn: scenario.heroPowerUsedThisTurn ?? false,
   };
 }
 
@@ -318,7 +354,14 @@ export function snapshotToScenario(snapshot: CombatSnapshot, meta: { name?: stri
     maxEnergy: snapshot.maxEnergy,
     player: { ...snapshot.player, statuses: orderedStatuses(snapshot.player.statuses) },
     relics: snapshot.relics.map((r) => r.id),
-    enemies: snapshot.enemies.map((e) => ({ id: e.definition.id, hp: e.hp, block: e.block, statuses: orderedStatuses(e.statuses), moveIndex: e.moveIndex })),
+    enemies: snapshot.enemies.map((e) => ({
+      id: e.definition.id,
+      hp: e.hp,
+      block: e.block,
+      statuses: orderedStatuses(e.statuses),
+      moveIndex: e.moveIndex,
+      ...(e.stunnedTurns ? { stunnedTurns: e.stunnedTurns } : {}),
+    })),
     piles: {
       draw: ids(snapshot.piles.draw),
       hand: ids(snapshot.piles.hand),
@@ -331,6 +374,9 @@ export function snapshotToScenario(snapshot: CombatSnapshot, meta: { name?: stri
   };
   if (meta.name) scenario.name = meta.name;
   if (meta.note) scenario.note = meta.note;
+  if (snapshot.temperature) scenario.temperature = snapshot.temperature;
+  if (snapshot.energizedTurnsRemaining) scenario.energizedTurnsRemaining = snapshot.energizedTurnsRemaining;
+  if (snapshot.heroPowerUsedThisTurn) scenario.heroPowerUsedThisTurn = snapshot.heroPowerUsedThisTurn;
   return scenario;
 }
 
@@ -340,8 +386,8 @@ export function captureScenario(combat: CombatState, meta: { name?: string; note
 }
 
 /** A new fight, standing exactly where the scenario says. Call `start()` after attaching listeners, as for any fight. */
-export function restoreScenario(scenario: Scenario, world: ScenarioWorld = GAME_WORLD): CombatState {
-  return new CombatState([], [], { restore: scenarioToSnapshot(scenario, world) });
+export function restoreScenario(scenario: Scenario, world: ScenarioWorld = GAME_WORLD, heroPower?: HeroPowerDefinition): CombatState {
+  return new CombatState([], [], { restore: scenarioToSnapshot(scenario, world), heroPower });
 }
 
 /** The scenario as readable JSON text: indented, with each list of ids on one line. */

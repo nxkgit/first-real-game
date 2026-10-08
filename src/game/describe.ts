@@ -1,4 +1,4 @@
-import type { CardDefinition, Effect, EventOutcome, RelicDefinition, RunEffect, ScaleSource, Trigger } from './types';
+import type { CardDefinition, Effect, EventOutcome, HeroPowerDefinition, RelicDefinition, RunEffect, ScaleSource, Trigger } from './types';
 import { acceptsScaling, describeEffectWith } from './effects';
 import type { DescribeOpts } from './effects';
 import { getCard } from '../data/cards';
@@ -28,6 +28,8 @@ const SCALE_UNIT: Record<ScaleSource, (tag?: string) => string> = {
   handSize: () => 'card in your hand',
   exhaustedThisCombat: () => 'card exhausted this combat',
   targetVulnerable: () => 'stack of Vulnerable on the target',
+  targetFreeze: () => 'stack of Freeze on the target',
+  temperature: () => 'point of Temperature',
 };
 
 /** One effect with its number filled in as `n` (the scaling is described separately). The wording
@@ -84,6 +86,12 @@ export function cardText(card: CardDefinition, liveValue?: (effect: Effect) => n
   for (const trigger of card.triggers ?? []) parts.push(describeTrigger(trigger));
   if (card.exhaust) parts.push('Exhaust.');
   return parts.join(' ');
+}
+
+/** A hero power's text: its `description` if it has one, otherwise generated from its effects. */
+export function heroPowerText(power: HeroPowerDefinition): string {
+  if (power.description !== undefined) return power.description;
+  return power.effects.map((effect) => describeEffect(effect)).join(' ');
 }
 
 /** A card's tags as the small line on its face, e.g. "#tag-a #tag-b"; empty if it has none. */

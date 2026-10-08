@@ -101,6 +101,99 @@ Decision: **very similar to StS** — an icon above the enemy showing its next m
 - One life per run (permadeath), like StS — no meta progression/persistent currency between runs, at least for now.
 - The eventual full run includes elites and a boss at the end.
 
+## Mage — Core Mechanics (built 2026-10-07)
+
+The user's first real design pass for the Mage (hero identity, card names and mechanics are theirs;
+see CLAUDE.md's creative boundary). This is the run's first **real** content — everything before it
+in the act was clearly-placeholder scaffolding. All numbers below are explicitly provisional
+(flagged "X" by the user where undecided) and chosen only to be reasonable relative to the existing
+cards in `cards.ts` (Strike 6 dmg/1 cost, Bolt 12/2, Heavy Hit 24/3, Defend 5/1, Big Block 13/2).
+Decided-without-asking calls the user didn't specify are logged in `DESIGN_LOG.md` with their reasoning.
+
+### Hero power (new system)
+
+Each hero can have one **hero power**: a fixed ability outside the hand (never drawn, discarded or
+exhausted), usable once per the player's turn for its energy cost, from its own button. This is new
+engine surface (`HeroPowerDefinition` in `game/types.ts`, `CombatState.useHeroPower` /
+`canUseHeroPower`), separate from Power *cards* (which stay in play and act every turn once played).
+It answers the open item from HANDOFF.md ("each hero gets one ability usable once per turn").
+
+The Mage's power (`src/data/heroPowers.ts`; display name "Hero Power" — a real name is the user's to
+give it): **1 cost, for the next 2 turns gain 1 extra energy at the start of your turn.** Built as a
+new generic effect, `gainEnergizedTurns`, so the mechanic is available to any future card or power,
+not special-cased to this one button.
+
+### Temperature (name, range and thresholds all PROVISIONAL)
+
+A second resource alongside energy, unique to the Mage: a number from **-5 to +5**, starting at 0
+each fight (`CombatState.temperature`, clamped). Fire-tagged cards push it up, frost-tagged cards
+pull it down, by an amount each card sets explicitly (a new `adjustTemperature` effect; not an
+automatic per-tag rule, so a card like Absolute Zero can shift it by a lot more than a Scorching
+Wind). A new scaling source, `temperature`, lets a card's number key off the current value (Molten
+Core).
+
+The user's stated intent — "fire cards gain an extra effect at high temperature, frost cards at
+low temperature" — is not built yet: no card in this first batch calls for it, and building the
+threshold-bonus plumbing before a card needs it would be exactly the premature abstraction
+CLAUDE.md warns against. Add it (most likely a `temperatureBonus` block on `CardDefinition`, gated
+by the card's `fire`/`frost` tag and a threshold constant) once a real card needs it.
+
+### Freeze (new status, Mage-only)
+
+A new `StatusId`, `freeze`: stacks never count down on their own (unlike Weak/Vulnerable), and every
+`FREEZE_STUN_THRESHOLD` (5, provisional) stacks **stuns the enemy for one move** and removes those
+stacks (`CombatState.checkFreezeStun`; a single large application can cross the threshold more than
+once). A stunned enemy skips its next move without its intent advancing, so it still telegraphs —
+and then performs — the same move once the stun wears off. The enemy's intent icon does not yet show
+that a stun is pending (a known UI gap; the player only learns from the combat log when it happens).
+
+### The 20 cards (`src/data/mageCards.ts`)
+
+All in the Mage's reward pool. Where the user wrote "X" for a value, or left a cost or effect
+unspecified, a placeholder was chosen and is flagged in the file's comments; two answers came from
+direct questions (Cauterize = plain block; the freeze-stun threshold = every 5 stacks).
+
+| Card | Type/cost | What it does |
+|---|---|---|
+| Scorching Wind | Attack, 0 | Light fire damage; heats up. |
+| Heating Up | Skill, 1 | This turn, attacks deal double damage (placeholder: a generous Empowered stack, since the engine has no unlimited-duration version). |
+| Meteor Shower | Attack, 2 | Fire damage to **all** enemies (new `damageAll` effect); heats up. |
+| Molten Core | Skill, 2 | Adds Scorching Winds to hand, scaling with current Temperature (new `addCardToHand` effect). |
+| Apocalyptic Flame | Attack, 3 (cost wasn't given) | The Mage's biggest single hit. |
+| Crippling Heat | Attack, 1 (cost was "0 or 1") | Damage + Weak; heats up. |
+| Heat Flash | Attack, 0 (the other half of the "0 or 1" pair) | Smaller damage + Weak; heats up. |
+| Cauterize | Skill, 1 | Plain block (user's answer to "some kind of defensive card"); heats up. |
+| Heat Warning | Attack, 1 | Damage + Vulnerable; heats up. |
+| Ice Block | Skill, 3 (cost was "high", no number) | "Immune to damage until your next turn" (placeholder: a block value well above any hit a current fight deals, not a true immunity flag); cools down. |
+| Ice Barrier | Skill, 1 | Discards cards from hand, gains block; cools down. |
+| Hypothermia | Skill, 1 | Applies a Freeze stack; cools down. |
+| Frozen Shield | Skill, 1 | Block + a Freeze stack; cools down. |
+| Cryofreeze | Power, 2 | "Gain X plating" (placeholder: reuses the existing turn-start-block pattern, like Fortify, rather than inventing a separate "plating" mechanic); cools down on cast. |
+| Endless Winter | Power, 1 | Applies 1 Freeze every turn (powers' turn-start effects can now target the first living enemy automatically, a small engine change this card needed). |
+| Glaciate | Attack, 2 | Triple damage against a target with any Freeze (new `vsFreezeMult` field on the damage effect). |
+| Glacial Spike | Skill, 1 | Applies Freeze; cools down. |
+| Absolute Zero | Skill, 3 | Large, pure Temperature drop, no other effect. |
+| Hungering Cold | Power, 1 | Cools down by 1 every turn. |
+| Arctic Strike | Attack, 1 | Damage that scales with the target's Freeze stacks (new `targetFreeze` scaling source). |
+
+### Engine additions this took
+
+New `Effect` kinds (`game/effects.ts`): `damageAll`, `discardRandom`, `adjustTemperature`,
+`addCardToHand`, `gainEnergizedTurns`; a new optional `vsFreezeMult` on `damage`. New scaling
+sources: `temperature`, `targetFreeze`. A power's `onTurnStartEffect` now targets the first living
+enemy (previously always `undefined`, so a target-needing effect there was silently a no-op).
+`CombatStats.cardsAddedThisCombat` tracks cards materialized by `addCardToHand`, since the deck's
+total card count is no longer fixed for a fight that uses it (the fuzz-test harness now accounts for
+it). Scenario capture/restore (`game/scenario.ts`) carries Temperature, the hero-power-used flag and
+the energized-turns counter, so a captured mid-fight Mage state reloads exactly.
+
+Played in a real browser (not just unit-tested): the hero power (button state, the once-per-turn
+lock, the energy bonus landing on turns 2 and 3 and not turn 1), the Temperature readout and its
+colour, Freeze stacking via a loaded dev-panel scenario (a Freeze badge appears, stacking to 5 logs
+"Enemy A is frozen solid!", the enemy then skips its move without its intent changing, and Glaciate's
+live-damage number drops from 24 back to 8 the instant the stun consumes the stacks), and Meteor
+Shower hitting every enemy in a two-enemy fight.
+
 ## Deferred (explicitly not MVP 1 — do not build yet)
 
 - Shop system (shop contents, prices, exchange rate between a card reward and gold) — a draft screen exists as a stop kind; nothing about it is decided

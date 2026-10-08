@@ -1,5 +1,5 @@
 import type { StatusDefinition, StatusId } from '../game/types';
-import { EMPOWERED_DAMAGE_MULT, VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from './tunables';
+import { EMPOWERED_DAMAGE_MULT, FREEZE_STUN_THRESHOLD, VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from './tunables';
 
 // Mirrors the Slay the Spire trio (implementationplan.md: "mirror StS closely"). Names and the
 // badge look are placeholders; the numbers live in tunables.ts.
@@ -40,7 +40,17 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
     outgoingDamageMult: () => EMPOWERED_DAMAGE_MULT,
     badge: { symbol: 'E', color: 0xc78fe8 },
   },
+  // Mage-only (implementationplan.md "Mage — Core Mechanics"): stacks never count down on their
+  // own; CombatState.addStatus stuns the holder and removes the stacks every FREEZE_STUN_THRESHOLD.
+  freeze: {
+    id: 'freeze',
+    name: 'Freeze',
+    kind: 'intensity',
+    describe: (n) =>
+      `Freeze ${n}: every ${FREEZE_STUN_THRESHOLD} stacks, stuns the target for its next turn and removes those stacks. Does not wear off on its own.`,
+    badge: { symbol: 'F', color: 0x6fd3e8 },
+  },
 };
 
 /** Display order for badges. */
-export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable'];
+export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable', 'freeze'];
