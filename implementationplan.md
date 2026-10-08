@@ -156,7 +156,7 @@ direct questions (Cauterize = plain block; the freeze-stun threshold = every 5 s
 | Card | Type/cost | What it does |
 |---|---|---|
 | Scorching Wind | Attack, 0 | Light fire damage; heats up. |
-| Heating Up | Skill, 1 | This turn, attacks deal double damage (placeholder: a generous Empowered stack, since the engine has no unlimited-duration version). |
+| Heating Up | Skill, 1 | Each attack played this turn deals double the damage of the one before it (1st normal, 2nd x2, 3rd x4, ...), uncapped. Corrected 2026-10-08 — see "Heating Up: the real mechanic" below; was briefly built as a flat Empowered grant, which was wrong. |
 | Meteor Shower | Attack, 2 | Fire damage to **all** enemies (new `damageAll` effect); heats up. |
 | Molten Core | Skill, 2 | Adds Scorching Winds to hand, scaling with current Temperature (new `addCardToHand` effect). |
 | Apocalyptic Flame | Attack, 3 (cost wasn't given) | The Mage's biggest single hit. |
@@ -237,6 +237,37 @@ Frail cut a 13-block card down to 9 (13 × 0.75, floored); Intangible capped a 5
 (with no block in the way, HP dropped by exactly 1); Buffer absorbed two full hits (14 and 500
 damage, HP unchanged both times, stacks ticking 2 → 1 → gone) and then a third hit (8 damage) went
 through normally once the stacks ran out.
+
+## Heating Up: the real mechanic (corrected 2026-10-08)
+
+The first build of Heating Up (above, in "Mage — Core Mechanics") approximated "this turn, attacks
+deal double damage" with a flat 5-stack grant of the existing Empowered status, flagged as a
+placeholder in its own code comments. The user's actual intent, given directly: "I want the first
+wind to do x damage, the second wind to do 2x dam, the third to do 4x and so on exponentially 2^n so
+that you can play apocalyptic flame at big dam * 2^n" — an uncapped exponential chain, not a flat
+double, and the *first* attack after playing it is normal (nothing has triggered the bonus yet).
+
+Built as a new status, **Ignite** (`StatusId: 'ignite'`, placeholder name — same treatment as
+"Temperature"): its `outgoingDamageMult` hook reads `CombatState.stats.attacksPlayedThisTurn`
+(already tracked, already excludes the attack currently resolving, already resets each turn) and
+returns `2 ** attacksPlayedThisTurn`, so the multiplier escalates on its own as attacks are played —
+no new trigger or per-attack bookkeeping needed. One real new, reusable engine piece: a
+`clearAtTurnEnd` flag on `StatusDefinition`, wiped entirely (not decremented) at the same
+end-of-round point `duration` stacks tick, regardless of `kind` — neither existing `kind` fit
+"lasts only until the end of the turn it was granted" (`duration` ticks by 1/round; `intensity`
+never clears on its own).
+
+**Provisional call, flagged rather than hidden:** `attacksPlayedThisTurn` counts the whole turn, not
+attacks since Heating Up was played — so an attack played *before* Heating Up this turn already
+counts toward the multiplier for whatever comes after it (e.g. Strike, then Heating Up, then
+Scorching Wind: the Wind is already at 2x, as if two attacks had been played after Heating Up).
+Easy to change (gate the count to "since this status was applied") if that turns out to matter once
+real decks are built around it.
+
+Played in a real browser, confirmed via `CombatState`: Heating Up → Scorching Wind → Scorching Wind
+→ Scorching Wind → Apocalyptic Flame dealt the exact 1x/2x/4x/8x sequence; Ignite's badge disappeared
+after ending the turn, and an attack played fresh the next turn (nothing chained yet) hit for
+normal, unmultiplied damage.
 
 ## Deferred (explicitly not MVP 1 — do not build yet)
 

@@ -67,12 +67,14 @@ export const DECK_PRESETS: Record<string, DeckPreset> = {
     ],
   },
   'mage-burst': {
-    // The user's own combo (2026-10-08): Heating Up's Empowered stacks double several free
-    // Scorching Winds in a row, Molten Core/Quick Draw keep them coming, then Apocalyptic Flame
-    // lands doubled for the finisher. Scorching Wind and Apocalyptic Flame cost 0/3, so Heating Up
-    // (1) + Apocalyptic Flame (3) already spends a full turn's 4 energy — Molten Core/Quick Draw
-    // are meant for a separate turn (or the one after, once the Hero Power's +1 energy kicks in),
-    // not all in the same breath as the finisher.
+    // The user's own combo (2026-10-08, corrected the same day — see DESIGN_LOG.md "Heating Up
+    // corrected"): Heating Up's real mechanic is an exponential chain (Ignite status), not a flat
+    // double — each attack this turn deals 2x the one before it (1st normal, 2nd x2, 3rd x4, ...).
+    // Chain several free Scorching Winds to ramp the multiplier, Molten Core/Quick Draw keep them
+    // coming, then land Apocalyptic Flame as the big finisher at base x 2^n. Scorching Wind and
+    // Apocalyptic Flame cost 0/3, so Heating Up (1) + Apocalyptic Flame (3) already spends a full
+    // turn's 4 energy — Molten Core/Quick Draw are meant for a separate turn (or the one after,
+    // once the Hero Power's +1 energy kicks in), not all in the same breath as the finisher.
     label: 'Mage: Heating Up burst',
     cardIds: [
       'heating-up',

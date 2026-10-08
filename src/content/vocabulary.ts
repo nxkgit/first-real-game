@@ -65,6 +65,7 @@ export const STATUS_IDS: Record<StatusId, string> = {
   frail: 'Duration, StS-style keyword (engine-only, no real card uses it yet). The holder gains less block.',
   intangible: 'Duration, StS-style keyword (engine-only, no real card uses it yet). All damage the holder takes is capped at a fixed amount.',
   buffer: 'Intensity, StS-style keyword (engine-only, no real card uses it yet). Prevents the next instance of HP loss entirely, one stack at a time.',
+  ignite: 'Intensity, Mage only, placeholder name (clears at end of turn). Each attack played this turn deals double the damage of the one before it.',
 };
 
 export const CARD_TYPES: Record<CardType, string> = {

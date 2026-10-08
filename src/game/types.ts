@@ -7,8 +7,10 @@ export const PLAYER_ID: CombatantId = 'player';
 /** 'freeze' is unique to the Mage: stacks never count down, and every FREEZE_STUN_THRESHOLD stacks
  *  stuns the holder for its next move (see CombatState). 'frail', 'intangible' and 'buffer' are
  *  generic StS-style keyword statuses (engine-only for now: no real card uses them yet, see
- *  src/data/keywordCards.ts and implementationplan.md). */
-export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered' | 'freeze' | 'frail' | 'intangible' | 'buffer';
+ *  src/data/keywordCards.ts and implementationplan.md). 'ignite' is Heating Up's real mechanic
+ *  (Mage-only, placeholder name): each attack played this turn deals 2x the damage of the one
+ *  before it; see StatusDefinition.clearAtTurnEnd and DESIGN_LOG.md. */
+export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered' | 'freeze' | 'frail' | 'intangible' | 'buffer' | 'ignite';
 
 /** Stacks per status currently on one combatant. Absent (or 0) means not affected. */
 export type Statuses = Partial<Record<StatusId, number>>;
@@ -23,13 +25,19 @@ export type Statuses = Partial<Record<StatusId, number>>;
  * `consumedByAttack` marks a status whose multiplier only applies to damage from an attack card, and
  * which loses one stack after each attack card the holder plays (see 'empowered').
  */
+/** Extra context `outgoingDamageMult` hooks may read, beyond their own stack count. Room to grow. */
+export interface DamageMultContext {
+  /** Attack cards played earlier this turn (not the one currently resolving) — see `ignite`. */
+  attacksPlayedThisTurn: number;
+}
+
 export interface StatusDefinition {
   id: StatusId;
   name: string;
   kind: 'duration' | 'intensity';
   describe(stacks: number): string;
   outgoingDamageAdd?(stacks: number): number;
-  outgoingDamageMult?(stacks: number): number;
+  outgoingDamageMult?(stacks: number, ctx: DamageMultContext): number;
   incomingDamageMult?(stacks: number): number;
   /** Multiplies block the holder gains (Frail). Applied the same way as the damage-mult stage,
    *  in CombatState.calcBlock. */
@@ -38,6 +46,10 @@ export interface StatusDefinition {
    *  modifier (Intangible). The lowest active cap wins if more than one status has one. */
   incomingDamageCap?(stacks: number): number;
   consumedByAttack?: boolean;
+  /** Removed entirely (not decremented) at the same end-of-round point `duration` stacks tick down,
+   *  regardless of `kind` — "lasts only until the end of the turn it was granted" (ignite). Unlike
+   *  `duration`, this never partially counts down: it's gone, all at once, one round after being applied. */
+  clearAtTurnEnd?: boolean;
   /** Placeholder badge look until statuses get real icons. */
   badge: { symbol: string; color: number };
 }

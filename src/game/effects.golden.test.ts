@@ -159,6 +159,10 @@ const POOL: CardDefinition[] = [
   skill('frail-skill', [status('frail', 2, 'target')], { target: 'enemy', cost: 1 }),
   skill('intangible-skill', [status('intangible', 1, 'self')], { cost: 1 }),
   skill('buffer-skill', [status('buffer', 2, 'self')], { cost: 1 }),
+  // Heating Up's real mechanic (implementationplan.md "Mage — Core Mechanics"; DESIGN_LOG.md
+  // 2026-10-08 correction): exercised with cheap repeatable attacks so a fight can chain several.
+  skill('ignite-skill', [status('ignite', 1, 'self')], { cost: 0 }),
+  atk('spark', [dmg(2)], { cost: 0 }),
 ];
 
 // Synthetic hero power (not a card), so the golden log also covers useHeroPower/heroPowerUsed.

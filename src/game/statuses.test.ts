@@ -275,6 +275,50 @@ describe('statuses', () => {
     });
   });
 
+  // Heating Up's real mechanic (implementationplan.md "Mage — Core Mechanics"; corrected
+  // 2026-10-08, see DESIGN_LOG.md: the first version used Empowered, which doubled the very first
+  // attack and capped at a fixed number of stacks — neither matches the user's actual intent of an
+  // uncapped exponential chain keyed off how many attacks were already played this turn).
+  describe('Ignite (Heating Up)', () => {
+    const IGNITE_SELF: CardDefinition = {
+      id: 'ignite-self',
+      name: 'Ignite Self',
+      type: 'skill',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      effects: [{ kind: 'applyStatus', status: 'ignite', value: 1, to: 'self' }],
+    };
+
+    it('doubles each attack compared to the one before it: 1st normal, 2nd x2, 3rd x4', () => {
+      const combat = started([IGNITE_SELF, HIT, HIT, HIT, HIT]);
+      play(combat, 'ignite-self');
+      play(combat, 'hit');
+      expect(combat.enemies[0].hp).toBe(500 - 10); // 1st attack: 2^0 = normal
+      play(combat, 'hit');
+      expect(combat.enemies[0].hp).toBe(500 - 10 - 20); // 2nd: 2^1 = double
+      play(combat, 'hit');
+      expect(combat.enemies[0].hp).toBe(500 - 10 - 20 - 40); // 3rd: 2^2 = quadruple
+    });
+
+    it('is not consumed by playing an attack, unlike Empowered', () => {
+      const combat = started([IGNITE_SELF, HIT, HIT, HIT, HIT]);
+      play(combat, 'ignite-self');
+      play(combat, 'hit');
+      expect(combat.player.statuses.ignite).toBe(1);
+    });
+
+    it('clears at the end of the turn it was granted; a later attack with none active deals normal damage', () => {
+      const combat = started([IGNITE_SELF, HIT, HIT, HIT, HIT]);
+      play(combat, 'ignite-self');
+      expect(combat.player.statuses.ignite).toBe(1);
+      combat.endPlayerTurn(); // unplayed hand (4 HIT) discards; the enemy acts; round-end tick clears ignite
+      expect(combat.player.statuses.ignite).toBeUndefined();
+      play(combat, 'hit'); // reshuffled back into hand; no ignite active this turn
+      expect(combat.enemies[0].hp).toBe(500 - 10);
+    });
+  });
+
   it('Unplayable (engine-only keyword): can never be played, even with energy and a legal target', () => {
     const CURSED: CardDefinition = {
       id: 'cursed',

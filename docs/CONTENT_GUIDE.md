@@ -343,6 +343,7 @@ A status is stacks on a fighter. Each has a `kind`: `duration` stacks drop by 1 
 | `blockMult` | Multiplier on block the holder gains (Frail). |
 | `incomingDamageCap` | Caps all damage the holder takes at this amount, applied last (Intangible). |
 | `consumedByAttack` | Loses one stack after each attack card the holder plays (Empowered). |
+| `clearAtTurnEnd` | Removed entirely (not decremented) at the next end-of-round tick, regardless of `kind` (Ignite). |
 | `badge` | Placeholder symbol and colour for the status icon. |
 <!-- /names -->
 
@@ -359,6 +360,7 @@ The existing statuses (a status id must be one of these; adding one needs a code
 | `frail` | Duration, StS-style keyword (engine-only, see "Keyword mechanics" below). The holder gains less block. |
 | `intangible` | Duration, StS-style keyword (engine-only). All damage the holder takes is capped at a fixed amount. |
 | `buffer` | Intensity, StS-style keyword (engine-only). Prevents the next instance of HP loss entirely, one stack at a time. |
+| `ignite` | Intensity, Mage only, placeholder name, `clearAtTurnEnd`. Each attack played this turn deals double the damage of the one before it (Heating Up). |
 <!-- /names -->
 
 ## Keyword mechanics (StS-style, engine-only as of 2026-10-08)
@@ -380,6 +382,9 @@ via `applyStatus`) — no further plumbing needed.
   damage modifier.
 - **Buffer** (status) — prevents the next instance of HP loss outright, independent of block;
   consumed one stack at a time.
+
+`ignite` is not part of this engine-only batch — it is live on a real card (Heating Up) as of
+2026-10-08; see "Mage — Core Mechanics" in `implementationplan.md` and `DESIGN_LOG.md`.
 
 ## The act's map
 

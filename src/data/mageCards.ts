@@ -46,13 +46,11 @@ export const HEATING_UP: CardDefinition = {
   owner: MAGE,
   inRewardPool: true,
   tags: ['fire'],
-  // PLACEHOLDER approximation of "every attack deals double damage for the rest of this turn":
-  // the engine has no unlimited-duration damage-double, so this grants a generous Empowered stack
-  // instead (Empowered is "used up by playing an attack"; 5 stacks covers any turn in practice).
-  // No description override, so the card face honestly shows "Gain 5 Empowered." rather than
-  // hiding that approximation behind cleaner-sounding text.
+  // Corrected 2026-10-08 (DESIGN_LOG.md): the user's real intent is an exponential chain, not a
+  // flat double — each attack played this turn deals 2x the damage of the one before it (1st
+  // normal, 2nd double, 3rd quadruple, ...), via the new `ignite` status (src/data/statuses.ts).
   effects: [
-    { kind: 'applyStatus', status: 'empowered', value: 5, to: 'self' },
+    { kind: 'applyStatus', status: 'ignite', value: 1, to: 'self' },
     { kind: 'adjustTemperature', value: 1 },
   ],
   upgrade: { cost: 0 },

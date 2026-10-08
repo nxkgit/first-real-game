@@ -9,6 +9,7 @@ import type {
   CardInstance,
   Combatant,
   CombatantId,
+  DamageMultContext,
   Effect,
   EnemyDefinition,
   EnemyMove,
@@ -353,12 +354,13 @@ export class CombatState extends EventEmitter<CombatEventMap> {
    */
   calcDamage(base: number, attacker: Combatant, defender: Combatant, fromAttackCard = true): number {
     let amount = base;
+    const ctx: DamageMultContext = { attacksPlayedThisTurn: this.stats.attacksPlayedThisTurn };
     for (const [id, stacks] of activeStatuses(attacker)) {
       amount += STATUSES[id].outgoingDamageAdd?.(stacks) ?? 0;
     }
     for (const [id, stacks] of activeStatuses(attacker)) {
       if (STATUSES[id].consumedByAttack && !fromAttackCard) continue;
-      amount *= STATUSES[id].outgoingDamageMult?.(stacks) ?? 1;
+      amount *= STATUSES[id].outgoingDamageMult?.(stacks, ctx) ?? 1;
     }
     for (const [id, stacks] of activeStatuses(defender)) {
       amount *= STATUSES[id].incomingDamageMult?.(stacks) ?? 1;
@@ -757,6 +759,13 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
   private tickStatuses(target: Combatant): void {
     for (const [id, stacks] of activeStatuses(target)) {
+      // clearAtTurnEnd (ignite): gone entirely at the next tick, regardless of kind or freshness —
+      // "lasts only until the end of the turn it was granted", not a 1-per-round countdown.
+      if (STATUSES[id].clearAtTurnEnd) {
+        delete target.statuses[id];
+        this.emit('statusChanged', { target: target.id, status: id, delta: -stacks, statuses: { ...target.statuses } });
+        continue;
+      }
       if (STATUSES[id].kind !== 'duration' || this.freshStatuses.has(`${target.id}:${id}`)) continue;
       if (stacks <= 1) delete target.statuses[id];
       else target.statuses[id] = stacks - 1;

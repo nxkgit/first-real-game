@@ -253,7 +253,7 @@ describe('enemies, relics, events, statuses', () => {
       expect(s.badge.symbol.length).toBeGreaterThan(0);
     }
     expect([...STATUS_ORDER].sort()).toEqual(Object.keys(STATUSES).sort());
-    expect(STATUSES.weak.outgoingDamageMult!(1)).toBe(T.WEAK_DAMAGE_MULT);
+    expect(STATUSES.weak.outgoingDamageMult!(1, { attacksPlayedThisTurn: 0 })).toBe(T.WEAK_DAMAGE_MULT);
     expect(STATUSES.vulnerable.incomingDamageMult!(1)).toBe(T.VULNERABLE_DAMAGE_MULT);
     expect(STATUSES.strength.outgoingDamageAdd!(4)).toBe(4);
     expect(STATUSES.weak.kind).toBe('duration');
