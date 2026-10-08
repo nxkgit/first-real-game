@@ -9,6 +9,8 @@ import { useLayoutCamera } from '../display';
 import { setCurrentCombat, takePendingScenario } from '../session';
 import { restoreScenario } from '../game/scenario';
 import { STATUSES } from '../data/statuses';
+import { MAGE_HERO_POWER } from '../data/heroPowers';
+import { heroPowerText } from '../game/describe';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -78,6 +80,9 @@ export class CombatScene extends Phaser.Scene {
 
   private endTurnButton!: Phaser.GameObjects.Rectangle;
   private endTurnText!: Phaser.GameObjects.Text;
+  /** Undefined when the hero has no power (see CombatState.heroPower). */
+  private heroPowerButton?: Phaser.GameObjects.Rectangle;
+  private heroPowerText?: Phaser.GameObjects.Text;
   private turnBanner!: Phaser.GameObjects.Text;
   private resultText!: Phaser.GameObjects.Text;
 
@@ -114,7 +119,7 @@ export class CombatScene extends Phaser.Scene {
     const scenario = takePendingScenario();
     if (scenario) {
       // a fight picked up from a dev-panel scenario: its own piles, stream and state (the run's stream is left alone)
-      this.combat = restoreScenario(scenario);
+      this.combat = restoreScenario(scenario, undefined, MAGE_HERO_POWER);
       this.powersPlayed = this.combat.deck.powerPile.length;
     } else {
       // the fight's shuffles come from the run's seeded stream, so a replayed or resumed run is identical
@@ -122,6 +127,7 @@ export class CombatScene extends Phaser.Scene {
         player: { hp: this.run.hp, maxHp: this.run.maxHp },
         rng: this.run.newCombatRng(),
         relics: this.run.relics,
+        heroPower: MAGE_HERO_POWER,
       });
     }
     setCurrentCombat(this.combat);
@@ -268,6 +274,27 @@ export class CombatScene extends Phaser.Scene {
     this.endTurnButton.on('pointerout', () => {
       this.tweens.add({ targets: [this.endTurnButton, this.endTurnText], scale: 1, duration: 100 });
     });
+
+    if (this.combat.heroPower) {
+      const power = this.combat.heroPower;
+      this.heroPowerButton = this.add
+        .rectangle(720, 90, 130, 50, 0x3a4b7a)
+        .setOrigin(0.5)
+        .setStrokeStyle(2, 0x6f8fd9)
+        .setInteractive({ useHandCursor: true });
+      this.heroPowerText = this.add
+        .text(720, 90, `${power.name} (${power.cost})`, { fontSize: '13px', color: '#ffffff', align: 'center', wordWrap: { width: 118 } })
+        .setOrigin(0.5);
+      this.heroPowerButton.on('pointerdown', () => this.onUseHeroPower());
+      this.heroPowerButton.on('pointerover', () => {
+        if (this.combat.canUseHeroPower()) this.tweens.add({ targets: [this.heroPowerButton, this.heroPowerText], scale: 1.05, duration: 100 });
+      });
+      this.heroPowerButton.on('pointerout', () => {
+        this.tweens.add({ targets: [this.heroPowerButton, this.heroPowerText], scale: 1, duration: 100 });
+      });
+      this.tooltips.add(720, 90, 130, 50, () => heroPowerText(power));
+      this.refreshHeroPowerButton();
+    }
   }
 
   private buildOverlays(): void {
@@ -287,7 +314,8 @@ export class CombatScene extends Phaser.Scene {
   // ---------- event wiring ----------
 
   /** Keyboard shortcuts: 1-9 play that card from the hand (aimed cards go to the first living
-   *  enemy), E ends the turn, D toggles the deck view, Esc cancels aiming or closes it. */
+   *  enemy), E ends the turn, H uses the hero power (if the hero has one), D toggles the deck view,
+   *  Esc cancels aiming or closes it. */
   private bindKeys(): void {
     onKeyPress(this, (key) => {
       if (key === 'escape') {
@@ -303,6 +331,10 @@ export class CombatScene extends Phaser.Scene {
       if (isDeckViewOpen(this) || this.inputLocked || this.combat.phase !== 'playerTurn') return;
       if (key === 'e') {
         this.onEndTurn();
+        return;
+      }
+      if (key === 'h') {
+        this.onUseHeroPower();
         return;
       }
       const slot = key === '0' ? 10 : Number(key); // 1-9 are the first nine cards, 0 the tenth
@@ -378,6 +410,25 @@ export class CombatScene extends Phaser.Scene {
     void this.runSteps(steps);
   }
 
+  private onUseHeroPower(): void {
+    if (!this.combat.canUseHeroPower() || this.sequencer) return;
+    this.lockInput(true);
+    this.sequencer = [];
+    this.combat.useHeroPower();
+    const steps = this.sequencer;
+    this.sequencer = null;
+    void this.runSteps(steps);
+  }
+
+  /** Enables/greys the hero power button for whether it can be used right now (energy, once per turn). */
+  private refreshHeroPowerButton(): void {
+    if (!this.heroPowerButton || !this.heroPowerText || !this.combat.heroPower) return;
+    const usable = !this.inputLocked && this.combat.canUseHeroPower();
+    this.heroPowerText.setText(this.combat.heroPowerUsedThisTurn ? `${this.combat.heroPower.name} (used)` : `${this.combat.heroPower.name} (${this.combat.heroPower.cost})`);
+    if (usable) this.heroPowerButton.setInteractive({ useHandCursor: true }).setAlpha(1);
+    else this.heroPowerButton.disableInteractive().setAlpha(0.4);
+  }
+
   private async runSteps(steps: AnimStep[]): Promise<void> {
     try {
       for (const step of steps) {
@@ -400,6 +451,7 @@ export class CombatScene extends Phaser.Scene {
     } else if (this.combat.phase === 'playerTurn') {
       this.endTurnButton.setInteractive({ useHandCursor: true }).setAlpha(1);
     }
+    this.refreshHeroPowerButton();
   }
 
   // ---------- small async animation primitives ----------
@@ -741,10 +793,12 @@ export class CombatScene extends Phaser.Scene {
     this.playerView.setBlock(c.player.block);
     this.playerView.setEnergy(c.energy, c.maxEnergy);
     this.playerView.statusRow.set(c.player.statuses);
+    this.playerView.setTemperature(c.heroPower ? c.temperature : undefined);
     for (const view of this.enemyViews) view.syncFrom();
 
     this.statusText.setText(c.log.slice(-2).map((e) => e.message).join('\n'));
     this.refreshCardNumbers();
+    this.refreshHeroPowerButton();
   }
 
   /** Shows what each hand card would really do now: against the first living enemy (the one the

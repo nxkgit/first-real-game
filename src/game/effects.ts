@@ -1,8 +1,9 @@
 ﻿import type { Deck } from './Deck';
 import type { CombatEventMap, DamageResult } from './CombatState';
 import type { IntentIcon } from './intent';
-import type { CardInstance, Combatant, Effect, EffectKind, EnemyState, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
+import type { CardDefinition, CardInstance, Combatant, Effect, EffectKind, EnemyState, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
 import { STATUSES } from '../data/statuses';
+import { getCard } from '../data/cards';
 
 /**
  * The effect registry: ONE entry per effect kind, bundling everything the game knows about it.
@@ -45,6 +46,16 @@ export interface EffectHost {
   emitHandChanged(): void;
   /** Marks a status put on during the enemy phase so it skips this round's countdown. */
   markFresh(target: Combatant, id: StatusId): void;
+  /** Every enemy still standing. */
+  livingEnemies(): EnemyState[];
+  /** Mage-only: shifts Temperature by `delta` (clamped) and returns the new value. */
+  adjustTemperature(delta: number): number;
+  /** Extends the player's "+1 energy at turn start" counter by `turns` more turns. */
+  gainEnergizedTurns(turns: number): void;
+  /** Mage-only: puts up to `count` new copies of `definition` into the hand; returns how many landed
+   *  there (the rest went to the discard pile, as with a draw into a full hand). Counted so the total
+   *  card count is no longer assumed fixed (see invariantHarness.ts's `cardsAddedThisCombat` escape hatch). */
+  addCardsToHand(definition: CardDefinition, count: number): number;
 }
 
 /** What an enemy move collects while its effects resolve; CombatState announces it afterwards. */
@@ -104,16 +115,22 @@ const SCALE_SOURCE_SET: Record<ScaleSource, true> = {
   handSize: true,
   exhaustedThisCombat: true,
   targetVulnerable: true,
+  targetFreeze: true,
+  temperature: true,
 };
 export const ALL_SCALE_SOURCES = Object.keys(SCALE_SOURCE_SET) as ScaleSource[];
 
 const plural = (n: number, word: string): string => `${n} ${word}${n === 1 ? '' : 's'}`;
 
+/** `base`, multiplied by `effect.vsFreezeMult` if the target currently has any Freeze stacks (Mage-only). */
+const vsFreeze = (effect: { vsFreezeMult?: number }, base: number, target: EnemyState | undefined): number =>
+  effect.vsFreezeMult && (target?.statuses.freeze ?? 0) > 0 ? base * effect.vsFreezeMult : base;
+
 export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
   damage: {
     resolvePlayer(effect, h, target, fromAttackCard) {
       if (!target || target.hp <= 0) return;
-      const base = h.scaledValue(effect, target);
+      const base = vsFreeze(effect, h.scaledValue(effect, target), target);
       const result = h.dealDamage(target, h.calcDamage(base, h.player, target, fromAttackCard));
       h.emit('damageDealt', { target: target.id, ...result });
       if (target.hp <= 0) {
@@ -129,9 +146,29 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
         ? { amount: out.damage.amount + hit.amount, absorbed: out.damage.absorbed + hit.absorbed, remainingHp: hit.remainingHp }
         : hit;
     },
-    describe: (_e, n) => `Deal ${n} damage.`,
+    describe: (e, n) => `Deal ${n} damage.${e.vsFreezeMult ? ` ${e.vsFreezeMult}x against a frozen target.` : ''}`,
     intent: { icon: () => 'attack', damage: (e) => e.value },
     scales: ALL_SCALE_SOURCES,
+    preview: (e, h, target, fromAttackCard) =>
+      target ? h.calcDamage(vsFreeze(e, h.scaledValue(e, target), target), h.player, target, fromAttackCard) : undefined,
+  },
+
+  damageAll: {
+    resolvePlayer(effect, h, _target, fromAttackCard) {
+      for (const enemy of h.livingEnemies()) {
+        if (enemy.hp <= 0) continue;
+        const base = h.scaledValue(effect, enemy);
+        const result = h.dealDamage(enemy, h.calcDamage(base, h.player, enemy, fromAttackCard));
+        h.emit('damageDealt', { target: enemy.id, ...result });
+        if (enemy.hp <= 0) {
+          h.emit('enemyDied', { enemyId: enemy.id });
+          h.fireTriggers('enemyDied');
+        }
+      }
+    },
+    describe: (_e, n) => `Deal ${n} damage to all enemies.`,
+    scales: ALL_SCALE_SOURCES,
+    // Shown against the first living enemy, like the rest of the multi-enemy UI (see HANDOFF.md).
     preview: (e, h, target, fromAttackCard) =>
       target ? h.calcDamage(h.scaledValue(e, target), h.player, target, fromAttackCard) : undefined,
   },
@@ -240,6 +277,47 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
       h.emitHandChanged();
     },
     describe: (e) => `Exhaust ${plural(e.value, 'random card')} from your hand.`,
+    scales: [],
+  },
+
+  discardRandom: {
+    resolvePlayer(effect, h) {
+      for (let i = 0; i < effect.value; i++) {
+        if (!h.deck.discardRandomFromHand()) break; // empty hand: nothing to discard
+      }
+      h.emitHandChanged();
+    },
+    describe: (e) => `Discard ${plural(e.value, 'random card')} from your hand.`,
+    scales: [],
+  },
+
+  // Mage-only (see docs/implementationplan.md "Mage — Core Mechanics"). Never clamped to 0 by
+  // scaledValue, since cooling down is a negative value: it carries no `scaling`.
+  adjustTemperature: {
+    resolvePlayer(effect, h) {
+      const temperature = h.adjustTemperature(effect.value);
+      h.emit('temperatureChanged', { temperature, delta: effect.value });
+    },
+    describe: (_e, n) => (n >= 0 ? `Heat up by ${n}.` : `Cool down by ${-n}.`),
+    scales: [],
+  },
+
+  addCardToHand: {
+    resolvePlayer(effect, h, target) {
+      const count = h.scaledValue(effect, target);
+      h.addCardsToHand(getCard(effect.cardId), count);
+      h.emitHandChanged();
+    },
+    describe: (e, n) => `Add ${plural(n, getCard(e.cardId).name)} to your hand.`,
+    scales: ALL_SCALE_SOURCES,
+    preview: scaledPreview,
+  },
+
+  gainEnergizedTurns: {
+    resolvePlayer(effect, h) {
+      h.gainEnergizedTurns(effect.value);
+    },
+    describe: (_e, n) => `Gain 1 extra energy at the start of your turn for the next ${plural(n, 'turn')}.`,
     scales: [],
   },
 };

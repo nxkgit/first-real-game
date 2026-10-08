@@ -1,5 +1,6 @@
 import type { CardDefinition } from '../game/types';
 import { SYNERGY_CARDS } from './synergyCards';
+import { MAGE_CARDS } from './mageCards';
 
 // PLACEHOLDER content. Names/numbers here are functional stand-ins to exercise the game's
 // systems — final card design, naming, and flavor are the user's to author (see CLAUDE.md).
@@ -213,6 +214,8 @@ const ALL_CARDS: CardDefinition[] = [
   STRENGTHEN,
   // placeholder synergy-test cards: registered, but never offered as rewards (see synergyCards.ts)
   ...SYNERGY_CARDS,
+  // the Mage's fire/frost/Freeze cards (user's design, see mageCards.ts): in the reward pool
+  ...MAGE_CARDS,
 ];
 
 /**

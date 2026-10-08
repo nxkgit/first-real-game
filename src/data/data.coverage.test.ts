@@ -16,11 +16,15 @@ const effectsOf = (c: { effects?: Effect[]; onTurnStartEffect?: Effect }): Effec
 ];
 
 describe('tunables sanity', () => {
-  it('every numeric tunable is a finite, non-negative number', () => {
+  // TEMPERATURE_MIN is the lower bound of a signed range (Mage's Temperature mechanic); it is
+  // meant to be negative.
+  const SIGNED_TUNABLES = ['TEMPERATURE_MIN'];
+
+  it('every numeric tunable is a finite number, non-negative unless signed on purpose', () => {
     for (const [name, value] of Object.entries(T)) {
       if (typeof value === 'number') {
         expect(Number.isFinite(value), name).toBe(true);
-        expect(value, name).toBeGreaterThanOrEqual(0);
+        if (!SIGNED_TUNABLES.includes(name)) expect(value, name).toBeGreaterThanOrEqual(0);
       }
     }
   });
@@ -167,8 +171,10 @@ describe('cards registry and upgrades', () => {
     for (const c of Object.values(CARDS)) {
       expect(Number.isInteger(c.cost), c.id).toBe(true);
       expect(c.cost, c.id).toBeGreaterThanOrEqual(0);
-      // a scaled effect may have a base of 0
-      for (const e of effectsOf(c)) if ('value' in e && !('scaling' in e && e.scaling)) expect(e.value, c.id).toBeGreaterThan(0);
+      // a scaled effect may have a base of 0; adjustTemperature (Mage-only) is signed on purpose
+      for (const e of effectsOf(c)) {
+        if (e.kind !== 'adjustTemperature' && 'value' in e && !('scaling' in e && e.scaling)) expect(e.value, c.id).toBeGreaterThan(0);
+      }
     }
   });
 

@@ -4,7 +4,9 @@ export type CardType = 'attack' | 'skill' | 'power';
 export type CombatantId = string;
 export const PLAYER_ID: CombatantId = 'player';
 
-export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered';
+/** 'freeze' is unique to the Mage: stacks never count down, and every FREEZE_STUN_THRESHOLD stacks
+ *  stuns the holder for its next move (see CombatState). */
+export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered' | 'freeze';
 
 /** Stacks per status currently on one combatant. Absent (or 0) means not affected. */
 export type Statuses = Partial<Record<StatusId, number>>;
@@ -46,7 +48,11 @@ export type ScaleSource =
   | 'handSize'
   | 'exhaustedThisCombat'
   /** Vulnerable stacks on the effect's target (0 if there is no target). */
-  | 'targetVulnerable';
+  | 'targetVulnerable'
+  /** Freeze stacks on the effect's target (0 if there is no target). Mage-only mechanic. */
+  | 'targetFreeze'
+  /** The Mage's current Temperature (-5..5; see CombatState.temperature). Mage-only mechanic. */
+  | 'temperature';
 
 /** The effect's value becomes `value + scaling.value * count(scaling.per)`. */
 export interface Scaling {
@@ -66,8 +72,12 @@ export interface Scaling {
  * Effects with a numeric `value` can also carry `scaling`.
  */
 export type Effect =
-  | { kind: 'damage'; value: number; scaling?: Scaling }
+  /** `vsFreezeMult`, if set, multiplies the damage when the target currently has any Freeze stacks
+   *  (Mage-only; e.g. Glaciate). */
+  | { kind: 'damage'; value: number; scaling?: Scaling; vsFreezeMult?: number }
   | { kind: 'block'; value: number; scaling?: Scaling }
+  /** Player cards only. Hits every living enemy for `value` (each scaled against its own target, e.g. targetVulnerable). */
+  | { kind: 'damageAll'; value: number; scaling?: Scaling }
   /** Player cards only. */
   | { kind: 'draw'; value: number; scaling?: Scaling }
   | { kind: 'applyStatus'; status: StatusId; value: number; to: 'target' | 'self'; scaling?: Scaling }
@@ -78,7 +88,17 @@ export type Effect =
   /** Multiplies the stacks of a status the holder already has (nothing happens at 0 stacks). */
   | { kind: 'multiplyStatus'; status: StatusId; factor: number; to: 'target' | 'self' }
   /** Player cards only. Exhausts `value` random cards from the hand (fewer if the hand is smaller). */
-  | { kind: 'exhaustRandom'; value: number };
+  | { kind: 'exhaustRandom'; value: number }
+  /** Player cards only. Discards `value` random cards from the hand (back to the discard pile, unlike exhaust). */
+  | { kind: 'discardRandom'; value: number }
+  /** Player cards only, Mage-only mechanic. Shifts Temperature by `value` (negative cools down), clamped. */
+  | { kind: 'adjustTemperature'; value: number }
+  /** Player cards only, Mage-only mechanic. Puts `value` more copies of `cardId` straight into the hand
+   *  (overflow goes to the discard pile, as with a draw into a full hand). */
+  | { kind: 'addCardToHand'; cardId: string; value: number; scaling?: Scaling }
+  /** Player cards (and hero powers) only. For the next `value` of the player's turns (this one not
+   *  counted), gain 1 extra energy at the start of the turn. Stacks additively with itself. */
+  | { kind: 'gainEnergizedTurns'; value: number };
 
 /** Every effect kind. Each one has exactly one entry in the effect registry (effects.ts). */
 export type EffectKind = Effect['kind'];
@@ -185,6 +205,23 @@ export interface EnemyState extends Combatant {
   definition: EnemyDefinition;
   /** Which move of the pattern is next. */
   moveIndex: number;
+  /** Turns of Freeze-stun still owed (see CombatState's freeze-stack-threshold check). Each one
+   *  skips a whole move without advancing moveIndex, so the same intended move happens once it wears off. */
+  stunnedTurns?: number;
+}
+
+/**
+ * A hero's once-per-turn active ability: not a card (never drawn, discarded or exhausted), just a
+ * fixed button the player can use once per their turn for its energy cost. See CombatState.useHeroPower.
+ */
+export interface HeroPowerDefinition {
+  id: string;
+  name: string;
+  cost: number;
+  owner: string;
+  /** Text override; otherwise generated from `effects` like a card (see describe.ts). */
+  description?: string;
+  effects: Effect[];
 }
 
 // ---- relics ----

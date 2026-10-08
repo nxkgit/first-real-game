@@ -78,7 +78,7 @@ describe('parsing', () => {
       relics: [],
       enemies: [{ id: 'enemy-a', hp: ENEMIES['enemy-a'].maxHp, block: 0, statuses: {}, moveIndex: 0 }],
       piles: { draw: [], hand: [], discard: [], exhaust: [], powers: [] },
-      stats: { cardsPlayedThisTurn: 0, attacksPlayedThisTurn: 0, taggedPlayedThisTurn: {}, exhaustedThisCombat: 0 },
+      stats: { cardsPlayedThisTurn: 0, attacksPlayedThisTurn: 0, taggedPlayedThisTurn: {}, exhaustedThisCombat: 0, cardsAddedThisCombat: 0 },
       triggersFired: [],
     });
   });

@@ -94,8 +94,11 @@ describe('cardText', () => {
       for (const e of effects) {
         // not every effect kind carries `value` (multiplyStatus is worded as "Double", exhaustRandom has no number)
         const n = 'value' in e ? e.value : undefined;
-        // a scaled effect with a base of 0 doesn't print the 0
-        if (n !== undefined && !(n === 0 && 'scaling' in e)) expect(text, c.id).toContain(String(n));
+        // a scaled effect with a base of 0 doesn't print the 0; adjustTemperature (Mage-only) is
+        // worded as "Cool down by N" for a negative value, printing N's absolute value instead
+        if (n !== undefined && !(n === 0 && 'scaling' in e)) {
+          expect(text, c.id).toContain(e.kind === 'adjustTemperature' ? String(Math.abs(n)) : String(n));
+        }
       }
     }
   });

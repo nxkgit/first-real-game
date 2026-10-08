@@ -5,7 +5,7 @@ import type { CombatEventMap } from './CombatState';
 import { cardText, describeEffect, relicText } from './describe';
 import { intentIcons } from './intent';
 import { Rng } from './rng';
-import type { CardDefinition, Effect, EnemyDefinition, RelicDefinition, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
+import type { CardDefinition, Effect, EnemyDefinition, HeroPowerDefinition, RelicDefinition, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
 import golden from './fixtures/effectsGolden.json';
 
 /**
@@ -55,6 +55,10 @@ const energy = (value: number, scaling?: Scaling): Effect => ({ kind: 'gainEnerg
 const loseHp = (value: number, scaling?: Scaling): Effect => ({ kind: 'loseHp', value, scaling });
 const mult = (s: StatusId, factor: number, to: 'target' | 'self'): Effect => ({ kind: 'multiplyStatus', status: s, factor, to });
 const exhaustRandom = (value: number): Effect => ({ kind: 'exhaustRandom', value });
+const discardRandom = (value: number): Effect => ({ kind: 'discardRandom', value });
+const damageAll = (value: number, scaling?: Scaling): Effect => ({ kind: 'damageAll', value, scaling });
+const adjustTemp = (value: number): Effect => ({ kind: 'adjustTemperature', value });
+const addCardToHand = (cardId: string, value: number, scaling?: Scaling): Effect => ({ kind: 'addCardToHand', cardId, value, scaling });
 
 const SOURCES: ScaleSource[] = [
   'cardsPlayedThisTurn',
@@ -65,6 +69,8 @@ const SOURCES: ScaleSource[] = [
   'handSize',
   'exhaustedThisCombat',
   'targetVulnerable',
+  'targetFreeze',
+  'temperature',
 ];
 const per = (p: ScaleSource, value = 2): Scaling => ({ per: p, value, tag: p === 'taggedPlayedThisTurn' ? 'x' : undefined });
 
@@ -108,6 +114,19 @@ const POOL: CardDefinition[] = [
   skill('exhaust1', [exhaustRandom(1)], { cost: 0 }),
   skill('exhaust2', [exhaustRandom(2), draw(1)], { cost: 0 }),
   skill('exhaust-self-blk', [blk(6), exhaustRandom(1)], { exhaust: true }),
+  // Mage-only mechanics (implementationplan.md "Mage — Core Mechanics"): exercised generically
+  // here so the golden log covers them, independent of the real mageCards.ts content.
+  skill('toss', [discardRandom(1), blk(4)], { cost: 0 }),
+  skill('toss2', [discardRandom(2)], { cost: 0 }),
+  skill('heat-up', [adjustTemp(2)], { cost: 0 }),
+  skill('cool-down', [adjustTemp(-2)], { cost: 0 }),
+  atk('meteor', [damageAll(4)], { cost: 1 }),
+  atk('meteor-vuln', [damageAll(2), status('vulnerable', 1, 'target')], { cost: 1 }),
+  skill('conjure', [addCardToHand('strike', 1)], { cost: 1 }),
+  skill('chill', [status('freeze', 1, 'target')], { target: 'enemy', cost: 0 }),
+  skill('flash-freeze', [status('freeze', 5, 'target')], { target: 'enemy', cost: 1 }),
+  atk('glaciate', [{ kind: 'damage', value: 4, vsFreezeMult: 3 }], { cost: 1 }),
+  skill('energize', [{ kind: 'gainEnergizedTurns', value: 2 }], { cost: 1 }),
   mk('power-block', { type: 'power', onTurnStartEffect: blk(3) }),
   mk('power-draw', { type: 'power', cost: 2, onTurnStartEffect: draw(1) }),
   mk('power-energy', { type: 'power', cost: 2, onTurnStartEffect: energy(1) }),
@@ -132,6 +151,9 @@ const POOL: CardDefinition[] = [
   }),
   mk('power-loop', { type: 'power', cost: 0, triggers: [{ on: 'hpLost', effects: [loseHp(1)] }] }),
 ];
+
+// Synthetic hero power (not a card), so the golden log also covers useHeroPower/heroPowerUsed.
+const GOLDEN_HERO_POWER: HeroPowerDefinition = { id: 'golden-power', name: 'Golden Power', owner: 'test', cost: 1, effects: [blk(2)] };
 
 const ENEMIES: EnemyDefinition[] = [
   { id: 'e-attacker', name: 'Attacker', maxHp: 30, movePattern: [{ name: 'hit', effects: [dmg(5)] }] },
@@ -195,6 +217,10 @@ const EVENT_NAMES: Record<keyof CombatEventMap, true> = {
   enemyMoveResolved: true,
   enemyDied: true,
   combatEnded: true,
+  temperatureChanged: true,
+  heroPowerUsed: true,
+  enemyStunned: true,
+  enemyTurnSkipped: true,
 };
 
 /** 53-bit string hash (cyrb53), good enough to catch any divergence. */
@@ -252,6 +278,7 @@ function runGoldenFight(index: number): FightRecord {
     random: () => shuffles.next(),
     relics,
     player: lowHp ? { hp: 14, maxHp: 30 } : undefined,
+    heroPower: GOLDEN_HERO_POWER,
   });
   const lines: string[] = [];
   const seen = new Set<string>();
@@ -271,6 +298,7 @@ function runGoldenFight(index: number): FightRecord {
   combat.start();
   readouts();
   while (combat.phase === 'playerTurn' && combat.turnNumber <= MAX_TURNS) {
+    if (combat.canUseHeroPower() && bot.next() < 0.3) combat.useHeroPower();
     for (let plays = 0; plays < MAX_PLAYS_PER_TURN && combat.phase === 'playerTurn'; plays++) {
       const playable = combat.deck.hand.filter((c) => combat.canPlay(c));
       if (playable.length === 0 || bot.next() < 0.08) break;

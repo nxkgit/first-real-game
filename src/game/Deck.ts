@@ -76,6 +76,32 @@ export class Deck {
     return this.exhaustCard(pick.instanceId);
   }
 
+  /** Discards one random card from the hand to the discard pile (so it can be reshuffled, unlike exhausting);
+   *  undefined if the hand is empty. */
+  discardRandomFromHand(): CardInstance | undefined {
+    if (this.hand.length === 0) return undefined;
+    const index = Math.floor(this.random() * this.hand.length);
+    const [card] = this.hand.splice(index, 1);
+    this.discardPile.push(card);
+    return card;
+  }
+
+  /** Puts up to `count` new instances of `definition` straight into the hand (not drawn from any
+   *  pile); overflow past the hand cap goes to the discard pile, as with a normal draw. Returns how
+   *  many actually landed in the hand. */
+  addCopiesToHand(definition: CardDefinition, count: number): number {
+    let added = 0;
+    for (let i = 0; i < count; i++) {
+      const card: CardInstance = { instanceId: nextInstanceId(), definition };
+      if (this.hand.length >= MAX_HAND_SIZE) this.discardPile.push(card);
+      else {
+        this.hand.push(card);
+        added += 1;
+      }
+    }
+    return added;
+  }
+
   /**
    * Replaces every pile with exactly these cards (new instances, so instance ids are not the ones
    * a captured fight had). `draw` is listed in the order the cards will be drawn (index 0 comes

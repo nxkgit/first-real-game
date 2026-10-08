@@ -25,6 +25,8 @@ export class PlayerView {
   private readonly blockIcon: Phaser.GameObjects.Polygon;
   private readonly blockText: Phaser.GameObjects.Text;
   private readonly energyText: Phaser.GameObjects.Text;
+  /** Mage-only "Temperature" readout; stays hidden for a hero without one (setTemperature(undefined)). */
+  private readonly temperatureText: Phaser.GameObjects.Text;
   /** Block currently shown, which can lag the live value while animations replay. */
   private shownBlock = 0;
 
@@ -66,6 +68,14 @@ export class PlayerView {
 
     this.statusRow = new StatusRow(scene, PLAYER_X - STATUS_SLOT_WIDTH, STATUS_Y);
 
+    // Mage-only "Temperature" (name/range/thresholds all PROVISIONAL, see implementationplan.md):
+    // a small number near energy, hidden for a hero with no such mechanic.
+    this.temperatureText = scene.add
+      .text(235, STAT_Y + 30, '', { fontSize: '13px', color: '#cfcfcf', fontStyle: 'bold' })
+      .setOrigin(0.5)
+      .setVisible(false);
+    tooltips.add(235, STAT_Y + 30, 60, 20, () => (this.temperatureText.visible ? 'Temperature: fire cards heat it up, frost cards cool it down. PROVISIONAL mechanic.' : null));
+
     tooltips.add(170, STAT_Y, 40, 28, () =>
       combat.player.block > 0
         ? `Block: absorbs the next ${combat.player.block} damage. Resets at the start of your turn.`
@@ -97,6 +107,14 @@ export class PlayerView {
 
   setEnergy(energy: number, maxEnergy: number): void {
     this.energyText.setText(`${energy}/${maxEnergy}`);
+  }
+
+  /** `undefined` hides the readout (a hero with no Temperature mechanic). */
+  setTemperature(temperature: number | undefined): void {
+    this.temperatureText.setVisible(temperature !== undefined);
+    if (temperature === undefined) return;
+    this.temperatureText.setText(`Temp ${temperature > 0 ? '+' : ''}${temperature}`);
+    this.temperatureText.setColor(temperature > 0 ? '#e8825c' : temperature < 0 ? '#6fd3e8' : '#cfcfcf');
   }
 
   /** Where block particles and "+N" text appear. */

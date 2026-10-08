@@ -7,6 +7,7 @@ import type { CardDefinition, EnemyDefinition, Effect, RelicDefinition, Trigger 
 import { CARDS, allDraftableCards, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
 import { SYNERGY_CARDS } from '../data/synergyCards';
+import { MAGE_CARDS } from '../data/mageCards';
 import { newRun, restoreSavedRun } from '../data/run';
 import { MAX_TRIGGER_DEPTH } from '../data/tunables';
 
@@ -549,9 +550,9 @@ describe('runs with synergy content', () => {
     expect(restored!.relics.map((r) => r.id)).toContain('exhaust-token');
   });
 
-  it('the starter deck has no synergy cards; the reward pool is the 11 original cards plus all of them', () => {
+  it('the starter deck has no synergy cards; the reward pool is the 11 original cards plus all of them plus the Mage cards', () => {
     const run = newRun(5);
     expect(run.deck.some((c) => SYNERGY_CARDS.includes(c))).toBe(false);
-    expect(rewardPoolFor('mage').length).toBe(11 + SYNERGY_CARDS.length);
+    expect(rewardPoolFor('mage').length).toBe(11 + SYNERGY_CARDS.length + MAGE_CARDS.length);
   });
 });

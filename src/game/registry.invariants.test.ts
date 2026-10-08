@@ -39,8 +39,16 @@ function effectProblems(effect: Effect): string[] {
   const e = effect as unknown as Record<string, unknown>;
   if (!e || typeof e !== 'object' || typeof e.kind !== 'string') return ['effect has no kind'];
   for (const [p, n] of numbersIn(effect)) if (!Number.isFinite(n)) problems.push(`${p} is not finite`);
-  // a scaled effect may have a base of 0 (its whole value comes from the scaling)
-  if (typeof e.value === 'number' && (!Number.isInteger(e.value) || (e.value < 1 && !(e.value === 0 && e.scaling)))) problems.push(`value ${e.value} is not a positive integer`);
+  // a scaled effect may have a base of 0 (its whole value comes from the scaling); adjustTemperature
+  // (Mage-only) is signed on purpose (frost cards cool down with a negative value).
+  if (
+    typeof e.value === 'number' &&
+    e.kind !== 'adjustTemperature' &&
+    (!Number.isInteger(e.value) || (e.value < 1 && !(e.value === 0 && e.scaling)))
+  ) {
+    problems.push(`value ${e.value} is not a positive integer`);
+  }
+  if (e.kind === 'adjustTemperature' && (!Number.isInteger(e.value) || e.value === 0)) problems.push(`value ${e.value} is not a nonzero integer`);
   if (e.kind === 'applyStatus') {
     if (!(e.status as string in STATUSES)) problems.push(`unknown status ${String(e.status)}`);
     if (e.to !== 'target' && e.to !== 'self') problems.push(`bad "to": ${String(e.to)}`);
@@ -143,7 +151,8 @@ describe('cards', () => {
       const uses = (c.effects ?? []).some(needsTarget);
       if (uses) expect(c.target, `${c.id} hits a target but is not aimed`).toBe('enemy');
       else expect(c.target, `${c.id} is aimed but nothing uses the target`).toBeUndefined();
-      if (c.onTurnStartEffect) expect(needsTarget(c.onTurnStartEffect), `${c.id} turn-start effect needs a target it never has`).toBe(false);
+      // A power's onTurnStartEffect, unlike a relic's, is allowed to need a target: CombatState
+      // auto-targets the first living enemy for it (see startPlayerTurn), e.g. Endless Winter.
     }
   });
 
@@ -210,10 +219,10 @@ describe('cards', () => {
       const inHand = combat.deck.hand.find((c) => c.definition === def);
       expect(inHand, `${def.id} drawn`).toBeDefined();
       expect(combat.playCard(inHand!.instanceId, target), `${def.id} playCard`).toBe(true);
-      checkCombatInvariants(combat, 6);
+      checkCombatInvariants(combat, 6 + combat.stats.cardsAddedThisCombat);
       for (let t = 0; t < 4 && combat.phase === 'playerTurn'; t++) {
         combat.endPlayerTurn();
-        checkCombatInvariants(combat, 6);
+        checkCombatInvariants(combat, 6 + combat.stats.cardsAddedThisCombat);
       }
       if (def.target) {
         // and an aimed card without a target is refused

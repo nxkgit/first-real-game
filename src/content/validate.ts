@@ -122,8 +122,10 @@ function checkEffect(effect: Effect, ctx: EffectCtx): void {
     const scaled = 'scaling' in effect && effect.scaling !== undefined;
     if (!Number.isFinite(v)) {
       out.add('error', kind, id, 'bad-number', `${where}: value is ${String(v)}, not a number.`, `Set a real number in ${file}.`);
-    } else if (v < 0) {
+    } else if (v < 0 && effect.kind !== 'adjustTemperature') {
       out.add('error', kind, id, 'negative-value', `${where}: ${effect.kind} value ${v} is negative.`, `Use a value of 0 or more (to take something away use a different effect, e.g. loseHp) in ${file}.`);
+    } else if (effect.kind === 'adjustTemperature' && v === 0) {
+      out.add('warning', kind, id, 'zero-value', `${where}: adjustTemperature value is 0, so it does nothing.`, 'Give it a nonzero value (negative cools down) or delete the effect.');
     } else if (v === 0 && !scaled) {
       out.add('warning', kind, id, 'zero-value', `${where}: ${effect.kind} value is 0 and has no scaling, so it does nothing.`, `Give it a value, add scaling, or delete the effect.`);
     } else if (!Number.isInteger(v)) {
