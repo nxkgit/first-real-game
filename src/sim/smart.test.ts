@@ -23,6 +23,9 @@ function fiveCardTurn(cards: string[], enemy: string, skill: SkillLevel, player?
 const played = (c: ReturnType<typeof fiveCardTurn>): string[] => [...c.deck.discardPile, ...c.deck.powerPile, ...c.deck.exhaustPile].map((x) => x.definition.id);
 const dummyHp = (c: ReturnType<typeof fiveCardTurn>): number => DUMMY.maxHp - c.enemies[0].hp;
 
+// These tests are about the bots' play, not balance: pin the enemy HP they were written against so retuning enemy HP does not change them.
+const oldHp = (id: string, maxHp: number): ReturnType<typeof getEnemy> => ({ ...getEnemy(id), maxHp });
+
 describe('smart bot: synergy mechanics', () => {
   it('plays tag enablers before the payoff that counts them (greedy plays the payoff first)', () => {
     const cards = ['prime-a', 'prime-a', 'tag-a-payoff', 'strike', 'defend'];
@@ -75,7 +78,7 @@ describe('smart bot: synergy mechanics', () => {
   });
 
   it('draw cards do not spin forever in a deck full of them', () => {
-    const spec = { deck: deckFromSpec(['quick-draw*5', 'strike*3', 'defend', 'bolt']), enemies: [getEnemy('enemy-a')] };
+    const spec = { deck: deckFromSpec(['quick-draw*5', 'strike*3', 'defend', 'bolt']), enemies: [oldHp('enemy-a', 80)] };
     for (let s = 1; s <= 10; s++) {
       const r = runFight(spec, rngStartFromSeed(s), 'smart');
       expect(r.result).toBe('won');
@@ -104,7 +107,7 @@ describe('smart beats greedy where sequencing matters', () => {
     const deck = synergyDeckSets()[1].decks[0];
     const wins = (skill: SkillLevel): number => {
       let w = 0;
-      for (let i = 0; i < 20; i++) w += runFight({ deck, enemies: [getEnemy('elite-a')] }, rngStartFromSeed(unitSeed(1, 'elite-a', i)), skill).result === 'won' ? 1 : 0;
+      for (let i = 0; i < 20; i++) w += runFight({ deck, enemies: [oldHp('elite-a', 170)] }, rngStartFromSeed(unitSeed(1, 'elite-a', i)), skill).result === 'won' ? 1 : 0;
       return w;
     };
     expect(wins('smart')).toBeGreaterThanOrEqual(wins('greedy'));
@@ -131,7 +134,7 @@ describe('every bot on the synergy decks', () => {
   it('expert still wins what smart wins (not required to beat it)', () => {
     const deck = synergyDeckSets()[4].decks[0];
     let wins = 0;
-    for (let i = 0; i < 10; i++) wins += runFight({ deck, enemies: [getEnemy('elite-a')] }, rngStartFromSeed(unitSeed(2, 'elite-a', i)), 'expert').result === 'won' ? 1 : 0;
+    for (let i = 0; i < 10; i++) wins += runFight({ deck, enemies: [oldHp('elite-a', 170)] }, rngStartFromSeed(unitSeed(2, 'elite-a', i)), 'expert').result === 'won' ? 1 : 0;
     expect(wins).toBeGreaterThanOrEqual(8);
   });
 });

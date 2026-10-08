@@ -97,7 +97,7 @@ describe('parsing', () => {
     ['no enemies', { enemies: [] }, 'at least one enemy'],
     ['a missing enemies list', {}, 'at least one enemy'],
     ['an unknown enemy', minimal({ enemies: [{ id: 'enemy-zz' }] }), 'unknown enemy "enemy-zz"'],
-    ['an enemy above its maximum HP', minimal({ enemies: [{ id: 'enemy-a', hp: 41 }] }), 'out of range'],
+    ['an enemy above its maximum HP', minimal({ enemies: [{ id: 'enemy-a', hp: ENEMIES['enemy-a'].maxHp + 1 }] }), 'out of range'],
     ['only dead enemies', minimal({ enemies: [{ id: 'enemy-a', hp: 0 }] }), '0 HP'],
     ['a fractional number', minimal({ turn: 1.5 }), 'whole number'],
     ['a negative number', minimal({ energy: -1 }), 'out of range'],

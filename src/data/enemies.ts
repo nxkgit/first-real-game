@@ -20,14 +20,14 @@ const buffSelf = (status: 'strength', value: number): EnemyMove => ({
 export const ENEMY_A: EnemyDefinition = {
   id: 'enemy-a',
   name: 'Enemy A',
-  maxHp: 80,
+  maxHp: 160,
   movePattern: [attack(8), attack(8), defend(6), attack(14, 'Heavy Attack')],
 };
 
 export const ENEMY_B: EnemyDefinition = {
   id: 'enemy-b',
   name: 'Enemy B',
-  maxHp: 96,
+  maxHp: 192,
   placeholderColor: 0x8a6a3c,
   movePattern: [defend(8), attack(12), debuffPlayer('weak', 1), attack(6)],
 };
@@ -36,7 +36,7 @@ export const ENEMY_B: EnemyDefinition = {
 export const ENEMY_C: EnemyDefinition = {
   id: 'enemy-c',
   name: 'Enemy C',
-  maxHp: 140,
+  maxHp: 280,
   placeholderColor: 0x7a3f6a,
   movePattern: [attack(10), buffSelf('strength', 2), attack(12, 'Heavy Attack'), defend(10), attack(10)],
 };
@@ -45,7 +45,7 @@ export const ENEMY_C: EnemyDefinition = {
 export const ENEMY_D: EnemyDefinition = {
   id: 'enemy-d',
   name: 'Enemy D',
-  maxHp: 40,
+  maxHp: 80,
   placeholderColor: 0x4f7aa8,
   movePattern: [attack(5), attack(5), defend(5)],
 };
@@ -64,7 +64,7 @@ const attackAndDebuff = (value: number, status: 'weak' | 'vulnerable', stacks: n
 export const ELITE_A: EnemyDefinition = {
   id: 'elite-a',
   name: 'Elite A',
-  maxHp: 170,
+  maxHp: 340,
   placeholderColor: 0x9a3c3c,
   placeholderScale: 1.25,
   movePattern: [attack(12), buffSelf('strength', 2), attack(16, 'Heavy Attack'), debuffPlayer('vulnerable', 2)],
@@ -73,7 +73,7 @@ export const ELITE_A: EnemyDefinition = {
 export const ELITE_B: EnemyDefinition = {
   id: 'elite-b',
   name: 'Elite B',
-  maxHp: 140,
+  maxHp: 280,
   placeholderColor: 0x3c6a9a,
   placeholderScale: 1.2,
   movePattern: [attackAndDebuff(8, 'weak', 1, 'Sap'), defend(12), attack(18, 'Heavy Attack')],
@@ -82,7 +82,7 @@ export const ELITE_B: EnemyDefinition = {
 export const BOSS_A: EnemyDefinition = {
   id: 'boss-a',
   name: 'Boss A',
-  maxHp: 300,
+  maxHp: 600,
   placeholderColor: 0x4a3a5a,
   placeholderScale: 1.5,
   movePattern: [

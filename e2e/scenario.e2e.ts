@@ -2,6 +2,9 @@ import { readFileSync } from 'node:fs';
 import { expect, test } from './harness';
 import type { Harness } from './harness';
 import { enterFirstFight } from './flows';
+import { ENEMIES } from '../src/data/enemies';
+
+const ELITE_A_HP = ENEMIES['elite-a'].maxHp;
 
 // The dev panel's scenario tools in a real browser: capture a fight, load it back, load a
 // hand-written scenario and win it with the mouse, and refuse a bad one. See docs/SCENARIOS.md.
@@ -72,7 +75,7 @@ test('(j) dev panel scenarios: powers already in play show up, still react, and 
   await loadAndSettle(game);
   expect(await game.hasText('Powers: 1')).toBe(true); // Tag A Echo, played "before" the scenario starts
   const start = await game.expectReadoutsMatchTruth();
-  expect(start.enemies[0].hp).toBe(85);
+  expect(start.enemies[0].hp).toBe(ELITE_A_HP);
 
   // Prime A (tag-a) x2, Power Up (Empowered), then Tag A Payoff: (3 + 5 x 2 tagged plays) = 13, doubled by Empowered = 26
   for (const name of ['Prime A', 'Prime A', 'Power Up', 'Tag A Payoff']) {
@@ -80,7 +83,7 @@ test('(j) dev panel scenarios: powers already in play show up, still react, and 
     await game.settle();
   }
   const end = await game.expectReadoutsMatchTruth();
-  expect(end.enemies[0].hp).toBe(85 - 26);
+  expect(end.enemies[0].hp).toBe(ELITE_A_HP - 26);
   expect(end.hand).toContain('Defend'); // Echo (restored, not yet fired this turn) drew a card on the first tagged play
   game.check();
 });
