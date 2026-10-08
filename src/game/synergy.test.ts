@@ -8,7 +8,7 @@ import { CARDS, allDraftableCards, baseCards, getCard, rewardPoolFor, upgradedVe
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
 import { SYNERGY_CARDS } from '../data/synergyCards';
 import { MAGE_CARDS } from '../data/mageCards';
-import { newRun, restoreSavedRun } from '../data/run';
+import { newPlayableRun, newRun, restoreSavedRun } from '../data/run';
 import { MAX_TRIGGER_DEPTH } from '../data/tunables';
 
 const mk = (id: string, extra: Partial<CardDefinition> = {}): CardDefinition => ({
@@ -503,11 +503,11 @@ describe('placeholder synergy content', () => {
     expect(RELICS['kill-token']).toBeDefined();
   });
 
-  it('allDraftableCards covers the pool plus the synergy cards, no starters or upgrades', () => {
+  it('allDraftableCards covers the pool plus the synergy cards, no upgrades (basics included since 2026-10-08, see rewardPoolFor)', () => {
     const all = allDraftableCards('mage');
     for (const c of SYNERGY_CARDS) expect(all).toContain(c);
     for (const c of rewardPoolFor('mage')) expect(all).toContain(c);
-    expect(all.some((c) => c.id === 'strike' || c.upgradeOf)).toBe(false);
+    expect(all.some((c) => c.upgradeOf)).toBe(false);
   });
 
   it('every registered card has generated text and a valid upgrade; aimed exactly when needed', () => {
@@ -550,9 +550,9 @@ describe('runs with synergy content', () => {
     expect(restored!.relics.map((r) => r.id)).toContain('exhaust-token');
   });
 
-  it('the starter deck has no synergy cards; the reward pool is the 11 original cards plus all of them plus the Mage cards', () => {
-    const run = newRun(5);
+  it('the simulator starter deck has no synergy cards; the reward pool is the 14 original cards (basics included, 2026-10-08) plus all of them plus the Mage cards', () => {
+    const run = newPlayableRun(5);
     expect(run.deck.some((c) => SYNERGY_CARDS.includes(c))).toBe(false);
-    expect(rewardPoolFor('mage').length).toBe(11 + SYNERGY_CARDS.length + MAGE_CARDS.length);
+    expect(rewardPoolFor('mage').length).toBe(14 + SYNERGY_CARDS.length + MAGE_CARDS.length);
   });
 });

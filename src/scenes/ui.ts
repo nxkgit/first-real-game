@@ -427,6 +427,10 @@ export function enterCurrentNode(scene: Phaser.Scene, run: RunState): void {
     scene.scene.start('MapScene', { run });
   } else if (run.phase === 'reward') {
     scene.scene.start('RewardScene', { run });
+  } else if (run.phase === 'draft') {
+    // starter-deck draft (DESIGN_LOG.md "Starter deck draft"): an intro screen until the first
+    // offer is rolled, then the reward screen's own 1-of-3 picker, reused, once per round.
+    scene.scene.start(run.pendingDraftOffer ? 'RewardScene' : 'DraftIntroScene', { run, draft: true });
   } else {
     scene.scene.start(NODE_SCENE[run.currentNode.kind], { run });
   }

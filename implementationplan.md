@@ -269,14 +269,79 @@ Played in a real browser, confirmed via `CombatState`: Heating Up → Scorching 
 after ending the turn, and an attack played fresh the next turn (nothing chained yet) hit for
 normal, unmultiplied damage.
 
+## Starter deck draft (built 2026-10-08)
+
+Planned in an explicit planning-mode session, then built the same day (full back-and-forth:
+`DESIGN_LOG.md` "Starter deck draft"). Replaces the old fixed, hardcoded `buildStarterDeck()` with a
+player-drafted starting deck, on top of a small generalized card-typing addition that also sets up
+future heroes/archetypes. `buildStarterDeck()` itself is unchanged and still lives in `data/cards.ts`
+as the simulator/balance toolkit's reference starter deck (and as a test convenience, `newPlayableRun`
+in `data/run.ts`) — the live game simply no longer calls it directly.
+
+**Mechanic:** the **New Run** button (and a fresh boot with no save) no longer jumps straight to the
+map. `RunState` gets a new `'draft'` phase: an intro screen (`DraftIntroScene`, styled like the
+reward screen) explains it's time to build a deck, with a single "Proceed" button. The existing
+1-of-3 reward-screen component (`RewardScene`) is then **reused ten times in a row** (a `draft: true`
+init flag switches its data source, title text, and hides the gold button/HUD/deck button — no new
+screen class for the picks themselves), each round offering 3 **distinct** cards drawn uniformly at
+random from the new **starter pool** (`starterPoolFor(MAGE)`, archetype-agnostic — no weighting
+toward any sub-class). Each of the 10 picks is mandatory: there is no gold option and no cancel path
+at all in `RewardScene` (draft or not), so nothing needed removing to make a round unskippable.
+Picking the same offered card across different rounds is allowed and stacks a copy, the same way the
+old starter deck had 4 copies of Strike — `RunState.pickDraftCard` just pushes the chosen card and,
+if the deck isn't yet at `STARTER_DECK_SIZE` (10, `tunables.ts`), rolls the next round's offer
+internally; once it is, `phase` becomes `'map'` and the run proceeds exactly as before this feature
+existed. The whole draft draws from the run's own seeded `Rng` stream (`RunState.rollDraftOffer`),
+the same way reward rolls already do, so a seed still replays deterministically and a save mid-draft
+resumes exactly (new `SavedRun.pendingDraftOffer` field; **save version bumped to 3**, so an old v2
+save is discarded like any other outdated save — never a crash).
+
+**Pools expanded** per the user's explicit "test everything" request: every card currently in
+`ALL_CARDS` (`data/cards.ts`) is now `inStarterPool: true`, and the three basics that were
+starter-only before (Strike, Defend, Focus — Bolt was already in the reward pool) are now
+`inRewardPool: true` as well, so the reward pool grew from 51 to **54** cards. **Judgment call,
+documented rather than asked:** the 7 engine-only "Test: ..." cards in `keywordCards.ts` are
+deliberately left out of both pools — they are demonstration fixtures for Innate/Retain/Ethereal/
+Buffer/etc. (see "Keyword mechanics" below), never meant to be real player-facing content, and
+including them would silently promote test fixtures to shipped content. `buildUpgraded` (which
+generates every `<id>+` card) now forces `inStarterPool: false` the same way it already forced
+`inRewardPool: false`, so an upgraded card can never be offered by either pool.
+
+**New `CardDefinition` fields (data model only — scaffolding, see "Deferred" for what still is):**
+- `archetype?: string` — a hero-scoped sub-class label (e.g. the Mage's `'frost'`/`'fire'`). Purely
+  descriptive for now; per the user's own design notes (`docs/classbrainstorming.md`), most future
+  heroes get one offense-leaning and one defense-leaning archetype, but that is a design convention
+  for content authoring, not an engine rule, and it is **not a player-facing choice** — nothing
+  reads this field yet except the future loot-table idea below. No card has one set yet.
+- `rarity?: RarityTier`, a new type `'common' | 'uncommon' | 'rare'` (placeholder tier names) — field
+  only; no reward-odds weighting logic reads it yet. No card has one set yet.
+- `inStarterPool?: boolean` — mirrors `inRewardPool`; see "Pools expanded" above for who has it.
+
+**Not decided/built here, deliberately:** the actual reward-odds weighting that `rarity` would drive;
+a second hero's real content (the `archetype` field is generic and ready whenever that happens);
+creature-specific loot tables that would bias starter/reward sampling toward an archetype (raised by
+the user as a future idea, not scheduled — see Open Questions).
+
+Played in a real browser (Playwright, `e2e/draft.e2e.ts`, plus by hand): New Run opens "Build your
+deck", Proceed rolls the first of 10 rounds, each round shows 3 distinct cards and no gold option,
+all 10 picks land in the resulting deck in order, and the run then proceeds to the map exactly as
+before. Also confirmed a normal post-fight reward screen now offers cards that used to be
+starter-only (Strike/Defend/Focus can come up as rewards). Every other existing e2e test keeps
+reaching the map through the old fixed starter deck, via a new `Harness.completeDraftIfPending()`
+(`RunState.skipDraftWith`, a dev/tooling bypass next to `jumpTo`/`startFight`) that `game.open()`
+calls by default — it does not touch the rng stream, so nothing about existing tests' seeded
+behaviour moved. `npm run verify` is green (831 tests, several rewritten where they asserted the old
+pool composition or fixed starter-deck phase); balance baseline and sample report regenerated for the
+grown reward pool (`npm run balance:baseline`/`balance:report`), no numbers tuned.
+
 ## Deferred (explicitly not MVP 1 — do not build yet)
 
 - Shop system (shop contents, prices, exchange rate between a card reward and gold) — a draft screen exists as a stop kind; nothing about it is decided
 - Relics — a basic placeholder system exists (see "One-Act Demo"); real relic design (what they do, where they come from) is deferred
 - Non-combat events — a placeholder system exists; real event writing and design is deferred
 - Map/run structure — one act with a branching map exists; real encounter design, multiple acts, treasure stops and other stop kinds are deferred
-- Card rarity tiers and reward-pool weighting
-- Multiple heroes/archetypes (ranger, fighter, etc.) — MVP 1 is Mage only
+- Card rarity tiers and reward-pool weighting — 2026-10-08: a `rarity` field and placeholder tier names are now built as data-model scaffolding (see "Starter deck draft"), but the weighting/odds logic itself is still deferred
+- Multiple heroes/archetypes (ranger, fighter, etc.) — MVP 1 is Mage only. 2026-10-08: a generic `archetype` field is now built, scoped per hero (see "Starter deck draft"), as scaffolding only — Mage remains the only hero with real content
 - Magic-school/tribe synergy system — deprioritized in favor of single-hero depth for now
 - Full status-effect roster beyond MVP 1's minimal set — partially lifted 2026-10-08 for the mechanics only: Frail, Intangible and Buffer are built (engine-only, no real card uses them; see "Keyword mechanics"), the same way the synergy engine partially lifted this for its own mechanics earlier. Real statuses beyond that, and applying any of these to real content, are still deferred.
 - Combat math/balance pass (HP/damage scale, target fight length in turns). A simulator now exists to support it (see "Tooling and playtest readiness"); the pass itself is still deferred
@@ -291,6 +356,7 @@ normal, unmultiplied damage.
 <!-- OPEN QUESTION: card rarity tiers and reward odds — deferred to MVP 2 planning. -->
 <!-- OPEN QUESTION: shop contents and the gold-value tuning for the card-vs-gold reward choice — deferred to MVP 2 planning; must avoid gold becoming a strictly dominant or strictly inferior choice. -->
 <!-- OPEN QUESTION: combat math (HP/damage scale, target turns per fight) — deferred. -->
+<!-- OPEN QUESTION (future, raised 2026-10-08): creature-specific loot tables that bias starter/reward sampling toward an archetype based on which enemies were fought. Not scheduled; noted so it isn't lost. -->
 
 ## MVP 1 Build Order
 

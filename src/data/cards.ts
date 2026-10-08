@@ -17,7 +17,8 @@ export const STRIKE: CardDefinition = {
   target: 'enemy',
   cost: 1,
   owner: MAGE,
-  inRewardPool: false,
+  inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'damage', value: 6 }],
   upgrade: { effects: [{ kind: 'damage', value: 9 }] },
 };
@@ -28,7 +29,8 @@ export const DEFEND: CardDefinition = {
   type: 'skill',
   cost: 1,
   owner: MAGE,
-  inRewardPool: false,
+  inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'block', value: 5 }],
   upgrade: { effects: [{ kind: 'block', value: 8 }] },
 };
@@ -41,6 +43,7 @@ export const BOLT: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'damage', value: 12 }],
   upgrade: { effects: [{ kind: 'damage', value: 16 }] },
 };
@@ -51,7 +54,8 @@ export const FOCUS: CardDefinition = {
   type: 'power',
   cost: 1,
   owner: MAGE,
-  inRewardPool: false,
+  inRewardPool: true,
+  inStarterPool: true,
   onTurnStartEffect: { kind: 'draw', value: 1 },
   upgrade: { cost: 0 },
 };
@@ -68,6 +72,7 @@ export const JAB: CardDefinition = {
   cost: 0,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'damage', value: 3 }],
   upgrade: { effects: [{ kind: 'damage', value: 5 }] },
 };
@@ -80,6 +85,7 @@ export const GUARDED_STRIKE: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [
     { kind: 'damage', value: 5 },
     { kind: 'block', value: 5 },
@@ -100,6 +106,7 @@ export const HEAVY_HIT: CardDefinition = {
   cost: 3,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'damage', value: 24 }],
   upgrade: { effects: [{ kind: 'damage', value: 32 }] },
 };
@@ -111,6 +118,7 @@ export const BIG_BLOCK: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'block', value: 13 }],
   upgrade: { effects: [{ kind: 'block', value: 18 }] },
 };
@@ -122,6 +130,7 @@ export const QUICK_DRAW: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'draw', value: 2 }],
   upgrade: { effects: [{ kind: 'draw', value: 3 }] },
 };
@@ -133,6 +142,7 @@ export const FORTIFY: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   onTurnStartEffect: { kind: 'block', value: 4 },
   upgrade: { onTurnStartEffect: { kind: 'block', value: 6 } },
 };
@@ -147,6 +157,7 @@ export const WEAKEN: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'applyStatus', status: 'weak', value: 2, to: 'target' }],
   upgrade: { effects: [{ kind: 'applyStatus', status: 'weak', value: 3, to: 'target' }] },
 };
@@ -159,6 +170,7 @@ export const EXPOSE: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'target' }],
   upgrade: { effects: [{ kind: 'applyStatus', status: 'vulnerable', value: 3, to: 'target' }] },
 };
@@ -171,6 +183,7 @@ export const SUNDER: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [
     { kind: 'damage', value: 8 },
     { kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'target' },
@@ -190,6 +203,7 @@ export const STRENGTHEN: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   effects: [{ kind: 'applyStatus', status: 'strength', value: 2, to: 'self' }],
   upgrade: { effects: [{ kind: 'applyStatus', status: 'strength', value: 3, to: 'self' }] },
 };
@@ -236,6 +250,7 @@ function buildUpgraded(card: CardDefinition): CardDefinition | undefined {
     name: `${card.name}+`,
     upgradeOf: card.id,
     inRewardPool: false,
+    inStarterPool: false,
   };
 }
 
@@ -269,10 +284,20 @@ export function rewardPoolFor(heroId: string): CardDefinition[] {
 }
 
 /**
+ * Cards a hero can be offered during the pre-run starter-deck draft: their own plus the neutral
+ * ones. Added 2026-10-08 for the starter-deck draft (DESIGN_LOG.md "Starter deck draft"); mirrors
+ * `rewardPoolFor` exactly, filtered on `inStarterPool` instead of `inRewardPool`.
+ */
+export function starterPoolFor(heroId: string): CardDefinition[] {
+  return ALL_CARDS.filter((card) => card.inStarterPool && (card.owner === heroId || card.owner === 'neutral'));
+}
+
+/**
  * Every base card a deck for `heroId` could plausibly contain, for tools that build decks from the
- * whole registry (the simulator, tests): the reward-pool cards plus the placeholder synergy cards,
- * regardless of `inRewardPool`. Excludes the starter-only basics (Strike, Defend, Focus) and
- * upgraded versions (use `upgradedVersion`). The live game never calls this; it uses `rewardPoolFor`.
+ * whole registry (the simulator, tests): the reward-pool cards (which, since 2026-10-08, includes
+ * the basics Strike/Defend/Bolt/Focus — see DESIGN_LOG.md "Starter deck draft") plus the placeholder
+ * synergy cards, regardless of `inRewardPool`. Excludes upgraded versions (use `upgradedVersion`).
+ * The live game never calls this; it uses `rewardPoolFor` (and, for the starter draft, `starterPoolFor`).
  */
 export function allDraftableCards(heroId: string = MAGE): CardDefinition[] {
   const synergyIds = new Set(SYNERGY_CARDS.map((c) => c.id));
@@ -281,7 +306,13 @@ export function allDraftableCards(heroId: string = MAGE): CardDefinition[] {
   );
 }
 
-/** Placeholder starter deck (mirrors StS's starter-deck shape): every card type, and the cost/energy system. */
+/**
+ * Placeholder reference starter deck (mirrors StS's starter-deck shape): every card type, and the
+ * cost/energy system. Used by the simulator/balance toolkit as its baseline deck, and by tests that
+ * want an ordinary ready-to-play deck (see `newPlayableRun` in data/run.ts). The live game no longer
+ * uses this directly — since 2026-10-08 the player builds their own starting deck via the starter
+ * draft (DESIGN_LOG.md "Starter deck draft"); this function is kept as the simulator's stand-in.
+ */
 export function buildStarterDeck(): CardDefinition[] {
   return [STRIKE, STRIKE, STRIKE, STRIKE, DEFEND, DEFEND, DEFEND, DEFEND, BOLT, FOCUS];
 }

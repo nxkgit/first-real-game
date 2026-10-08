@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { parseSavedRun, restoreRun } from './save';
-import { RUN_WORLD, newRun, restoreSavedRun } from '../data/run';
+import { RUN_WORLD, newPlayableRun, restoreSavedRun } from '../data/run';
 import type { RunState } from './RunState';
 
 // A real saved run, round-tripped through JSON like localStorage would.
 function savedAt(setup: (r: RunState) => void = () => {}): Record<string, unknown> {
-  const r = newRun(11);
+  const r = newPlayableRun(11);
   setup(r);
   return JSON.parse(JSON.stringify(r.toSaved()));
 }
@@ -45,7 +45,7 @@ describe('parseSavedRun / restoreRun', () => {
   });
 
   it('rejects an old or unknown version', () => {
-    for (const v of [1, 3, '2', undefined, null]) expect(parseSavedRun(mutate((s) => (s.version = v)))).toBeNull();
+    for (const v of [1, 2, '3', undefined, null]) expect(parseSavedRun(mutate((s) => (s.version = v)))).toBeNull();
   });
 
   it('rejects bad seed / rng position', () => {
@@ -134,7 +134,7 @@ describe('parseSavedRun / restoreRun', () => {
   });
 
   it('a restored run carries on with the same random stream as the original', () => {
-    const original = newRun(21);
+    const original = newPlayableRun(21);
     const raw = JSON.parse(JSON.stringify(original.toSaved()));
     const copy = restoreRun(raw, RUN_WORLD)!;
     expect(copy.newCombatRng().next()).toBe(original.newCombatRng().next());

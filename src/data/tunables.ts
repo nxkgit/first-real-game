@@ -35,6 +35,12 @@ export const TEMPERATURE_MAX = 5;
 /** How many turns the Mage's hero power's extra energy lasts. PROVISIONAL. */
 export const HERO_POWER_ENERGIZED_TURNS = 2;
 
+// ---- starter deck draft (see DESIGN_LOG.md "Starter deck draft", 2026-10-08) ----
+/** How many cards the pre-run draft produces; matches the prior fixed starter deck's size. */
+export const STARTER_DECK_SIZE = 10;
+/** Cards offered per draft round (reuses the reward screen's 1-of-3 pattern). */
+export const STARTER_DRAFT_OFFER_SIZE = 3;
+
 // ---- run ----
 export const PLAYER_MAX_HP = 60;
 /** Fraction of max HP restored at a rest stop. */

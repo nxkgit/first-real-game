@@ -149,6 +149,13 @@ export interface Trigger {
   oncePerTurn?: boolean;
 }
 
+/**
+ * Placeholder rarity tiers (data-model scaffolding only, added 2026-10-08 — see DESIGN_LOG.md
+ * "Starter deck draft"). No reward-pool weighting logic reads this yet; names are placeholders,
+ * easy to rename once a real rarity pass happens.
+ */
+export type RarityTier = 'common' | 'uncommon' | 'rare';
+
 export interface CardDefinition {
   id: string;
   name: string;
@@ -158,6 +165,20 @@ export interface CardDefinition {
   owner: string;
   /** Whether it can show up as a reward / in a shop. Starter-only cards leave this false. */
   inRewardPool: boolean;
+  /** Whether it can be offered during the pre-run starter-deck draft (see data/cards.ts's `starterPoolFor`). */
+  inStarterPool?: boolean;
+  /**
+   * Hero-scoped sub-class label (e.g. the Mage's 'frost'/'fire'; see docs/classbrainstorming.md for
+   * the full per-hero list). Scaffolding only, added 2026-10-08 (DESIGN_LOG.md "Starter deck draft"):
+   * purely descriptive for now, a design convention for content authoring. Nothing in the engine
+   * reads this yet.
+   */
+  archetype?: string;
+  /**
+   * Placeholder rarity tier (scaffolding only, added 2026-10-08 — see `RarityTier` below). Nothing
+   * reads this yet; no reward-odds weighting is built. Still deferred, per implementationplan.md.
+   */
+  rarity?: RarityTier;
   /** Text override. Leave it out: the text is generated from `effects` (see describe.ts). */
   description?: string;
   /** 'enemy' cards must be played onto an enemy (drag/click to target); others play on click. */

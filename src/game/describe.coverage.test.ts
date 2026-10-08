@@ -7,7 +7,7 @@ import type { CardDefinition, Effect, EnemyMove, EventOutcome, RelicDefinition, 
 import { CARDS } from '../data/cards';
 import { RELICS } from '../data/relics';
 import { EVENTS } from '../data/events';
-import { newRun } from '../data/run';
+import { newPlayableRun } from '../data/run';
 
 const card = (extra: Partial<CardDefinition>): CardDefinition => ({
   id: 'x',
@@ -220,7 +220,7 @@ describe('intentIcons', () => {
 
 describe('runReport', () => {
   it('reports a fresh run as in progress with the starter deck counted by id', () => {
-    const run = newRun(5);
+    const run = newPlayableRun(5);
     const r = buildRunReport(run);
     expect(r.version).toBe(2);
     expect(r.seed).toBe(5);
@@ -236,7 +236,7 @@ describe('runReport', () => {
   });
 
   it('maps phase won/lost to the result, and anything else to in progress', () => {
-    const run = newRun(5);
+    const run = newPlayableRun(5);
     for (const [phase, result] of [['won', 'won'], ['lost', 'lost'], ['map', 'in progress'], ['inNode', 'in progress'], ['reward', 'in progress']] as const) {
       run.phase = phase;
       expect(buildRunReport(run).result).toBe(result);
@@ -244,7 +244,7 @@ describe('runReport', () => {
   });
 
   it('counts duplicates and lists relic ids', () => {
-    const run = newRun(5);
+    const run = newPlayableRun(5);
     run.deck.push(run.deck[0]);
     run.relics.push(RELICS['guard-token'], RELICS['draw-token']);
     const r = buildRunReport(run);
@@ -253,7 +253,7 @@ describe('runReport', () => {
   });
 
   it('is a snapshot: later changes to the run do not alter an earlier report', () => {
-    const run = newRun(5);
+    const run = newPlayableRun(5);
     run.chooseNode(run.mapChoices[0].id);
     run.finishCombat('won', 40, 4);
     const r = buildRunReport(run);
@@ -265,7 +265,7 @@ describe('runReport', () => {
   });
 
   it('formatRunReport is JSON that round-trips', () => {
-    const run = newRun(5);
+    const run = newPlayableRun(5);
     const report = buildRunReport(run);
     const text = formatRunReport(report);
     expect(JSON.parse(text)).toEqual(report);

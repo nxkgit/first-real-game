@@ -160,7 +160,10 @@ describe('differential: the simulator path and the RunState path agree', () => {
         fights++;
       }
     }
-    expect(fights).toBeGreaterThan(200);
+    // lowered from 200 (2026-10-08): the starter-deck draft now spends ~11 extra non-combat steps
+    // at the start of every run (DESIGN_LOG.md "Starter deck draft"), so slightly fewer fights land
+    // inside the same 400-step-per-seed budget.
+    expect(fights).toBeGreaterThan(180);
   });
 
   it('the simulator is a pure function of its seed and agrees with itself across policies', () => {

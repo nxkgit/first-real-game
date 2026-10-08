@@ -17,6 +17,13 @@ Hero identity, card flavor/names, art, narrative, and overall aesthetic are auth
 
 Stay on the systems/architecture/mechanics side of the line.
 
+## Working mode: planning vs. building
+
+Every session (or natural transition point within one — e.g. a plan just got finished and the next move is to implement it, or implementation work wraps and a new feature is up for discussion) is in one of two modes. If it isn't clear which mode applies, **ask rather than assume**.
+
+- **Planning mode.** The goal is a good decision and a clear plan, not code. Be inquisitive: ask clarifying questions, surface tradeoffs, point out consequences the user may not have considered. Offer your own opinion even when it conflicts with the user's stated direction — but only when you have a genuine, specific reason; never disagree reflexively or play devil's advocate just to stress-test an idea that doesn't need it. If you have no real objection, say so plainly instead of manufacturing one. Don't write code in this mode unless the user directs otherwise.
+- **Building mode.** Execute against the plan produced in planning mode. Don't relitigate decisions that plan already settled, and don't quietly expand or change scope from it — if something comes up that the plan didn't cover, that's a signal to step back into planning mode (ask) rather than improvise past it.
+
 ## Scope discipline
 
 - Build exactly to the current MVP target in `implementationplan.md`. Do not implement anything from its "Deferred" list ahead of schedule, even if it looks easy or related to code you're already touching.

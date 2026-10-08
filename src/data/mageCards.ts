@@ -30,6 +30,7 @@ export const SCORCHING_WIND: CardDefinition = {
   cost: 0,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   effects: [
     { kind: 'damage', value: 2 },
@@ -45,6 +46,7 @@ export const HEATING_UP: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   // Corrected 2026-10-08 (DESIGN_LOG.md): the user's real intent is an exponential chain, not a
   // flat double — each attack played this turn deals 2x the damage of the one before it (1st
@@ -63,6 +65,7 @@ export const METEOR_SHOWER: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   effects: [
     { kind: 'damageAll', value: 8 },
@@ -78,6 +81,7 @@ export const MOLTEN_CORE: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   // "Add X Scorching Winds to your hand for every X temperature" (the user's pasted text): copies
   // scale with the current Temperature (0 or below adds none; scaledValue floors at 0).
@@ -95,6 +99,7 @@ export const APOCALYPTIC_FLAME: CardDefinition = {
   cost: 3,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   effects: [
     { kind: 'damage', value: 30 },
@@ -113,6 +118,7 @@ export const CRIPPLING_HEAT: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   effects: [
     { kind: 'damage', value: 4 },
@@ -130,6 +136,7 @@ export const HEAT_FLASH: CardDefinition = {
   cost: 0,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   effects: [
     { kind: 'damage', value: 3 },
@@ -146,6 +153,7 @@ export const CAUTERIZE: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   // User's answer when asked what the unspecified "defensive skill" does: plain block.
   effects: [
@@ -163,6 +171,7 @@ export const HEAT_WARNING: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['fire'],
   effects: [
     { kind: 'damage', value: 4 },
@@ -180,6 +189,7 @@ export const ICE_BLOCK: CardDefinition = {
   cost: 3,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   // PLACEHOLDER approximation of "immune to damage until your next turn": the engine has no
   // immunity flag, so this is just a block value well above any other block card's, high enough to
@@ -201,6 +211,7 @@ export const ICE_BARRIER: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [
     { kind: 'discardRandom', value: 2 },
@@ -218,6 +229,7 @@ export const HYPOTHERMIA: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [
     { kind: 'applyStatus', status: 'freeze', value: 1, to: 'target' },
@@ -234,6 +246,7 @@ export const FROZEN_SHIELD: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [
     { kind: 'block', value: 6 },
@@ -250,6 +263,7 @@ export const CRYOFREEZE: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   // "Gain X plating" was not otherwise specified: reused as the existing turn-start-block power
   // pattern (see Fortify in cards.ts) rather than inventing a separate "plating" mechanic.
@@ -265,6 +279,7 @@ export const ENDLESS_WINTER: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [{ kind: 'adjustTemperature', value: -1 }],
   onTurnStartEffect: { kind: 'applyStatus', status: 'freeze', value: 1, to: 'target' },
@@ -279,6 +294,7 @@ export const GLACIATE: CardDefinition = {
   cost: 2,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [{ kind: 'damage', value: 8, vsFreezeMult: 3 }],
   upgrade: { effects: [{ kind: 'damage', value: 11, vsFreezeMult: 3 }] },
@@ -292,6 +308,7 @@ export const GLACIAL_SPIKE: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [
     { kind: 'applyStatus', status: 'freeze', value: 1, to: 'target' },
@@ -308,6 +325,7 @@ export const ABSOLUTE_ZERO: CardDefinition = {
   cost: 3,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [{ kind: 'adjustTemperature', value: -4 }],
   upgrade: { cost: 2 },
@@ -320,6 +338,7 @@ export const HUNGERING_COLD: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   onTurnStartEffect: { kind: 'adjustTemperature', value: -1 },
   upgrade: { cost: 0 },
@@ -333,6 +352,7 @@ export const ARCTIC_STRIKE: CardDefinition = {
   cost: 1,
   owner: MAGE,
   inRewardPool: true,
+  inStarterPool: true,
   tags: ['frost'],
   effects: [{ kind: 'damage', value: 2, scaling: { per: 'targetFreeze', value: 3 } }],
   upgrade: { effects: [{ kind: 'damage', value: 4, scaling: { per: 'targetFreeze', value: 3 } }] },

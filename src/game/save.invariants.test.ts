@@ -128,7 +128,7 @@ describe('parseSavedRun / restoreRun never throw', () => {
 
   it('discards the wrong version, and any change of the version field', () => {
     for (const save of validSaves(40) as Record<string, unknown>[]) {
-      for (const version of [0, 1, 3, -2, '2', null, 2.5, NaN, undefined, [2]]) {
+      for (const version of [0, 1, 2, -2, '3', null, 2.5, NaN, undefined, [3]]) {
         expect(restoreSavedRun({ ...save, version })).toBeNull();
       }
     }

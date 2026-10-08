@@ -75,11 +75,11 @@ describe('card registry', () => {
     for (const [id, c] of Object.entries(CARDS)) expect(c.id).toBe(id);
   });
 
-  it('offers a hero only its own reward cards (and never starter-only ones)', () => {
+  it('offers a hero only its own cards, or neutral ones (basics included since 2026-10-08)', () => {
     const pool = rewardPoolFor(MAGE);
     expect(pool.length).toBeGreaterThan(0);
     expect(pool.every((c) => c.inRewardPool && (c.owner === MAGE || c.owner === 'neutral'))).toBe(true);
-    expect(pool).not.toContain(getCard('strike'));
+    expect(pool).toContain(getCard('strike'));
     // another hero is offered only the neutral cards (the synergy placeholders)
     for (const c of rewardPoolFor('someone-else')) expect(c.owner).toBe('neutral');
   });

@@ -88,11 +88,12 @@ test('(e) trigger powers: on card played, and at end of turn through the enemy t
   expect(t.enemies[0].hp).toBe(ENEMY_A_HP - 10);
   expect(t.block, 'Attack Echo gives 2 block when an attack is played').toBe(2);
 
-  // End of turn: End Guard adds 4 block (total 6) before the enemy's 8-damage attack lands: 2 HP is lost.
+  // End of turn: End Guard adds 4 block (total 6) before the enemy's attack lands (11 damage since
+  // the 2026-10-08 enemy-damage pass, DESIGN_LOG.md "Enemy HP cut 40%..."; was 8): 5 HP is lost.
   await game.endTurn();
   t = await game.expectReadoutsMatchTruth();
   expect(t.turn).toBe(2);
-  expect(t.hp).toBe(60 - 2);
+  expect(t.hp).toBe(60 - 5);
 });
 
 test('(e) trigger on kill gives energy; empowered kill', async ({ game }) => {

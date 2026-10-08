@@ -16,6 +16,8 @@ import {
   REWARD_GOLD,
   SHOP_CARD_COUNT,
   SHOP_CARD_PRICE,
+  STARTER_DECK_SIZE,
+  STARTER_DRAFT_OFFER_SIZE,
 } from '../data/tunables';
 
 export type FightTier = 'normal' | 'elite' | 'boss';
@@ -30,6 +32,8 @@ export type RunNode =
 /** Everything the run needs to look up or draw from: the content of the game. */
 export interface RunWorld {
   rewardPool: CardDefinition[];
+  /** Cards offered during the pre-run starter-deck draft (see data/cards.ts's `starterPoolFor`). */
+  starterPool: CardDefinition[];
   relicPool: RelicDefinition[];
   card(id: string): CardDefinition;
   relic(id: string): RelicDefinition;
@@ -52,12 +56,15 @@ export interface RewardOffer {
 }
 
 /**
+ * - draft: before the map even starts, picking the starting deck one card at a time (see
+ *   "Starter deck draft" in DESIGN_LOG.md). `pendingDraftOffer === null` means the intro screen
+ *   hasn't been passed yet; otherwise it's the 3 options for the current round.
  * - map: between stops, choosing where to go next
  * - inNode: at a stop (a fight, a rest stop, a shop, or an event)
  * - reward: just won a fight, choosing card vs gold
  * - won / lost: run over (winning means beating the boss)
  */
-export type RunPhase = 'map' | 'inNode' | 'reward' | 'won' | 'lost';
+export type RunPhase = 'draft' | 'map' | 'inNode' | 'reward' | 'won' | 'lost';
 
 /** What happened at each stop, kept for playtest reports. Plain data; cards, enemies and relics are ids. */
 export type RunLogEntry =
@@ -75,7 +82,7 @@ export interface EventFight {
 
 /** A run in a form that can be stored and restored (content by id). Bump `version` if this changes. */
 export interface SavedRun {
-  version: 2;
+  version: 3;
   seed: number;
   rngPosition: number;
   map: ActMap;
@@ -88,6 +95,8 @@ export interface SavedRun {
   deck: string[];
   relics: string[];
   pendingReward: { cards: string[]; gold: number; relic: string | null } | null;
+  /** The starter-deck draft's current round offer, or null (see `RunPhase`'s 'draft'). */
+  pendingDraftOffer: string[] | null;
   shop: { card: string; price: number; sold: boolean }[] | null;
   eventFight: EventFight | null;
   notice: string[];
@@ -108,6 +117,8 @@ export class RunState {
   gold = 0;
   phase: RunPhase = 'map';
   pendingReward: RewardOffer | null = null;
+  /** The starter-deck draft's current round offer; null before the intro is passed or once the deck is full. */
+  pendingDraftOffer: CardDefinition[] | null = null;
   /** Where you are: a map stop's id, or null before the first stop. */
   position: string | null = null;
   visited: string[] = [];
@@ -269,6 +280,37 @@ export class RunState {
     this.advance();
   }
 
+  // ---------- starter-deck draft ----------
+  // Replaces the old fixed `buildStarterDeck()` (DESIGN_LOG.md "Starter deck draft", 2026-10-08):
+  // the player builds their own starting deck, one card at a time, from `STARTER_DECK_SIZE` rounds
+  // of a 1-of-3 pick (the reward screen's own UI, reused). No skip is offered at any point — the
+  // intro screen (phase 'draft', `pendingDraftOffer` null) has a single "proceed" button, and each
+  // round has only the 3 cards to choose from. Sampling is archetype-agnostic and uniformly random,
+  // per the user's explicit call that archetype is a design convention, not a player-facing choice.
+
+  /** Rolls the next 3-card draft offer. Called once after the intro screen's "proceed", then again
+   *  internally after each pick until the deck is full. */
+  rollDraftOffer(): void {
+    if (this.phase !== 'draft') throw new Error(`can't draft while ${this.phase}`);
+    this.pendingDraftOffer = this.rollCardsFrom(this.world.starterPool, STARTER_DRAFT_OFFER_SIZE);
+  }
+
+  /** Picks one of the current draft offer's cards into the deck. Duplicates across rounds are fine
+   *  (the same card can be offered and picked more than once) — only one round's own 3 options are
+   *  distinct from each other. */
+  pickDraftCard(index: number): void {
+    if (this.phase !== 'draft' || !this.pendingDraftOffer) throw new Error('no draft offer pending');
+    const card = this.pendingDraftOffer[index];
+    if (!card) throw new Error(`no draft option at index ${index}`);
+    this.deck.push(card);
+    this.pendingDraftOffer = null;
+    if (this.deck.length >= STARTER_DECK_SIZE) {
+      this.phase = 'map';
+    } else {
+      this.rollDraftOffer();
+    }
+  }
+
   // ---------- rest stops ----------
 
   /** HP a rest would restore right now (capped at max HP). */
@@ -398,6 +440,17 @@ export class RunState {
 
   // ---------- dev tools ----------
 
+  /** Dev/tooling bypass: completes the starter-deck draft instantly with a given deck, without
+   *  rolling any offers (so it never touches the rng stream, unlike a real draft pick) — for
+   *  callers that don't care about the draft mechanic itself (the simulator, most tests). The live
+   *  game always drafts for real; see `data/run.ts`'s `newPlayableRun` for the common case. */
+  skipDraftWith(deck: CardDefinition[]): void {
+    if (this.phase !== 'draft') throw new Error(`can't skip the draft while ${this.phase}`);
+    this.deck = [...deck];
+    this.pendingDraftOffer = null;
+    this.phase = 'map';
+  }
+
   /** Dev tool: go straight to a stop, dropping whatever was pending. */
   jumpTo(id: string): void {
     this.node(id);
@@ -423,7 +476,7 @@ export class RunState {
   /** The run as plain data, for saving. */
   toSaved(): SavedRun {
     return {
-      version: 2,
+      version: 3,
       seed: this.rng.seed,
       rngPosition: this.rng.position,
       map: this.map,
@@ -442,6 +495,7 @@ export class RunState {
             relic: this.pendingReward.relic?.id ?? null,
           }
         : null,
+      pendingDraftOffer: this.pendingDraftOffer ? this.pendingDraftOffer.map((c) => c.id) : null,
       shop: this.shopStock ? this.shopStock.map((i) => ({ card: i.card.id, price: i.price, sold: i.sold })) : null,
       eventFight: this.eventFight ? { enemies: [...this.eventFight.enemies], after: [...this.eventFight.after] } : null,
       notice: [...this.notice],
@@ -467,6 +521,7 @@ export class RunState {
           relic: saved.pendingReward.relic ? world.relic(saved.pendingReward.relic) : undefined,
         }
       : null;
+    run.pendingDraftOffer = saved.pendingDraftOffer ? saved.pendingDraftOffer.map((id) => world.card(id)) : null;
     run.shopStock = saved.shop
       ? saved.shop.map((i) => ({ card: world.card(i.card), price: i.price, sold: i.sold }))
       : null;
@@ -558,12 +613,17 @@ export class RunState {
 
   /** Up to `count` distinct cards from the reward pool, in random order. */
   private rollCards(count: number): CardDefinition[] {
-    const pool = [...new Set(this.world.rewardPool)];
-    for (let i = pool.length - 1; i > 0; i--) {
+    return this.rollCardsFrom(this.world.rewardPool, count);
+  }
+
+  /** Up to `count` distinct cards from `pool`, in random order (shared by reward rolls, the shop, and the starter draft). */
+  private rollCardsFrom(pool: CardDefinition[], count: number): CardDefinition[] {
+    const shuffled = [...new Set(pool)];
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(this.rng.next() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return pool.slice(0, count);
+    return shuffled.slice(0, count);
   }
 
   private requireNode(kind: RunNode['kind']): void {

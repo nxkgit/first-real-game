@@ -5,7 +5,7 @@ import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../game/t
 import { PLAYER_MAX_HP, SHOP_CARD_PRICE } from '../data/tunables';
 import { buildStarterDeck } from '../data/cards';
 import { getEnemy } from '../data/enemies';
-import { ACT_CONTENT, newRun } from '../data/run';
+import { ACT_CONTENT, newPlayableRun } from '../data/run';
 import { runFight } from './fight';
 import { rngStartOf } from './fightCore';
 import type { SkillLevel } from './skills';
@@ -120,7 +120,7 @@ function chooseNode(run: RunState, policy: PathPolicy, rng: Rng): MapNode {
 }
 
 export function playRun(seed: number, options: SimOptions = DEFAULT_OPTIONS): RunOutcome {
-  const run = newRun(seed);
+  const run = newPlayableRun(seed);
   // the bot's own choices use a separate stream so they never disturb the run's randomness
   const botRng = new Rng(seed ^ 0x9e3779b9);
   const fights: FightRecord[] = [];

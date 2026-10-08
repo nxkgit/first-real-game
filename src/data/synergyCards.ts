@@ -7,7 +7,7 @@ import type { CardDefinition } from '../game/types';
 // tags with meaning) is the user's to author. Text is generated (game/describe.ts).
 // How to write one: docs/SYNERGY_ENGINE.md.
 
-const base = { owner: 'neutral', inRewardPool: true } as const;
+const base = { owner: 'neutral', inRewardPool: true, inStarterPool: true } as const;
 
 // ---- scaling ----
 

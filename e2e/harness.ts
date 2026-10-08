@@ -58,8 +58,15 @@ export class Harness {
 
   // ---------- loading and stepping ----------
 
-  /** Loads the game with the test hook on, stops the real loop, and runs the first frames. */
-  async open(query = 'seed=123'): Promise<void> {
+  /**
+   * Loads the game with the test hook on, stops the real loop, and runs the first frames. A fresh
+   * run now starts at the starter-deck draft (DESIGN_LOG.md "Starter deck draft", 2026-10-08); by
+   * default this instantly completes it with the simulator's reference starter deck (same content
+   * as the old fixed starter deck), so every test written before the draft existed still reaches
+   * `MapScene` exactly as before. Pass `{ skipDraft: false }` to see the real draft screens instead
+   * (see the dedicated draft e2e test).
+   */
+  async open(query = 'seed=123', opts: { skipDraft?: boolean } = {}): Promise<void> {
     if (!this.initScriptAdded) {
       this.initScriptAdded = true;
       await this.page.addInitScript(() => {
@@ -69,12 +76,38 @@ export class Harness {
     }
     await this.page.goto(`/?${query ? `${query}&` : ''}e2e`);
     await this.afterLoad();
+    if (opts.skipDraft ?? true) await this.completeDraftIfPending();
   }
 
-  /** Reloads the page (browser storage survives), as a player refreshing the tab would. */
-  async reload(): Promise<void> {
+  /**
+   * Reloads the page (browser storage survives), as a player refreshing the tab would. If there was
+   * no run to resume (e.g. the previous one just finished), the boot screen starts a fresh one,
+   * same as `open()` — so this also completes a pending starter-deck draft by default; see `open()`.
+   */
+  async reload(opts: { skipDraft?: boolean } = {}): Promise<void> {
     await this.page.reload();
     await this.afterLoad();
+    if (opts.skipDraft ?? true) await this.completeDraftIfPending();
+  }
+
+  /**
+   * If the current run is mid starter-deck draft, completes it instantly (`RunState.skipDraftWith`)
+   * with the simulator's reference starter deck, and moves on to the map — a no-op otherwise. Lets
+   * most tests ignore the draft entirely; see the dedicated draft e2e test for the real UI.
+   */
+  async completeDraftIfPending(): Promise<void> {
+    const changed = await this.page.evaluate(async () => {
+      const session = await (window as Any).__imp('/src/session.ts');
+      const run = session.getCurrentRun();
+      if (!run || run.phase !== 'draft') return false;
+      const { buildStarterDeck } = await (window as Any).__imp('/src/data/cards.ts');
+      const { enterCurrentNode } = await (window as Any).__imp('/src/scenes/ui.ts');
+      const scene = (window as Any).__game.scene.getScenes(true)[0];
+      run.skipDraftWith(buildStarterDeck());
+      enterCurrentNode(scene, run);
+      return true;
+    });
+    if (changed) await this.step(10);
   }
 
   private async afterLoad(): Promise<void> {

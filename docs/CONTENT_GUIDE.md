@@ -55,7 +55,10 @@ export const EXAMPLE_STRIKE: CardDefinition = {
 | `type` | `attack`, `skill` or `power` (see below). |
 | `cost` | Energy to play. Must be a whole number from 0 to `MAX_ENERGY`. |
 | `owner` | A hero id, or `neutral`. |
-| `inRewardPool` | `true` to be offered as a reward or in the shop. Starter-only cards leave it `false`. |
+| `inRewardPool` | `true` to be offered as a reward or in the shop. |
+| `inStarterPool` | `true` to be offered during the pre-run starter-deck draft (see DESIGN_LOG.md "Starter deck draft"). |
+| `archetype` | A hero-scoped sub-class label (e.g. the Mage's `frost`/`fire`; see `docs/classbrainstorming.md`). Scaffolding only — nothing reads it yet. |
+| `rarity` | `'common'`, `'uncommon'` or `'rare'`. Scaffolding only — no reward-odds weighting reads it yet. |
 | `description` | **Avoid.** Replaces the generated text; it will not follow the numbers when they change. |
 | `target` | `'enemy'` makes the card aimed. Required if any effect is `damage`, or applies/multiplies a status `to: 'target'`. |
 | `effects` | Things that happen when the card is played, in order. |

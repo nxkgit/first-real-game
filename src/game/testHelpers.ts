@@ -33,10 +33,13 @@ export interface WorldOptions {
   cards?: CardDefinition[];
   relics?: RelicDefinition[];
   events?: EventDefinition[];
+  starterPool?: CardDefinition[];
 }
 
 export const STARTER = [card('s1', { owner: 'test', inRewardPool: false }), card('s2', { inRewardPool: false })];
 export const POOL = ['p1', 'p2', 'p3', 'p4', 'p5'].map((id) => card(id));
+/** A separate pool for the starter-deck draft, distinct from the reward `POOL` (see RunState's "Starter deck draft"). */
+export const STARTER_POOL = ['d1', 'd2', 'd3', 'd4', 'd5'].map((id) => card(id, { inRewardPool: false, inStarterPool: true }));
 
 export const TEST_EVENT: EventDefinition = {
   id: 'ev',
@@ -50,7 +53,7 @@ export const TEST_EVENT: EventDefinition = {
 };
 
 export function world(options: WorldOptions = {}): RunWorld {
-  const cards = [...STARTER, ...POOL, ...(options.cards ?? [])];
+  const cards = [...STARTER, ...POOL, ...(options.starterPool ?? STARTER_POOL), ...(options.cards ?? [])];
   const relics = options.relics ?? [];
   const events = [TEST_EVENT, ...(options.events ?? [])];
   const find = <T extends { id: string }>(list: T[], id: string, what: string): T => {
@@ -60,6 +63,7 @@ export function world(options: WorldOptions = {}): RunWorld {
   };
   return {
     rewardPool: POOL,
+    starterPool: options.starterPool ?? STARTER_POOL,
     relicPool: relics,
     card: (id) => find(cards, id, 'card'),
     relic: (id) => find(relics, id, 'relic'),

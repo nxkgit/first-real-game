@@ -9,7 +9,7 @@ They do not replace a human playing for *feel*; they check that the screens come
 ```
 npm run e2e:install   # once: downloads Chromium (with OS deps on Linux)
 npm run e2e           # whole suite; starts `vite` on port 5199 itself (E2E_PORT to change)
-npx playwright test --grep-invert "whole seeded act"   # the fast subset CI runs on pull requests (19 of 20 tests, about 2 minutes)
+npx playwright test --grep-invert "whole seeded act"   # the fast subset CI runs on pull requests (29 of 30 tests, about 2 minutes)
 npx playwright test devpanel          # one file
 npx playwright test -g "Cull"         # one test by name
 npm run e2e:typecheck # type-checks e2e/ (verify only checks src/)
@@ -18,7 +18,7 @@ npx playwright show-trace test-results/<test>/trace.zip   # after a failure (tra
 
 The suite runs against the Vite **dev** server, not a build, because tests reach into game modules with `import('/src/...')` (same module instances the page uses). `npm run build` in CI separately proves the bundle builds.
 
-The whole suite takes about 5 minutes: the other 19 tests are quick (5 to 15 s each, run in parallel, about 2 minutes in all) and the whole-act test (g) is the long pole at roughly 3 to 5 minutes. That is why CI runs the fast subset on pull requests and the whole suite nightly (see "CI").
+The whole suite takes about 5 minutes: the other 29 tests are quick (5 to 15 s each, run in parallel, about 2 minutes in all) and the whole-act test (g) is the long pole at roughly 3 to 5 minutes. That is why CI runs the fast subset on pull requests and the whole suite nightly (see "CI").
 
 ## The `?e2e` hook and the frame stepper
 
@@ -88,6 +88,7 @@ Notes:
 | `synergy.e2e.ts` | (e) scaling attack, empowered doubling, trigger powers (card played, end of turn, kill), exhaust, energy gain, self-damage |
 | `save.e2e.ts` | (f) reload mid-fight / on the reward screen / on the map, then Continue; New Run discards the save |
 | `act.e2e.ts` | (g) a whole seeded act (`seed=1`) played by a simple policy through the real UI to the run-end screen |
+| `draft.e2e.ts` | (h) the starter-deck draft: intro screen, 10 forced 1-of-3 picks, no gold/skip, lands on the map with the drafted deck (2026-10-08) |
 
 The act policy is deliberately dumb (it only has to keep the game moving) and, because the map offers few rests, heals the run to full on the map when under half HP (a stand-in for the dev panel's "Heal full"). It reports win or loss rather than asserting it.
 

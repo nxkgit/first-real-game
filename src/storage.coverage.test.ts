@@ -43,7 +43,7 @@ afterEach(() => vi.unstubAllGlobals());
 describe('storage: current run', () => {
   it('saves and loads a run, and the loaded run matches', async () => {
     const { storage, run } = await load();
-    const r = run.newRun(31);
+    const r = run.newPlayableRun(31);
     r.chooseNode(r.mapChoices[0].id);
     storage.saveRun(r);
     const back = storage.loadSavedRun()!;

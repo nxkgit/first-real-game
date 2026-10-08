@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import * as T from './tunables';
-import { CARDS, MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from './cards';
+import { CARDS, MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, starterPoolFor, upgradedVersion } from './cards';
 import { ENEMIES, getEnemy } from './enemies';
 import { EVENTS, getEvent } from './events';
 import { RELICS, RELIC_POOL, getRelic } from './relics';
 import { STATUSES, STATUS_ORDER } from './statuses';
-import { ACT_CONTENT, RUN_WORLD, newRun } from './run';
+import { ACT_CONTENT, RUN_WORLD, newPlayableRun, newRun } from './run';
+import { KEYWORD_CARDS } from './keywordCards';
 import { generateActMap } from '../game/actMap';
 import { Rng } from '../game/rng';
 import type { Effect } from '../game/types';
@@ -107,6 +108,7 @@ describe('cards registry and upgrades', () => {
       expect(up!.upgrade).toBeUndefined(); // can't be upgraded twice
       expect(upgradedVersion(up!)).toBeUndefined();
       expect(up!.inRewardPool).toBe(false);
+      expect(up!.inStarterPool).toBe(false);
       // identity that must not change by upgrading
       expect(up!.type).toBe(base.type);
       expect(up!.owner).toBe(base.owner);
@@ -142,7 +144,7 @@ describe('cards registry and upgrades', () => {
     }
   });
 
-  it('reward pool: only base, hero-or-neutral, inRewardPool cards; never an upgraded card; starter-only cards excluded', () => {
+  it('reward pool: only base, hero-or-neutral, inRewardPool cards; never an upgraded card (basics included since 2026-10-08)', () => {
     const pool = rewardPoolFor(MAGE);
     expect(pool.length).toBeGreaterThanOrEqual(T.REWARD_CARD_CHOICES);
     for (const c of pool) {
@@ -151,7 +153,20 @@ describe('cards registry and upgrades', () => {
       expect([MAGE, 'neutral']).toContain(c.owner);
     }
     expect(new Set(pool).size).toBe(pool.length);
-    expect(pool.map((c) => c.id)).not.toContain('strike');
+    expect(pool.map((c) => c.id)).toContain('strike'); // basics are now reward-pool-eligible too (DESIGN_LOG.md "Starter deck draft")
+  });
+
+  it('starter pool: only base, hero-or-neutral, inStarterPool cards; excludes the engine-only keyword test cards', () => {
+    const pool = starterPoolFor(MAGE);
+    expect(pool.length).toBeGreaterThanOrEqual(T.STARTER_DRAFT_OFFER_SIZE);
+    for (const c of pool) {
+      expect(c.inStarterPool).toBe(true);
+      expect(c.upgradeOf).toBeUndefined();
+      expect([MAGE, 'neutral']).toContain(c.owner);
+    }
+    expect(new Set(pool).size).toBe(pool.length);
+    expect(pool.map((c) => c.id)).toContain('strike');
+    for (const c of KEYWORD_CARDS) expect(pool).not.toContain(c);
   });
 
   it('another hero gets none of the mage cards, only neutral ones', () => {
@@ -286,6 +301,8 @@ describe('the act (data/run.ts)', () => {
     expect(RUN_WORLD.enemy('enemy-a')).toBe(getEnemy('enemy-a'));
     expect(RUN_WORLD.relicPool.length).toBeGreaterThan(0);
     expect(RUN_WORLD.rewardPool).toEqual(rewardPoolFor(MAGE));
+    expect(RUN_WORLD.starterPool).toEqual(starterPoolFor(MAGE));
+    expect(RUN_WORLD.starterPool.length).toBeGreaterThan(0);
   });
 
   it('the same seed gives the same run; different seeds give different maps', () => {
@@ -293,15 +310,52 @@ describe('the act (data/run.ts)', () => {
     expect(JSON.stringify(newRun(1).map)).not.toBe(JSON.stringify(newRun(2).map));
   });
 
-  it('a new run starts at full HP, no gold, no relics, on the map with floor-0 choices', () => {
+  it('a new run starts at full HP, no gold, no relics, deck empty, mid starter-deck draft (DESIGN_LOG.md "Starter deck draft")', () => {
     const r = newRun(3);
     expect(r.hp).toBe(T.PLAYER_MAX_HP);
     expect(r.gold).toBe(0);
     expect(r.relics).toEqual([]);
+    expect(r.deck).toEqual([]);
+    expect(r.phase).toBe('draft');
+    expect(r.pendingDraftOffer).toBeNull();
+    expect(r.totalFloors).toBe(T.MAP_FLOORS + 1);
+  });
+
+  it('completing the starter draft (skipDraftWith, the simulator/tooling bypass) lands on the map with floor-0 choices', () => {
+    const r = newPlayableRun(3);
     expect(r.phase).toBe('map');
+    expect(r.deck.length).toBe(T.STARTER_DECK_SIZE);
     expect(r.mapChoices.length).toBeGreaterThan(0);
     expect(r.mapChoices.every((n) => n.floor === 0 && n.kind === 'combat')).toBe(true);
-    expect(r.totalFloors).toBe(T.MAP_FLOORS + 1);
+  });
+
+  it('the starter draft: rolling and picking fills the deck to STARTER_DECK_SIZE, then switches to map', () => {
+    const r = newRun(3);
+    expect(r.phase).toBe('draft');
+    expect(r.pendingDraftOffer).toBeNull(); // the intro screen: nothing rolled yet
+    r.rollDraftOffer(); // the intro screen's "proceed"
+    for (let i = 0; i < T.STARTER_DECK_SIZE; i++) {
+      expect(r.pendingDraftOffer).not.toBeNull();
+      expect(r.pendingDraftOffer!.length).toBe(T.STARTER_DRAFT_OFFER_SIZE);
+      expect(new Set(r.pendingDraftOffer!.map((c) => c.id)).size).toBe(r.pendingDraftOffer!.length); // 3 distinct options
+      const offer = r.pendingDraftOffer!;
+      r.pickDraftCard(0); // auto-rolls the next round, or flips to 'map' once the deck is full
+      expect(r.deck[r.deck.length - 1]).toBe(offer[0]);
+    }
+    expect(r.phase).toBe('map');
+    expect(r.deck.length).toBe(T.STARTER_DECK_SIZE);
+    expect(r.pendingDraftOffer).toBeNull();
+    expect(() => r.rollDraftOffer()).toThrow();
+    expect(() => r.pickDraftCard(0)).toThrow();
+  });
+
+  it('the starter draft offer only ever contains cards flagged inStarterPool for the hero (or neutral)', () => {
+    const r = newRun(9);
+    r.rollDraftOffer();
+    for (const c of r.pendingDraftOffer!) {
+      expect(c.inStarterPool).toBe(true);
+      expect(c.owner === MAGE || c.owner === 'neutral').toBe(true);
+    }
   });
 
   it('across many seeds: the map ends in exactly one boss, every stop is reachable and leads on, and the rules about floors hold', () => {

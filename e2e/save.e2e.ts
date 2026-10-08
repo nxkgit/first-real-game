@@ -69,6 +69,7 @@ test('(f) New Run on the continue screen discards the save', async ({ game }) =>
   await game.reload();
   await game.waitForScene('BootScene');
   await game.clickText('New Run');
+  await game.completeDraftIfPending();
   await game.waitForScene('MapScene');
   const run = await game.run();
   expect(run.phase).toBe('map');

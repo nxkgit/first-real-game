@@ -264,6 +264,14 @@ export interface StepResult {
  */
 export function stepRun(run: RunState, stepSeed: number, opts: { turnCap?: number } = {}): StepResult {
   const rng = new Rng(stepSeed);
+  if (run.phase === 'draft') {
+    // the starter-deck draft (DESIGN_LOG.md "Starter deck draft"): one step rolls the first offer
+    // (the intro screen's "proceed"), each later step picks randomly from the current offer —
+    // `pickDraftCard` rolls the next one internally, same one-decision-per-step shape as 'reward'.
+    if (!run.pendingDraftOffer || run.pendingDraftOffer.length === 0) run.rollDraftOffer();
+    else run.pickDraftCard(Math.floor(rng.next() * run.pendingDraftOffer.length));
+    return { kind: 'draft' };
+  }
   if (run.phase === 'map') {
     run.chooseNode(pickOne(rng, run.mapChoices).id);
     return { kind: 'map' };

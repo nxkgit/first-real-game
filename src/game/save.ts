@@ -1,7 +1,7 @@
 import { RunState } from './RunState';
 import type { RunPhase, RunWorld, SavedRun } from './RunState';
 
-const PHASES: RunPhase[] = ['map', 'inNode', 'reward', 'won', 'lost'];
+const PHASES: RunPhase[] = ['draft', 'map', 'inNode', 'reward', 'won', 'lost'];
 const KINDS = ['combat', 'elite', 'rest', 'shop', 'event', 'boss'];
 const FIGHT_KINDS = ['combat', 'elite', 'boss'];
 const TIERS = ['normal', 'elite', 'boss'];
@@ -92,7 +92,7 @@ function validMap(raw: unknown): boolean {
 
 /** Checks that stored data really has the shape of a SavedRun. Returns null if not (never throws). */
 export function parseSavedRun(raw: unknown): SavedRun | null {
-  if (!isRecord(raw) || raw.version !== 2) return null;
+  if (!isRecord(raw) || raw.version !== 3) return null;
   if (!isInt(raw.seed, 0, 4294967295) || !isInt(raw.rngPosition, 0, 4294967295)) return null;
   if (!validMap(raw.map)) return null;
   const mapNodes = (raw.map as { nodes: { id: string; kind: string }[] }).nodes;
@@ -100,7 +100,7 @@ export function parseSavedRun(raw: unknown): SavedRun | null {
   if (raw.position !== null && (typeof raw.position !== 'string' || !ids.has(raw.position))) return null;
   if (!isStringArray(raw.visited) || !raw.visited.every((id) => ids.has(id))) return null;
   if (!PHASES.includes(raw.phase as RunPhase)) return null;
-  if (raw.position === null && raw.phase !== 'map') return null;
+  if (raw.position === null && raw.phase !== 'map' && raw.phase !== 'draft') return null;
   if (!isInt(raw.hp, 0, 100000) || !isInt(raw.maxHp, 1, 100000) || !isInt(raw.gold, 0, 1000000)) return null;
   if (raw.hp > raw.maxHp) return null;
   if (typeof raw.position === 'string' && !raw.visited.includes(raw.position)) return null;
@@ -112,6 +112,9 @@ export function parseSavedRun(raw: unknown): SavedRun | null {
     if (!isRecord(reward) || !isStringArray(reward.cards) || !isInt(reward.gold, 0, 1000000)) return null;
     if (reward.relic !== null && typeof reward.relic !== 'string') return null;
   }
+  const draftOffer = raw.pendingDraftOffer;
+  if (draftOffer !== null && (!isStringArray(draftOffer) || draftOffer.length === 0)) return null;
+  if (draftOffer !== null && raw.phase !== 'draft') return null; // only the draft phase ever has one pending
   const shop = raw.shop;
   if (shop !== null) {
     if (!Array.isArray(shop)) return null;
