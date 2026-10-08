@@ -1,6 +1,7 @@
 import type { CardDefinition } from '../game/types';
 import { SYNERGY_CARDS } from './synergyCards';
 import { MAGE_CARDS } from './mageCards';
+import { KEYWORD_CARDS } from './keywordCards';
 
 // PLACEHOLDER content. Names/numbers here are functional stand-ins to exercise the game's
 // systems — final card design, naming, and flavor are the user's to author (see CLAUDE.md).
@@ -216,6 +217,9 @@ const ALL_CARDS: CardDefinition[] = [
   ...SYNERGY_CARDS,
   // the Mage's fire/frost/Freeze cards (user's design, see mageCards.ts): in the reward pool
   ...MAGE_CARDS,
+  // StS-style keyword demo cards (innate/retain/ethereal/unplayable/frail/intangible/buffer):
+  // engine-only, never offered as rewards (see keywordCards.ts)
+  ...KEYWORD_CARDS,
 ];
 
 /**

@@ -56,6 +56,11 @@ export interface EffectHost {
    *  there (the rest went to the discard pile, as with a draw into a full hand). Counted so the total
    *  card count is no longer assumed fixed (see invariantHarness.ts's `cardsAddedThisCombat` escape hatch). */
   addCardsToHand(definition: CardDefinition, count: number): number;
+  /** `base` block for `who`, after Frail (a keyword status) multiplies it down. */
+  calcBlock(base: number, who: Combatant): number;
+  /** Buffer (a keyword status): if `target` has any stacks, consumes one and returns true, meaning
+   *  the caller should skip reducing HP for this loss. Independent of block. */
+  consumeBufferIfPresent(target: Combatant): boolean;
 }
 
 /** What an enemy move collects while its effects resolve; CombatState announces it afterwards. */
@@ -68,7 +73,7 @@ export interface EnemyMoveOutcome {
 }
 
 /** The slice of the fight a preview may read (a subset of EffectHost, so previews cannot change anything). */
-export interface PreviewHost extends Pick<EffectHost, 'player' | 'calcDamage' | 'scaledValue'> {
+export interface PreviewHost extends Pick<EffectHost, 'player' | 'calcDamage' | 'calcBlock' | 'scaledValue'> {
   /** How many of `count` cards a draw would really put into the hand right now (hand cap and pile sizes included). */
   previewDraw(count: number): number;
 }
@@ -175,19 +180,22 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
 
   block: {
     resolvePlayer(effect, h, target) {
-      const amount = h.scaledValue(effect, target);
+      const amount = h.calcBlock(h.scaledValue(effect, target), h.player);
       h.player.block += amount;
       h.emit('blockGained', { target: h.player.id, amount });
       if (amount > 0) h.fireTriggers('blockGained');
     },
     resolveEnemy(effect, _h, enemy, out) {
+      // Frail is not applied to an enemy's own block here, to keep EnemyMoveOutcome simple (it
+      // mirrors Vulnerable/Weak not being enemy-symmetric everywhere either); only the player side
+      // goes through calcBlock. See implementationplan.md's keyword-mechanics section.
       enemy.block += effect.value;
       out.blockGained = (out.blockGained ?? 0) + effect.value;
     },
     describe: (_e, n) => `Gain ${n} block.`,
     intent: { icon: () => 'defend', block: (e) => e.value },
     scales: ALL_SCALE_SOURCES,
-    preview: scaledPreview,
+    preview: (e, h, target) => h.calcBlock(h.scaledValue(e, target), h.player),
   },
 
   draw: {
@@ -235,6 +243,10 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     resolvePlayer(effect, h, target) {
       const lost = Math.min(h.player.hp, h.scaledValue(effect, target));
       if (lost <= 0) return;
+      // Buffer (a keyword status) can cancel this entirely, independent of block (loseHp never
+      // goes through block anyway). No HP was actually lost, so neither the hpLost event nor its
+      // trigger fires — only the Buffer stack ticking down (a statusChanged event) is visible.
+      if (h.consumeBufferIfPresent(h.player)) return;
       h.player.hp -= lost;
       h.emit('hpLost', { target: h.player.id, amount: lost, remainingHp: h.player.hp });
       if (h.player.hp > 0) h.fireTriggers('hpLost');

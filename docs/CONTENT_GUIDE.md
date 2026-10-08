@@ -63,6 +63,10 @@ export const EXAMPLE_STRIKE: CardDefinition = {
 | `triggers` | Powers only: "whenever X happens, do Y" for the rest of the fight. |
 | `tags` | Neutral labels other cards can scale from or trigger on. They have no meaning of their own. |
 | `exhaust` | `true`: the card leaves the deck for the rest of this fight after being played. |
+| `innate` | `true`: always starts in the opening hand of combat, never subject to the shuffle. |
+| `retain` | `true`: survives the end-of-turn discard, staying in hand into the next turn. |
+| `ethereal` | `true`: if still in hand at end of turn, exhausts instead of discarding (wins over `retain`). |
+| `unplayable` | `true`: can never be played, even with energy and (if aimed) a legal target. |
 | `upgrade` | What changes at a rest stop (see Upgrades). Leave it out and the card cannot be upgraded. |
 | `upgradeOf` | Set by the game on generated upgrades. Never write it yourself. |
 <!-- /names -->
@@ -186,6 +190,10 @@ A tag is just a word on a card, such as `'tag-a'`. It does nothing alone; it mat
 | `triggers` | The whole replacement list of triggers. |
 | `tags` | Replacement tags. |
 | `exhaust` | `false` to remove Exhaust, `true` to add it. |
+| `innate` | `false` to remove Innate, `true` to add it. |
+| `retain` | `false` to remove Retain, `true` to add it. |
+| `ethereal` | `false` to remove Ethereal, `true` to add it. |
+| `unplayable` | `false` to remove Unplayable, `true` to add it. |
 | `description` | Avoid, as above. |
 <!-- /names -->
 
@@ -332,6 +340,8 @@ A status is stacks on a fighter. Each has a `kind`: `duration` stacks drop by 1 
 | `outgoingDamageAdd` | Flat damage the holder adds (Strength). |
 | `outgoingDamageMult` | Multiplier on damage the holder deals (Weak, Empowered). |
 | `incomingDamageMult` | Multiplier on damage the holder takes (Vulnerable). |
+| `blockMult` | Multiplier on block the holder gains (Frail). |
+| `incomingDamageCap` | Caps all damage the holder takes at this amount, applied last (Intangible). |
 | `consumedByAttack` | Loses one stack after each attack card the holder plays (Empowered). |
 | `badge` | Placeholder symbol and colour for the status icon. |
 <!-- /names -->
@@ -346,7 +356,30 @@ The existing statuses (a status id must be one of these; adding one needs a code
 | `strength` | Intensity. The holder's attacks deal N more damage for the whole fight. |
 | `empowered` | Intensity. The next attack card(s) deal a damage multiple; one stack per attack card. |
 | `freeze` | Intensity, Mage only. Never counts down on its own; every `FREEZE_STUN_THRESHOLD` stacks stuns the holder for one move and removes those stacks. |
+| `frail` | Duration, StS-style keyword (engine-only, see "Keyword mechanics" below). The holder gains less block. |
+| `intangible` | Duration, StS-style keyword (engine-only). All damage the holder takes is capped at a fixed amount. |
+| `buffer` | Intensity, StS-style keyword (engine-only). Prevents the next instance of HP loss entirely, one stack at a time. |
 <!-- /names -->
+
+## Keyword mechanics (StS-style, engine-only as of 2026-10-08)
+
+Built at the user's request, mirroring Slay the Spire's own keyword vocabulary. Not applied to any
+real card yet — demonstrated only by `src/data/keywordCards.ts`'s "Test: ..." cards, reachable via
+the `?dev` panel's "Add card" dropdown, never offered as rewards. Adding one to a real card is just
+setting the field (`innate`/`retain`/`ethereal`/`unplayable` on the card; `frail`/`intangible`/`buffer`
+via `applyStatus`) — no further plumbing needed.
+
+- **Innate** (`CardDefinition.innate`) — always in the opening hand, never shuffled. If more Innate
+  cards exist than the hand size, only as many as fit land in the opening hand.
+- **Retain** (`CardDefinition.retain`) — survives the end-of-turn discard into the next turn.
+- **Ethereal** (`CardDefinition.ethereal`) — exhausts instead of discarding if still in hand at end
+  of turn. Wins over Retain if a card somehow has both.
+- **Unplayable** (`CardDefinition.unplayable`) — can never be played, by energy or by targeting.
+- **Frail** (status) — the defensive counterpart to Weak: less block gained.
+- **Intangible** (status) — caps all damage taken at a fixed amount, applied after every other
+  damage modifier.
+- **Buffer** (status) — prevents the next instance of HP loss outright, independent of block;
+  consumed one stack at a time.
 
 ## The act's map
 

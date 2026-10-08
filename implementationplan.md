@@ -194,6 +194,50 @@ colour, Freeze stacking via a loaded dev-panel scenario (a Freeze badge appears,
 live-damage number drops from 24 back to 8 the instant the stun consumes the stacks), and Meteor
 Shower hitting every enemy in a two-enemy fight.
 
+## Keyword mechanics (StS-style, built 2026-10-08)
+
+The user asked to "examine all the keywords from StS like retain and innate and the rest" and
+implement them. Before building, three questions were asked and answered (full reasoning in
+`DESIGN_LOG.md`): which card-property keywords to build (Innate, Retain, Ethereal, Unplayable — all
+four, out of the option list offered); which status-effect keywords, since `implementationplan.md`
+had deferred "the full status-effect roster" as a group (Frail, Intangible, Buffer — chosen, out of
+that same deferral); and whether to put any of them on a real card yet (no — **engine only** for now,
+same treatment as Temperature's unused threshold-bonus half: built and demonstrated, not applied to
+a balance/design decision on the user's behalf).
+
+**Card-property keywords** (`CardDefinition`, mirroring how `exhaust` already works):
+- **Innate** — always starts in the opening hand, never subject to the shuffle (`Deck`'s constructor
+  only; a later mid-fight reshuffle of the discard pile does not re-apply it). More Innate cards than
+  the hand size: only as many as fit land in the opening hand.
+- **Retain** — survives the end-of-turn discard into the next turn.
+- **Ethereal** — exhausts instead of discarding if still in hand at end of turn (wins over Retain if
+  a card somehow has both).
+- **Unplayable** — can never be played, by energy or by targeting.
+
+**Status-effect keywords** (`StatusDefinition`, alongside Weak/Vulnerable/Strength/Empowered):
+- **Frail** — the defensive counterpart to Weak: less block gained (`FRAIL_BLOCK_MULT`, mirrors
+  `WEAK_DAMAGE_MULT`'s value). New `blockMult` status hook, applied in a new `CombatState.calcBlock`.
+- **Intangible** — caps all damage taken at a fixed amount (`INTANGIBLE_DAMAGE_CAP`), applied last in
+  `calcDamage`, after every other modifier (Vulnerable included). New `incomingDamageCap` status hook.
+- **Buffer** — prevents the next instance of HP loss entirely, independent of block (block still
+  absorbs normally first); consumed one stack at a time. Wired into both `dealDamage` (enemy hits and
+  player-dealt damage) and the `loseHp` effect (self-damage cards), which previously had no shared path.
+
+**Demo cards:** `src/data/keywordCards.ts`, one "Test: ..." card per keyword (7 total), same pattern
+as `synergyCards.ts` — `owner: 'neutral'`, `inRewardPool: false`, reachable via the `?dev` panel's
+"Add card" dropdown and the scenario system, registered as known test cards (`testCardIds` in
+`content/world.ts`) so the content checker treats them as intentionally unreachable rather than a
+content bug.
+
+Played in a real browser, confirmed via the live `CombatState` (not just visuals): Test: Unplayable
+could not be played (`canPlay` false, `playCard` false) even with 10 energy; Test: Innate landed in
+the opening hand of a normal (non-scenario) fight; a Retain card survived `endPlayerTurn` into the
+next hand while an Ethereal card left unplayed was exhausted instead of discarded, in the same turn;
+Frail cut a 13-block card down to 9 (13 × 0.75, floored); Intangible capped a 500-damage hit to 1
+(with no block in the way, HP dropped by exactly 1); Buffer absorbed two full hits (14 and 500
+damage, HP unchanged both times, stacks ticking 2 → 1 → gone) and then a third hit (8 damage) went
+through normally once the stacks ran out.
+
 ## Deferred (explicitly not MVP 1 — do not build yet)
 
 - Shop system (shop contents, prices, exchange rate between a card reward and gold) — a draft screen exists as a stop kind; nothing about it is decided
@@ -203,7 +247,7 @@ Shower hitting every enemy in a two-enemy fight.
 - Card rarity tiers and reward-pool weighting
 - Multiple heroes/archetypes (ranger, fighter, etc.) — MVP 1 is Mage only
 - Magic-school/tribe synergy system — deprioritized in favor of single-hero depth for now
-- Full status-effect roster beyond MVP 1's minimal set
+- Full status-effect roster beyond MVP 1's minimal set — partially lifted 2026-10-08 for the mechanics only: Frail, Intangible and Buffer are built (engine-only, no real card uses them; see "Keyword mechanics"), the same way the synergy engine partially lifted this for its own mechanics earlier. Real statuses beyond that, and applying any of these to real content, are still deferred.
 - Combat math/balance pass (HP/damage scale, target fight length in turns). A simulator now exists to support it (see "Tooling and playtest readiness"); the pass itself is still deferred
 - Enemy roster beyond the placeholder enemies (four normal, two elites, one boss), enemy AI variety
 

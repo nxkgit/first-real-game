@@ -169,4 +169,128 @@ describe('statuses', () => {
     combat.endPlayerTurn();
     expect(seen).toEqual(['enemy-0:vulnerable:2:2', 'enemy-0:vulnerable:-1:1']);
   });
+
+  // StS-style keyword statuses (engine-only, see implementationplan.md's "Keyword mechanics"): no
+  // real card uses them yet, so these use raw test CardDefinitions like the rest of this file.
+  describe('Frail (engine-only keyword)', () => {
+    const FRAIL_SELF: CardDefinition = {
+      id: 'frail-self',
+      name: 'Frail Self',
+      type: 'skill',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      effects: [{ kind: 'applyStatus', status: 'frail', value: 2, to: 'self' }],
+    };
+    const BLOCK_8: CardDefinition = {
+      id: 'block-8',
+      name: 'Block 8',
+      type: 'skill',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      effects: [{ kind: 'block', value: 8 }],
+    };
+
+    it('reduces block gained by 25%, rounded down', () => {
+      const combat = started([FRAIL_SELF, BLOCK_8]);
+      play(combat, 'frail-self');
+      play(combat, 'block-8');
+      expect(combat.player.block).toBe(6); // 8 * 0.75 = 6
+    });
+  });
+
+  describe('Intangible (engine-only keyword)', () => {
+    const INTANGIBLE_SELF: CardDefinition = {
+      id: 'intangible-self',
+      name: 'Intangible Self',
+      type: 'skill',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      effects: [{ kind: 'applyStatus', status: 'intangible', value: 1, to: 'self' }],
+    };
+
+    it('caps all damage taken at 1, however big the hit', () => {
+      const bigHit = move('Smash', { kind: 'damage', value: 999 });
+      const combat = started([INTANGIBLE_SELF, ...Array(4).fill(HIT)], foe([bigHit]));
+      play(combat, 'intangible-self');
+      combat.endPlayerTurn();
+      expect(combat.player.hp).toBe(combat.player.maxHp - 1);
+    });
+
+    it('wears off after its duration like Weak/Vulnerable', () => {
+      const bigHit = move('Smash', { kind: 'damage', value: 999 });
+      const combat = started([INTANGIBLE_SELF, ...Array(4).fill(HIT)], foe([bigHit, bigHit]));
+      play(combat, 'intangible-self');
+      combat.endPlayerTurn(); // round 1: capped at 1, then the stack ticks off
+      expect(combat.player.hp).toBe(combat.player.maxHp - 1);
+      expect(combat.player.statuses.intangible).toBeUndefined();
+      combat.endPlayerTurn(); // round 2: full damage again (999 far exceeds remaining HP, so it floors at 0)
+      expect(combat.player.hp).toBe(0);
+    });
+  });
+
+  describe('Buffer (engine-only keyword)', () => {
+    const BUFFER_SELF: CardDefinition = {
+      id: 'buffer-self',
+      name: 'Buffer Self',
+      type: 'skill',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      effects: [{ kind: 'applyStatus', status: 'buffer', value: 2, to: 'self' }],
+    };
+
+    it('prevents the next instance of HP loss entirely and is consumed one at a time', () => {
+      const combat = started([BUFFER_SELF, ...Array(4).fill(HIT)], foe([ATTACK_10, ATTACK_10, ATTACK_10]));
+      play(combat, 'buffer-self');
+      expect(combat.player.statuses.buffer).toBe(2);
+      combat.endPlayerTurn(); // hit 1: fully prevented
+      expect(combat.player.hp).toBe(combat.player.maxHp);
+      expect(combat.player.statuses.buffer).toBe(1);
+      combat.endPlayerTurn(); // hit 2: fully prevented, stack used up
+      expect(combat.player.hp).toBe(combat.player.maxHp);
+      expect(combat.player.statuses.buffer).toBeUndefined();
+      combat.endPlayerTurn(); // hit 3: no stacks left, full damage
+      expect(combat.player.hp).toBe(combat.player.maxHp - 10);
+    });
+
+    it('does not block damage that block already absorbed (block first, buffer only for the rest)', () => {
+      const BLOCK_SELF: CardDefinition = {
+        id: 'block-self',
+        name: 'Block Self',
+        type: 'skill',
+        cost: 0,
+        owner: 'test',
+        inRewardPool: false,
+        effects: [{ kind: 'block', value: 100 }],
+      };
+      const combat = started([BUFFER_SELF, BLOCK_SELF, HIT, HIT, HIT], foe([ATTACK_10]));
+      play(combat, 'buffer-self');
+      play(combat, 'block-self');
+      combat.endPlayerTurn(); // block absorbs it all; buffer is never touched
+      expect(combat.player.hp).toBe(combat.player.maxHp);
+      expect(combat.player.statuses.buffer).toBe(2);
+    });
+  });
+
+  it('Unplayable (engine-only keyword): can never be played, even with energy and a legal target', () => {
+    const CURSED: CardDefinition = {
+      id: 'cursed',
+      name: 'Cursed',
+      type: 'skill',
+      target: 'enemy',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      unplayable: true,
+      effects: [{ kind: 'block', value: 5 }],
+    };
+    const combat = started([CURSED, ...Array(4).fill(HIT)]);
+    const card = combat.deck.hand.find((c) => c.definition.id === 'cursed')!;
+    expect(combat.canPlay(card)).toBe(false);
+    expect(combat.playCard(card.instanceId, 'enemy-0')).toBe(false);
+    expect(combat.deck.hand).toContain(card);
+  });
 });

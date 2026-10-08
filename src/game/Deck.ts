@@ -21,8 +21,14 @@ export class Deck {
 
   constructor(cards: CardDefinition[], random: () => number = Math.random) {
     this.random = random;
-    this.drawPile = cards.map((definition) => ({ instanceId: nextInstanceId(), definition }));
+    const innate = cards.filter((c) => c.innate);
+    const rest = cards.filter((c) => !c.innate);
+    this.drawPile = rest.map((definition) => ({ instanceId: nextInstanceId(), definition }));
     this.shuffleDrawPile();
+    // Innate cards always start in the opening hand: placed on top (the end of the array) after
+    // the shuffle, never re-triggered by a later mid-fight reshuffle (shuffleDrawPile only runs
+    // here and from draw()'s empty-pile reshuffle, which this constructor never calls again).
+    this.drawPile.push(...innate.map((definition) => ({ instanceId: nextInstanceId(), definition })));
   }
 
   shuffleDrawPile(): void {
@@ -123,8 +129,23 @@ export class Deck {
     this.powerPile = make(piles.powers);
   }
 
-  discardHand(): void {
-    this.discardPile.push(...this.hand);
-    this.hand = [];
+  /** Moves the hand to its end-of-turn piles: a plain card discards, a Retain card stays in hand,
+   *  an Ethereal card exhausts instead of discarding (Ethereal wins if a card somehow has both).
+   *  Returns the cards exhausted this way, so the caller can run the usual exhaust bookkeeping on them. */
+  discardHand(): CardInstance[] {
+    const keep: CardInstance[] = [];
+    const exhausted: CardInstance[] = [];
+    for (const card of this.hand) {
+      if (card.definition.ethereal) {
+        this.exhaustPile.push(card);
+        exhausted.push(card);
+      } else if (card.definition.retain) {
+        keep.push(card);
+      } else {
+        this.discardPile.push(card);
+      }
+    }
+    this.hand = keep;
+    return exhausted;
   }
 }

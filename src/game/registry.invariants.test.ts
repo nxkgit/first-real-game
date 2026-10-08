@@ -218,6 +218,11 @@ describe('cards', () => {
       const target = def.target ? 'enemy-0' : undefined;
       const inHand = combat.deck.hand.find((c) => c.definition === def);
       expect(inHand, `${def.id} drawn`).toBeDefined();
+      if (def.unplayable) {
+        // the keyword means exactly this: never playable, even with energy and a legal target
+        expect(combat.playCard(inHand!.instanceId, target), `${def.id} playCard`).toBe(false);
+        continue;
+      }
       expect(combat.playCard(inHand!.instanceId, target), `${def.id} playCard`).toBe(true);
       checkCombatInvariants(combat, 6 + combat.stats.cardsAddedThisCombat);
       for (let t = 0; t < 4 && combat.phase === 'playerTurn'; t++) {

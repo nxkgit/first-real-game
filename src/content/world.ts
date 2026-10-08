@@ -5,6 +5,7 @@ import { RELICS, RELIC_POOL, SYNERGY_RELICS } from '../data/relics';
 import { ACT_CONTENT } from '../data/run';
 import { STATUSES } from '../data/statuses';
 import { SYNERGY_CARDS } from '../data/synergyCards';
+import { KEYWORD_CARDS } from '../data/keywordCards';
 import { MAX_ENERGY, PLAYER_MAX_HP } from '../data/tunables';
 import type { ContentWorld } from './validate';
 
@@ -15,7 +16,7 @@ export function realWorld(): ContentWorld {
     registry: CARDS,
     starterDeck: buildStarterDeck(),
     rewardPool: rewardPoolFor(MAGE),
-    testCardIds: new Set(SYNERGY_CARDS.map((c) => c.id)),
+    testCardIds: new Set([...SYNERGY_CARDS, ...KEYWORD_CARDS].map((c) => c.id)),
     testRelicIds: new Set(SYNERGY_RELICS.map((r) => r.id)),
     relics: Object.values(RELICS),
     relicPool: RELIC_POOL,

@@ -236,6 +236,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       adjustTemperature: (delta) => this.adjustTemperature(delta),
       gainEnergizedTurns: (turns) => (this.energizedTurnsRemaining += turns),
       addCardsToHand: (definition, count) => this.addCardsToHand(definition, count),
+      calcBlock: (base, who) => this.calcBlock(base, who),
+      consumeBufferIfPresent: (target) => this.consumeBufferIfPresent(target),
     };
   }
 
@@ -361,7 +363,14 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     for (const [id, stacks] of activeStatuses(defender)) {
       amount *= STATUSES[id].incomingDamageMult?.(stacks) ?? 1;
     }
-    return Math.max(0, Math.floor(amount));
+    amount = Math.max(0, Math.floor(amount));
+    // Intangible-style caps apply last, after every other modifier, and only ever lower the amount.
+    let cap = Infinity;
+    for (const [id, stacks] of activeStatuses(defender)) {
+      const c = STATUSES[id].incomingDamageCap?.(stacks);
+      if (c !== undefined) cap = Math.min(cap, c);
+    }
+    return Math.min(amount, cap);
   }
 
   /** The number one effect of `card` would really produce right now if the card were played on
@@ -418,7 +427,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   }
 
   canPlay(card: CardInstance): boolean {
-    return this.phase === 'playerTurn' && card.definition.cost <= this.energy;
+    return this.phase === 'playerTurn' && !card.definition.unplayable && card.definition.cost <= this.energy;
   }
 
   canUseHeroPower(): boolean {
@@ -500,7 +509,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.fireTriggers('turnEnd'); // before the hand is discarded, so hand-size scaling still sees it
     this.checkWinLoss();
     if (this.phase !== 'playerTurn') return;
-    this.deck.discardHand();
+    // Ethereal cards (a keyword, see types.ts) exhaust here instead of discarding; Retain cards stay.
+    for (const card of this.deck.discardHand()) this.noteExhausted(card);
     this.emitHandChanged();
     this.runEnemyTurn();
   }
@@ -674,12 +684,38 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     }
   }
 
-  /** Applies damage through block and returns what happened. The caller announces it. */
+  /** Applies damage through block and returns what happened. The caller announces it. Buffer (a
+   *  keyword status, see types.ts) can cancel the HP loss that would follow block, consuming one
+   *  stack; `amount`/`absorbed` still reflect the real hit and block absorption. */
   private dealDamage(target: Combatant, amount: number): DamageResult {
     const absorbed = Math.min(target.block, amount);
     target.block -= absorbed;
-    target.hp = Math.max(0, target.hp - (amount - absorbed));
+    const remainder = amount - absorbed;
+    if (remainder <= 0 || !this.consumeBufferIfPresent(target)) {
+      target.hp = Math.max(0, target.hp - remainder);
+    }
     return { amount, absorbed, remainingHp: target.hp };
+  }
+
+  /** Buffer (a keyword status, see types.ts): if `target` has any stacks, consumes one and returns
+   *  true (the caller then skips reducing HP for this hit/loss). Independent of block. */
+  private consumeBufferIfPresent(target: Combatant): boolean {
+    const stacks = target.statuses.buffer ?? 0;
+    if (stacks <= 0) return false;
+    if (stacks <= 1) delete target.statuses.buffer;
+    else target.statuses.buffer = stacks - 1;
+    this.emit('statusChanged', { target: target.id, status: 'buffer', delta: -1, statuses: { ...target.statuses } });
+    return true;
+  }
+
+  /** `base` block, after Frail (a keyword status, see types.ts) multiplies it down; same shape as
+   *  calcDamage's multiply stage, floored once. */
+  private calcBlock(base: number, who: Combatant): number {
+    let amount = base;
+    for (const [id, stacks] of activeStatuses(who)) {
+      amount *= STATUSES[id].blockMult?.(stacks) ?? 1;
+    }
+    return Math.max(0, Math.floor(amount));
   }
 
   /** Adds stacks and returns the matching event for the caller to emit. */

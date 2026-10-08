@@ -150,6 +150,15 @@ const POOL: CardDefinition[] = [
     ],
   }),
   mk('power-loop', { type: 'power', cost: 0, triggers: [{ on: 'hpLost', effects: [loseHp(1)] }] }),
+  // StS-style keyword mechanics (implementationplan.md "Keyword mechanics"): exercised generically
+  // here too, independent of the real keywordCards.ts demo content.
+  skill('innate-test', [blk(3)], { cost: 0, innate: true }),
+  skill('retain-test', [blk(4)], { cost: 1, retain: true }),
+  atk('ethereal-test', [dmg(6)], { cost: 1, ethereal: true }),
+  skill('unplayable-test', [blk(5)], { cost: 0, unplayable: true }),
+  skill('frail-skill', [status('frail', 2, 'target')], { target: 'enemy', cost: 1 }),
+  skill('intangible-skill', [status('intangible', 1, 'self')], { cost: 1 }),
+  skill('buffer-skill', [status('buffer', 2, 'self')], { cost: 1 }),
 ];
 
 // Synthetic hero power (not a card), so the golden log also covers useHeroPower/heroPowerUsed.

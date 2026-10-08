@@ -5,8 +5,10 @@ export type CombatantId = string;
 export const PLAYER_ID: CombatantId = 'player';
 
 /** 'freeze' is unique to the Mage: stacks never count down, and every FREEZE_STUN_THRESHOLD stacks
- *  stuns the holder for its next move (see CombatState). */
-export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered' | 'freeze';
+ *  stuns the holder for its next move (see CombatState). 'frail', 'intangible' and 'buffer' are
+ *  generic StS-style keyword statuses (engine-only for now: no real card uses them yet, see
+ *  src/data/keywordCards.ts and implementationplan.md). */
+export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered' | 'freeze' | 'frail' | 'intangible' | 'buffer';
 
 /** Stacks per status currently on one combatant. Absent (or 0) means not affected. */
 export type Statuses = Partial<Record<StatusId, number>>;
@@ -29,6 +31,12 @@ export interface StatusDefinition {
   outgoingDamageAdd?(stacks: number): number;
   outgoingDamageMult?(stacks: number): number;
   incomingDamageMult?(stacks: number): number;
+  /** Multiplies block the holder gains (Frail). Applied the same way as the damage-mult stage,
+   *  in CombatState.calcBlock. */
+  blockMult?(stacks: number): number;
+  /** Caps all damage the holder takes at this amount, applied last, after every other damage
+   *  modifier (Intangible). The lowest active cap wins if more than one status has one. */
+  incomingDamageCap?(stacks: number): number;
   consumedByAttack?: boolean;
   /** Placeholder badge look until statuses get real icons. */
   badge: { symbol: string; color: number };
@@ -152,6 +160,16 @@ export interface CardDefinition {
   tags?: string[];
   /** The card leaves the deck for the rest of this combat after it is played. */
   exhaust?: boolean;
+  /** StS-style keyword (engine-only for now, see src/data/keywordCards.ts): always starts in the
+   *  opening hand of combat, never subject to the shuffle. Deck's constructor only; a mid-fight
+   *  reshuffle of the discard pile does not re-apply this. */
+  innate?: boolean;
+  /** StS-style keyword: survives the end-of-turn discard, staying in hand into the next turn. */
+  retain?: boolean;
+  /** StS-style keyword: if still in hand at end of turn, exhausts instead of discarding (wins over `retain`). */
+  ethereal?: boolean;
+  /** StS-style keyword: can never be played (StS uses this for Status/Curse cards). */
+  unplayable?: boolean;
   /**
    * What changes when the card is upgraded (at a rest stop). Leave it out and the card can't be
    * upgraded. The upgraded card is generated from this and registered as `<id>+` (see data/cards.ts).
@@ -163,6 +181,10 @@ export interface CardDefinition {
     triggers?: Trigger[];
     tags?: string[];
     exhaust?: boolean;
+    innate?: boolean;
+    retain?: boolean;
+    ethereal?: boolean;
+    unplayable?: boolean;
     description?: string;
   };
   /** Set on a generated upgraded card: the id of the card it was upgraded from. */

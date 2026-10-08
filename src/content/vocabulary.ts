@@ -62,6 +62,9 @@ export const STATUS_IDS: Record<StatusId, string> = {
   strength: "Intensity. The holder's attacks deal N more damage for the whole fight.",
   empowered: 'Intensity. The next attack card(s) deal a damage multiple; one stack used per attack card.',
   freeze: 'Intensity, Mage only. Never counts down on its own; every FREEZE_STUN_THRESHOLD stacks stuns the holder for one move and removes those stacks.',
+  frail: 'Duration, StS-style keyword (engine-only, no real card uses it yet). The holder gains less block.',
+  intangible: 'Duration, StS-style keyword (engine-only, no real card uses it yet). All damage the holder takes is capped at a fixed amount.',
+  buffer: 'Intensity, StS-style keyword (engine-only, no real card uses it yet). Prevents the next instance of HP loss entirely, one stack at a time.',
 };
 
 export const CARD_TYPES: Record<CardType, string> = {

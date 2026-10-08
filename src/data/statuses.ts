@@ -1,5 +1,12 @@
 import type { StatusDefinition, StatusId } from '../game/types';
-import { EMPOWERED_DAMAGE_MULT, FREEZE_STUN_THRESHOLD, VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from './tunables';
+import {
+  EMPOWERED_DAMAGE_MULT,
+  FRAIL_BLOCK_MULT,
+  FREEZE_STUN_THRESHOLD,
+  INTANGIBLE_DAMAGE_CAP,
+  VULNERABLE_DAMAGE_MULT,
+  WEAK_DAMAGE_MULT,
+} from './tunables';
 
 // Mirrors the Slay the Spire trio (implementationplan.md: "mirror StS closely"). Names and the
 // badge look are placeholders; the numbers live in tunables.ts.
@@ -50,7 +57,33 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
       `Freeze ${n}: every ${FREEZE_STUN_THRESHOLD} stacks, stuns the target for its next turn and removes those stacks. Does not wear off on its own.`,
     badge: { symbol: 'F', color: 0x6fd3e8 },
   },
+  // Generic StS-style keyword statuses (engine-only for now: no real card applies them yet, see
+  // src/data/keywordCards.ts and implementationplan.md's "Keyword mechanics" section).
+  frail: {
+    id: 'frail',
+    name: 'Frail',
+    kind: 'duration',
+    describe: (n) => `Frail ${n}: gains ${pct(FRAIL_BLOCK_MULT)}% less block. Drops by 1 at the end of its turn.`,
+    blockMult: () => FRAIL_BLOCK_MULT,
+    badge: { symbol: 'Fr', color: 0x8a7fae },
+  },
+  intangible: {
+    id: 'intangible',
+    name: 'Intangible',
+    kind: 'duration',
+    describe: (n) => `Intangible ${n}: all damage taken is capped at ${INTANGIBLE_DAMAGE_CAP}. Drops by 1 at the end of its turn.`,
+    incomingDamageCap: () => INTANGIBLE_DAMAGE_CAP,
+    badge: { symbol: 'In', color: 0xd8e8f0 },
+  },
+  buffer: {
+    id: 'buffer',
+    name: 'Buffer',
+    kind: 'intensity',
+    describe: (n) =>
+      `Buffer ${n}: prevents the next ${n === 1 ? 'instance' : `${n} instances`} of HP loss entirely (block still absorbs normally first). Used up one at a time.`,
+    badge: { symbol: 'Bu', color: 0xe8c23c },
+  },
 };
 
 /** Display order for badges. */
-export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable', 'freeze'];
+export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable', 'freeze', 'frail', 'intangible', 'buffer'];

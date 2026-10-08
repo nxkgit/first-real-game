@@ -24,6 +24,10 @@ export const WEAK_DAMAGE_MULT = 0.75;
 export const VULNERABLE_DAMAGE_MULT = 1.5;
 /** Freeze (Mage-only): every this many stacks, the holder is stunned for one move and loses the stacks. PROVISIONAL. */
 export const FREEZE_STUN_THRESHOLD = 5;
+/** Frail (generic keyword status, engine-only for now): the holder gains this fraction of the block it would. Mirrors WEAK_DAMAGE_MULT's value. */
+export const FRAIL_BLOCK_MULT = 0.75;
+/** Intangible (generic keyword status, engine-only for now): all damage the holder takes is capped at this amount. */
+export const INTANGIBLE_DAMAGE_CAP = 1;
 
 // ---- Mage: Temperature (name, range and thresholds are all PROVISIONAL placeholders) ----
 export const TEMPERATURE_MIN = -5;

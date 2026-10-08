@@ -83,4 +83,74 @@ describe('Deck', () => {
       expect(all).toHaveLength(10);
     }
   });
+
+  describe('keyword cards (innate, retain, ethereal)', () => {
+    it('innate: always lands in the opening hand, on top of the shuffled rest', () => {
+      const innate = { ...card('innate-1'), innate: true };
+      const deck = new Deck([innate, ...cards(9)]);
+      deck.draw(5);
+      expect(deck.hand.some((c) => c.definition === innate)).toBe(true);
+    });
+
+    it('innate: more than one, all land in a hand big enough for them', () => {
+      const innates = [card('i0'), card('i1'), card('i2')].map((c) => ({ ...c, innate: true }));
+      const deck = new Deck([...innates, ...cards(7)]);
+      deck.draw(5);
+      for (const i of innates) expect(deck.hand.some((c) => c.definition === i), i.id).toBe(true);
+    });
+
+    it('innate: not re-applied by a later mid-fight reshuffle (only the opening hand is guaranteed)', () => {
+      const innate = { ...card('innate-1'), innate: true };
+      const deck = new Deck([innate, ...cards(5)]);
+      deck.draw(6); // empties the draw pile, innate card included in this first draw
+      deck.discardHand();
+      deck.draw(6); // reshuffles the discard pile (which now contains the innate card like any other)
+      // no assertion on where it lands: the point is this does not throw and every card is still accounted for
+      const all = [...deck.drawPile, ...deck.hand, ...deck.discardPile].map((c) => c.instanceId);
+      expect(new Set(all).size).toBe(6);
+    });
+
+    it('retain: survives discardHand into the next turn', () => {
+      const retain = { ...card('retain-1'), retain: true };
+      const deck = new Deck([retain, ...cards(4)]);
+      deck.draw(5);
+      expect(deck.hand).toContain(deck.hand.find((c) => c.definition === retain));
+      deck.discardHand();
+      expect(deck.hand.some((c) => c.definition === retain)).toBe(true);
+      expect(deck.discardPile.some((c) => c.definition === retain)).toBe(false);
+    });
+
+    it('ethereal: exhausts instead of discarding if still in hand at end of turn', () => {
+      const ethereal = { ...card('ethereal-1'), ethereal: true };
+      const deck = new Deck([ethereal, ...cards(4)]);
+      deck.draw(5);
+      const exhausted = deck.discardHand();
+      expect(exhausted.some((c) => c.definition === ethereal)).toBe(true);
+      expect(deck.exhaustPile.some((c) => c.definition === ethereal)).toBe(true);
+      expect(deck.discardPile.some((c) => c.definition === ethereal)).toBe(false);
+      expect(deck.hand).toHaveLength(0);
+    });
+
+    it('ethereal wins over retain if a card somehow has both', () => {
+      const both = { ...card('both-1'), retain: true, ethereal: true };
+      const deck = new Deck([both, ...cards(4)]);
+      deck.draw(5);
+      const exhausted = deck.discardHand();
+      expect(exhausted.some((c) => c.definition === both)).toBe(true);
+      expect(deck.hand.some((c) => c.definition === both)).toBe(false);
+    });
+
+    it('a plain card still just discards, alongside retain/ethereal ones in the same hand', () => {
+      const retain = { ...card('retain-1'), retain: true };
+      const ethereal = { ...card('ethereal-1'), ethereal: true };
+      const plain = card('plain-1');
+      const deck = new Deck([retain, ethereal, plain, ...cards(2)]);
+      deck.draw(5);
+      const exhausted = deck.discardHand();
+      expect(exhausted).toHaveLength(1);
+      expect(deck.hand.map((c) => c.definition)).toEqual([retain]);
+      expect(deck.discardPile.some((c) => c.definition === plain)).toBe(true);
+      expect(deck.exhaustPile.some((c) => c.definition === ethereal)).toBe(true);
+    });
+  });
 });
