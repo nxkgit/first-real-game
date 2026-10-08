@@ -8,8 +8,10 @@ export default defineConfig({
   // testTimeout: the default 5000ms is too tight for the two heavy seeded-fuzz suites
   // (run.invariants.test.ts, sim/balance.test.ts), which already run thousands of simulated fights
   // and only grew heavier as the card registry grew; they were timing out under load even locally
-  // (see HANDOFF.md) and started reliably timing out in CI once the Mage cards were added.
-  test: { exclude: [...configDefaults.exclude, '.claude/**'], testTimeout: 30000 },
+  // (see HANDOFF.md) and started reliably timing out in CI once the Mage cards were added. Raised
+  // again 2026-10-08 after enemy HP was doubled twice (093a6db, then again): sim/balance.test.ts
+  // alone now measures ~46s on an otherwise-idle machine, so 30s was no longer enough even without load.
+  test: { exclude: [...configDefaults.exclude, '.claude/**'], testTimeout: 60000 },
   build: {
     // Phaser is most of the bundle and rarely changes, so it gets its own file: a game-code
     // update then doesn't make returning players re-download it.
