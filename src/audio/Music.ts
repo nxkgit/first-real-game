@@ -8,7 +8,7 @@ import { MUSIC_FADE_IN_MS } from '../data/tunables';
 import { effectiveMusicVolume, onSettingsChange } from '../settings';
 
 const MUSIC_KEY = 'music-main-theme';
-const MUSIC_FILE = 'audio/main_theme_russian_guy.mp3';
+const MUSIC_FILE = 'audio/main_theme_alex089.mp3';
 
 type Track = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound;
 
