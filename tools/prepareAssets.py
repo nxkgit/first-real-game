@@ -6,6 +6,7 @@ Needs Pillow (pip install pillow). Sources and licences are listed in public/ass
 """
 import io
 import os
+import sys
 import zipfile
 
 from PIL import Image
@@ -21,10 +22,15 @@ ICONS = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger
 BACKGROUNDS = {'grass': 'backgroundColorGrass', 'forest': 'backgroundColorForest', 'fall': 'backgroundColorFall', 'desert': 'backgroundColorDesert', 'castles': 'backgroundCastles'}
 # animated pixel enemies: spritesheets.zip files, kept as they are (frame size is in the file name)
 PIXEL_SHEETS = {'gnu': 'gnu-120x100', 'disciple': 'disciple-45x51', 'minion': 'minion-45x66'}
+# pixel stills: 604x604 pictures in assets/pixel_stills/ (the "Instagram_last" files), drawn at ~9.4x a
+# 64x64 original. Neutral names, in file-name order; shrunk back to 64x64 and trimmed (pixel-<letter>).
+PIXEL_STILL_NATIVE = 64
 # painted characters sheet: quadrants, in reading order
 ENEMIES = ['skeleton', 'goblin', 'fighter', 'brute']
 ENEMY_MAX_HEIGHT = 200
-HERO_FRAMES = [f'character_idle_{i}' for i in range(4)] + [f'character_sword_Attack_{i}' for i in range(4)] + [f'character_death_{i}' for i in range(3)]
+# the hero: the dark-elf witch (craftpix free pack): four near-identical portraits, no attack or death art
+HERO_ZIP = 'dark_elf_character_witch.zip'
+HERO_FACES = [f'Character2_face{i}.png' for i in range(1, 5)]
 
 
 def zip_image(zip_name: str, inner_suffix: str) -> Image.Image:
@@ -40,7 +46,26 @@ def save(img: Image.Image, *parts: str) -> None:
     print('wrote', os.path.relpath(path, ROOT), img.size)
 
 
+def build_ashlands() -> None:
+    """The animated ashlands backdrop: assets/backgrounds/Ashlands_1.gif becomes one PNG per frame
+    (backgrounds/ashlands-0.png ...). The game plays them in order (src/data/art.ts ASHLANDS)."""
+    path = os.path.join(RAW, 'backgrounds', 'Ashlands_1.gif')
+    if not os.path.exists(path):
+        print('skipped ashlands: no', os.path.relpath(path, ROOT))
+        return
+    gif = Image.open(path)
+    durations = set()
+    for i in range(gif.n_frames):
+        gif.seek(i)
+        durations.add(gif.info.get('duration'))
+        save(gif.convert('RGB'), 'backgrounds', f'ashlands-{i}.png')
+    print(f'ashlands: {gif.n_frames} frames of {gif.size[0]}x{gif.size[1]}, frame time(s) in ms: {sorted(durations)} (ASHLANDS in src/data/art.ts must match)')
+
+
 def main() -> None:
+    if 'ashlands' in sys.argv[1:]:  # only the animated backdrop, when the other raw packs are not at hand
+        build_ashlands()
+        return
     for kind, name in MAP_ICONS.items():
         save(zip_image('kenney_cartography-pack.zip', f'PNG/Default/{name}.png'), 'map', f'{kind}.png')
     for name in ICONS:
@@ -49,6 +74,7 @@ def main() -> None:
 
     for name, file in BACKGROUNDS.items():
         save(zip_image('kenney_background-elements-remastered.zip', f'Backgrounds/{file}.png').convert('RGB'), 'backgrounds', f'{name}.png')
+    build_ashlands()
 
     for name, file in PIXEL_SHEETS.items():
         save(zip_image('spritesheets.zip', f'/{file}.png'), 'pixel', f'{name}.png')
@@ -63,16 +89,20 @@ def main() -> None:
             quad = quad.resize((round(quad.width * ENEMY_MAX_HEIGHT / quad.height), ENEMY_MAX_HEIGHT), Image.LANCZOS)
         save(quad, 'enemies', f'{name}.png')
 
-    frames = [zip_image('fantasy_vector_character.zip', f'character with sword/{n}.png') for n in HERO_FRAMES]
-    boxes = [f.getchannel('A').point(lambda a: 255 if a > 8 else 0).getbbox() for f in frames]
-    left, top = min(b[0] for b in boxes), min(b[1] for b in boxes)
-    right, bottom = max(b[2] for b in boxes), max(b[3] for b in boxes)
-    fw, fh = right - left, bottom - top
-    strip = Image.new('RGBA', (fw * len(frames), fh))
-    for i, f in enumerate(frames):
-        strip.paste(f.crop((left, top, right, bottom)), (i * fw, 0))
+    still_dir = os.path.join(RAW, 'pixel_stills')
+    for letter, file in zip('abcdefghijklmnopqrstuvwxyz', sorted(f for f in os.listdir(still_dir) if f.endswith('.png'))):
+        img = Image.open(os.path.join(still_dir, file)).convert('RGBA')
+        img = img.resize((PIXEL_STILL_NATIVE, PIXEL_STILL_NATIVE), Image.NEAREST)
+        save(img.crop(img.getchannel('A').point(lambda a: 255 if a > 8 else 0).getbbox()), 'enemies', f'pixel-{letter}.png')
+
+    with zipfile.ZipFile(os.path.join(RAW, HERO_ZIP)) as z:  # top-level files only: icons/ holds 64px copies
+        faces = [Image.open(io.BytesIO(z.read(n))).convert('RGBA') for n in HERO_FACES]
+    fw, fh = faces[0].size
+    strip = Image.new('RGBA', (fw * len(faces), fh))
+    for i, f in enumerate(faces):
+        strip.paste(f, (i * fw, 0))
     save(strip, 'hero', 'hero.png')
-    print(f'hero frames: {len(frames)} of {fw}x{fh} (idle 0-3, attack 4-7, death 8-10)')
+    print(f'hero frames: {len(faces)} of {fw}x{fh} (idle only; attack and death are drawn in code)')
 
 
 if __name__ == '__main__':

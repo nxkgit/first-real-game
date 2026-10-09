@@ -9,7 +9,7 @@ They do not replace a human playing for *feel*; they check that the screens come
 ```
 npm run e2e:install   # once: downloads Chromium (with OS deps on Linux)
 npm run e2e           # whole suite; starts `vite` on port 5199 itself (E2E_PORT to change)
-npx playwright test --grep-invert "whole seeded act"   # the fast subset CI runs on pull requests (29 of 30 tests, about 2 minutes)
+npx playwright test --grep-invert "whole seeded act"   # the fast subset CI runs on pull requests (everything but the whole-act test; about 2 minutes locally)
 npx playwright test devpanel          # one file
 npx playwright test -g "Cull"         # one test by name
 npm run e2e:typecheck # type-checks e2e/ (verify only checks src/)
@@ -18,7 +18,7 @@ npx playwright show-trace test-results/<test>/trace.zip   # after a failure (tra
 
 The suite runs against the Vite **dev** server, not a build, because tests reach into game modules with `import('/src/...')` (same module instances the page uses). `npm run build` in CI separately proves the bundle builds.
 
-The whole suite takes about 5 minutes: the other 29 tests are quick (5 to 15 s each, run in parallel, about 2 minutes in all) and the whole-act test (g) is the long pole at roughly 3 to 5 minutes. That is why CI runs the fast subset on pull requests and the whole suite nightly (see "CI").
+The whole suite takes about 5 minutes locally: the other tests are quick (5 to 25 s each, run in parallel, about 2 minutes in all, apart from the 1.5-minute combat test) and the whole-act test (g) is the long pole at roughly 3 to 5 minutes. That is why CI runs the fast subset on pull requests and the whole suite nightly (see "CI").
 
 ## The `?e2e` hook and the frame stepper
 
@@ -91,6 +91,7 @@ Notes:
 | `draft.e2e.ts` | (h) the starter-deck draft: intro screen, 10 forced 1-of-3 picks, no gold/skip, lands on the map with the drafted deck (2026-10-08) |
 | `report.e2e.ts` | (i) the Report window (QA_PLAN.md): a report from the map and from a fight, tester id and name kept, a refused send keeps the text, empty report stopped, typing does not trigger hotkeys, sending does not click through to the game, and the dev panel's snapshot loader restores a fight exactly. The report proxy is never called: the network is stubbed with `page.route`, and the test server runs with a fake `VITE_REPORT_SECRET` (`playwright.config.ts`). A 401 or 429 makes the browser itself log "Failed to load resource", which `expectNetworkErrorLog` removes in the tests that cause one on purpose. If you reuse a dev server started without that variable, the Report window refuses to send and these tests fail: stop the old server. |
 | `heropower.e2e.ts` | (k) issue #7: the hero power button (real drawn bounds) covers no enemy's intent readout with 1, 2 and 3 enemies and sits left of End Turn; a mouse click on it works |
+| `backdrop.e2e.ts` | (m) the default combat backdrop: every fight tier draws the animated ashlands sprite and its frames really advance |
 | `content.e2e.ts` | (l) the content site (`content.html`): the Patch notes section comes first and shows the newest entry, no console errors |
 
 The act policy is deliberately dumb (it only has to keep the game moving) and, because the map offers few rests, heals the run to full on the map when under half HP (a stand-in for the dev panel's "Heal full"). It reports win or loss rather than asserting it.
@@ -107,15 +108,17 @@ The act policy is deliberately dumb (it only has to keep the game moving) and, b
 
 ## CI
 
-`.github/workflows/e2e.yml` has two jobs that share their setup (install Chromium, `npm run build`):
+`.github/workflows/e2e.yml` has two kinds of job that share their setup (install Chromium, `npm run build`):
 
 | Job | Runs on | Runs | Failure artifact |
 |---|---|---|---|
-| `e2e` | pull requests, and pushes to `auto/**` and `integration/**` | `npx playwright test --grep-invert "whole seeded act"`: everything except `act.e2e.ts` (about 2 minutes) | `playwright-traces` |
-| `e2e-full` | nightly at 03:17 UTC (`schedule`, on the default branch) and by hand (**Actions > E2E > Run workflow**) | `npm run e2e`: the whole suite including the whole-act test (about 5 minutes) | `playwright-traces-full` |
+| `e2e-shard` (3 in parallel) plus the `e2e` gate | pull requests, and pushes to `auto/**` and `integration/**` | `npx playwright test --grep-invert "whole seeded act" --shard=N/3`: everything except `act.e2e.ts`, split over three runners. The `e2e` gate job passes only if all three shards do, so "e2e" stays the one check name to require. | `playwright-traces-shard-N` |
+| `e2e-full` | nightly at 03:17 UTC (`schedule`, on the default branch) and by hand (**Actions > E2E > Run workflow**) | `npm run e2e`: the whole suite including the whole-act test | `playwright-traces-full` |
+
+**Speed (measured 2026-10-09).** The unsharded pull-request job took 5 min 13 s on GitHub with 2 workers: about 35 s of setup and 4.6 min of tests, and the tests were bound by total work (44 tests, about 9 minutes of work) divided by 2 workers, not by one slow test. The config now uses 4 workers on CI (public-repo runners have 4 vCPUs) and the job is split three ways. Locally, 2 workers took 169 s and 4 workers took 122 s. Each test spends about 2 s locally (about 4 to 5 s on CI) just booting the page: about 1 s loading roughly 130 modules from the dev server and about 1 s on the first frames in software WebGL. Chromium flags (`--use-angle=swiftshader`, `--disable-gpu`, no vsync) did not help the suite as a whole (the swiftshader one made it slower and flaky), so none are set. After sharding, the combat test (about 1.5 min) is the longest single piece, so shortening that fight is the next lever if it is needed. `E2E_WORKERS=n` overrides the worker count for a local run.
 
 On failure each job uploads `test-results/` (traces) and `playwright-report/` for 14 days (download it and open a trace with `npx playwright show-trace`).
 
-The `e2e` job is **blocking** for pull requests and for pushes to `auto/**` and `integration/**` (the whole suite passed on GitHub's Linux runner on 2026-10-07 before being promoted). To make it a required check, mark "e2e" required in the repository's branch protection. The whole-act test is therefore **not** part of the pull-request gate: a change that breaks only the full-act path is caught by the next nightly run, or run `npm run e2e` yourself before merging anything that touches the map, rewards, rests, events or run flow. If the nightly run fails, the commit that broke it is among those since the last green nightly.
+The `e2e` gate job is **blocking** for pull requests and for pushes to `auto/**` and `integration/**` (the whole suite passed on GitHub's Linux runner on 2026-10-07 before being promoted). To make it a required check, mark "e2e" required in the repository's branch protection. The whole-act test is therefore **not** part of the pull-request gate: a change that breaks only the full-act path is caught by the next nightly run, or run `npm run e2e` yourself before merging anything that touches the map, rewards, rests, events or run flow. If the nightly run fails, the commit that broke it is among those since the last green nightly.
 
 Notes on the schedule: GitHub runs scheduled workflows only from the default branch, and switches them off after 60 days without repository activity (re-enable it under Actions). The split was written without being able to run GitHub Actions (`gh` is not installed here): the YAML was parsed and the fast command run locally, but the workflow itself had not yet run on GitHub when this was written.

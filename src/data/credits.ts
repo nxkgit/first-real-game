@@ -7,7 +7,7 @@ export interface Credit {
   usedFor: string;
   /** The pack's name. */
   source: string;
-  /** Where the pack came from. */
+  /** Where the pack came from. Empty when the source page is not known yet (say so in CREDITS.md). */
   url: string;
   author: string;
   licence: string;
@@ -15,11 +15,18 @@ export interface Credit {
 
 export const CREDITS: readonly Credit[] = [
   {
-    usedFor: 'Hero (idle, attack and death frames)',
-    source: 'Free Animated Fantasy Character Vector 2D',
-    url: 'https://opengameart.org/content/free-animated-fantasy-character-vector-2d',
-    author: 'rgsdev',
-    licence: 'CC-BY 4.0',
+    usedFor: 'Hero (dark-elf witch portraits)',
+    source: 'Free Dark Elf Pixel Art Asset Pack',
+    url: 'https://craftpix.net/freebies/free-dark-elf-pixel-art-asset-pack/',
+    author: 'CraftPix.net 2D Game Assets',
+    licence: 'CraftPix free licence (exact terms unconfirmed)',
+  },
+  {
+    usedFor: 'Pixel enemies (seven still pictures)',
+    source: 'OpenGameArt.org pack (files named *Instagram_last.png)',
+    url: 'https://opengameart.org/',
+    author: 'BlackSwordo',
+    licence: 'UNCONFIRMED (check the OpenGameArt page)',
   },
   {
     usedFor: 'Painted enemies (four characters)',
@@ -62,6 +69,15 @@ export const CREDITS: readonly Credit[] = [
     url: 'https://kenney.nl/assets/background-elements-remastered',
     author: 'Kenney',
     licence: 'CC0',
+  },
+  {
+    usedFor: 'Combat backdrop (animated ashlands)',
+    source: 'Ashlands animated background',
+    // PROVISIONAL: the user supplied the picture and named the artist; where it came from and its
+    // licence are not known yet. Fill both in (and CREDITS.md) once they are.
+    url: '',
+    author: 'trowheel',
+    licence: 'Licence not yet confirmed',
   },
   {
     usedFor: 'Background music',
