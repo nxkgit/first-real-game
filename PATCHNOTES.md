@@ -2,6 +2,17 @@
 
 What changed in each batch of fixes, newest first. Written so playtesters can read them; issue numbers are for the maintainer. The procedure that produces these is `docs/QA_FIX_WORKFLOW.md`.
 
+## 2026-10-09 (restart run from Settings)
+
+### Added
+- A "Restart run" button in the Settings panel during a run (map, fights, rest sites, shops, events, rewards and the starting-deck draft). It asks "Abandon this run?"; Yes takes you to the hero select screen for a new run, Cancel goes back to Settings. The button is not shown on the start screen, the hero select screen or the end-of-run screen, which already offer a new run. An abandoned run is not recorded anywhere.
+
+### Not fixed
+- Nothing was a bug fix in this batch.
+
+### Checked
+- Typecheck, unit tests and the build pass. Played in a real browser: the button and the confirm box, Cancel returning to Settings, Yes landing on hero select, and the button being absent on the start screen.
+- Not checked: restarting in the middle of a fight, touch screens.
 ## 2026-10-09 (second hero and hero selection)
 
 ### Added

@@ -37,7 +37,7 @@ export class HeroSelectScene extends Phaser.Scene {
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
     addScreenBackdrop(this, 'start');
     addReportButton(this);
-    addSettingsButton(this);
+    addSettingsButton(this, { canRestart: false });
 
     this.add.text(400, 60, 'Choose your hero', { fontSize: '30px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
 
