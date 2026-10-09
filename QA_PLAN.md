@@ -55,7 +55,8 @@ Static GitHub Pages cannot store anything, so one small backend piece sits betwe
 
 - The game POSTs the report to a **serverless proxy** (Cloudflare Worker, free tier).
 - The proxy creates a **GitHub Issue** in the public repo, using a token the testers never see. Issues are public; that was chosen on purpose, since the testers are friends.
-- The full snapshot goes into a **gist** (a secret/unlisted one); the issue body holds the tester's text, name or ID, build, and a link to the gist. This keeps the issue under GitHub's body-size limit (about 65,000 characters).
+- The full snapshot is stored in **Cloudflare KV** (the `bug-report-limits` namespace, or a second one if the rate-limit counters should stay separate), under a snapshot ID. Gists were rejected: a token that can create them is too broad. The issue body holds the tester's text, name or ID, build, and the snapshot ID. This keeps the issue under GitHub's body-size limit (about 65,000 characters) and keeps snapshots out of public view.
+- The Worker has a **read endpoint** for snapshots, protected by a separate maintainer-only key. The `?dev` panel's load flow fetches a snapshot by ID through it. KV values can be up to 25 MB, far more than a snapshot needs. Decide at build time how long snapshots are kept (KV supports expiry).
 - The proxy labels each new issue `needs-triage`. It does nothing else to it.
 
 **Abuse protection** (sized for 10-15 friends, not for the open internet):
@@ -63,7 +64,9 @@ Static GitHub Pages cannot store anything, so one small backend piece sits betwe
 - a hard cap on request size;
 - a rate limit of **20 reports per hour per anonymous ID**. The ID is chosen by the client and so can be spoofed; also limit per IP so a spoofed ID does not defeat the cap.
 
-To verify when building (stated from memory, not checked): GitHub fine-grained personal access tokens may not support creating gists, in which case a classic token with only the `gist` and `issues`/repo scopes is needed. Keep the token as a Worker secret, never in the repo.
+**Token:** a GitHub **fine-grained personal access token** limited to this one repository with **Issues: read and write** only (no gist, no contents, no broad `repo` scope). It expires after at most a year, so note the expiry date and renew it. Keep it as a Worker secret, never in the repo. The Worker's secrets are: the GitHub token, the shared secret the game sends, and the maintainer read key.
+
+**Already set up (2026-10-08):** a Cloudflare account with the `michael-e-leonhard.workers.dev` subdomain (it contains the owner's name and will be visible in the page source; changeable in the Workers & Pages dashboard), a KV namespace `bug-report-limits` (ID `dacf5baf82164553821766084e5f2953`), and these issue labels on the repo: `needs-triage`, `sev:game-breaking`, `sev:fix-soon`, `sev:eventually`, `type:bug`, `type:balance`, `type:feel`. The GitHub CLI is installed and logged in as `nxkgit`.
 
 ### 4. Triage (maintainer only)
 The maintainer reads each issue, loads the snapshot in `?dev` to see what the tester saw, does their own investigation, and decides whether it is a bug, a misunderstanding, or feedback. Then labels it:
@@ -120,9 +123,9 @@ Suggested build order. Each step should be playable or testable on its own. Step
 
 1. **Snapshot capture** (game side, no network). Bundle the run save, the fight scenario when present, the action log, build id and environment into one object; load it back through the `?dev` panel. Unit-test the round trip. This is also useful before the rest exists.
 2. **Report button and dialog** (game side). Top-middle button next to Deck on every scene; dialog with text box, optional name, Send; anonymous ID in browser storage (guarded, per the existing storage pattern). Keyboard and key-handling must follow the existing `onKeyPress()` pattern and not swallow typed text.
-3. **Proxy** (Cloudflare Worker): validate the secret and size, rate-limit, create the gist, create the issue, apply `needs-triage`. **(maintainer)**: Cloudflare account, GitHub token, secrets, and the label set (`needs-triage`, the three severities, the three types).
+3. **Proxy** (Cloudflare Worker): validate the secret and size, rate-limit (KV counters), store the snapshot in KV, create the issue, apply `needs-triage`; plus the maintainer-only snapshot read endpoint. **(maintainer)**: create the fine-grained GitHub token (Issues write, this repo only), log in to Wrangler (`npx wrangler login`), and set the Worker secrets. The Cloudflare account, KV namespace and issue labels are already done.
 4. **Wire the button to the proxy**, with a clear failure message if the send fails and a way to copy the report text manually so nothing a tester wrote is lost.
-5. **Maintainer loading flow**: given an issue's gist, load the snapshot in `?dev`. Document it.
+5. **Maintainer loading flow**: given an issue's snapshot ID, fetch it from the Worker and load it in `?dev`. Document it.
 6. **Fix-run guide**: a short doc (like `docs/CARD_WORKFLOW.md`) holding the section "Fix runs" above as the working procedure, linked from `CLAUDE.md`.
 7. **`PATCHNOTES.md`** created with the first batch.
 
