@@ -31,7 +31,7 @@ export interface EffectHost {
   readonly deck: Deck;
   emit<K extends keyof CombatEventMap>(event: K, payload: CombatEventMap[K]): void;
   /** Damage `attacker` would really deal for `base` to `defender` (statuses included). */
-  calcDamage(base: number, attacker: Combatant, defender: Combatant, fromAttackCard?: boolean): number;
+  calcDamage(base: number, attacker: Combatant, defender: Combatant, fromAttackCard?: boolean, ignoring?: readonly StatusId[]): number;
   /** Applies damage through block. The caller announces it. */
   dealDamage(target: Combatant, amount: number): DamageResult;
   /** Adds stacks and returns the matching event for the caller to emit. */
@@ -138,7 +138,7 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     resolvePlayer(effect, h, target, fromAttackCard) {
       if (!target || target.hp <= 0) return;
       const base = vsFreeze(effect, h.scaledValue(effect, target), target);
-      const result = h.dealDamage(target, h.calcDamage(base, h.player, target, fromAttackCard));
+      const result = h.dealDamage(target, h.calcDamage(base, h.player, target, fromAttackCard, effect.ignoresStatuses));
       h.emit('damageDealt', { target: target.id, ...result });
       if (target.hp <= 0) {
         h.emit('enemyDied', { enemyId: target.id });
@@ -157,7 +157,7 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     intent: { icon: () => 'attack', damage: (e) => e.value },
     scales: ALL_SCALE_SOURCES,
     preview: (e, h, target, fromAttackCard) =>
-      target ? h.calcDamage(vsFreeze(e, h.scaledValue(e, target), target), h.player, target, fromAttackCard) : undefined,
+      target ? h.calcDamage(vsFreeze(e, h.scaledValue(e, target), target), h.player, target, fromAttackCard, e.ignoresStatuses) : undefined,
   },
 
   damageAll: {
@@ -214,7 +214,8 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     resolvePlayer(effect, h, target) {
       const recipient = effect.to === 'self' ? h.player : target;
       if (recipient && recipient.hp > 0) {
-        h.emit('statusChanged', h.addStatus(recipient, effect.status, h.scaledValue(effect, target)));
+        const change = h.addStatus(recipient, effect.status, h.scaledValue(effect, target));
+        if (change.delta !== 0) h.emit('statusChanged', change); // a capped status (Fuming) may gain nothing
       }
     },
     resolveEnemy(effect, h, enemy, out) {
@@ -223,8 +224,9 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
       h.markFresh(recipient, effect.status);
     },
     describe: (e, n) => {
-      const name = STATUSES[e.status].name;
-      return e.to === 'self' ? `Gain ${n} ${name}.` : `Apply ${n} ${name}.`;
+      const status = STATUSES[e.status];
+      if (e.to === 'self') return status.gainText ? status.gainText(n) : `Gain ${n} ${status.name}.`;
+      return `Apply ${n} ${status.name}.`;
     },
     intent: { icon: (e) => (e.to === 'self' ? 'buff' : 'debuff') },
     scales: ALL_SCALE_SOURCES,

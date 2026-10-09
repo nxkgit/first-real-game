@@ -5,27 +5,37 @@ import { STATUSES, STATUS_ORDER } from '../../data/statuses';
 /** Horizontal distance between badge centers. Tooltip zones are laid out from this too. */
 export const STATUS_SLOT_WIDTH = 38;
 
+/** The x of the first badge's center in a row of `count` badges centered on `centerX`. */
+export function statusRowStart(centerX: number, count: number): number {
+  return centerX - ((Math.max(count, 1) - 1) * STATUS_SLOT_WIDTH) / 2;
+}
+
 /**
- * A left-aligned row of status badges (placeholder look: a colored disc with a letter, plus the
- * stack count). Redrawn from a Statuses snapshot, in STATUS_ORDER, so it never reads live combat state.
+ * A row of status badges (placeholder look: a colored disc with a letter, plus the stack count).
+ * Redrawn from a Statuses snapshot, in STATUS_ORDER, so it never reads live combat state. Only the
+ * statuses present are drawn, packed together: left-aligned from `x`, or centered on `x` when
+ * `centered` (an enemy's row sits under it, whatever number of badges it has).
  */
 export class StatusRow {
   readonly x: number;
   readonly y: number;
+  private readonly centered: boolean;
   private readonly scene: Phaser.Scene;
   private readonly container: Phaser.GameObjects.Container;
   private shown: [StatusId, number][] = [];
 
-  /** `x` is the center of the first slot. */
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  /** `x` is the center of the first slot, or of the whole row when `centered`. */
+  constructor(scene: Phaser.Scene, x: number, y: number, centered = false) {
     this.scene = scene;
     this.x = x;
     this.y = y;
+    this.centered = centered;
     this.container = scene.add.container(x, y);
   }
 
+  /** The center of badge slot `index` for the badges currently shown. */
   slotX(index: number): number {
-    return this.x + index * STATUS_SLOT_WIDTH;
+    return (this.centered ? statusRowStart(this.x, this.shown.length) : this.x) + index * STATUS_SLOT_WIDTH;
   }
 
   set(statuses: Statuses): void {
@@ -34,6 +44,7 @@ export class StatusRow {
       const stacks = statuses[id] ?? 0;
       return stacks > 0 ? [[id, stacks]] : [];
     });
+    this.container.setX(this.slotX(0));
     this.shown.forEach(([id, stacks], i) => {
       const { symbol, color } = STATUSES[id].badge;
       const cx = i * STATUS_SLOT_WIDTH;

@@ -275,47 +275,163 @@ describe('statuses', () => {
     });
   });
 
-  // Heating Up's real mechanic (implementationplan.md "Mage — Core Mechanics"; corrected
-  // 2026-10-08, see DESIGN_LOG.md: the first version used Empowered, which doubled the very first
-  // attack and capped at a fixed number of stacks — neither matches the user's actual intent of an
-  // uncapped exponential chain keyed off how many attacks were already played this turn).
-  describe('Ignite (Heating Up)', () => {
-    const IGNITE_SELF: CardDefinition = {
-      id: 'ignite-self',
-      name: 'Ignite Self',
+  // Heating Up's real mechanic (user, 2026-10-09, QA #28): Heating Up gives Fuming for the rest of the
+  // turn; while Fuming, each attack card played grants 1 Ignite after it resolves; Ignite multiplies
+  // outgoing damage by 2^stacks. So the 1st attack after Heating Up is normal, then x2, x4, x8...
+  // Attacks played before Heating Up never count. A damage effect can ignore Ignite (Scorching Wind).
+  describe('Fuming and Ignite (Heating Up)', () => {
+    const FUME_SELF: CardDefinition = {
+      id: 'fume-self',
+      name: 'Fume Self',
       type: 'skill',
       cost: 0,
       owner: 'test',
       inRewardPool: false,
-      effects: [{ kind: 'applyStatus', status: 'ignite', value: 1, to: 'self' }],
+      effects: [{ kind: 'applyStatus', status: 'fuming', value: 1, to: 'self' }],
+    };
+    const SCORCH: CardDefinition = {
+      id: 'scorch',
+      name: 'Scorch',
+      type: 'attack',
+      target: 'enemy',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      effects: [{ kind: 'damage', value: 10, ignoresStatuses: ['ignite'] }],
+    };
+    const EMPOWER_SELF: CardDefinition = {
+      id: 'empower-self',
+      name: 'Empower Self',
+      type: 'skill',
+      cost: 0,
+      owner: 'test',
+      inRewardPool: false,
+      effects: [{ kind: 'applyStatus', status: 'empowered', value: 1, to: 'self' }],
     };
 
-    it('doubles each attack compared to the one before it: 1st normal, 2nd x2, 3rd x4', () => {
-      const combat = started([IGNITE_SELF, HIT, HIT, HIT, HIT]);
-      play(combat, 'ignite-self');
-      play(combat, 'hit');
-      expect(combat.enemies[0].hp).toBe(500 - 10); // 1st attack: 2^0 = normal
-      play(combat, 'hit');
-      expect(combat.enemies[0].hp).toBe(500 - 10 - 20); // 2nd: 2^1 = double
-      play(combat, 'hit');
-      expect(combat.enemies[0].hp).toBe(500 - 10 - 20 - 40); // 3rd: 2^2 = quadruple
+    it('Fuming grants 1 Ignite per attack, so attacks deal 1x, 2x, 4x, 8x', () => {
+      const combat = started([FUME_SELF, HIT, HIT, HIT, HIT]);
+      play(combat, 'fume-self');
+      expect(combat.player.statuses.ignite).toBeUndefined(); // Heating Up itself gives no Ignite
+      let expected = 500;
+      for (const mult of [1, 2, 4, 8]) {
+        play(combat, 'hit');
+        expected -= 10 * mult;
+        expect(combat.enemies[0].hp).toBe(expected);
+      }
+      expect(combat.player.statuses.ignite).toBe(4);
     });
 
-    it('is not consumed by playing an attack, unlike Empowered', () => {
-      const combat = started([IGNITE_SELF, HIT, HIT, HIT, HIT]);
-      play(combat, 'ignite-self');
+    it('attacks played before Fuming never count', () => {
+      const combat = started([HIT, HIT, FUME_SELF, HIT, HIT]);
       play(combat, 'hit');
-      expect(combat.player.statuses.ignite).toBe(1);
+      play(combat, 'hit');
+      play(combat, 'fume-self');
+      play(combat, 'hit'); // the 1st attack after Heating Up is normal, however many came before it
+      expect(combat.enemies[0].hp).toBe(500 - 10 - 10 - 10);
+      play(combat, 'hit');
+      expect(combat.enemies[0].hp).toBe(500 - 10 - 10 - 10 - 20);
     });
 
-    it('clears at the end of the turn it was granted; a later attack with none active deals normal damage', () => {
-      const combat = started([IGNITE_SELF, HIT, HIT, HIT, HIT]);
-      play(combat, 'ignite-self');
+    it('Fuming cannot stack higher than 1, and an attack still grants only 1 Ignite', () => {
+      const combat = started([FUME_SELF, FUME_SELF, HIT, HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'fume-self');
+      expect(combat.player.statuses.fuming).toBe(1);
+      play(combat, 'hit');
       expect(combat.player.statuses.ignite).toBe(1);
-      combat.endPlayerTurn(); // unplayed hand (4 HIT) discards; the enemy acts; round-end tick clears ignite
+      play(combat, 'hit');
+      expect(combat.player.statuses.ignite).toBe(2);
+    });
+
+    it('a skill grants no Ignite, only an attack card does', () => {
+      const combat = started([FUME_SELF, EMPOWER_SELF, HIT, HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'empower-self');
       expect(combat.player.statuses.ignite).toBeUndefined();
-      play(combat, 'hit'); // reshuffled back into hand; no ignite active this turn
-      expect(combat.enemies[0].hp).toBe(500 - 10);
+    });
+
+    it('a damage effect that ignores Ignite deals its normal damage but still grants Ignite', () => {
+      const combat = started([FUME_SELF, HIT, SCORCH, HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'hit'); // 10, grants Ignite 1
+      play(combat, 'hit'); // 20, grants Ignite 2
+      const before = combat.enemies[0].hp;
+      play(combat, 'scorch'); // ignores Ignite 2: normal 10
+      expect(combat.enemies[0].hp).toBe(before - 10);
+      expect(combat.player.statuses.ignite).toBe(3);
+      const next = combat.enemies[0].hp;
+      play(combat, 'hit'); // Ignite 3 -> x8
+      expect(combat.enemies[0].hp).toBe(next - 80);
+    });
+
+    it('a damage effect that ignores Ignite still gets Strength, Empowered and the rest', () => {
+      const combat = started([FUME_SELF, EMPOWER_SELF, SCORCH, HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'hit');
+      play(combat, 'empower-self');
+      const before = combat.enemies[0].hp;
+      play(combat, 'scorch'); // Empowered x2, Ignite ignored
+      expect(combat.enemies[0].hp).toBe(before - 20);
+    });
+
+    it('Ignite stacks with Empowered (#29): the multipliers multiply', () => {
+      const combat = started([FUME_SELF, EMPOWER_SELF, HIT, HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'hit'); // Ignite 1 afterwards
+      play(combat, 'empower-self');
+      const before = combat.enemies[0].hp;
+      play(combat, 'hit'); // Ignite 2^1 = 2, Empowered 2: 10 x 2 x 2
+      expect(combat.enemies[0].hp).toBe(before - 40);
+    });
+
+    it('the live damage a card shows includes Ignite, except for a damage effect that ignores it (#28)', () => {
+      const combat = started([FUME_SELF, HIT, HIT, HIT, SCORCH]);
+      play(combat, 'fume-self');
+      play(combat, 'hit');
+      play(combat, 'hit'); // Ignite 2
+      const target = combat.enemies[0];
+      expect(combat.previewCardEffect(HIT, HIT.effects![0], target)).toBe(40);
+      expect(combat.previewCardEffect(SCORCH, SCORCH.effects![0], target)).toBe(10);
+    });
+
+    it('Ignite only buffs damage from attack cards, not a skill\'s damage or a trigger\'s (user, 2026-10-09)', () => {
+      const SKILL_HIT: CardDefinition = {
+        id: 'skill-hit',
+        name: 'Skill Hit',
+        type: 'skill',
+        target: 'enemy',
+        cost: 0,
+        owner: 'test',
+        inRewardPool: false,
+        effects: [{ kind: 'damage', value: 10 }],
+      };
+      const combat = started([FUME_SELF, HIT, HIT, SKILL_HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'hit');
+      play(combat, 'hit'); // Ignite 2
+      const before = combat.enemies[0].hp;
+      expect(combat.previewCardEffect(SKILL_HIT, SKILL_HIT.effects![0], combat.enemies[0])).toBe(10);
+      play(combat, 'skill-hit');
+      expect(combat.enemies[0].hp).toBe(before - 10); // not x4
+      expect(combat.player.statuses.ignite).toBe(2); // a skill is not an attack: no Ignite granted either
+      expect(combat.calcDamage(10, combat.player, combat.enemies[0], false)).toBe(10); // a trigger's damage
+      expect(combat.calcDamage(10, combat.player, combat.enemies[0], true)).toBe(40);
+    });
+
+    it('Ignite and Fuming are not consumed by attacks, and both clear at the end of the turn', () => {
+      const combat = started([FUME_SELF, HIT, HIT, HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'hit');
+      expect(combat.player.statuses.fuming).toBe(1);
+      expect(combat.player.statuses.ignite).toBe(1);
+      combat.endPlayerTurn();
+      expect(combat.player.statuses.fuming).toBeUndefined();
+      expect(combat.player.statuses.ignite).toBeUndefined();
+      const before = combat.enemies[0].hp;
+      play(combat, 'hit'); // a fresh turn: nothing active, normal damage and no Ignite granted
+      expect(combat.enemies[0].hp).toBe(before - 10);
+      expect(combat.player.statuses.ignite).toBeUndefined();
     });
   });
 

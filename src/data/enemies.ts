@@ -84,7 +84,7 @@ export const BOSS_A: EnemyDefinition = {
   name: 'Boss A',
   maxHp: 360,
   placeholderColor: 0x4a3a5a,
-  placeholderScale: 1.5,
+  placeholderScale: 1, // the dino sheet is a whole-number zoom already (1x, 181 wide): a bigger container scale would make it overflow the fight panel and unsquare its pixels
   movePattern: [
     attack(20),
     debuffPlayer('weak', 2),

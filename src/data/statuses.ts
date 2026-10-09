@@ -83,24 +83,36 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
       `Buffer ${n}: prevents the next ${n === 1 ? 'instance' : `${n} instances`} of HP loss entirely (block still absorbs normally first). Used up one at a time.`,
     badge: { symbol: 'Bu', color: 0xe8c23c },
   },
-  // Mage-only, placeholder name (implementationplan.md "Mage — Core Mechanics"): Heating Up's real
-  // mechanic. Doesn't use its own stack count for the math (kind 'intensity' only so it doesn't
-  // decay mid-turn) — the multiplier comes straight from how many attacks were already played this
-  // turn (DamageMultContext), so the 1st attack after Heating Up is at 2^0 = normal, the 2nd is
-  // 2^1 = double, the 3rd is 2^2 = quadruple, and so on. `clearAtTurnEnd` (not `duration`, which
-  // would only drop by 1 a round) wipes it at the next end-of-round tick, so it never survives into
-  // a later turn.
+  // Mage-only (implementationplan.md "Heating Up: the real mechanic", corrected 2026-10-09, QA #28).
+  // Heating Up gives Fuming for the rest of the turn; each attack card played while Fuming grants 1
+  // Ignite after it resolves; Ignite multiplies outgoing damage by 2^stacks. So the 1st attack after
+  // Heating Up is at 2^0 = normal, the 2nd 2^1 = double, the 3rd 2^2 = quadruple, and so on, and
+  // attacks played before Heating Up never count. Both clear at the end of the turn
+  // (`clearAtTurnEnd`, not `duration`, which would only drop by 1 a round). A damage effect can ignore
+  // Ignite (Scorching Wind's `ignoresStatuses`); it still grants Ignite, being an attack.
   ignite: {
     id: 'ignite',
     name: 'Ignite',
     kind: 'intensity',
     clearAtTurnEnd: true,
+    attackCardsOnly: true,
     describe: (n) =>
-      `Ignite ${n}: each attack you play this turn deals double the damage of the one before it (2x per attack already played). Clears at the end of the turn.`,
-    outgoingDamageMult: (_stacks, ctx) => 2 ** ctx.attacksPlayedThisTurn,
+      `Ignite ${n}: your attacks deal ${2 ** n}x damage (2^${n}). Does not apply to Scorching Wind's damage. Clears at the end of the turn.`,
+    outgoingDamageMult: (stacks) => 2 ** stacks,
     badge: { symbol: 'Ig', color: 0xff8c3c },
+  },
+  fuming: {
+    id: 'fuming',
+    name: 'Fuming',
+    kind: 'intensity',
+    clearAtTurnEnd: true,
+    maxStacks: 1,
+    grantsOnAttack: { status: 'ignite', stacks: 1 },
+    describe: (n) => `Fuming ${n}: for the rest of your turn, your attacks grant you 1 Ignite. Clears at the end of the turn.`,
+    gainText: () => `For the rest of your turn, your attacks grant you 1 Ignite. (This effect does not apply to Scorching Wind's damage.)`,
+    badge: { symbol: 'Fu', color: 0xd9552b },
   },
 };
 
 /** Display order for badges. */
-export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable', 'freeze', 'frail', 'intangible', 'buffer', 'ignite'];
+export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable', 'freeze', 'frail', 'intangible', 'buffer', 'fuming', 'ignite'];
