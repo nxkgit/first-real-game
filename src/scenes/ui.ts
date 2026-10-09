@@ -87,10 +87,13 @@ const DESC_BOTTOM = CARD_HEIGHT / 2 - 5;
  *  if it would run into the tags line or off the card. */
 function fitDescription(desc: Phaser.GameObjects.Text, tags: Phaser.GameObjects.Text | null): void {
   const bottom = tags ? tags.y - tags.height - 2 : DESC_BOTTOM;
+  desc.setLineSpacing(0);
   for (let size = 11; size >= 9; size--) {
     desc.setFontSize(size);
     if (desc.height <= bottom - DESC_TOP) break;
   }
+  // a very long text (Heating Up's) still does not fit at 9px: pull the lines closer together
+  for (let spacing = -1; spacing >= -5 && desc.height > bottom - DESC_TOP; spacing--) desc.setLineSpacing(spacing);
   const center = Math.min(28, bottom - desc.height / 2);
   desc.setY(Math.max(center, DESC_TOP + desc.height / 2));
 }

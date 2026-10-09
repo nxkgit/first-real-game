@@ -23,6 +23,23 @@ test('Heating Up: attacks deal 1x, 2x, 4x...; Scorching Wind ignores Ignite but 
   expect(await game.hasText(/For the rest of your turn, your attacks grant you 1 Ignite\./)).toBe(true);
   expect(await game.hasText(/\(This effect does not apply to Scorching Wind's damage\.\)/)).toBe(true);
 
+  // the long card text stays inside the card face (it used to spill off the bottom edge)
+  const fit = await game.page.evaluate(() => {
+    const scene = (window as any).__game.scene.getScene('CombatScene');
+    const find = (list: any[]): any => {
+      for (const o of list) {
+        if (typeof o.text === 'string' && /^For the rest of your turn/.test(o.text)) return o;
+        const inner = o.list ? find(o.list) : null;
+        if (inner) return inner;
+      }
+      return null;
+    };
+    const text = find(scene.children.list);
+    const face = text.parentContainer.getWorldTransformMatrix();
+    return { textBottom: text.getBounds().bottom as number, cardBottom: face.ty + 75 * face.d };
+  });
+  expect(fit.textBottom, 'card text bottom vs card bottom').toBeLessThanOrEqual(fit.cardBottom);
+
   const start = await hp();
   await game.playCard('Heating Up', 0);
   expect(await player('fuming')).toBe(1);
