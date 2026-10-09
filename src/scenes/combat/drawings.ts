@@ -164,3 +164,15 @@ export function drawArrow(g: Phaser.GameObjects.Graphics, direction: 'up' | 'dow
   g.lineStyle(2, 0xffffff, 0.6);
   g.strokeTriangle(-11, d * 1, 11, d * 1, 0, d * 15);
 }
+
+/** A plain flat-colour stand-in for a hero with no picture yet (a body and a head). Facing right, feet near y = 70. */
+export function buildPlaceholderHero(scene: Phaser.Scene, color: number): Phaser.GameObjects.Container {
+  const g = scene.add.graphics();
+  g.fillStyle(color, 1);
+  g.fillRoundedRect(-24, -30, 48, 100, 10);
+  g.fillCircle(0, -48, 18);
+  g.lineStyle(2, 0xffffff, 0.5);
+  g.strokeRoundedRect(-24, -30, 48, 100, 10);
+  g.strokeCircle(0, -48, 18);
+  return scene.add.container(0, 0, [g]);
+}

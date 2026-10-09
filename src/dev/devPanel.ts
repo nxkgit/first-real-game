@@ -5,6 +5,7 @@ import { CARDS, getCard } from '../data/cards';
 import { ENEMIES, getEnemy } from '../data/enemies';
 import { RELICS, getRelic } from '../data/relics';
 import { newRun, restoreSavedRun } from '../data/run';
+import { HEROES } from '../data/heroes';
 import { BUILD_ID } from '../qa/buildInfo';
 import { REPORT_URL } from '../qa/reportConfig';
 import { readSnapshot } from '../qa/snapshot';
@@ -112,6 +113,8 @@ export function installDevPanel(game: Phaser.Game): void {
   const cardPick = select(Object.values(CARDS).map((c) => [c.id, `${c.name} (${c.cost})`]));
   const relicPick = select(Object.values(RELICS).map((r) => [r.id, r.name]));
   const deckPresetPick = select(Object.entries(DECK_PRESETS).map(([id, preset]) => [id, preset.label]));
+  const heroPick = select(HEROES.map((h) => [h.id, h.name]));
+  heroPick.value = getCurrentRun()?.heroId ?? HEROES[0].id;
   const seedInput = document.createElement('input');
   seedInput.placeholder = 'seed (blank = random)';
   seedInput.style.cssText = 'font:inherit;width:130px;background:#1b1b24;color:#fff;border:1px solid #5a5a72;';
@@ -241,11 +244,12 @@ export function installDevPanel(game: Phaser.Game): void {
       button('HP 1', () => withRun((run) => (run.hp = 1), false))
     ),
     row(
+      heroPick,
       seedInput,
       button('New run', () => {
         const text = seedInput.value.trim();
         if (text !== '' && !/^\d+$/.test(text)) return say('Seed must be a whole number.');
-        enterCurrentNode(scene(), newRun(text === '' ? undefined : Number(text)));
+        enterCurrentNode(scene(), newRun(text === '' ? undefined : Number(text), heroPick.value));
         refresh();
       })
     ),
@@ -275,7 +279,7 @@ export function installDevPanel(game: Phaser.Game): void {
       info.textContent = 'No run yet.';
       return;
     }
-    info.textContent = `seed ${run.seed}\nfloor ${run.floor}/${run.totalFloors}  ${run.phase}\nhp ${run.hp}/${run.maxHp}  gold ${run.gold}  deck ${run.deck.length}  relics ${run.relics.length}`;
+    info.textContent = `hero ${run.hero.name}  seed ${run.seed}\nfloor ${run.floor}/${run.totalFloors}  ${run.phase}\nhp ${run.hp}/${run.maxHp}  gold ${run.gold}  deck ${run.deck.length}  relics ${run.relics.length}`;
   }
 
   refresh();

@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import { ASHLANDS, BACKGROUNDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
+import { ASHLANDS, BACKGROUNDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, HERO_ART, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
 import type { BackgroundName } from '../data/art';
 import { ENEMY_ART_ENTRIES, sheetOf } from '../data/enemyArt';
 import type { EnemySheet } from '../data/enemyArt';
-import type { EnemyDefinition } from '../game/types';
+import type { EnemyDefinition, HeroDefinition } from '../game/types';
 import { buildGoblinCharacter } from './combat/drawings';
 
 // Loading and building the picture-based visuals (hero, enemies, map icons, icons, card border).
@@ -12,7 +12,7 @@ import { buildGoblinCharacter } from './combat/drawings';
 /** Queues every art file. Call from a scene's preload(). */
 export function preloadArt(scene: Phaser.Scene): void {
   scene.load.setPath(`${import.meta.env.BASE_URL}assets/`);
-  scene.load.spritesheet('hero', 'hero/hero.png', { frameWidth: HERO_SHEET.frameWidth, frameHeight: HERO_SHEET.frameHeight });
+  for (const [id, art] of Object.entries(HERO_ART)) scene.load.spritesheet(`hero-${id}`, art.file, { frameWidth: art.frameWidth, frameHeight: art.frameHeight });
   for (const [name, entry] of Object.entries(ENEMY_ART_ENTRIES)) {
     if (entry.kind === 'still') scene.load.image(`enemy-${name}`, `${entry.still.dir}/${name}.png`);
     else scene.load.spritesheet(`pixel-${name}`, `pixel/${name}.png`, { frameWidth: entry.sheet.frameWidth, frameHeight: entry.sheet.frameHeight });
@@ -24,16 +24,17 @@ export function preloadArt(scene: Phaser.Scene): void {
   for (let i = 0; i < ASHLANDS.frames; i++) scene.load.image(`bg-${ASHLANDS.name}-${i}`, `backgrounds/${ASHLANDS.name}-${i}.png`);
 }
 
-/** Registers the hero's animations once (they are global to the game). */
-export function createArtAnimations(scene: Phaser.Scene): void {
-  if (!scene.textures.exists('hero') || scene.anims.exists('hero-idle')) return;
+/** Registers a hero's animations once (they are global to the game). */
+export function createArtAnimations(scene: Phaser.Scene, heroId: string): void {
+  const art = HERO_ART[heroId];
+  if (!art || !scene.textures.exists(`hero-${heroId}`) || scene.anims.exists(`hero-${heroId}-idle`)) return;
   const make = (key: 'idle' | 'attack' | 'death'): void => {
-    const def = HERO_SHEET[key];
+    const def = art[key];
     if (!def) return; // no frames for this one: buildHeroSprite draws it in code
     const { start, end, frameRate } = def;
     scene.anims.create({
-      key: `hero-${key}`,
-      frames: scene.anims.generateFrameNumbers('hero', { start, end }),
+      key: `hero-${heroId}-${key}`,
+      frames: scene.anims.generateFrameNumbers(`hero-${heroId}`, { start, end }),
       frameRate,
       repeat: key === 'idle' ? -1 : 0,
     });
@@ -53,38 +54,39 @@ export interface HeroSprite {
 
 /** The hero as a picture (animated), or null if the sheet did not load. Stands on the container's
  *  origin like the drawn hero did: feet near y = 70. */
-export function buildHeroSprite(scene: Phaser.Scene): HeroSprite | null {
-  if (!scene.textures.exists('hero')) return null;
-  createArtAnimations(scene);
-  const sprite = scene.add.sprite(0, 0, 'hero', 0).setScale(HERO_SHEET.scale).setOrigin(0.5, 1);
+export function buildHeroSprite(scene: Phaser.Scene, heroId: string): HeroSprite | null {
+  const art = HERO_ART[heroId];
+  if (!art || !scene.textures.exists(`hero-${heroId}`)) return null;
+  createArtAnimations(scene, heroId);
+  const sprite = scene.add.sprite(0, 0, `hero-${heroId}`, 0).setScale(art.scale).setOrigin(0.5, 1);
   sprite.setY(78);
-  sprite.play('hero-idle');
+  sprite.play(`hero-${heroId}-idle`);
   const container = scene.add.container(0, 0, [sprite]);
   let dead = false;
   return {
     container,
     attack: () => {
-      if (dead || sprite.anims.currentAnim?.key === 'hero-death') return;
-      if (!HERO_SHEET.attack) {
+      if (dead || sprite.anims.currentAnim?.key === `hero-${heroId}-death`) return;
+      if (!art.attack) {
         // no attack frames: a quick lunge toward the enemies and back
         scene.tweens.add({ targets: sprite, x: 28, duration: 90, yoyo: true, ease: 'Quad.easeOut' });
         return;
       }
-      sprite.play('hero-attack');
+      sprite.play(`hero-${heroId}-attack`);
       sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        if (sprite.anims.currentAnim?.key === 'hero-attack') sprite.play('hero-idle');
+        if (sprite.anims.currentAnim?.key === `hero-${heroId}-attack`) sprite.play(`hero-${heroId}-idle`);
       });
     },
     die: () => {
       dead = true;
-      if (!HERO_SHEET.death) {
+      if (!art.death) {
         // no death frames: freeze, tip over onto her side, and dim
         sprite.anims.stop();
         scene.tweens.add({ targets: sprite, angle: 90, y: 78, duration: 600, ease: 'Quad.easeIn' });
         scene.tweens.add({ targets: sprite, alpha: 0.5, duration: 600 });
         return;
       }
-      sprite.play('hero-death');
+      sprite.play(`hero-${heroId}-death`);
     },
   };
 }
@@ -251,4 +253,19 @@ function addAnimatedBackdrop(scene: Phaser.Scene, rect: { x: number; y: number; 
 export function addScreenBackdrop(scene: Phaser.Scene, screen: keyof typeof SCREEN_BACKDROPS): void {
   const { name, dim } = SCREEN_BACKDROPS[screen];
   addBackdrop(scene, name, { x: 0, y: 0, width: 800, height: 600 }, dim);
+}
+
+/** A hero's portrait for the select screen: the first frame of their picture sheet, or a flat-colour stand-in
+ *  when they have no picture yet. Centered on (x, y), about `height` tall. */
+export function addHeroPortrait(scene: Phaser.Scene, hero: HeroDefinition, x: number, y: number, height: number): Phaser.GameObjects.GameObject {
+  const art = HERO_ART[hero.id];
+  if (art && scene.textures.exists(`hero-${hero.id}`)) {
+    const sprite = scene.add.sprite(x, y, `hero-${hero.id}`, 0);
+    return sprite.setScale(height / art.frameHeight);
+  }
+  const g = scene.add.graphics({ x, y });
+  g.fillStyle(hero.placeholderColor, 1);
+  g.fillRoundedRect(-height * 0.2, -height * 0.3, height * 0.4, height * 0.8, 10);
+  g.fillCircle(0, -height * 0.42, height * 0.15);
+  return g;
 }

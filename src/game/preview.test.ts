@@ -176,6 +176,7 @@ describe('live numbers on card faces: preview matches playing the card', () => {
       adjustTemperature: false,
       addCardToHand: false,
       gainEnergizedTurns: false,
+      gainRadiantLight: false,
     };
     for (const [kind, lower] of Object.entries(kinds)) {
       const effect = { kind, value: 1, status: 'strength', to: 'self', factor: 2 } as unknown as Effect;

@@ -80,6 +80,14 @@ export const CREDITS: readonly Credit[] = [
     licence: 'Licence not yet confirmed',
   },
   {
+    usedFor: 'Paladin hero (animated)',
+    source: 'Paladin model (animated GIF)',
+    // PROVISIONAL: the user supplied the picture; its author, source page and licence are not known yet.
+    url: '',
+    author: 'Unknown (supplied by the project owner)',
+    licence: 'Licence not yet confirmed',
+  },
+  {
     usedFor: 'Background music',
     source: 'alex_089 on SoundCloud',
     url: 'https://soundcloud.com/alex_089_x',

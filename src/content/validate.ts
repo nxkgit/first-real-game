@@ -6,11 +6,13 @@ import type {
   EnemyDefinition,
   EnemyMove,
   EventDefinition,
+  HeroDefinition,
   RelicDefinition,
   RunEffect,
   StatusDefinition,
   Trigger,
 } from '../game/types';
+import { RADIANT_LIGHT_MAX } from '../data/tunables';
 import { EFFECT_KINDS, SCALE_SOURCES, TRIGGER_EVENTS } from './vocabulary';
 
 // Content validation: reads everything the registries hold and reports problems in words a content
@@ -22,7 +24,7 @@ import { EFFECT_KINDS, SCALE_SOURCES, TRIGGER_EVENTS } from './vocabulary';
 // warning = probably a mistake or a gap, check it; info = a fact worth knowing, often intended.
 
 export type Severity = 'error' | 'warning' | 'info';
-export type ContentKind = 'card' | 'relic' | 'enemy' | 'event' | 'status' | 'act';
+export type ContentKind = 'card' | 'relic' | 'enemy' | 'event' | 'status' | 'act' | 'hero';
 
 export interface Issue {
   severity: Severity;
@@ -56,6 +58,25 @@ export interface ContentWorld {
   act: MapContent;
   playerMaxHp: number;
   maxEnergy: number;
+  /** Every playable hero with its own reward and starter pools (hero cards plus colorless). Optional so
+   *  hand-built test worlds need not supply it; the checks that need it are skipped without it. */
+  heroes?: readonly { hero: HeroDefinition; rewardPool: readonly CardDefinition[]; starterPool: readonly CardDefinition[] }[];
+}
+
+/** Effects and statuses that only make sense for one hero: a colorless card must not rely on them. */
+const HERO_ONLY_EFFECTS = new Set<string>(['gainRadiantLight', 'adjustTemperature', 'addCardToHand']);
+const HERO_ONLY_SCALING = new Set<string>(['temperature', 'targetFreeze']);
+
+function allEffectsOf(card: CardDefinition): Effect[] {
+  return [...(card.effects ?? []), ...(card.onTurnStartEffect ? [card.onTurnStartEffect] : []), ...(card.triggers ?? []).flatMap((t) => t.effects)];
+}
+
+/** The most energy a player of this card's owner ever has: the owner's own, or for a colorless card the lowest of any hero. */
+function energyCapFor(world: ContentWorld, card: CardDefinition): number {
+  const own = world.heroes?.find((h) => h.hero.id === card.owner)?.hero.energy;
+  if (own !== undefined) return own;
+  if (card.owner === 'neutral' && world.heroes) return Math.min(world.maxEnergy, ...world.heroes.map((h) => h.hero.energy));
+  return world.maxEnergy;
 }
 
 /** How far from the cohort's middle counts as "suspicious". Provisional; tune freely. */
@@ -262,8 +283,23 @@ function checkCards(world: ContentWorld, out: Collector): void {
     if (!card.name || card.name.trim() === '') out.add('error', 'card', id, 'empty-name', 'The card has no name.', 'Set name.');
     if (!Number.isInteger(card.cost) || card.cost < 0) {
       out.add('error', 'card', id, 'bad-cost', `Cost ${String(card.cost)} is not a whole number of 0 or more.`, 'Set cost to 0, 1, 2...');
-    } else if (card.cost > world.maxEnergy) {
-      out.add('error', 'card', id, 'unplayable-cost', `Costs ${card.cost} but the player only ever has ${world.maxEnergy} energy, so it can never be played.`, `Lower the cost to ${world.maxEnergy} or less, or raise MAX_ENERGY in src/data/tunables.ts.`);
+    } else if (card.costResource === 'radiantLight') {
+      if (card.cost > RADIANT_LIGHT_MAX) {
+        out.add('error', 'card', id, 'unplayable-cost', `Costs ${card.cost} Radiant Light but it can never go above ${RADIANT_LIGHT_MAX}, so it can never be played.`, `Lower the cost to ${RADIANT_LIGHT_MAX} or less, or raise RADIANT_LIGHT_MAX in src/data/tunables.ts.`);
+      }
+    } else if (card.cost > energyCapFor(world, card)) {
+      const cap = energyCapFor(world, card);
+      out.add('error', 'card', id, 'unplayable-cost', `Costs ${card.cost} but the player only ever has ${cap} energy, so it can never be played.`, `Lower the cost to ${cap} or less, or raise the hero's energy in src/data/heroes.ts (Mage: MAX_ENERGY in src/data/tunables.ts).`);
+    }
+
+    // a colorless card is playable by every hero, so it must not need one hero's own resource or status
+    if (card.owner === 'neutral') {
+      const heroOnly =
+        card.costResource !== undefined ||
+        allEffectsOf(card).some((e) => HERO_ONLY_EFFECTS.has(e.kind) || (e.kind === 'applyStatus' && e.status === 'freeze') || ('scaling' in e && e.scaling !== undefined && HERO_ONLY_SCALING.has(e.scaling.per)));
+      if (heroOnly) {
+        out.add('error', 'card', id, 'colorless-hero-mechanic', 'A colorless card uses a mechanic that belongs to one hero (Temperature, Freeze, Radiant Light or a Radiant Light cost).', 'Give the card to that hero (owner) or remove the hero-only part.');
+      }
     }
 
     // text
@@ -546,6 +582,20 @@ function checkAct(world: ContentWorld, out: Collector): void {
   for (const c of wrong) out.add('error', 'act', c.id, 'upgraded-in-pool', `Upgraded card ${c.name} is in the reward pool.`, 'Upgrades must never be offered by themselves.');
 }
 
+// ---------- heroes ----------
+
+function checkHeroes(world: ContentWorld, out: Collector): void {
+  for (const { hero, rewardPool, starterPool } of world.heroes ?? []) {
+    if (rewardPool.length < 3) out.add('warning', 'hero', hero.id, 'small-pool', `${hero.name}'s reward pool has ${rewardPool.length} cards; rewards offer 3 to choose from.`, 'Add cards owned by this hero or colorless ones with inRewardPool: true.');
+    if (starterPool.length < 3) out.add('warning', 'hero', hero.id, 'small-starter-pool', `${hero.name}'s starter-draft pool has ${starterPool.length} cards; each draft round offers 3 to choose from.`, 'Add cards with inStarterPool: true.');
+    if (!hero.heroPower || hero.heroPower.effects.length === 0) out.add('error', 'hero', hero.id, 'no-hero-power', `${hero.name} has no usable hero power; every hero needs one.`, 'Give the hero a heroPower with at least one effect in src/data/heroes.ts.');
+    if (!Number.isInteger(hero.maxHp) || hero.maxHp < 1) out.add('error', 'hero', hero.id, 'bad-hp', `${hero.name}'s max HP ${String(hero.maxHp)} is not a whole number of 1 or more.`, 'Set maxHp in src/data/heroes.ts.');
+    if (!Number.isInteger(hero.energy) || hero.energy < 1) out.add('error', 'hero', hero.id, 'bad-energy', `${hero.name}'s energy ${String(hero.energy)} is not a whole number of 1 or more.`, 'Set energy in src/data/heroes.ts.');
+    const usesLight = [...rewardPool, ...starterPool].some((c) => c.costResource === 'radiantLight' || allEffectsOf(c).some((e) => e.kind === 'gainRadiantLight'));
+    if (usesLight && hero.resource !== 'radiantLight') out.add('warning', 'hero', hero.id, 'resource-undeclared', `${hero.name}'s pools hold Radiant Light cards but the hero does not declare the resource, so the fight screen would not show it.`, "Set resource: 'radiantLight' on the hero.");
+  }
+}
+
 // ---------- entry points ----------
 
 const ORDER: Record<Severity, number> = { error: 0, warning: 1, info: 2 };
@@ -559,6 +609,7 @@ export function validateContent(world: ContentWorld): Issue[] {
   checkEvents(world, out);
   checkStatuses(world, out);
   checkAct(world, out);
+  checkHeroes(world, out);
   return out.issues.map((issue, i) => ({ issue, i })).sort((a, b) => ORDER[a.issue.severity] - ORDER[b.issue.severity] || a.i - b.i).map((x) => x.issue);
 }
 

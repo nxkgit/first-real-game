@@ -4,7 +4,8 @@ import { cardTagsText, cardText, relicText } from '../game/describe';
 import { lowerIsBetterFor } from '../game/effects';
 import type { RunNode, RunState } from '../game/RunState';
 import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from '../settings';
-import { getCurrentCombat, getCurrentRun, setCurrentRun } from '../session';
+import { getCurrentCombat, getCurrentRun, heroFromUrl, seedFromUrl, setCurrentRun } from '../session';
+import { newRun } from '../data/run';
 import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
 import { BUILD_ID } from '../qa/buildInfo';
 import { browserEnvironment, openReportDialog } from '../qa/reportDialog';
@@ -38,7 +39,8 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     g.strokeRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 10);
   }
 
-  const costBadge = scene.add.circle(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, 13, accent);
+  // a card paid for in Radiant Light has a gold cost badge, so it can't be mistaken for an energy cost
+  const costBadge = scene.add.circle(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, 13, card.costResource === 'radiantLight' ? 0xc9a23a : accent);
   const costText = scene.add
     .text(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, `${card.cost}`, {
       fontSize: '14px',
@@ -53,7 +55,7 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     .text(0, -36, card.name, { fontSize: '14px', color: card.upgradeOf ? '#9fe08a' : '#ffffff', fontStyle: 'bold' })
     .setOrigin(0.5);
   for (let size = 13; nameText.width > CARD_WIDTH - 12 && size >= 10; size--) nameText.setFontSize(size);
-  const typeText = scene.add.text(0, -19, card.type.toUpperCase(), { fontSize: '10px', color: '#9a9aae' }).setOrigin(0.5);
+  const typeText = scene.add.text(0, -19, `${card.type.toUpperCase()}${card.costResource === 'radiantLight' ? ' · LIGHT' : ''}`, { fontSize: '10px', color: '#9a9aae' }).setOrigin(0.5);
   const descText = scene.add
     .text(0, 28, cardText(card), {
       fontSize: '11px',
@@ -446,6 +448,17 @@ const NODE_SCENE: Record<RunNode['kind'], string> = {
   shop: 'ShopScene',
   event: 'EventScene',
 };
+
+/**
+ * A new run: the hero select screen, or straight in when the address names a hero (`?hero=paladin`,
+ * which the browser tests and the dev tools use). Continuing a saved run never comes through here.
+ * `useUrlSeed` is whether `?seed=` applies (the first boot) or the run gets a random seed.
+ */
+export function startNewRun(scene: Phaser.Scene, useUrlSeed: boolean): void {
+  const heroId = heroFromUrl();
+  if (heroId) enterCurrentNode(scene, newRun(useUrlSeed ? seedFromUrl() : undefined, heroId));
+  else scene.scene.start('HeroSelectScene', { useUrlSeed });
+}
 
 /** Starts whichever scene matches where the run is now. Every scene transition goes through here. */
 export function enterCurrentNode(scene: Phaser.Scene, run: RunState): void {

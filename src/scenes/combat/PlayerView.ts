@@ -1,12 +1,13 @@
 import Phaser from 'phaser';
 import type { CombatState } from '../../game/CombatState';
+import type { HeroDefinition } from '../../game/types';
 import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { PLAYER_X, PLAYER_Y } from './layout';
 import { addIcon, buildHeroSprite } from '../art';
 import type { HeroSprite } from '../art';
-import { addIdleBob, buildMageCharacter } from './drawings';
+import { addIdleBob, buildMageCharacter, buildPlaceholderHero } from './drawings';
 
 const STAT_Y = 360;
 const BLOCK_X = 165;
@@ -27,17 +28,19 @@ export class PlayerView {
   private readonly energyText: Phaser.GameObjects.Text;
   /** Mage-only "Temperature" readout; stays hidden for a hero without one (setTemperature(undefined)). */
   private readonly temperatureText: Phaser.GameObjects.Text;
+  /** Paladin-only "Radiant Light" readout (placeholder resource); hidden for a hero without it. */
+  private readonly radiantLightText: Phaser.GameObjects.Text;
   /** Block currently shown, which can lag the live value while animations replay. */
   private shownBlock = 0;
 
-  constructor(scene: Phaser.Scene, combat: CombatState, tooltips: Tooltips) {
+  constructor(scene: Phaser.Scene, combat: CombatState, tooltips: Tooltips, hero: HeroDefinition) {
     this.scene = scene;
-    this.hero = buildHeroSprite(scene);
-    this.container = this.hero?.container ?? buildMageCharacter(scene);
+    this.hero = buildHeroSprite(scene, hero.id);
+    this.container = this.hero?.container ?? (hero.id === 'mage' ? buildMageCharacter(scene) : buildPlaceholderHero(scene, hero.placeholderColor));
     this.container.setPosition(PLAYER_X, PLAYER_Y);
     if (!this.hero) addIdleBob(scene, this.container, PLAYER_Y);
 
-    scene.add.text(PLAYER_X, 130, 'HERO', { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    scene.add.text(PLAYER_X, 130, hero.name.toUpperCase(), { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
 
     const heartIcon = addIcon(scene, 'heart', 34);
     if (heartIcon) {
@@ -75,6 +78,14 @@ export class PlayerView {
       .setOrigin(0.5)
       .setVisible(false);
     tooltips.add(235, STAT_Y + 30, 60, 20, () => (this.temperatureText.visible ? 'Temperature: fire cards heat it up, frost cards cool it down. PROVISIONAL mechanic.' : null));
+
+    this.radiantLightText = scene.add
+      .text(235, STAT_Y + 30, '', { fontSize: '13px', color: '#f0d27a', fontStyle: 'bold' })
+      .setOrigin(0.5)
+      .setVisible(false);
+    tooltips.add(235, STAT_Y + 30, 80, 20, () =>
+      this.radiantLightText.visible ? 'Radiant Light: a second resource, spent to play cards that cost it. Cards generate it; it carries between turns. PLACEHOLDER mechanic.' : null
+    );
 
     tooltips.add(170, STAT_Y, 40, 28, () =>
       combat.player.block > 0
@@ -115,6 +126,12 @@ export class PlayerView {
     if (temperature === undefined) return;
     this.temperatureText.setText(`Temp ${temperature > 0 ? '+' : ''}${temperature}`);
     this.temperatureText.setColor(temperature > 0 ? '#e8825c' : temperature < 0 ? '#6fd3e8' : '#cfcfcf');
+  }
+
+  /** `undefined` hides the readout (a hero with no Radiant Light). */
+  setRadiantLight(radiantLight: number | undefined): void {
+    this.radiantLightText.setVisible(radiantLight !== undefined);
+    if (radiantLight !== undefined) this.radiantLightText.setText(`Light ${radiantLight}`);
   }
 
   /** Where block particles and "+N" text appear. */

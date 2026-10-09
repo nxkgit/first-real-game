@@ -29,6 +29,7 @@ const SAMPLES: Record<EffectKind, Effect> = {
   adjustTemperature: { kind: 'adjustTemperature', value: 1 },
   addCardToHand: { kind: 'addCardToHand', cardId: 'strike', value: 1 },
   gainEnergizedTurns: { kind: 'gainEnergizedTurns', value: 2 },
+  gainRadiantLight: { kind: 'gainRadiantLight', value: 2 },
 };
 const KINDS = Object.keys(SAMPLES) as EffectKind[];
 
@@ -58,7 +59,7 @@ describe('effect registry', () => {
   it('scaling: value-carrying kinds accept every source, the rest accept none', () => {
     for (const kind of KINDS) {
       const scales = EFFECTS[kind].scales;
-      if (['multiplyStatus', 'exhaustRandom', 'discardRandom', 'adjustTemperature', 'gainEnergizedTurns'].includes(kind)) expect(scales, kind).toEqual([]);
+      if (['multiplyStatus', 'exhaustRandom', 'discardRandom', 'adjustTemperature', 'gainEnergizedTurns', 'gainRadiantLight'].includes(kind)) expect(scales, kind).toEqual([]);
       else expect([...scales].sort(), kind).toEqual([...ALL_SCALE_SOURCES].sort());
       expect(acceptsScaling(SAMPLES[kind]), kind).toBe(scales.length > 0);
     }

@@ -2,12 +2,14 @@ import type { CardDefinition } from '../game/types';
 import { SYNERGY_CARDS } from './synergyCards';
 import { MAGE_CARDS } from './mageCards';
 import { KEYWORD_CARDS } from './keywordCards';
+import { PALADIN_CARDS } from './paladinCards';
 
 // PLACEHOLDER content. Names/numbers here are functional stand-ins to exercise the game's
 // systems — final card design, naming, and flavor are the user's to author (see CLAUDE.md).
 // Card text is generated from `effects` (game/describe.ts), so numbers live in one place.
 
-/** The only hero so far. Cards belong to a hero by id, or to 'neutral' for cards any hero can use. */
+/** The Mage's hero id. Cards belong to a hero by id, or to 'neutral' ("colorless") for cards any hero can use.
+ *  Since 2026-10-09 the Mage owns only its fire/frost cards (mageCards.ts); everything in this file is colorless. */
 export const MAGE = 'mage';
 
 export const STRIKE: CardDefinition = {
@@ -16,7 +18,7 @@ export const STRIKE: CardDefinition = {
   type: 'attack',
   target: 'enemy',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'damage', value: 6 }],
@@ -28,7 +30,7 @@ export const DEFEND: CardDefinition = {
   name: 'Defend',
   type: 'skill',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'block', value: 5 }],
@@ -41,7 +43,7 @@ export const BOLT: CardDefinition = {
   type: 'attack',
   target: 'enemy',
   cost: 2,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   inStarterPool: true,
   effects: [{ kind: 'damage', value: 12 }],
@@ -53,7 +55,7 @@ export const FOCUS: CardDefinition = {
   name: 'Focus',
   type: 'power',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   onTurnStartEffect: { kind: 'draw', value: 1 },
@@ -70,7 +72,7 @@ export const JAB: CardDefinition = {
   type: 'attack',
   target: 'enemy',
   cost: 0,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'damage', value: 3 }],
@@ -83,7 +85,7 @@ export const GUARDED_STRIKE: CardDefinition = {
   type: 'attack',
   target: 'enemy',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [
@@ -104,7 +106,7 @@ export const HEAVY_HIT: CardDefinition = {
   type: 'attack',
   target: 'enemy',
   cost: 3,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'damage', value: 24 }],
@@ -116,7 +118,7 @@ export const BIG_BLOCK: CardDefinition = {
   name: 'Big Block',
   type: 'skill',
   cost: 2,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'block', value: 13 }],
@@ -128,7 +130,7 @@ export const QUICK_DRAW: CardDefinition = {
   name: 'Quick Draw',
   type: 'skill',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'draw', value: 2 }],
@@ -140,7 +142,7 @@ export const FORTIFY: CardDefinition = {
   name: 'Fortify',
   type: 'power',
   cost: 2,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   onTurnStartEffect: { kind: 'block', value: 4 },
@@ -155,7 +157,7 @@ export const WEAKEN: CardDefinition = {
   type: 'skill',
   target: 'enemy',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'applyStatus', status: 'weak', value: 2, to: 'target' }],
@@ -168,7 +170,7 @@ export const EXPOSE: CardDefinition = {
   type: 'skill',
   target: 'enemy',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'applyStatus', status: 'vulnerable', value: 2, to: 'target' }],
@@ -181,7 +183,7 @@ export const SUNDER: CardDefinition = {
   type: 'attack',
   target: 'enemy',
   cost: 2,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [
@@ -201,7 +203,7 @@ export const STRENGTHEN: CardDefinition = {
   name: 'Strengthen',
   type: 'power',
   cost: 1,
-  owner: MAGE,
+  owner: 'neutral',
   inRewardPool: true,
   inStarterPool: true,
   effects: [{ kind: 'applyStatus', status: 'strength', value: 2, to: 'self' }],
@@ -231,6 +233,8 @@ const ALL_CARDS: CardDefinition[] = [
   ...SYNERGY_CARDS,
   // the Mage's fire/frost/Freeze cards (user's design, see mageCards.ts): in the reward pool
   ...MAGE_CARDS,
+  // the Paladin's PLACEHOLDER cards, including the Radiant Light ones (see paladinCards.ts)
+  ...PALADIN_CARDS,
   // StS-style keyword demo cards (innate/retain/ethereal/unplayable/frail/intangible/buffer):
   // engine-only, never offered as rewards (see keywordCards.ts)
   ...KEYWORD_CARDS,

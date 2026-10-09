@@ -30,6 +30,7 @@ import {
   MAX_HAND_SIZE,
   MAX_TRIGGER_DEPTH,
   PLAYER_MAX_HP,
+  RADIANT_LIGHT_MAX,
   TEMPERATURE_MAX,
   TEMPERATURE_MIN,
 } from '../data/tunables';
@@ -62,6 +63,8 @@ export interface CombatOptions {
   relics?: RelicDefinition[];
   /** The hero's once-per-turn active ability, if they have one (see CombatState.useHeroPower). */
   heroPower?: HeroPowerDefinition;
+  /** Energy per turn (a hero's own number; default MAX_ENERGY). Ignored when restoring a snapshot, which carries its own. */
+  maxEnergy?: number;
   /** A seeded stream to draw the fight's randomness from (instead of `random`). Needed to capture
    *  the fight exactly (see `exportState`). */
   rng?: Rng;
@@ -94,6 +97,8 @@ export interface CombatSnapshot {
   temperature?: number;
   energizedTurnsRemaining?: number;
   heroPowerUsedThisTurn?: boolean;
+  /** Paladin-only mechanic (optional so older snapshots/scenarios still load as 0). */
+  radiantLight?: number;
 }
 
 export type CombatPhase = 'playerTurn' | 'enemyTurn' | 'won' | 'lost';
@@ -135,7 +140,9 @@ export interface CombatEventMap {
   combatEnded: { result: 'won' | 'lost' };
   /** Mage-only: Temperature shifted (adjustTemperature). */
   temperatureChanged: { temperature: number; delta: number };
-  /** Mage-only: the hero power was used. */
+  /** Paladin-only: Radiant Light changed (a card gained it, or paid for a card). `radiantLight` is the new total. */
+  radiantLightChanged: { radiantLight: number; delta: number };
+  /** The hero power was used. */
   heroPowerUsed: Record<string, never>;
   /** Mage-only: an enemy's Freeze stacks crossed FREEZE_STUN_THRESHOLD and it owes a stunned move. */
   enemyStunned: { enemyId: CombatantId };
@@ -165,6 +172,9 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** Mage-only "Temperature" mechanic (implementationplan.md "Mage — Core Mechanics"): clamped to
    *  [TEMPERATURE_MIN, TEMPERATURE_MAX], starts at 0. Fire cards push it up, frost cards pull it down. */
   temperature = 0;
+  /** Paladin-only placeholder resource: starts at 0, carries between turns, gained from cards, spent to play
+   *  cards with `costResource: 'radiantLight'`. Clamped to [0, RADIANT_LIGHT_MAX]. */
+  radiantLight = 0;
   /** The hero's once-per-turn active ability, if they have one. */
   readonly heroPower?: HeroPowerDefinition;
   heroPowerUsedThisTurn = false;
@@ -218,6 +228,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       moveIndex: 0,
     }));
     this.heroPower = options.heroPower;
+    this.maxEnergy = options.maxEnergy ?? MAX_ENERGY;
     this.restored = snapshot !== undefined;
     if (snapshot) this.applySnapshot(snapshot);
     this.host = {
@@ -236,6 +247,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       livingEnemies: () => this.livingEnemies,
       adjustTemperature: (delta) => this.adjustTemperature(delta),
       gainEnergizedTurns: (turns) => (this.energizedTurnsRemaining += turns),
+      gainRadiantLight: (amount) => this.gainRadiantLight(amount),
       addCardsToHand: (definition, count) => this.addCardsToHand(definition, count),
       calcBlock: (base, who) => this.calcBlock(base, who),
       consumeBufferIfPresent: (target) => this.consumeBufferIfPresent(target),
@@ -259,6 +271,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       enemy.stunnedTurns = from.stunnedTurns ?? 0;
     });
     this.temperature = s.temperature ?? 0;
+    this.radiantLight = s.radiantLight ?? 0;
     this.energizedTurnsRemaining = s.energizedTurnsRemaining ?? 0;
     this.heroPowerUsedThisTurn = s.heroPowerUsedThisTurn ?? false;
     this.stats.cardsPlayedThisTurn = s.stats.cardsPlayedThisTurn;
@@ -299,6 +312,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       })),
       relics: [...this.relics],
       temperature: this.temperature,
+      radiantLight: this.radiantLight,
       energizedTurnsRemaining: this.energizedTurnsRemaining,
       heroPowerUsedThisTurn: this.heroPowerUsedThisTurn,
       piles: {
@@ -429,7 +443,12 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   }
 
   canPlay(card: CardInstance): boolean {
-    return this.phase === 'playerTurn' && !card.definition.unplayable && card.definition.cost <= this.energy;
+    return this.phase === 'playerTurn' && !card.definition.unplayable && card.definition.cost <= this.resourceFor(card.definition);
+  }
+
+  /** How much of the resource that pays for `card` the player has right now (energy, or Radiant Light). */
+  private resourceFor(card: CardDefinition): number {
+    return card.costResource === 'radiantLight' ? this.radiantLight : this.energy;
   }
 
   canUseHeroPower(): boolean {
@@ -463,7 +482,12 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       if (!target) return false;
     }
 
-    this.energy -= handCard.definition.cost;
+    if (handCard.definition.costResource === 'radiantLight') {
+      this.radiantLight -= handCard.definition.cost;
+      this.emit('radiantLightChanged', { radiantLight: this.radiantLight, delta: -handCard.definition.cost });
+    } else {
+      this.energy -= handCard.definition.cost;
+    }
     this.deck.playCard(instanceId);
     this.emit('cardPlayed', { card: handCard, targetId: target?.id });
 
@@ -746,6 +770,13 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   private adjustTemperature(delta: number): number {
     this.temperature = Math.min(TEMPERATURE_MAX, Math.max(TEMPERATURE_MIN, this.temperature + delta));
     return this.temperature;
+  }
+
+  /** Gains Radiant Light (clamped to RADIANT_LIGHT_MAX) and returns the new total and the real change. */
+  private gainRadiantLight(amount: number): { radiantLight: number; delta: number } {
+    const before = this.radiantLight;
+    this.radiantLight = Math.min(RADIANT_LIGHT_MAX, Math.max(0, before + amount));
+    return { radiantLight: this.radiantLight, delta: this.radiantLight - before };
   }
 
   /** Mage-only: materializes new cards straight into the hand (Molten Core). Counted in

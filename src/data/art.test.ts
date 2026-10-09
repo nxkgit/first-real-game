@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ASHLANDS, BACKGROUNDS, DEFAULT_COMBAT_BACKGROUND, ENEMY_ART, HERO_SHEET, backgroundFor } from './art';
+import { ASHLANDS, BACKGROUNDS, DEFAULT_COMBAT_BACKGROUND, ENEMY_ART, HERO_ART, backgroundFor } from './art';
 import { ENEMY_ART_ENTRIES } from './enemyArt';
 import { ENEMIES } from './enemies';
 
@@ -85,12 +85,14 @@ describe('enemy art manifest', () => {
 
 describe('hero art', () => {
   it('describes the hero strip the way it is really cut', () => {
-    const { width, height } = pngSize('public/assets/hero/hero.png');
-    expect(width % HERO_SHEET.frameWidth).toBe(0);
-    expect(height).toBe(HERO_SHEET.frameHeight);
-    const count = width / HERO_SHEET.frameWidth;
-    for (const def of [HERO_SHEET.idle, HERO_SHEET.attack, HERO_SHEET.death]) {
-      if (def) expect(def.end).toBeLessThan(count);
+    for (const [id, art] of Object.entries(HERO_ART)) {
+      const { width, height } = pngSize(`public/assets/${art.file}`);
+      expect(width % art.frameWidth, id).toBe(0);
+      expect(height, id).toBe(art.frameHeight);
+      const count = width / art.frameWidth;
+      for (const def of [art.idle, art.attack, art.death]) {
+        if (def) expect(def.end, id).toBeLessThan(count);
+      }
     }
   });
 });

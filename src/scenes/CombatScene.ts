@@ -9,7 +9,6 @@ import { useLayoutCamera } from '../display';
 import { setCurrentCombat, takePendingScenario } from '../session';
 import { restoreScenario } from '../game/scenario';
 import { STATUSES } from '../data/statuses';
-import { MAGE_HERO_POWER } from '../data/heroPowers';
 import { heroPowerText } from '../game/describe';
 import {
   CARD_HEIGHT,
@@ -132,7 +131,7 @@ export class CombatScene extends Phaser.Scene {
     const scenario = takePendingScenario();
     if (scenario) {
       // a fight picked up from a dev-panel scenario: its own piles, stream and state (the run's stream is left alone)
-      this.combat = restoreScenario(scenario, undefined, MAGE_HERO_POWER);
+      this.combat = restoreScenario(scenario, undefined, this.run.hero.heroPower);
       this.powersPlayed = this.combat.deck.powerPile.length;
     } else {
       // the fight's shuffles come from the run's seeded stream, so a replayed or resumed run is identical
@@ -140,13 +139,14 @@ export class CombatScene extends Phaser.Scene {
         player: { hp: this.run.hp, maxHp: this.run.maxHp },
         rng: this.run.newCombatRng(),
         relics: this.run.relics,
-        heroPower: MAGE_HERO_POWER,
+        heroPower: this.run.hero.heroPower,
+        maxEnergy: this.run.hero.energy,
       });
     }
     setCurrentCombat(this.combat);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => setCurrentCombat(null));
     this.tooltips = new Tooltips(this);
-    this.playerView = new PlayerView(this, this.combat, this.tooltips);
+    this.playerView = new PlayerView(this, this.combat, this.tooltips, this.run.hero);
     const slots = enemySlots(this.combat.enemies.length);
     const crowded = this.combat.enemies.length > 1;
     this.enemyViews = this.combat.enemies.map(
@@ -807,7 +807,9 @@ export class CombatScene extends Phaser.Scene {
     this.playerView.setBlock(c.player.block);
     this.playerView.setEnergy(c.energy, c.maxEnergy);
     this.playerView.statusRow.set(c.player.statuses);
-    this.playerView.setTemperature(c.heroPower ? c.temperature : undefined);
+    // a hero's own resource is declared by the hero (data/heroes.ts), not guessed from having a hero power
+    this.playerView.setTemperature(this.run.hero.resource === 'temperature' ? c.temperature : undefined);
+    this.playerView.setRadiantLight(this.run.hero.resource === 'radiantLight' ? c.radiantLight : undefined);
     for (const view of this.enemyViews) view.syncFrom();
 
     this.statusText.setText(c.log.slice(-2).map((e) => e.message).join('\n'));

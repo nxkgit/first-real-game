@@ -3,6 +3,7 @@
 // starts. Card and enemy numbers live with their definitions in cards.ts / enemies.ts.
 
 // ---- combat ----
+/** Energy per turn for the Mage (heroes set their own in data/heroes.ts; this is the Mage's value). */
 export const MAX_ENERGY = 4;
 export const HAND_SIZE = 5;
 /** Most cards the hand can hold. A card drawn into a full hand goes straight to the discard pile (as in StS). PROVISIONAL. */
@@ -42,16 +43,24 @@ export const STARTER_DECK_SIZE = 10;
 export const STARTER_DRAFT_OFFER_SIZE = 3;
 
 // ---- run ----
+/** Max HP of the Mage (heroes set their own in data/heroes.ts; this is the Mage's value). */
 export const PLAYER_MAX_HP = 60;
+/** Paladin (placeholder stats, user 2026-10-09, to test heroes with different numbers): max HP is this fraction of the Mage's. */
+export const PALADIN_MAX_HP_FACTOR = 0.9;
+/** Paladin energy per turn (the Mage has MAX_ENERGY). */
+export const PALADIN_ENERGY = 3;
+/** Radiant Light (the Paladin's placeholder resource) can't go above this. No cap was specified; PROVISIONAL. */
+export const RADIANT_LIGHT_MAX = 10;
 /** Fraction of max HP restored at a rest stop. */
 export const REST_HEAL_FRACTION = 0.3;
 /** How many cards the post-combat reward offers to pick from. */
 export const REWARD_CARD_CHOICES = 3;
 /**
  * How much more likely a hero's own card is to be offered than a neutral one when rolling card
- * rewards and shop stock (user, 2026-10-08: 1.5:1 in favour of Mage cards). 1 = no preference.
+ * rewards and shop stock (user, 2026-10-08: 1.5:1 in favour of Mage cards; 2026-10-09: 2:1, for every
+ * hero, once most cards became colorless). 1 = no preference.
  */
-export const HERO_CARD_WEIGHT = 1.5;
+export const HERO_CARD_WEIGHT = 2;
 /**
  * Gold offered instead of a card after a win. Open question (implementationplan.md): gold
  * must end up a genuine toss-up against the card, which can't be tuned until a shop exists.

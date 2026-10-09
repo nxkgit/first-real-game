@@ -213,6 +213,7 @@ describe('cards', () => {
     for (const def of cards) {
       const rng = new Rng(3);
       const combat = new CombatState([def, def, def, def, def, def], [dummy], { random: () => rng.next() });
+      combat.radiantLight = 50; // likewise for cards paid for in Radiant Light
       combat.maxEnergy = 50; // some cards cost more than a turn's energy: the smoke test is about effects, not affordability
       combat.start();
       const target = def.target ? 'enemy-0' : undefined;

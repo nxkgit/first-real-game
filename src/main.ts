@@ -3,6 +3,7 @@ import { BootScene } from './scenes/BootScene';
 import { CombatScene } from './scenes/CombatScene';
 import { DraftIntroScene } from './scenes/DraftIntroScene';
 import { EventScene } from './scenes/EventScene';
+import { HeroSelectScene } from './scenes/HeroSelectScene';
 import { MapScene } from './scenes/MapScene';
 import { RestScene } from './scenes/RestScene';
 import { RewardScene } from './scenes/RewardScene';
@@ -20,7 +21,7 @@ const game = new Phaser.Game({
   parent: 'app',
   backgroundColor: '#1b1b24',
   disableContextMenu: true, // right-click cancels card targeting
-  scene: [BootScene, DraftIntroScene, MapScene, CombatScene, RewardScene, RestScene, ShopScene, EventScene, RunEndScene],
+  scene: [BootScene, HeroSelectScene, DraftIntroScene, MapScene, CombatScene, RewardScene, RestScene, ShopScene, EventScene, RunEndScene],
 });
 
 fitGameToWindow(game);

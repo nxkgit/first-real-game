@@ -30,6 +30,7 @@ export const EFFECT_KINDS: Record<Effect['kind'], EffectKindInfo> = {
   damageAll: { scales: true, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Deal damage to every living enemy. Player only; no `target: "enemy"` needed.' },
   adjustTemperature: { scales: false, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Mage only: shift Temperature (negative cools down), clamped to its range. Player only.' },
   addCardToHand: { scales: true, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Put copies of a specific card (`cardId`) straight into the hand. Player only.' },
+  gainRadiantLight: { scales: false, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Paladin only: gain Radiant Light (capped), the resource some cards cost instead of energy. Player only.' },
   gainEnergizedTurns: { scales: false, enemyMove: false, intentIcon: false, hasValue: true, summary: 'Gain 1 extra energy at the start of your turn for that many turns (not counting this one). Player only.' },
 };
 

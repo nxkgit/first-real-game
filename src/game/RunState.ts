@@ -3,6 +3,7 @@ import type {
   EnemyDefinition,
   EventDefinition,
   EventOutcome,
+  HeroDefinition,
   RelicDefinition,
   RunEffect,
 } from './types';
@@ -11,7 +12,6 @@ import { Rng, randomSeed } from './rng';
 import {
   ELITE_REWARD_GOLD,
   HERO_CARD_WEIGHT,
-  PLAYER_MAX_HP,
   REST_HEAL_FRACTION,
   REWARD_CARD_CHOICES,
   REWARD_GOLD,
@@ -32,6 +32,8 @@ export type RunNode =
 
 /** Everything the run needs to look up or draw from: the content of the game. */
 export interface RunWorld {
+  /** The hero this run is played as; the pools below are already that hero's own plus colorless. */
+  hero: HeroDefinition;
   rewardPool: CardDefinition[];
   /** Cards offered during the pre-run starter-deck draft (see data/cards.ts's `starterPoolFor`). */
   starterPool: CardDefinition[];
@@ -83,8 +85,13 @@ export interface EventFight {
 
 /** A run in a form that can be stored and restored (content by id). Bump `version` if this changes. */
 export interface SavedRun {
-  version: 3;
+  version: 4;
+  /** The hero being played (see data/heroes.ts). */
+  heroId: string;
+  /** The seed the stream actually runs on (a hero other than the Mage mixes its id in; see data/run.ts). */
   seed: number;
+  /** The seed the player sees and types (`?seed=`); equals `seed` for the Mage. */
+  baseSeed: number;
   rngPosition: number;
   map: ActMap;
   position: string | null;
@@ -114,7 +121,7 @@ export class RunState {
   deck: CardDefinition[];
   relics: RelicDefinition[] = [];
   hp: number;
-  maxHp = PLAYER_MAX_HP;
+  maxHp: number;
   gold = 0;
   phase: RunPhase = 'map';
   pendingReward: RewardOffer | null = null;
@@ -134,6 +141,8 @@ export class RunState {
 
   readonly map: ActMap;
   readonly rng: Rng;
+  /** The seed as the player knows it (what `?seed=` takes). Differs from `rng.seed` for a hero other than the Mage. */
+  baseSeed: number;
   private readonly world: RunWorld;
 
   constructor(map: ActMap, starterDeck: CardDefinition[], world: RunWorld, rng: Rng = new Rng(randomSeed())) {
@@ -141,12 +150,22 @@ export class RunState {
     this.map = map;
     this.world = world;
     this.rng = rng;
+    this.baseSeed = rng.seed;
     this.deck = [...starterDeck];
+    this.maxHp = world.hero.maxHp;
     this.hp = this.maxHp;
   }
 
   get seed(): number {
-    return this.rng.seed;
+    return this.baseSeed;
+  }
+
+  get hero(): HeroDefinition {
+    return this.world.hero;
+  }
+
+  get heroId(): string {
+    return this.world.hero.id;
   }
 
   // ---------- where you are ----------
@@ -477,8 +496,10 @@ export class RunState {
   /** The run as plain data, for saving. */
   toSaved(): SavedRun {
     return {
-      version: 3,
+      version: 4,
+      heroId: this.world.hero.id,
       seed: this.rng.seed,
+      baseSeed: this.baseSeed,
       rngPosition: this.rng.position,
       map: this.map,
       position: this.position,
@@ -506,7 +527,9 @@ export class RunState {
 
   /** Rebuilds a run from a save. Throws if the save names content that no longer exists. */
   static fromSaved(saved: SavedRun, world: RunWorld): RunState {
+    if (saved.heroId !== world.hero.id) throw new Error(`the save is for hero ${saved.heroId}, not ${world.hero.id}`);
     const run = new RunState(saved.map, [], world, Rng.restore(saved.seed, saved.rngPosition));
+    run.baseSeed = saved.baseSeed;
     run.deck = saved.deck.map((id) => world.card(id));
     run.relics = saved.relics.map((id) => world.relic(id));
     run.hp = saved.hp;
