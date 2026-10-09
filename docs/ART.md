@@ -34,6 +34,7 @@ screens
 | Map stop icons | `map/<kind>.png` | `map-<kind>` | `addMapIcon` (map nodes and legend) | file per stop kind, set in `MAP_ICONS` in the prepare script (the rest icon is overwritten by the campfire step) |
 | Relic badges, HP heart | `icons/<name>.png` | `icon-<name>` | `addIcon` (relic bar, `PlayerView`) | `RELIC_ICON` (relic id to icon), `ICON_FILES` |
 | Card and button borders | `ui/border.png` | `ui-border` | `addBorder` (card faces, buttons) | tinted by card type (`TYPE_COLOR` in `ui.ts`) or the button's stroke colour |
+| Card pictures | `cards/default.png`, `cards/<card-id>.png` | `card-art-default`, `card-art-<card-id>` | `addCardArt` (the window on `buildCardFace`, every screen that shows a card) | `CARD_ART_IDS` (ids that have their own file); every other card shows the default, an upgrade without its own file shows its base card's |
 | Backdrops | `backgrounds/<name>.png` | `bg-<name>` | `addBackdrop` (fights), `addScreenBackdrop` (map, rest, shop, event, reward) | `backgroundFor(tier, floor)` and `SCREEN_BACKDROPS` |
 | Animated ashlands backdrop (the default combat backdrop) | `backgrounds/ashlands-<n>.png`, one per frame, built from `assets/backgrounds/Ashlands_1.gif` | `bg-ashlands-<n>` | `addBackdrop` (it hands off to an animated path for this name) | `ASHLANDS` (frame count, frame time, size) and `DEFAULT_COMBAT_BACKGROUND` in `src/data/art.ts` |
 
@@ -79,3 +80,13 @@ Keep the GIF itself in the repo (it is small and is the source the strip is rebu
 - The styles clash on purpose (painted enemies, vector hero, pixel borders, flat backgrounds, line-art map icons). Choosing one direction is a creative decision still to come.
 - There are no pictures yet for statuses or enemy intents (they are still drawn shapes), and no touch or phone check of the new art.
 - Work on branches other than this one may add in-game credits, start/end-screen backdrops and animated enemies; check `git log` and `HANDOFF.md` before assuming this document is complete.
+
+## Card pictures
+
+Your own card art is made outside the repo (any editor); keep layered source files out of `public/` (for example in the git-ignored `assets/` folder) and export the finished picture.
+
+- **Size and shape:** a PNG at **2:1**, 320x160 recommended (a test fails on any other ratio). On the card it shows in a 98x42 window and is cropped to fill, never stretched, so keep the important part near the centre.
+- **To add one:** save it as `public/assets/cards/<card-id>.png` and add the id to `CARD_ART_IDS` in `src/data/art.ts`. `npm test` checks the list and the folder match and every id is a real card. No other code changes.
+- **Default:** `cards/default.png` is a plain geometric placeholder (regenerate with `python tools/makeDefaultCardArt.py`, or replace the file with a standard card picture of your own). Cards with no file of their own show it; if it is missing too, the card falls back to the old text-only layout.
+- **Upgrades** (`<id>+`) use the base card's picture unless `cards/<id>+.png` is listed in `CARD_ART_IDS`.
+- Third-party art needs a credit (`src/data/credits.ts` and `public/assets/CREDITS.md`); your own does not.

@@ -35,6 +35,12 @@ export const RELIC_ICON: Readonly<Record<string, string>> = {
 };
 export const ICON_FILES = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger', 'coin', 'tome', 'wand', 'gemBlue', 'campfire'] as const;
 
+/** Card ids that have their own picture at public/assets/cards/<id>.png (2:1, e.g. 320x160; see
+ *  docs/ART.md). Add an id here when you drop its file in. Every other card (and an upgraded card
+ *  without its own file, which uses its base card's) shows cards/default.png. A test keeps this
+ *  list and the folder in step. */
+export const CARD_ART_IDS: readonly string[] = [];
+
 /** Map stop kind -> icon in public/assets/map (the file is named after the kind). */
 export const MAP_ICON_KINDS: readonly MapNodeKind[] = ['combat', 'elite', 'rest', 'shop', 'event', 'boss'];
 

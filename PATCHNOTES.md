@@ -2,6 +2,18 @@
 
 What changed in each batch of fixes, newest first. Written so playtesters can read them; issue numbers are for the maintainer. The procedure that produces these is `docs/QA_FIX_WORKFLOW.md`.
 
+## 2026-10-09 (card picture slot)
+
+### Added
+- Cards now have a picture window along the top, showing a plain placeholder picture until real card art is made (each card can get its own picture later). A card whose text is too long to fit beside the picture (Heating Up) is drawn without it so the text stays readable; this is temporary and goes away once real card art exists.
+
+### Not fixed
+- Nothing was a bug fix in this batch.
+
+### Checked
+- Typecheck, unit tests and the build pass. Played in a real browser: a hand of cards with and without the picture, and Heating Up's text staying inside its card.
+- Not checked: touch screens, the deck and reward screens' card layouts beyond the hand.
+
 ## 2026-10-09 (fix commit 84bb4d7)
 
 ### Fixed

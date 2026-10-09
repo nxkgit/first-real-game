@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { ASHLANDS, BACKGROUNDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, HERO_ART, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
+import { ASHLANDS, BACKGROUNDS, CARD_ART_IDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, HERO_ART, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
 import type { BackgroundName } from '../data/art';
 import { ENEMY_ART_ENTRIES, sheetOf } from '../data/enemyArt';
 import type { EnemySheet } from '../data/enemyArt';
@@ -20,6 +20,8 @@ export function preloadArt(scene: Phaser.Scene): void {
   for (const kind of MAP_ICON_KINDS) scene.load.image(`map-${kind}`, `map/${kind}.png`);
   for (const name of ICON_FILES) scene.load.image(`icon-${name}`, `icons/${name}.png`);
   scene.load.image('ui-border', 'ui/border.png');
+  scene.load.image('card-art-default', 'cards/default.png');
+  for (const id of CARD_ART_IDS) scene.load.image(`card-art-${id}`, `cards/${id}.png`);
   for (const name of BACKGROUNDS) scene.load.image(`bg-${name}`, `backgrounds/${name}.png`);
   for (let i = 0; i < ASHLANDS.frames; i++) scene.load.image(`bg-${ASHLANDS.name}-${i}`, `backgrounds/${ASHLANDS.name}-${i}.png`);
 }
@@ -198,6 +200,31 @@ export function addBorder(
   if (!scene.textures.exists('ui-border')) return null;
   const s = Math.min(slice, Math.floor(width / 2) - 1, Math.floor(height / 2) - 1);
   return scene.add.nineslice(0, 0, 'ui-border', undefined, width, height, s, s, s, s).setTint(color);
+}
+
+/** True if the card (or the card it upgrades) has its own picture, not just the shared default. */
+export function hasOwnCardArt(scene: Phaser.Scene, card: { id: string; upgradeOf?: string }): boolean {
+  return [card.id, card.upgradeOf].some((id) => id !== undefined && scene.textures.exists(`card-art-${id}`));
+}
+
+/** A card's picture, cropped to fill `width` x `height` centered on (x, y) (never stretched), or
+ *  null if even the default did not load. Looks for the card's own file, then its base card's (for
+ *  an upgrade), then the default. */
+export function addCardArt(
+  scene: Phaser.Scene,
+  card: { id: string; upgradeOf?: string },
+  rect: { x: number; y: number; width: number; height: number }
+): Phaser.GameObjects.Image | null {
+  const key = [card.id, card.upgradeOf, 'default']
+    .map((id) => `card-art-${id}`)
+    .find((k) => scene.textures.exists(k));
+  if (!key) return null;
+  const image = scene.add.image(rect.x, rect.y, key);
+  const scale = Math.max(rect.width / image.width, rect.height / image.height);
+  const cropW = rect.width / scale;
+  const cropH = rect.height / scale;
+  image.setCrop((image.width - cropW) / 2, (image.height - cropH) / 2, cropW, cropH).setScale(scale);
+  return image;
 }
 
 /** Fills a rectangle with a landscape picture, cropped to fit (never stretched) and darkened by

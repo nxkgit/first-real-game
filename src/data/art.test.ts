@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { ASHLANDS, BACKGROUNDS, DEFAULT_COMBAT_BACKGROUND, ENEMY_ART, HERO_ART, backgroundFor } from './art';
 import { ENEMY_ART_ENTRIES } from './enemyArt';
@@ -93,6 +93,24 @@ describe('hero art', () => {
       for (const def of [art.idle, art.attack, art.death]) {
         if (def) expect(def.end, id).toBeLessThan(count);
       }
+    }
+  });
+});
+
+describe('card art', () => {
+  it('has a default picture and one file per listed card id, and no unlisted files', async () => {
+    const { CARD_ART_IDS } = await import('./art');
+    const { CARDS } = await import('./cards');
+    expect(existsSync('public/assets/cards/default.png')).toBe(true);
+    const files = readdirSync('public/assets/cards').filter((f) => f.endsWith('.png') && f !== 'default.png');
+    expect(files.map((f) => f.replace(/\.png$/, '')).sort()).toEqual([...CARD_ART_IDS].sort());
+    for (const id of CARD_ART_IDS) expect(CARDS[id], `card ${id}`).toBeDefined();
+  });
+
+  it('draws every picture at 2:1', async () => {
+    for (const f of readdirSync('public/assets/cards').filter((n) => n.endsWith('.png'))) {
+      const { width, height } = pngSize(`public/assets/cards/${f}`);
+      expect(width, f).toBe(height * 2);
     }
   });
 });
