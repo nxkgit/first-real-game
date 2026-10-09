@@ -29,7 +29,7 @@ export class BootScene extends Phaser.Scene {
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
     addScreenBackdrop(this, 'start');
     addReportButton(this);
-    addSettingsButton(this);
+    addSettingsButton(this, { canRestart: false });
     this.add.text(400, 150, 'Run in progress', { fontSize: '30px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     this.add.text(400, 180, `Playing as the ${saved.hero.name}`, { fontSize: '14px', color: '#c8c8d8' }).setOrigin(0.5);
     this.add

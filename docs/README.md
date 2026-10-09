@@ -1,6 +1,6 @@
 # Docs index
 
-One line per document and when to read it. The root documents (`CLAUDE.md`, `HANDOFF.md`, `implementationplan.md`, `DESIGN_LOG.md`) are not repeated here: `CLAUDE.md` first, then `HANDOFF.md`, then the plan and the log.
+One line per document and when to read it. The root documents (`CLAUDE.md`, `HANDOFF.md`, `implementationplan.md`, `DESIGN_LOG.md`, `REFLECTION_LOG.md`) are not repeated here: `CLAUDE.md` first, then `HANDOFF.md`, then the plan and the log.
 
 Written 2026-10-07; index brought up to date the same day after the art pass, map variety work and test layers. Rows for documents that were still being written on another branch say so: check that the file exists before relying on them.
 
@@ -17,6 +17,7 @@ Written 2026-10-07; index brought up to date the same day after the art pass, ma
 | [`E2E.md`](E2E.md) | The browser tests: the `?e2e` hook and frame stepper, the harness helpers, how to add a test, and CI (a fast subset on pull requests, the whole suite nightly). | You change scenes or the map, or CI shows an end-to-end failure. |
 | [`SCENARIOS.md`](SCENARIOS.md) | Saving a fight state and loading it back: capture, load, tests. | You want to reproduce an exact fight situation. |
 | [`QA_FIX_WORKFLOW.md`](QA_FIX_WORKFLOW.md) | The procedure for fixing a list of tester-reported bugs (reproduce, fix, regression test, one branch and draft PR per bug, a patch-notes entry per batch) and how the maintainer loads a report's snapshot. The reasoning is in `../QA_PLAN.md`. | The maintainer hands you bug reports to fix, or wants to look at one. |
+| [`REFLECTING_MODE.md`](REFLECTING_MODE.md) | The procedure for reflecting mode: how it starts and ends, the files it may edit, the evidence and audit rules for new guidance, the no-loss check for restructuring, and how entries in `../REFLECTION_LOG.md` are written. | The maintainer says "reflecting mode", or asks to change `CLAUDE.md`, memory, skills or subagents. |
 | [`AUTOMATION.md`](AUTOMATION.md) | Rules for unattended sessions: branch naming, no questions, placeholders, scope, reports, merging. | You are briefing or running an unattended session. |
 
 ## Tools (commands you will use)

@@ -24,7 +24,7 @@ export class RunEndScene extends Phaser.Scene {
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
     addScreenBackdrop(this, 'end');
     addReportButton(this);
-    addSettingsButton(this);
+    addSettingsButton(this, { canRestart: false });
 
     const won =this.run.phase === 'won';
     this.add
