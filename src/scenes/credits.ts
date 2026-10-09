@@ -41,7 +41,7 @@ export function toggleCredits(scene: Phaser.Scene): void {
   parts.push(scene.add.text(400, 40, 'Credits', { fontSize: '26px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5));
   parts.push(
     scene.add
-      .text(400, 70, 'Art used in this game. Click anywhere to close.', { fontSize: '12px', color: '#777788' })
+      .text(400, 70, 'Art and music used in this game. Click anywhere to close.', { fontSize: '12px', color: '#777788' })
       .setOrigin(0.5)
   );
 

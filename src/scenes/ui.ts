@@ -368,9 +368,9 @@ export function addSettingsButton(scene: Phaser.Scene): void {
     const parts: Phaser.GameObjects.GameObject[] = [];
     const backdrop = scene.add.rectangle(400, 300, 800, 600, 0x08080c, 0.8).setInteractive();
     backdrop.on('pointerdown', close);
-    const box = scene.add.rectangle(400, 300, 380, 300, 0x1b1b24).setStrokeStyle(2, 0x5a5a72).setInteractive();
+    const box = scene.add.rectangle(400, 300, 380, 340, 0x1b1b24).setStrokeStyle(2, 0x5a5a72).setInteractive();
     parts.push(backdrop, box);
-    parts.push(scene.add.text(400, 170, 'Settings', { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5));
+    parts.push(scene.add.text(400, 152, 'Settings', { fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5));
 
     const s = getSettings();
     const row = (y: number, label: string, value: string, onClick: () => void): void => {
@@ -387,26 +387,31 @@ export function addSettingsButton(scene: Phaser.Scene): void {
       );
     };
     const volumeSteps = [0, 0.25, 0.5, 0.75, 1];
-    row(220, 'Volume', `${Math.round(s.volume * 100)}%`, () => {
+    row(205, 'Effects volume', `${Math.round(s.volume * 100)}%`, () => {
       const next = volumeSteps.find((v) => v > s.volume + 0.001) ?? 0;
       updateSettings({ volume: next });
       open();
     });
-    row(262, 'Sound', s.muted ? 'Off' : 'On', () => {
+    row(243, 'Music volume', `${Math.round(s.musicVolume * 100)}%`, () => {
+      const next = volumeSteps.find((v) => v > s.musicVolume + 0.001) ?? 0;
+      updateSettings({ musicVolume: next });
+      open();
+    });
+    row(281, 'Sound & music', s.muted ? 'Off' : 'On', () => {
       updateSettings({ muted: !s.muted });
       open();
     });
-    row(304, 'Animation speed', `${s.animationSpeed}x`, () => {
+    row(319, 'Animation speed', `${s.animationSpeed}x`, () => {
       const next = ANIMATION_SPEEDS[(ANIMATION_SPEEDS.indexOf(s.animationSpeed) + 1) % ANIMATION_SPEEDS.length];
       updateSettings({ animationSpeed: next });
       open();
     });
-    row(346, 'Screen shake', s.reducedMotion ? 'Off' : 'On', () => {
+    row(357, 'Screen shake', s.reducedMotion ? 'Off' : 'On', () => {
       updateSettings({ reducedMotion: !s.reducedMotion });
       open();
     });
     parts.push(
-      addButton(scene, 330, 410, 'Credits', () => toggleCredits(scene), {
+      addButton(scene, 330, 415, 'Credits', () => toggleCredits(scene), {
         width: 120,
         height: 36,
         fontSize: 15,
@@ -415,7 +420,7 @@ export function addSettingsButton(scene: Phaser.Scene): void {
         once: false,
       })
     );
-    parts.push(addButton(scene, 470, 410, 'Close', close, { width: 120, height: 36, fontSize: 15, once: false }));
+    parts.push(addButton(scene, 470, 415, 'Close', close, { width: 120, height: 36, fontSize: 15, once: false }));
     panel = scene.add.container(0, 0, parts).setDepth(200);
   };
 

@@ -4,6 +4,7 @@ import { useLayoutCamera } from '../display';
 import { seedFromUrl } from '../session';
 import { clearSavedRun, loadSavedRun } from '../storage';
 import { addScreenBackdrop, preloadArt } from './art';
+import { preloadMusic, startMusic } from '../audio/Music';
 import { toggleCredits } from './credits';
 import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
 
@@ -15,9 +16,11 @@ export class BootScene extends Phaser.Scene {
 
   preload(): void {
     preloadArt(this);
+    preloadMusic(this);
   }
 
   create(): void {
+    startMusic(this);
     const saved = loadSavedRun();
     if (!saved) {
       enterCurrentNode(this, newRun(seedFromUrl()));

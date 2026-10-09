@@ -3,7 +3,7 @@
 // whenever a new pack's files go into public/assets (tools/prepareAssets.py).
 
 export interface Credit {
-  /** What the art is used for, in the game's words. */
+  /** What the art (or music) is used for, in the game's words. */
   usedFor: string;
   /** The pack's name. */
   source: string;
@@ -78,5 +78,12 @@ export const CREDITS: readonly Credit[] = [
     url: '',
     author: 'trowheel',
     licence: 'Licence not yet confirmed',
+  },
+  {
+    usedFor: 'Background music',
+    source: 'alex_089 on SoundCloud',
+    url: 'https://soundcloud.com/alex_089_x',
+    author: 'alex_089',
+    licence: 'Free to use (from a licence-free site; exact terms unconfirmed)',
   },
 ];

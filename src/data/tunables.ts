@@ -60,6 +60,10 @@ export const REWARD_GOLD = 25;
 /** Gold offered after winning against an elite (which also drops a relic). */
 export const ELITE_REWARD_GOLD = 40;
 
+// ---- music ----
+/** How long the background music takes to fade in when it first starts, in milliseconds. PROVISIONAL (about 2 s asked for). */
+export const MUSIC_FADE_IN_MS = 2000;
+
 // ---- shop (DRAFT: visual placeholder, nothing here is a decision) ----
 /** Cards for sale at a shop stop. */
 export const SHOP_CARD_COUNT = 4;

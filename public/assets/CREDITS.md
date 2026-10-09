@@ -13,6 +13,7 @@ Raw packs are kept outside the repo; `tools/prepareAssets.py` builds the files i
 | Card and button borders | Fantasy UI Borders, https://kenney.nl/assets/fantasy-ui-borders | Kenney | CC0 |
 | Fight and screen backdrops | Background Elements Remastered, https://kenney.nl/assets/background-elements-remastered | Kenney | CC0 |
 | Combat backdrop (animated ashlands) | Ashlands animated background | trowheel | Licence not yet confirmed |
+| Background music | alex_089 on SoundCloud, https://soundcloud.com/alex_089_x | alex_089 | Free to use (from a licence-free site; exact terms unconfirmed) |
 
 The pixel-enemy sheets came as a zip with no licence or author file; the credit above is the licence and artist list on the page of the bestiary they belong to, so the per-sheet artist is not known.
 
