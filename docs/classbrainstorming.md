@@ -65,3 +65,9 @@ Paladin
 Druid
     -nature's fury: offense
     -keeper of the grove: defense
+
+
+
+    need to be able to see deck while choosing rewards at start
+    hero power should be more clear
+    
