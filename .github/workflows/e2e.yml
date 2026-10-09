@@ -2,7 +2,8 @@
 #
 # Two jobs from one setup:
 #  - e2e (pull requests, and pushes to auto/** and integration/**): everything except the roughly
-#    5-minute whole-seeded-act test, so a PR gets its answer sooner. Blocking, as before.
+#    5-minute whole-seeded-act test, so a PR gets its answer sooner, split across 3 parallel shard
+#    jobs (e2e-shard) with an "e2e" gate job on top. Blocking, as before.
 #  - e2e-full (nightly at 03:17 UTC on the default branch, and by hand through "Run workflow"):
 #    the whole suite including the whole-act test.
 name: E2E
@@ -23,10 +24,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  e2e:
+  # The pull-request run is split three ways (Playwright --shard) so the shards run on separate
+  # runners at the same time. Each runner has 4 vCPUs and the config uses 4 workers on CI.
+  e2e-shard:
+    name: e2e shard ${{ matrix.shard }}/3
     if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -38,16 +46,27 @@ jobs:
       # the suite itself runs against the dev server; the build catches bundling problems first
       - run: npm run build
       # everything except the whole-act test (e2e/act.e2e.ts); the nightly job runs that one
-      - run: npx playwright test --grep-invert "whole seeded act"
+      - run: npx playwright test --grep-invert "whole seeded act" --shard=${{ matrix.shard }}/3
       - name: Upload Playwright traces and report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-traces
+          name: playwright-traces-shard-${{ matrix.shard }}
           path: |
             test-results/
             playwright-report/
           retention-days: 14
+
+  # Keeps the single check name "e2e" (what a branch-protection rule would require) now that the
+  # work is split across shard jobs: it passes only if every shard passed.
+  e2e:
+    if: always() && (github.event_name == 'pull_request' || github.event_name == 'push')
+    needs: e2e-shard
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "shards: ${{ needs.e2e-shard.result }}"
+          test "${{ needs.e2e-shard.result }}" = "success"
 
   e2e-full:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
