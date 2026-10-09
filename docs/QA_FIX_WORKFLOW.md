@@ -41,7 +41,7 @@ When every bug in the list is fixed, blocked or not reproduced:
 2. Add an entry to the top of [`../PATCHNOTES.md`](../PATCHNOTES.md) (create it with the first batch), in plain language that testers can read too:
 
    ```
-   ## <date>, build <short commit>
+   ## <date> (fix commit <short commit of the batch's last fix>)
 
    ### Fixed
    - #12 (game breaking): the shop no longer locks up when you buy the last card.
@@ -54,6 +54,8 @@ When every bug in the list is fixed, blocked or not reproduced:
 
    Checked: <what was only unit-tested>. Played in a real browser: <what>.
    ```
+
+   The heading names the fix commit, not the deployed build: the build id testers see (the Report window sends it) is the merge commit, which does not exist until the maintainer merges.
 
 3. Open one PR for the batch branch. **The maintainer merges it**; do not merge anything into `main` yourself.
 4. Tell the maintainer, in this order: what is fixed, what is blocked or not reproduced and why, the PR links.
