@@ -57,8 +57,9 @@ When every bug in the list is fixed, blocked or not reproduced:
 
    The heading names the fix commit, not the deployed build: the build id testers see (the Report window sends it) is the merge commit, which does not exist until the maintainer merges.
 
-3. Open one PR for the batch branch. **The maintainer merges it**; do not merge anything into `main` yourself.
-4. Tell the maintainer, in this order: what is fixed, what is blocked or not reproduced and why, the PR links.
+3. **Make the notes visible.** Run `npm run patchnotes:sync`: it copies the newest entry into the "Latest changes" block of `README.md` (the page GitHub shows first when the repository is opened). Commit the README with the entry. The content site's **Patch notes** section (first on the page) reads `PATCHNOTES.md` directly at build time, so it needs nothing from you. `npm test` fails if the README is behind `PATCHNOTES.md`, and `npm run patchnotes:check` says so without writing anything.
+4. Open one PR for the batch branch. **The maintainer merges it**; do not merge anything into `main` yourself.
+5. Tell the maintainer, in this order: what is fixed, what is blocked or not reproduced and why, the PR links.
 
 ## Loading a snapshot (for the maintainer)
 

@@ -18,6 +18,8 @@
     "balance:check": "npm run balance -- check",
     "balance:evidence": "npm run balance -- evidence --out balance/reports/design-evidence/all",
     "balance:report": "npm run balance -- report --out balance/reports/sample",
+    "patchnotes:sync": "vite build --ssr src/content/patchNotesCli.ts --outDir .sim/patchnotes --emptyOutDir --logLevel warn && node .sim/patchnotes/patchNotesCli.js",
+    "patchnotes:check": "vite build --ssr src/content/patchNotesCli.ts --outDir .sim/patchnotes --emptyOutDir --logLevel warn && node .sim/patchnotes/patchNotesCli.js --check",
     "content:check": "vite build --ssr src/content/checkCli.ts --outDir .sim/content --emptyOutDir --logLevel warn && node .sim/content/checkCli.js",
     "e2e": "playwright test",
     "e2e:install": "playwright install --with-deps chromium",
