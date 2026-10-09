@@ -77,6 +77,8 @@ The maintainer reads each issue, loads the snapshot in `?dev` to see what the te
 | `sev:fix-soon` | Wrong behaviour or display that hurts play but does not stop it. |
 | `sev:eventually` | Minor, cosmetic, and **all balance and "feels bad" feedback by default**. |
 
+**Update (2026-10-09):** when handing Claude a fix list the maintainer now uses three categories instead: `game breaking`, `minor fix`, `big fix` (size of the work, not priority; every listed bug is fixed). The GitHub `sev:*` labels above are the maintainer's own triage and have not been renamed.
+
 | Type | Meaning |
 |---|---|
 | `type:bug` | Game does something other than what the docs/card text say. |
@@ -86,7 +88,7 @@ The maintainer reads each issue, loads the snapshot in `?dev` to see what the te
 Bugs, balance and feel share one intake; the type and severity labels separate them.
 
 ### 5. Fix runs (Claude, on request)
-The maintainer hands Claude a list: **issue numbers with severity**, plus any notes. Only then does Claude start. For each issue:
+The maintainer hands Claude a list: **issue numbers with a category** (`game breaking`, `minor fix`, `big fix`), plus any notes. Only then does Claude start. For each issue:
 
 1. **Reproduce first**, from the snapshot or a scenario. If it cannot be reproduced, report "could not reproduce" with what was tried. Do not guess at a fix.
 2. **Settle ambiguity from the docs.** The card text, `implementationplan.md`, `DESIGN_LOG.md` and the other docs are the source of truth for intended behaviour; gameplay decisions are not supplied in the bug report. If the docs are silent, ambiguous or stale on the point, mark the item **blocked: docs do not settle this** and move on. Do not pick an interpretation.
@@ -95,14 +97,14 @@ The maintainer hands Claude a list: **issue numbers with severity**, plus any no
 5. **`npm run verify` green.** For combat or UI changes, also play it in a real browser and state plainly what was played versus only tested (the existing testing rule in `CLAUDE.md`).
 6. **Do not touch the issue.** No labelling, commenting or closing; the maintainer closes issues after merging.
 
-Fix order within a batch: `game-breaking`, then `fix-soon`, then `eventually`.
+Fix order within a batch: the order the maintainer gave (the category is not a priority, since every listed bug is worked).
 
 ### 6. Batch and patch notes
 After each batch of bugs the maintainer handed over, Claude:
 1. Merges that batch's bug branches into one **integration branch** and opens a single PR for the whole batch. The maintainer does this one merge.
 2. Adds an entry to **`PATCHNOTES.md`** (newest first; created with the first batch). Each entry has:
    - the date and the build/version;
-   - **Fixed:** each bug with issue number, severity and a one-line plain-language description of what changed;
+   - **Fixed:** each bug with issue number, category and a one-line plain-language description of what changed;
    - **Not fixed:** anything blocked (docs did not settle it), not reproducible, or skipped, each with the reason;
    - the verification statement: what was only unit-tested versus actually played in a browser.
 3. Patch notes are written in plain language so they can also tell testers what changed since they last played, while keeping issue numbers for the maintainer.

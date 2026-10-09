@@ -6,15 +6,15 @@ The procedure for working through a list of bugs the maintainer hands over. The 
 
 Only when the maintainer gives you a list. Never start a fix run on your own, never go looking through the issues for work, and never read an issue the maintainer did not point you at.
 
-The list is **issue numbers with a severity**, plus optional notes from the maintainer's own investigation:
+The list is **issue numbers with a category**, plus optional notes from the maintainer's own investigation:
 
 ```
 #12 game breaking  - soft-lock after buying the last card. Seems to be in the shop leave button.
-#15 fix soon       - Strike+ shows 9 damage but deals 8
-#19 eventually     - balance: Heat Warning feels weak (type:balance)
+#15 minor fix      - Strike+ shows 9 damage but deals 8
+#19 big fix        - the aiming arrow is drawn off screen on some clients
 ```
 
-Severities, worst first: `game breaking`, `fix soon`, `eventually`. Work in that order. Balance and feel feedback is `eventually` unless told otherwise.
+Categories: `game breaking` (crash, soft-lock, lost progress, run cannot continue), `minor fix` (a small, local change), `big fix` (a larger change, or one that touches several systems). Every bug in the list gets worked, so the category is not a priority and does not set the order: work in the order given. Balance and feel feedback is not a fix request unless the maintainer's note says exactly what to change.
 
 ## Rules about report text
 
@@ -31,7 +31,7 @@ Each bug gets its own branch (`fix/issue-<n>-<short-name>`, from the current `ma
 3. **Fix it** with the smallest change that does. Follow the patterns in `HANDOFF.md`.
 4. **Add a regression test** that fails before the fix and passes after. Show that it failed first. A pure-engine bug gets a unit test; a screen or click bug gets an e2e test (`docs/E2E.md`).
 5. **`npm run verify` is green.** For anything that touches combat flow, a screen or the interface, also play it in a real browser (`docs/E2E.md`, or the dev panel) and state plainly what was played versus only tested.
-6. **Commit and push the branch, open a draft PR.** The PR says: the issue number and severity, what was wrong, the fix, the test, and what was played versus only tested. Never push to `main`.
+6. **Commit and push the branch, open a draft PR.** The PR says: the issue number and category, what was wrong, the fix, the test, and what was played versus only tested. Never push to `main`.
 
 ## Per batch
 
@@ -45,10 +45,10 @@ When every bug in the list is fixed, blocked or not reproduced:
 
    ### Fixed
    - #12 (game breaking): the shop no longer locks up when you buy the last card.
-   - #15 (fix soon): Strike+ now deals the damage its card says.
+   - #15 (minor fix): Strike+ now deals the damage its card says.
 
    ### Not fixed
-   - #19: balance feedback, nothing changed (eventually).
+   - #19: balance feedback, nothing changed (balance feedback, no change requested).
    - #22: could not reproduce. Tried: <what>.
    - #23: blocked, the docs do not say what <question> should do. Needs a decision.
 
