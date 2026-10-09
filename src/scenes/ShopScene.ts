@@ -9,6 +9,7 @@ import {
   CARD_WIDTH,
   addButton,
   addDeckButton,
+  addReportButton,
   addRunHud,
   addSettingsButton,
   buildCardFace,
@@ -46,6 +47,7 @@ export class ShopScene extends Phaser.Scene {
 
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
+    addReportButton(this, hud.x + hud.width + 70);
     addSettingsButton(this);
 
     this.add.text(400, 80, 'Shop', { fontSize: '28px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);

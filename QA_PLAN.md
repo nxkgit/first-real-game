@@ -129,6 +129,8 @@ Suggested build order. Each step should be playable or testable on its own. Step
 6. **Fix-run guide**: a short doc (like `docs/CARD_WORKFLOW.md`) holding the section "Fix runs" above as the working procedure, linked from `CLAUDE.md`.
 7. **`PATCHNOTES.md`** created with the first batch.
 
+**Status (2026-10-09):** steps 1 to 6 are built (`src/qa/`, the Report button on every screen, `worker/`, the dev panel's "Load report snapshot", `docs/QA_FIX_WORKFLOW.md`); step 7 waits for the first batch of fixes. The proxy is deployed and was tested live. Choices made while building, per the maintainer: the shared secret reaches the game through a GitHub Actions secret named `REPORT_SECRET` (`VITE_REPORT_SECRET` at build time; locally a git-ignored `.env.local`), and the dev panel never stores the maintainer key. One bug found by the browser tests while building: clicks on the report window used to reach the game underneath and play a card, so the window now stops pointer events from propagating (regression test in `e2e/report.e2e.ts`). Still to do by the maintainer: add `REPORT_SECRET` under repo Settings, Secrets and variables, Actions, using the value set on the Worker; until then a deployed build says "Reporting is not set up in this build" and offers to copy the report text.
+
 ## Testing this system
 
 - Snapshot round trip and the proxy request builder: unit tests.

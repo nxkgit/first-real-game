@@ -89,6 +89,7 @@ Notes:
 | `save.e2e.ts` | (f) reload mid-fight / on the reward screen / on the map, then Continue; New Run discards the save |
 | `act.e2e.ts` | (g) a whole seeded act (`seed=1`) played by a simple policy through the real UI to the run-end screen |
 | `draft.e2e.ts` | (h) the starter-deck draft: intro screen, 10 forced 1-of-3 picks, no gold/skip, lands on the map with the drafted deck (2026-10-08) |
+| `report.e2e.ts` | (i) the Report window (QA_PLAN.md): a report from the map and from a fight, tester id and name kept, a refused send keeps the text, empty report stopped, typing does not trigger hotkeys, sending does not click through to the game, and the dev panel's snapshot loader restores a fight exactly. The report proxy is never called: the network is stubbed with `page.route`, and the test server runs with a fake `VITE_REPORT_SECRET` (`playwright.config.ts`). A 401 or 429 makes the browser itself log "Failed to load resource", which `expectNetworkErrorLog` removes in the tests that cause one on purpose. If you reuse a dev server started without that variable, the Report window refuses to send and these tests fail: stop the old server. |
 
 The act policy is deliberately dumb (it only has to keep the game moving) and, because the map offers few rests, heals the run to full on the map when under half HP (a stand-in for the dev panel's "Heal full"). It reports win or loss rather than asserting it.
 

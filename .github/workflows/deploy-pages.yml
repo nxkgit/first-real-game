@@ -32,7 +32,12 @@ jobs:
       - run: npm test
       # Pages serves the site under /<repo-name>/, so asset URLs need that base path.
       # Passed here rather than in a Vite config so local dev and Docker still serve from /.
+      # VITE_REPORT_SECRET is the shared key the in-game Report button sends to the report proxy
+      # (QA_PLAN.md). Add it once under repo Settings -> Secrets and variables -> Actions as
+      # REPORT_SECRET. It ends up in the built page, so it only stops casual abuse.
       - run: npx vite build --base=/${{ github.event.repository.name }}/
+        env:
+          VITE_REPORT_SECRET: ${{ secrets.REPORT_SECRET }}
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
