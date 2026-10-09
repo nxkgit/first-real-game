@@ -334,6 +334,16 @@ behaviour moved. `npm run verify` is green (831 tests, several rewritten where t
 pool composition or fixed starter-deck phase); balance baseline and sample report regenerated for the
 grown reward pool (`npm run balance:baseline`/`balance:report`), no numbers tuned.
 
+## Background music (planned 2026-10-09, not built)
+
+One theme track plays through the whole game. The track is the user's choice and is not Claude's to name or replace.
+
+- **Settings.** `musicVolume` (0 to 1, default 0.5) joins `Settings` in `src/settings.ts`; missing values fall back to the default, so the storage key stays `v1`. The Settings panel gets a "Music" row (cycling 0/25/50/75/100%); the existing "Volume" row is relabeled "Effects volume". The existing Sound On/Off toggle (`muted`) mutes music as well.
+- **Playback.** `src/audio/Music.ts` owns a single looping track through Phaser's sound manager, loaded in `BootScene.preload` beside `preloadArt`. It starts once (a guard makes repeat calls do nothing) and carries across scene changes. Browsers block audio until the first click or key press, so it begins then. It follows `onSettingsChange`. Skipped under `?e2e` so the browser tests are unaffected.
+- **Fade and loop.** Fade-in on start, about 2 s (`tunables.ts`, provisional). The track is not made to loop cleanly; it hard-loops with an audible jump, to improve later.
+- **Credits.** An entry for alex_089 in `src/data/credits.ts` and `public/assets/CREDITS.md` (a test keeps them in step). Needs the licence from the user first.
+- **Housekeeping.** The mp3 is about 6.4 MB and will ship with the Pages deploy. Its placeholder filename can be renamed by the user. Only unit-tested and type-checked until the user listens; Claude cannot hear it.
+
 ## Deferred (explicitly not MVP 1 — do not build yet)
 
 - Shop system (shop contents, prices, exchange rate between a card reward and gold) — a draft screen exists as a stop kind; nothing about it is decided
