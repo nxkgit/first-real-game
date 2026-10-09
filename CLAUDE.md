@@ -40,6 +40,16 @@ Every session (or natural transition point within one — e.g. a plan just got f
 - **Centralized tunables.** Balance numbers (HP, damage, costs, hand size, etc.) live in one obvious place. Expect these to change frequently once playtesting starts — don't scatter them inline.
 - **No premature abstraction.** This is a small solo project at MVP stage. Don't build generic systems for hypothetical future content (e.g., a full hero-plugin architecture) before there's more than one hero to support it.
 
+## Reusability and repeatable processes
+
+Treat repeatability as a first-class goal. Any recurring kind of change — adding or swapping assets (sprites, backgrounds, enemy art), changing music/SFX, adding or editing cards, adding enemies or status effects — should be doable next time by following written steps, not by re-deriving them.
+
+- **Document the process the first time you do it.** When you perform a recurring kind of change for the first time (or find it undocumented), write the steps down as a short how-to in `docs/howto/<topic>.md` (e.g. `adding-a-card.md`, `swapping-assets.md`, `changing-music.md`). Cover: which files to touch, naming/format/size conventions, where the data/config entry goes, any registration or preload step, and how to verify it in the browser.
+- **Follow and fix existing how-tos.** Before doing a recurring change, check `docs/howto/` first. If a step was wrong, missing, or out of date, fix the doc as part of the same change.
+- **Prefer repeatable mechanisms over one-off edits.** Make the change through data/config and shared helpers (see Architecture conventions) rather than special-casing. If the same manual step shows up a second time, consider a small script or helper for it. Don't build speculative tooling before then (see "No premature abstraction").
+- **Link, don't duplicate.** `HANDOFF.md` should point to the relevant how-tos in its code map/working notes rather than restating them.
+- **Check the doc after the work.** Before reporting a recurring-type change as done, confirm the how-to still matches what you actually did.
+
 ## Testing discipline
 
 Game *feel* cannot be verified by type-checking or unit tests alone. After any change to combat flow, card effects, or turn structure, actually run the dev server and play the loop (draw → play a card → end turn → watch the enemy act) before reporting it as working. State plainly when something has only been type-checked/logic-tested versus actually played.
