@@ -66,7 +66,10 @@ export class Harness {
    * `MapScene` exactly as before. Pass `{ skipDraft: false }` to see the real draft screens instead
    * (see the dedicated draft e2e test).
    */
-  async open(query = 'seed=123', opts: { skipDraft?: boolean } = {}): Promise<void> {
+  async open(query = 'seed=123', opts: { skipDraft?: boolean; heroSelect?: boolean } = {}): Promise<void> {
+    // Tests play the Mage unless they name a hero: `?hero=` skips the hero select screen, which
+    // `{ heroSelect: true }` brings back (see the hero-select e2e test).
+    if (!opts.heroSelect && !/(^|&)hero=/.test(query)) query = `${query ? `${query}&` : ''}hero=mage`;
     if (!this.initScriptAdded) {
       this.initScriptAdded = true;
       await this.page.addInitScript(() => {
@@ -240,6 +243,7 @@ export class Harness {
   /** The run as plain data. */
   async run(): Promise<{
     seed: number;
+    heroId: string;
     phase: string;
     hp: number;
     maxHp: number;
@@ -256,6 +260,7 @@ export class Harness {
       const node = (n: Any) => ({ id: n.id, kind: n.kind, floor: n.floor, lane: n.lane });
       return {
         seed: r.seed,
+        heroId: r.heroId,
         phase: r.phase,
         hp: r.hp,
         maxHp: r.maxHp,

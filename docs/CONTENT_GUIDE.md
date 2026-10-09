@@ -53,8 +53,9 @@ export const EXAMPLE_STRIKE: CardDefinition = {
 | `id` | Unique key. Saves and reports use it. Do not rename a card that exists in saves. |
 | `name` | Shown on the card. Upgrades get `+` added automatically. |
 | `type` | `attack`, `skill` or `power` (see below). |
-| `cost` | Energy to play. Must be a whole number from 0 to `MAX_ENERGY`. |
-| `owner` | A hero id, or `neutral`. |
+| `cost` | Energy to play (or Radiant Light, see `costResource`). A whole number from 0 up to the owning hero's energy; a colorless card up to the lowest energy of any hero. |
+| `costResource` | Leave out for energy. `'radiantLight'` pays the cost in the Paladin's Radiant Light instead (a card costs exactly one resource; the cost may be 0 to `RADIANT_LIGHT_MAX`). |
+| `owner` | A hero id, or `neutral` (colorless: any hero can use it, so it must not need one hero's own resource, status or Temperature; the content check enforces this). |
 | `inRewardPool` | `true` to be offered as a reward or in the shop. |
 | `inStarterPool` | `true` to be offered during the pre-run starter-deck draft (see DESIGN_LOG.md "Starter deck draft"). |
 | `archetype` | A hero-scoped sub-class label (e.g. the Mage's `frost`/`fire`; see `docs/classbrainstorming.md`). Scaffolding only — nothing reads it yet. |
@@ -104,6 +105,7 @@ An effect is `{ kind: '...', ... }`. Cards, relics and enemy moves all use the s
 | `adjustTemperature` | `value` | Mage only: shift Temperature (negative cools down), clamped to its range. | no | no |
 | `addCardToHand` | `cardId`, `value` | Put that many copies of a specific card straight into the hand (overflow discards, like a draw into a full hand). | yes | no |
 | `gainEnergizedTurns` | `value` | Gain 1 extra energy at the start of your turn for that many of your next turns (this turn not counted). | no | no |
+| `gainRadiantLight` | `value` | Paladin only: gain Radiant Light (capped at `RADIANT_LIGHT_MAX`), the resource some cards cost instead of energy. | no | no |
 <!-- /names -->
 
 "Target" is the enemy the card was aimed at (for a trigger: the first living enemy). "Self" is whoever plays it. Triggered effects are not card plays: they do not count towards "cards played this turn".

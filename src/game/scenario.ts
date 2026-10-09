@@ -5,7 +5,7 @@ import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
 import { STATUSES, STATUS_ORDER } from '../data/statuses';
-import { MAX_ENERGY, MAX_HAND_SIZE, PLAYER_MAX_HP, TEMPERATURE_MAX, TEMPERATURE_MIN } from '../data/tunables';
+import { MAX_ENERGY, MAX_HAND_SIZE, PLAYER_MAX_HP, RADIANT_LIGHT_MAX, TEMPERATURE_MAX, TEMPERATURE_MIN } from '../data/tunables';
 
 // A scenario is an exact fight state as plain JSON: capture one from a running fight, or write one
 // by hand, and load it back to get the same situation every time. Everything refers to content by
@@ -39,6 +39,8 @@ export interface Scenario {
   triggersFired: boolean[];
   /** Mage-only mechanics. Left out (default 0/false) unless non-default. */
   temperature?: number;
+  /** Paladin-only. */
+  radiantLight?: number;
   energizedTurnsRemaining?: number;
   heroPowerUsedThisTurn?: boolean;
 }
@@ -71,6 +73,7 @@ const TOP_KEYS = [
   'stats',
   'triggersFired',
   'temperature',
+  'radiantLight',
   'energizedTurnsRemaining',
   'heroPowerUsedThisTurn',
 ];
@@ -269,6 +272,7 @@ function readScenario(raw: unknown, world: ScenarioWorld): Scenario {
   if (typeof raw.name === 'string') scenario.name = raw.name;
   if (typeof raw.note === 'string') scenario.note = raw.note;
   if (raw.temperature !== undefined) scenario.temperature = int(raw.temperature, 'temperature', TEMPERATURE_MIN, TEMPERATURE_MAX);
+  if (raw.radiantLight !== undefined) scenario.radiantLight = int(raw.radiantLight, 'radiantLight', 0, RADIANT_LIGHT_MAX);
   if (raw.energizedTurnsRemaining !== undefined) {
     scenario.energizedTurnsRemaining = int(raw.energizedTurnsRemaining, 'energizedTurnsRemaining', 0, 1000);
   }
@@ -331,6 +335,7 @@ export function scenarioToSnapshot(scenario: Scenario, world: ScenarioWorld = GA
     stats: { ...scenario.stats, taggedPlayedThisTurn: { ...scenario.stats.taggedPlayedThisTurn } },
     triggersFired: [...scenario.triggersFired],
     temperature: scenario.temperature ?? 0,
+    radiantLight: scenario.radiantLight ?? 0,
     energizedTurnsRemaining: scenario.energizedTurnsRemaining ?? 0,
     heroPowerUsedThisTurn: scenario.heroPowerUsedThisTurn ?? false,
   };
@@ -375,6 +380,7 @@ export function snapshotToScenario(snapshot: CombatSnapshot, meta: { name?: stri
   if (meta.name) scenario.name = meta.name;
   if (meta.note) scenario.note = meta.note;
   if (snapshot.temperature) scenario.temperature = snapshot.temperature;
+  if (snapshot.radiantLight) scenario.radiantLight = snapshot.radiantLight;
   if (snapshot.energizedTurnsRemaining) scenario.energizedTurnsRemaining = snapshot.energizedTurnsRemaining;
   if (snapshot.heroPowerUsedThisTurn) scenario.heroPowerUsedThisTurn = snapshot.heroPowerUsedThisTurn;
   return scenario;

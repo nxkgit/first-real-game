@@ -118,7 +118,10 @@ export type Effect =
   | { kind: 'addCardToHand'; cardId: string; value: number; scaling?: Scaling }
   /** Player cards (and hero powers) only. For the next `value` of the player's turns (this one not
    *  counted), gain 1 extra energy at the start of the turn. Stacks additively with itself. */
-  | { kind: 'gainEnergizedTurns'; value: number };
+  | { kind: 'gainEnergizedTurns'; value: number }
+  /** Player cards only, Paladin-only mechanic (placeholder, see implementationplan.md "Multiple heroes
+   *  and hero selection"). Gains `value` Radiant Light, up to RADIANT_LIGHT_MAX. */
+  | { kind: 'gainRadiantLight'; value: number };
 
 /** Every effect kind. Each one has exactly one entry in the effect registry (effects.ts). */
 export type EffectKind = Effect['kind'];
@@ -161,7 +164,12 @@ export interface CardDefinition {
   name: string;
   type: CardType;
   cost: number;
-  /** Who owns the card: a hero's id, or 'neutral' for cards any hero can use. */
+  /**
+   * What `cost` is paid in. Leave it out for energy. 'radiantLight' (the Paladin's placeholder
+   * resource) is spent from the hero's Radiant Light instead of energy. A card costs exactly one resource.
+   */
+  costResource?: 'radiantLight';
+  /** Who owns the card: a hero's id, or 'neutral' for cards ("colorless") any hero can use. */
   owner: string;
   /** Whether it can show up as a reward / in a shop. Starter-only cards leave this false. */
   inRewardPool: boolean;
@@ -277,6 +285,27 @@ export interface HeroPowerDefinition {
   /** Text override; otherwise generated from `effects` like a card (see describe.ts). */
   description?: string;
   effects: Effect[];
+}
+
+/**
+ * A playable hero (data, see src/data/heroes.ts). Cards point at their hero through `owner`; this
+ * record holds what is about the hero itself. Every hero has a hero power. `resource` names the
+ * hero's own extra mechanic, which decides what the fight screen shows (a hero's resource is
+ * declared here, never inferred from having a hero power).
+ */
+export interface HeroDefinition {
+  id: string;
+  name: string;
+  maxHp: number;
+  /** Energy per turn. */
+  energy: number;
+  heroPower: HeroPowerDefinition;
+  /** The hero's own extra resource, if any: the Mage's Temperature or the Paladin's Radiant Light. */
+  resource?: 'temperature' | 'radiantLight';
+  /** Select-screen text. Placeholder until the user writes the real one (creative content). */
+  blurb: string;
+  /** Flat colour of the drawn stand-in when the hero has no picture (art always falls back). */
+  placeholderColor: number;
 }
 
 // ---- relics ----

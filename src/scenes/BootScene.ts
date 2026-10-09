@@ -1,12 +1,10 @@
 import Phaser from 'phaser';
-import { newRun } from '../data/run';
 import { useLayoutCamera } from '../display';
-import { seedFromUrl } from '../session';
-import { clearSavedRun, loadSavedRun } from '../storage';
+import { loadSavedRun } from '../storage';
 import { addScreenBackdrop, preloadArt } from './art';
 import { preloadMusic, startMusic } from '../audio/Music';
 import { toggleCredits } from './credits';
-import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
+import { addButton, addReportButton, addSettingsButton, enterCurrentNode, startNewRun } from './ui';
 
 /** First scene: starts a fresh run, or offers to continue the one saved in this browser. */
 export class BootScene extends Phaser.Scene {
@@ -23,7 +21,7 @@ export class BootScene extends Phaser.Scene {
     startMusic(this);
     const saved = loadSavedRun();
     if (!saved) {
-      enterCurrentNode(this, newRun(seedFromUrl()));
+      startNewRun(this, true);
       return;
     }
 
@@ -33,6 +31,7 @@ export class BootScene extends Phaser.Scene {
     addReportButton(this);
     addSettingsButton(this);
     this.add.text(400, 150, 'Run in progress', { fontSize: '30px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    this.add.text(400, 180, `Playing as the ${saved.hero.name}`, { fontSize: '14px', color: '#c8c8d8' }).setOrigin(0.5);
     this.add
       .text(
         400,
@@ -52,8 +51,8 @@ export class BootScene extends Phaser.Scene {
       385,
       'New Run',
       () => {
-        clearSavedRun();
-        enterCurrentNode(this, newRun(seedFromUrl()));
+        // the old save is replaced once a hero is picked (every stop of the new run saves over it)
+        startNewRun(this, true);
       },
       { fill: 0x2a2a3a, stroke: 0x5a5a72 }
     );

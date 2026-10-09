@@ -72,7 +72,42 @@ def build_ashlands() -> None:
     print(f'ashlands: {gif.n_frames} frames of {gif.size[0]}x{gif.size[1]}, frame time(s) in ms: {sorted(durations)} (ASHLANDS in src/data/art.ts must match)')
 
 
+def build_paladin() -> None:
+    """The Paladin hero: assets/heroes/paladin_model.gif (an 800x800 animated GIF with transparency)
+    becomes one horizontal strip, hero/paladin_model.png (named after the GIF), every frame cropped to the same box around the
+    figure so it does not jitter. src/data/art.ts HERO_ART.paladin must match the printed numbers."""
+    # the GIF may sit in assets/heroes/ (git-ignored raw folder) or where the project owner dropped it, public/assets/hero/
+    candidates = [os.path.join(RAW, 'heroes', 'paladin_model.gif'), os.path.join(OUT, 'hero', 'paladin_model.gif')]
+    path = next((p for p in candidates if os.path.exists(p)), None)
+    if path is None:
+        print('skipped paladin: no paladin_model.gif in assets/heroes/ or public/assets/hero/')
+        return
+    gif = Image.open(path)
+    frames = []
+    box = None
+    for i in range(gif.n_frames):
+        gif.seek(i)
+        frame = gif.convert('RGBA')
+        frames.append(frame)
+        b = frame.getbbox()
+        if b:
+            box = b if box is None else (min(box[0], b[0]), min(box[1], b[1]), max(box[2], b[2]), max(box[3], b[3]))
+    assert box is not None, 'the paladin GIF is empty'
+    pad = 4
+    box = (max(0, box[0] - pad), max(0, box[1] - pad), min(gif.size[0], box[2] + pad), min(gif.size[1], box[3] + pad))
+    width, height = box[2] - box[0], box[3] - box[1]
+    strip = Image.new('RGBA', (width * len(frames), height), (0, 0, 0, 0))
+    for i, frame in enumerate(frames):
+        strip.paste(frame.crop(box), (i * width, 0))
+    durations = sorted({(gif.seek(i), gif.info.get('duration'))[1] for i in range(gif.n_frames)})
+    save(strip, 'hero', 'paladin_model.png')
+    print(f'paladin: {len(frames)} frames of {width}x{height}, frame time(s) in ms: {durations} (HERO_ART.paladin in src/data/art.ts must match)')
+
+
 def main() -> None:
+    if 'paladin' in sys.argv[1:]:  # only the Paladin, when the other raw packs are not at hand
+        build_paladin()
+        return
     if 'ashlands' in sys.argv[1:]:  # only the animated backdrop, when the other raw packs are not at hand
         build_ashlands()
         return
@@ -88,6 +123,7 @@ def main() -> None:
     for name, file in BACKGROUNDS.items():
         save(zip_image('kenney_background-elements-remastered.zip', f'Backgrounds/{file}.png').convert('RGB'), 'backgrounds', f'{name}.png')
     build_ashlands()
+    build_paladin()
 
     for name, file in PIXEL_SHEETS.items():
         save(zip_image('spritesheets.zip', f'/{file}.png'), 'pixel', f'{name}.png')

@@ -1,4 +1,5 @@
-import { CARDS, MAGE, baseCards, buildStarterDeck, rewardPoolFor } from '../data/cards';
+import { CARDS, baseCards, buildStarterDeck, rewardPoolFor, starterPoolFor } from '../data/cards';
+import { HEROES } from '../data/heroes';
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';
 import { RELICS, RELIC_POOL, SYNERGY_RELICS } from '../data/relics';
@@ -15,7 +16,9 @@ export function realWorld(): ContentWorld {
     cards: baseCards(),
     registry: CARDS,
     starterDeck: buildStarterDeck(),
-    rewardPool: rewardPoolFor(MAGE),
+    // every hero's pool, so a hero's cards count as reachable (colorless cards appear once)
+    rewardPool: [...new Set(HEROES.flatMap((h) => rewardPoolFor(h.id)))],
+    heroes: HEROES.map((hero) => ({ hero, rewardPool: rewardPoolFor(hero.id), starterPool: starterPoolFor(hero.id) })),
     testCardIds: new Set([...SYNERGY_CARDS, ...KEYWORD_CARDS].map((c) => c.id)),
     testRelicIds: new Set(SYNERGY_RELICS.map((r) => r.id)),
     relics: Object.values(RELICS),

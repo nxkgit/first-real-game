@@ -1,6 +1,7 @@
 import type { ActMap, MapNode, MapNodeKind } from './actMap';
 import type { RunWorld } from './RunState';
-import type { CardDefinition, EnemyDefinition, EventDefinition, RelicDefinition } from './types';
+import type { CardDefinition, EnemyDefinition, EventDefinition, HeroDefinition, RelicDefinition } from './types';
+import { PLAYER_MAX_HP, MAX_ENERGY } from '../data/tunables';
 
 // Small builders for tests, so run tests don't depend on the placeholder game content.
 
@@ -28,6 +29,17 @@ export function chainMap(kinds: MapNodeKind[]): ActMap {
   }));
   return { lanes: 1, floors: kinds.length, nodes };
 }
+
+/** A stand-in hero for tests that build their own worlds. */
+export const TEST_HERO: HeroDefinition = {
+  id: 'test',
+  name: 'Test hero',
+  maxHp: PLAYER_MAX_HP,
+  energy: MAX_ENERGY,
+  heroPower: { id: 'test-power', name: 'Test power', owner: 'test', cost: 1, effects: [{ kind: 'draw', value: 1 }] },
+  blurb: 'placeholder blurb',
+  placeholderColor: 0x888888,
+};
 
 export interface WorldOptions {
   cards?: CardDefinition[];
@@ -62,6 +74,7 @@ export function world(options: WorldOptions = {}): RunWorld {
     return found;
   };
   return {
+    hero: TEST_HERO,
     rewardPool: POOL,
     starterPool: options.starterPool ?? STARTER_POOL,
     relicPool: relics,

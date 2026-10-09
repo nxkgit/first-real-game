@@ -11,7 +11,7 @@ assets/                       raw packs (zips, pngs). GIT-IGNORED: never committ
 public/assets/                only the files the game uses, resized/cropped. COMMITTED, served by the site
    |  loaded once in BootScene.preload() -> preloadArt() in src/scenes/art.ts
    v
-Phaser texture cache          keys: hero, enemy-<name>, map-<kind>, icon-<name>, ui-border, bg-<name>
+Phaser texture cache          keys: hero-<id>, enemy-<name>, map-<kind>, icon-<name>, ui-border, bg-<name>
    |  drawn through the helpers in src/scenes/art.ts, chosen by the data in src/data/art.ts
    v
 screens
@@ -27,7 +27,7 @@ screens
 
 | Picture | Files in `public/assets/` | Keys | Drawn by | Chosen by |
 |---|---|---|---|---|
-| Hero (the dark-elf witch since 2026-10-09: 4 idle frames of 119x288, no attack or death art) | `hero/hero.png` | `hero` | `buildHeroSprite` (used by `PlayerView`); the attack plays when an attack card is played, death on defeat (`CombatScene`); a sheet with no attack/death frames gets a lunge and a tip-over drawn in code | `HERO_SHEET` (attack/death are optional) |
+| Hero (the dark-elf witch since 2026-10-09: 4 idle frames of 119x288, no attack or death art) | `hero/hero.png` | `hero-mage` (one sheet per hero: `hero-<id>`) | `buildHeroSprite` (used by `PlayerView`); the attack plays when an attack card is played, death on defeat (`CombatScene`); a sheet with no attack/death frames gets a lunge and a tip-over drawn in code | `HERO_ART[heroId]` in `data/art.ts` (attack/death are optional); a hero with no entry is drawn as a flat-colour stand-in (`buildPlaceholderHero`) |
 | Enemies | `enemies/<name>.png` | `enemy-<name>` | `buildEnemySprite` (used by `EnemyView`) | `ENEMY_ART` (enemy id to manifest entry); the entries are in `src/data/enemyArt.ts`; size from `ENEMY_DISPLAY_HEIGHT` and the enemy's `placeholderScale` |
 | Map stop icons | `map/<kind>.png` | `map-<kind>` | `addMapIcon` (map nodes and legend) | file per stop kind, set in `MAP_ICONS` in the prepare script |
 | Relic badges, HP heart | `icons/<name>.png` | `icon-<name>` | `addIcon` (relic bar, `PlayerView`) | `RELIC_ICON` (relic id to icon), `ICON_FILES` |
@@ -44,6 +44,18 @@ screens
 - **The ashlands backdrop is wide and animated, so it takes its own path.** Phaser cannot play a GIF, so `prepareAssets.py` (`python tools/prepareAssets.py ashlands` runs just this part) writes each GIF frame as `ashlands-<n>.png` (1350x625, about 25 KB each) and the game plays them as a looping sprite (`bg-ashlands`, 330 ms a frame, registered the first time a fight draws it). Unlike the square stills it is scaled to *cover* the rectangle and cropped around its centre (a fight panel is 680x300, nearly the picture's own shape, so only a thin strip is cut), then dimmed like the others. If a frame is missing it draws nothing and the fight panel shows its flat colour. To change the animation: replace the GIF in `assets/backgrounds/`, rerun the script, and update `ASHLANDS` to match (a test checks the size).
 - **`DEFAULT_COMBAT_BACKGROUND` is provisional.** While it names a picture, every fight uses it (user, 2026-10-09). Set it to `null` to go back to the older pairing in `backgroundFor` (boss castles, elite desert, ordinary fights grass, forest or fall by floor), which is still there.
 - **Animations are registered once** (`createArtAnimations`), globally. Phaser keeps them across scene restarts.
+
+## Adding an animated GIF
+
+Phaser cannot play a GIF, so every GIF goes through `tools/prepareAssets.py`, which splits it into frames the game can play. Two worked examples: the ashlands backdrop (one PNG per frame) and the Paladin hero (one horizontal strip). To add another:
+
+1. **Drop the GIF in** `assets/<folder>/` (git-ignored raw folder) or straight into `public/assets/<folder>/`, as was done for `paladin_model.gif`. Note its size, frame count and frame time (the script prints them).
+2. **Add a `build_<name>()` function** to `tools/prepareAssets.py`, copying `build_ashlands` (one file per frame, for a backdrop) or `build_paladin` (all frames cropped to one common box and pasted into a strip, for a character), add it to `main()`, and give it a command-line word (`python tools/prepareAssets.py paladin` runs just that part, so the other raw packs need not be present). Name the output after the GIF (`paladin_model.gif` becomes `hero/paladin_model.png`).
+3. **Describe the result in `src/data/art.ts`** with exactly the numbers the script prints: for a hero, a `HERO_ART[heroId]` entry (`file`, `frameWidth`, `frameHeight`, `idle: { start, end, frameRate }`, `scale`; the frame rate is 1000 divided by the GIF's frame time in ms); for a backdrop, the `ASHLANDS`-style constant. `art.test.ts` checks the real file sizes against these numbers.
+4. **Add a credits row** in `src/data/credits.ts` and `public/assets/CREDITS.md` (the two are kept in step by a test). If the author or licence is unknown, say so ("Licence not yet confirmed") and add the "not confirmed yet" caveat sentence to `CREDITS.md`.
+5. **Run** `python tools/prepareAssets.py <name>`, then `npm run verify`, and look at it in a browser. A GIF with a transparent background keeps its transparency; a hero GIF only needs idle frames (attack and death are drawn in code when the sheet has none).
+
+Keep the GIF itself in the repo (it is small and is the source the strip is rebuilt from) or in the git-ignored `assets/`; the game only ever loads the built PNGs.
 
 ## Swapping a picture
 

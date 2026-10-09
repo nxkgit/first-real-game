@@ -52,6 +52,8 @@ export interface EffectHost {
   adjustTemperature(delta: number): number;
   /** Extends the player's "+1 energy at turn start" counter by `turns` more turns. */
   gainEnergizedTurns(turns: number): void;
+  /** Paladin-only: gains Radiant Light (clamped) and returns the new total and the real change. */
+  gainRadiantLight(amount: number): { radiantLight: number; delta: number };
   /** Mage-only: puts up to `count` new copies of `definition` into the hand; returns how many landed
    *  there (the rest went to the discard pile, as with a draw into a full hand). Counted so the total
    *  card count is no longer assumed fixed (see invariantHarness.ts's `cardsAddedThisCombat` escape hatch). */
@@ -323,6 +325,15 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
     describe: (e, n) => `Add ${plural(n, getCard(e.cardId).name)} to your hand.`,
     scales: ALL_SCALE_SOURCES,
     preview: scaledPreview,
+  },
+
+  // Paladin-only placeholder resource (see implementationplan.md "Multiple heroes and hero selection").
+  gainRadiantLight: {
+    resolvePlayer(effect, h) {
+      h.emit('radiantLightChanged', h.gainRadiantLight(effect.value));
+    },
+    describe: (_e, n) => `Gain ${n} Radiant Light.`,
+    scales: [],
   },
 
   gainEnergizedTurns: {

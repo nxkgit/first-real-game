@@ -1,3 +1,4 @@
+import { findHero } from './data/heroes';
 import type { CombatState } from './game/CombatState';
 import type { RunState } from './game/RunState';
 import type { Scenario } from './game/scenario';
@@ -36,6 +37,12 @@ export function takePendingScenario(): Scenario | null {
   const scenario = pendingScenario;
   pendingScenario = null;
   return scenario;
+}
+
+/** A hero given in the page address (`?hero=paladin`): skips the select screen on a new run. Only a known hero counts. */
+export function heroFromUrl(): string | undefined {
+  const raw = new URLSearchParams(window.location.search).get('hero');
+  return raw !== null && findHero(raw) ? raw : undefined;
 }
 
 /** A seed given in the page address (`?seed=123`), for replaying a particular run. */

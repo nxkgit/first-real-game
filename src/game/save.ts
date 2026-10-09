@@ -92,8 +92,9 @@ function validMap(raw: unknown): boolean {
 
 /** Checks that stored data really has the shape of a SavedRun. Returns null if not (never throws). */
 export function parseSavedRun(raw: unknown): SavedRun | null {
-  if (!isRecord(raw) || raw.version !== 3) return null;
-  if (!isInt(raw.seed, 0, 4294967295) || !isInt(raw.rngPosition, 0, 4294967295)) return null;
+  if (!isRecord(raw) || raw.version !== 4) return null;
+  if (typeof raw.heroId !== 'string' || raw.heroId === '') return null;
+  if (!isInt(raw.seed, 0, 4294967295) || !isInt(raw.baseSeed, 0, 4294967295) || !isInt(raw.rngPosition, 0, 4294967295)) return null;
   if (!validMap(raw.map)) return null;
   const mapNodes = (raw.map as { nodes: { id: string; kind: string }[] }).nodes;
   const ids = new Set(mapNodes.map((n) => n.id));

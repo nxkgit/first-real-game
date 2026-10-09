@@ -52,11 +52,33 @@ export interface HeroSheet {
   /** True for pixel art: drawn with crisp edges. */
   pixel?: boolean;
 }
-export const HERO_SHEET: HeroSheet = {
-  frameWidth: 119,
-  frameHeight: 288,
-  idle: { start: 0, end: 3, frameRate: 3 },
-  scale: 0.5, // half size is not a whole-number zoom, so no crisp-edge flag: she is drawn smoothed
+/** A hero's picture sheet plus where its file is (under public/assets). */
+export interface HeroArt extends HeroSheet {
+  file: string;
+}
+
+/**
+ * Hero id -> picture sheet. Adding a hero's art = the file in public/assets/hero/ and one entry here.
+ * A hero with no entry (the Paladin until the user supplies one) is drawn as a flat-colour stand-in.
+ */
+export const HERO_ART: Readonly<Record<string, HeroArt>> = {
+  mage: {
+    file: 'hero/hero.png',
+    frameWidth: 119,
+    frameHeight: 288,
+    idle: { start: 0, end: 3, frameRate: 3 },
+    scale: 0.5, // half size is not a whole-number zoom, so no crisp-edge flag: she is drawn smoothed
+  },
+  // The user's animated GIF (2026-10-09), built into a 6-frame strip by `python tools/prepareAssets.py paladin`
+  // (numbers printed by the script). Pixel art shown at about 0.31x, so drawn smoothed like the witch,
+  // not with crisp edges (a non-whole zoom would make uneven pixels). Idle only: lunge and tip-over are drawn in code.
+  paladin: {
+    file: 'hero/paladin_model.png',
+    frameWidth: 416,
+    frameHeight: 464,
+    idle: { start: 0, end: 5, frameRate: 4 },
+    scale: 0.31,
+  },
 };
 
 export const BACKGROUNDS = ['grass', 'forest', 'fall', 'desert', 'castles'] as const;

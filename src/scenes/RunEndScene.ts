@@ -1,12 +1,11 @@
 import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { useLayoutCamera } from '../display';
-import { newRun } from '../data/run';
 import { buildRunReport, formatRunReport } from '../game/runReport';
 import { copyToClipboard } from '../storage';
 import { addScreenBackdrop } from './art';
 import { toggleCredits } from './credits';
-import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
+import { addButton, addReportButton, addSettingsButton, startNewRun } from './ui';
 
 /** End of a run, won or lost: a short summary and a way to start over. */
 export class RunEndScene extends Phaser.Scene {
@@ -50,8 +49,9 @@ export class RunEndScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add.text(400, 312, `Seed ${this.run.seed}`, { fontSize: '12px', color: '#777788' }).setOrigin(0.5);
+    this.add.text(400, 330, `Played as the ${this.run.hero.name}`, { fontSize: '12px', color: '#777788' }).setOrigin(0.5);
 
-    addButton(this, 400, 370, 'New Run', () => enterCurrentNode(this, newRun()));
+    addButton(this, 400, 370, 'New Run', () => startNewRun(this, false));
 
     addButton(this, 400, 540, 'Credits', () => toggleCredits(this), { width: 140, height: 34, fontSize: 14, fill: 0x2a2a3a, stroke: 0x5a5a72, once: false });
 
