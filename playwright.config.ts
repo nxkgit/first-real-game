@@ -12,7 +12,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0, // a flaky test is a bug to fix or document, not to hide (docs/E2E.md)
-  workers: process.env.CI ? 2 : undefined,
+  workers: process.env.E2E_WORKERS ? Number(process.env.E2E_WORKERS) : process.env.CI ? 4 : undefined,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list']],
   outputDir: 'test-results',
   use: {
