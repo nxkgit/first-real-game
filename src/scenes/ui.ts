@@ -7,7 +7,7 @@ import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from 
 import { setCurrentRun } from '../session';
 import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
 import { RELIC_ICON } from '../data/art';
-import { addBorder, addIcon } from './art';
+import { addBorder, addCardArt, addIcon } from './art';
 import { toggleCredits } from './credits';
 import { gameKeyFrom } from './keyFilter';
 
@@ -35,6 +35,12 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     g.strokeRoundedRect(-CARD_WIDTH / 2, -CARD_HEIGHT / 2, CARD_WIDTH, CARD_HEIGHT, 10);
   }
 
+  // picture window along the top (the cost badge sits over its corner); without one the text
+  // keeps the layout it had before cards had pictures
+  const art = addCardArt(scene, card, { x: 0, y: ART_Y, width: ART_WIDTH, height: ART_HEIGHT });
+  const top = art ? WITH_ART : NO_ART;
+  const artFrame = art ? scene.add.rectangle(0, ART_Y, ART_WIDTH, ART_HEIGHT).setStrokeStyle(1, accent) : null;
+
   const costBadge = scene.add.circle(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, 13, accent);
   const costText = scene.add
     .text(-CARD_WIDTH / 2 + 16, -CARD_HEIGHT / 2 + 16, `${card.cost}`, {
@@ -47,12 +53,12 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
   // name sits below the cost badge so long names never run into it; shrink to fit the width.
   // An upgraded card's name is green.
   const nameText = scene.add
-    .text(0, -36, card.name, { fontSize: '14px', color: card.upgradeOf ? '#9fe08a' : '#ffffff', fontStyle: 'bold' })
+    .text(0, top.name, card.name, { fontSize: '14px', color: card.upgradeOf ? '#9fe08a' : '#ffffff', fontStyle: 'bold' })
     .setOrigin(0.5);
   for (let size = 13; nameText.width > CARD_WIDTH - 12 && size >= 10; size--) nameText.setFontSize(size);
-  const typeText = scene.add.text(0, -19, card.type.toUpperCase(), { fontSize: '10px', color: '#9a9aae' }).setOrigin(0.5);
+  const typeText = scene.add.text(0, top.type, card.type.toUpperCase(), { fontSize: '10px', color: '#9a9aae' }).setOrigin(0.5);
   const descText = scene.add
-    .text(0, 28, cardText(card), {
+    .text(0, top.descCenter, cardText(card), {
       fontSize: '11px',
       color: '#d8d8e4',
       wordWrap: { width: CARD_WIDTH - 16 },
@@ -66,28 +72,42 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
     .text(0, CARD_HEIGHT / 2 - 5, tagsLine, { fontSize: '9px', color: '#7f8fa8', wordWrap: { width: CARD_WIDTH - 14 }, align: 'center' })
     .setOrigin(0.5, 1)
     .setVisible(tagsLine !== '');
-  fitDescription(descText, tagsLine === '' ? null : tagsText);
+  fitDescription(descText, tagsLine === '' ? null : tagsText, top);
 
-  const face = scene.add.container(0, 0, [g, ...(border ? [border] : []), costBadge, costText, nameText, typeText, descText, tagsText]);
+  const face = scene.add.container(0, 0, [g, ...(border ? [border] : []), ...(art ? [art] : []), ...(artFrame ? [artFrame] : []), costBadge, costText, nameText, typeText, descText, tagsText]);
   face.setData('descText', descText);
   face.setData('tagsText', tagsText);
+  face.setData('textTop', top);
   return face;
 }
 
+const ART_WIDTH = 98;
+const ART_HEIGHT = 42;
+const ART_Y = -CARD_HEIGHT / 2 + 8 + ART_HEIGHT / 2;
+
+/** Vertical positions of the name, the type line and the description (top and usual centre). */
+interface TextTop {
+  name: number;
+  type: number;
+  descTop: number;
+  descCenter: number;
+}
+const WITH_ART: TextTop = { name: -15, type: -1, descTop: 7, descCenter: 36 };
+const NO_ART: TextTop = { name: -36, type: -19, descTop: -10, descCenter: 28 };
+
 /** Space for the description: just under the type line down to the bottom edge (or the tags line). */
-const DESC_TOP = -10;
 const DESC_BOTTOM = CARD_HEIGHT / 2 - 5;
 
 /** Centers the description on its usual spot, nudging it up (and shrinking the font, down to 9px)
  *  if it would run into the tags line or off the card. */
-function fitDescription(desc: Phaser.GameObjects.Text, tags: Phaser.GameObjects.Text | null): void {
+function fitDescription(desc: Phaser.GameObjects.Text, tags: Phaser.GameObjects.Text | null, top: TextTop): void {
   const bottom = tags ? tags.y - tags.height - 2 : DESC_BOTTOM;
   for (let size = 11; size >= 9; size--) {
     desc.setFontSize(size);
-    if (desc.height <= bottom - DESC_TOP) break;
+    if (desc.height <= bottom - top.descTop) break;
   }
-  const center = Math.min(28, bottom - desc.height / 2);
-  desc.setY(Math.max(center, DESC_TOP + desc.height / 2));
+  const center = Math.min(top.descCenter, bottom - desc.height / 2);
+  desc.setY(Math.max(center, top.descTop + desc.height / 2));
 }
 
 /**
@@ -104,6 +124,7 @@ export function setCardLiveText(
   const desc = face.getData('descText') as Phaser.GameObjects.Text | undefined;
   if (!desc) return;
   const tags = (face.getData('tagsText') as Phaser.GameObjects.Text | undefined) ?? null;
+  const top = face.getData('textTop') as TextTop;
   let better = false;
   let worse = false;
   const tracked = (effect: Effect): number | undefined => {
@@ -119,7 +140,7 @@ export function setCardLiveText(
   const text = cardText(card, tracked);
   if (desc.text !== text) {
     desc.setText(text);
-    fitDescription(desc, tags?.visible ? tags : null);
+    fitDescription(desc, tags?.visible ? tags : null, top);
   }
   desc.setColor(better && !worse ? '#7fe08a' : worse && !better ? '#ff7b7b' : '#d8d8e4');
 }
