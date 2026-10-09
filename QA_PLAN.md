@@ -66,7 +66,7 @@ Static GitHub Pages cannot store anything, so one small backend piece sits betwe
 
 **Token:** a GitHub **fine-grained personal access token** limited to this one repository with **Issues: read and write** only (no gist, no contents, no broad `repo` scope). It expires after at most a year, so note the expiry date and renew it. Keep it as a Worker secret, never in the repo. The Worker's secrets are: the GitHub token, the shared secret the game sends, and the maintainer read key.
 
-**Already set up (2026-10-08):** a Cloudflare account with the `michael-e-leonhard.workers.dev` subdomain (it contains the owner's name and will be visible in the page source; changeable in the Workers & Pages dashboard), a KV namespace `bug-report-limits` (ID `dacf5baf82164553821766084e5f2953`), and these issue labels on the repo: `needs-triage`, `sev:game-breaking`, `sev:fix-soon`, `sev:eventually`, `type:bug`, `type:balance`, `type:feel`. The GitHub CLI is installed and logged in as `nxkgit`.
+**Already set up (2026-10-08):** a Cloudflare account with the `michael-e-leonhard.workers.dev` subdomain (it contains the owner's name and will be visible in the page source; changeable in the Workers & Pages dashboard), a KV namespace `bug-report-limits` (ID `dacf5baf82164553821766084e5f2953`), and these issue labels on the repo: `needs-triage`, `sev:game-breaking`, `sev:big-fix`, `sev:minor-fix`, `type:bug`, `type:balance`, `type:feel`. The GitHub CLI is installed and logged in as `nxkgit`.
 
 ### 4. Triage (maintainer only)
 The maintainer reads each issue, loads the snapshot in `?dev` to see what the tester saw, does their own investigation, and decides whether it is a bug, a misunderstanding, or feedback. Then labels it:
@@ -74,10 +74,10 @@ The maintainer reads each issue, loads the snapshot in `?dev` to see what the te
 | Severity | Meaning |
 |---|---|
 | `sev:game-breaking` | Crash, soft-lock, lost progress, corrupted save, run cannot continue. |
-| `sev:fix-soon` | Wrong behaviour or display that hurts play but does not stop it. |
-| `sev:eventually` | Minor, cosmetic, and **all balance and "feels bad" feedback by default**. |
+| `sev:big-fix` | Wrong behaviour or display that hurts play but does not stop it. |
+| `sev:minor-fix` | Minor, cosmetic, and **all balance and "feels bad" feedback by default**. |
 
-**Update (2026-10-09):** when handing Claude a fix list the maintainer now uses three categories instead: `game breaking`, `minor fix`, `big fix` (size of the work, not priority; every listed bug is fixed). The GitHub `sev:*` labels above are the maintainer's own triage and have not been renamed.
+**Update (2026-10-09):** when handing Claude a fix list the maintainer now uses three categories instead: `game breaking`, `minor fix`, `big fix` (size of the work, not priority; every listed bug is fixed). The GitHub labels were renamed to match (2026-10-09): `sev:eventually` is now `sev:minor-fix` and `sev:fix-soon` is now `sev:big-fix`; `sev:game-breaking` is unchanged.
 
 | Type | Meaning |
 |---|---|

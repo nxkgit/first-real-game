@@ -7,7 +7,7 @@ import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { ENEMY_Y, INTENT_SIZE, INTENT_Y } from './layout';
-import { buildEnemySprite, isPixelEnemy, playEnemyAttack, playEnemyDeath } from '../art';
+import { addIcon, buildEnemySprite, isPixelEnemy, playEnemyAttack, playEnemyDeath } from '../art';
 import { addIdleBob, drawArrow, drawShield, drawSword } from './drawings';
 
 const NAME_Y = 130;
@@ -41,6 +41,8 @@ export class EnemyView {
   private readonly intent: Phaser.GameObjects.Container;
   private readonly intentGraphics: Record<IntentIcon, Phaser.GameObjects.Graphics>;
   private readonly intentValue: Phaser.GameObjects.Text;
+  /** Shown in the intent slot, instead of the move, while the enemy is stunned by Freeze (#14). */
+  private readonly stunMark: Phaser.GameObjects.Image | Phaser.GameObjects.Text;
   private dead = false;
 
   constructor(scene: Phaser.Scene, state: EnemyState, x: number, crowded: boolean, combat: CombatState, tooltips: Tooltips) {
@@ -76,7 +78,12 @@ export class EnemyView {
     this.intentValue = scene.add
       .text(0, 1, '', { fontSize: '20px', color: '#ffffff', fontStyle: 'bold', stroke: '#14141c', strokeThickness: 4 })
       .setOrigin(0, 0.5);
-    this.intent = scene.add.container(x, INTENT_Y, [sword, shield, buff, debuff, this.intentValue]);
+    // Placeholder picture: a blue gem from the icon pack; plain text if the picture is missing.
+    this.stunMark =
+      addIcon(scene, 'gemBlue', 30) ??
+      scene.add.text(0, 0, 'FROZEN', { fontSize: '14px', color: '#9fd3ff', fontStyle: 'bold' }).setOrigin(0.5);
+    this.stunMark.setVisible(false);
+    this.intent = scene.add.container(x, INTENT_Y, [sword, shield, buff, debuff, this.intentValue, this.stunMark]);
     for (const g of Object.values(this.intentGraphics)) g.setVisible(false);
 
     const barX = x - this.barWidth / 2;
@@ -142,6 +149,15 @@ export class EnemyView {
 
   /** Draws the icons and number for the enemy's next move. Attack damage includes statuses. */
   showIntent(): void {
+    // A stunned enemy will not act: the frozen icon takes the place of the move and its number.
+    const stunned = (this.state.stunnedTurns ?? 0) > 0;
+    this.stunMark.setVisible(stunned);
+    if (stunned) {
+      for (const g of Object.values(this.intentGraphics)) g.setVisible(false);
+      this.intentValue.setText('');
+      this.intent.setVisible(true);
+      return;
+    }
     const move = this.combat.nextMove(this.state);
     const icons = intentIcons(move);
     const damage = this.combat.intentDamage(this.state);
@@ -204,6 +220,7 @@ export class EnemyView {
 
   private intentTooltip(): string | null {
     if (this.dead) return null;
+    if ((this.state.stunnedTurns ?? 0) > 0) return 'Frozen solid: skips its next move.';
     const parts: string[] = [];
     const damage = this.combat.intentDamage(this.state);
     const block = this.combat.intentBlock(this.state);

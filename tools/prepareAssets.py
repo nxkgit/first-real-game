@@ -18,7 +18,8 @@ OUT = os.path.join(ROOT, 'public', 'assets')
 
 # which pack file stands in for what (placeholder choices; change freely)
 MAP_ICONS = {'combat': 'flag', 'elite': 'skull', 'rest': 'campfire', 'shop': 'houseChimney', 'event': 'runis', 'boss': 'castle'}
-ICONS = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger', 'coin', 'tome', 'wand']
+ICONS = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger', 'coin', 'tome', 'wand', 'gemBlue']
+TRIMMED_ICONS = {'gemBlue'}  # drawn small inside the 64px frame: cropped to the artwork (kept square) so it sizes like the others
 BACKGROUNDS = {'grass': 'backgroundColorGrass', 'forest': 'backgroundColorForest', 'fall': 'backgroundColorFall', 'desert': 'backgroundColorDesert', 'castles': 'backgroundCastles'}
 # animated pixel enemies: spritesheets.zip files, kept as they are (frame size is in the file name)
 PIXEL_SHEETS = {'gnu': 'gnu-120x100', 'disciple': 'disciple-45x51', 'minion': 'minion-45x66'}
@@ -37,6 +38,15 @@ def zip_image(zip_name: str, inner_suffix: str) -> Image.Image:
     with zipfile.ZipFile(os.path.join(RAW, zip_name)) as z:
         name = next(n for n in z.namelist() if n.replace('\\', '/').endswith(inner_suffix))
         return Image.open(io.BytesIO(z.read(name))).convert('RGBA')
+
+
+def square_trim(img: Image.Image) -> Image.Image:
+    """Crops to the visible artwork and pads to a square, so the picture keeps its shape when shown at a square size."""
+    art = img.crop(img.getbbox())
+    side = max(art.size)
+    out = Image.new('RGBA', (side, side), (0, 0, 0, 0))
+    out.paste(art, ((side - art.width) // 2, (side - art.height) // 2))
+    return out
 
 
 def save(img: Image.Image, *parts: str) -> None:
@@ -104,7 +114,10 @@ def main() -> None:
     for kind, name in MAP_ICONS.items():
         save(zip_image('kenney_cartography-pack.zip', f'PNG/Default/{name}.png'), 'map', f'{kind}.png')
     for name in ICONS:
-        save(zip_image('RavenmoreIconPack.02.2014.zip', f'64/{name}.png'), 'icons', f'{name}.png')
+        icon = zip_image('RavenmoreIconPack.02.2014.zip', f'64/{name}.png')
+        if name in TRIMMED_ICONS:
+            icon = square_trim(icon)
+        save(icon, 'icons', f'{name}.png')
     save(zip_image('kenney_fantasy-ui-borders.zip', 'PNG/Default/Border/panel-border-009.png'), 'ui', 'border.png')
 
     for name, file in BACKGROUNDS.items():
