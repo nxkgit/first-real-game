@@ -30,7 +30,8 @@ export class Tooltips {
     });
   }
 
-  add(x: number, y: number, w: number, h: number, getText: () => string | null): void {
+  /** Returns the hover zone, so a caller whose readout moves (a centered status row) can move it too. */
+  add(x: number, y: number, w: number, h: number, getText: () => string | null): Phaser.GameObjects.Zone {
     // below the hand (depth -1) so a wide hand overlapping a pile still gets the click
     const zone = this.scene.add.zone(x, y, w, h).setInteractive().setDepth(-1);
     zone.on('pointerover', (pointer: Phaser.Input.Pointer) => {
@@ -41,12 +42,13 @@ export class Tooltips {
       // keep the bubble on screen; it sits just above the hovered thing
       const halfWidth = this.bg.width / 2;
       this.bubble
-        .setPosition(Phaser.Math.Clamp(x, halfWidth + 4, 800 - halfWidth - 4), y - h / 2 - 4)
+        .setPosition(Phaser.Math.Clamp(zone.x, halfWidth + 4, 800 - halfWidth - 4), y - h / 2 - 4)
         .setVisible(true);
       this.shownByTouchDown = pointer.wasTouch ? pointer.downTime : null;
     });
     zone.on('pointerout', (pointer: Phaser.Input.Pointer) => {
       if (!pointer.wasTouch) this.bubble.setVisible(false);
     });
+    return zone;
   }
 }

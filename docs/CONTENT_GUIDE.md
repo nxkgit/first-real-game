@@ -348,7 +348,10 @@ A status is stacks on a fighter. Each has a `kind`: `duration` stacks drop by 1 
 | `blockMult` | Multiplier on block the holder gains (Frail). |
 | `incomingDamageCap` | Caps all damage the holder takes at this amount, applied last (Intangible). |
 | `consumedByAttack` | Loses one stack after each attack card the holder plays (Empowered). |
-| `clearAtTurnEnd` | Removed entirely (not decremented) at the next end-of-round tick, regardless of `kind` (Ignite). |
+| `clearAtTurnEnd` | Removed entirely (not decremented) at the next end-of-round tick, regardless of `kind` (Ignite, Fuming). |
+| `grantsOnAttack` | After each attack card the holder plays, the holder gains this status (Fuming grants 1 Ignite). |
+| `maxStacks` | The most stacks the holder can have; more are lost (Fuming is 1). |
+| `gainText` | What a card that gives the holder this status says, instead of "Gain N <name>." (Fuming). |
 | `badge` | Placeholder symbol and colour for the status icon. |
 <!-- /names -->
 
@@ -365,7 +368,8 @@ The existing statuses (a status id must be one of these; adding one needs a code
 | `frail` | Duration, StS-style keyword (engine-only, see "Keyword mechanics" below). The holder gains less block. |
 | `intangible` | Duration, StS-style keyword (engine-only). All damage the holder takes is capped at a fixed amount. |
 | `buffer` | Intensity, StS-style keyword (engine-only). Prevents the next instance of HP loss entirely, one stack at a time. |
-| `ignite` | Intensity, Mage only, placeholder name, `clearAtTurnEnd`. Each attack played this turn deals double the damage of the one before it (Heating Up). |
+| `ignite` | Intensity, Mage only, placeholder name, `clearAtTurnEnd`. The holder's attacks deal 2^N times damage; a damage effect can ignore it (`ignoresStatuses`, Scorching Wind). Gained from Fuming. |
+| `fuming` | Intensity, Mage only, placeholder name, `clearAtTurnEnd`, cannot stack above 1. Each attack card the holder plays grants 1 Ignite (Heating Up). |
 <!-- /names -->
 
 ## Keyword mechanics (StS-style, engine-only as of 2026-10-08)
@@ -388,8 +392,8 @@ via `applyStatus`) — no further plumbing needed.
 - **Buffer** (status) — prevents the next instance of HP loss outright, independent of block;
   consumed one stack at a time.
 
-`ignite` is not part of this engine-only batch — it is live on a real card (Heating Up) as of
-2026-10-08; see "Mage — Core Mechanics" in `implementationplan.md` and `DESIGN_LOG.md`.
+`ignite` and `fuming` are not part of this engine-only batch — they are live on a real card (Heating Up),
+reworked 2026-10-09 (QA #28: Heating Up gives Fuming, each attack then grants 1 Ignite, Ignite is 2^stacks); see "Mage — Core Mechanics" in `implementationplan.md` and `DESIGN_LOG.md`.
 
 ## The act's map
 

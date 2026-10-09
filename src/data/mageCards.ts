@@ -32,11 +32,12 @@ export const SCORCHING_WIND: CardDefinition = {
   inRewardPool: true,
   inStarterPool: true,
   tags: ['fire'],
+  // Ignite (Heating Up) does not multiply this card's damage; it still grants Ignite, being an attack (QA #28).
   effects: [
-    { kind: 'damage', value: 2 },
+    { kind: 'damage', value: 2, ignoresStatuses: ['ignite'] },
     { kind: 'adjustTemperature', value: 1 },
   ],
-  upgrade: { effects: [{ kind: 'damage', value: 4 }, { kind: 'adjustTemperature', value: 1 }] },
+  upgrade: { effects: [{ kind: 'damage', value: 4, ignoresStatuses: ['ignite'] }, { kind: 'adjustTemperature', value: 1 }] },
 };
 
 export const HEATING_UP: CardDefinition = {
@@ -48,11 +49,11 @@ export const HEATING_UP: CardDefinition = {
   inRewardPool: true,
   inStarterPool: true,
   tags: ['fire'],
-  // Corrected 2026-10-08 (DESIGN_LOG.md): the user's real intent is an exponential chain, not a
-  // flat double — each attack played this turn deals 2x the damage of the one before it (1st
-  // normal, 2nd double, 3rd quadruple, ...), via the new `ignite` status (src/data/statuses.ts).
+  // Reworked 2026-10-09 (QA #28, DESIGN_LOG.md): gives Fuming for the rest of the turn; each attack
+  // played while Fuming grants 1 Ignite, and Ignite doubles damage per stack (1st attack normal, 2nd
+  // x2, 3rd x4, ...). The card text comes from Fuming's `gainText` (src/data/statuses.ts).
   effects: [
-    { kind: 'applyStatus', status: 'ignite', value: 1, to: 'self' },
+    { kind: 'applyStatus', status: 'fuming', value: 1, to: 'self' },
     { kind: 'adjustTemperature', value: 1 },
   ],
   upgrade: { cost: 0 },

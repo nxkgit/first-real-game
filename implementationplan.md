@@ -156,7 +156,7 @@ direct questions (Cauterize = plain block; the freeze-stun threshold = every 5 s
 | Card | Type/cost | What it does |
 |---|---|---|
 | Scorching Wind | Attack, 0 | Light fire damage; heats up. |
-| Heating Up | Skill, 1 | Each attack played this turn deals double the damage of the one before it (1st normal, 2nd x2, 3rd x4, ...), uncapped. Corrected 2026-10-08 — see "Heating Up: the real mechanic" below; was briefly built as a flat Empowered grant, which was wrong. |
+| Heating Up | Skill, 1 | "For the rest of your turn, your attacks grant you 1 Ignite. (This effect does not apply to Scorching Wind's damage.)" Gives the Fuming status; Ignite doubles attack damage per stack (1st attack normal, 2nd x2, 3rd x4, ...), uncapped. Reworked 2026-10-09 (QA #28) — see "Heating Up and Ignite: reworked" below; first corrected 2026-10-08, "Heating Up: the real mechanic". |
 | Meteor Shower | Attack, 2 | Fire damage to **all** enemies (new `damageAll` effect); heats up. |
 | Molten Core | Skill, 2 | Adds Scorching Winds to hand, scaling with current Temperature (new `addCardToHand` effect). |
 | Apocalyptic Flame | Attack, 3 (cost wasn't given) | The Mage's biggest single hit. |
@@ -268,6 +268,28 @@ Played in a real browser, confirmed via `CombatState`: Heating Up → Scorching 
 → Scorching Wind → Apocalyptic Flame dealt the exact 1x/2x/4x/8x sequence; Ignite's badge disappeared
 after ending the turn, and an attack played fresh the next turn (nothing chained yet) hit for
 normal, unmultiplied damage.
+
+## Heating Up and Ignite: reworked (user, 2026-10-09, QA #28)
+
+The 2026-10-08 build above keyed Ignite's multiplier off how many attacks had been played this turn,
+so attacks played *before* Heating Up counted (the provisional call flagged above). The user's
+intent, given while triaging issue #28: attacks before Heating Up must never contribute, and the
+card should read "For the rest of your turn, your attacks grant you 1 Ignite." Now built as two
+statuses, both `clearAtTurnEnd` (gone at the end of the turn):
+
+- **Fuming** (new, placeholder name chosen by the user): given by Heating Up, cannot stack above 1
+  (`maxStacks`). Each attack *card* played while Fuming grants 1 Ignite after the card resolves
+  (`grantsOnAttack`), once per card however many hits it has. Heating Up itself gives no Ignite.
+- **Ignite**: a stack counter; every hit of an attack deals `2^stacks` times damage (so 1x, 2x, 4x, 8x,
+  uncapped), multiplied with Strength, Weak, Empowered and Vulnerable like any other multiplier.
+- **Scorching Wind** still grants Ignite (it is an attack) but its own damage ignores Ignite: a
+  damage effect can list `ignoresStatuses: ['ignite']`; every other modifier still applies to it.
+- The live numbers on cards in hand and the Ignite badge tooltip ("Ignite N: your attacks deal 2^N x
+  damage") use the same rules, so what the card shows is what it deals. All the wording is generated
+  from the status definitions (`src/data/statuses.ts`) so card, badge and docs stay in step.
+
+Played in a real browser (`e2e/heatingup.e2e.ts`): Heating Up, Strike x2, Scorching Wind, Strike dealt
+6, 12, 2 (ignoring Ignite), 48; the Fuming and Ignite badges showed; both cleared at end of turn.
 
 ## Starter deck draft (built 2026-10-08)
 

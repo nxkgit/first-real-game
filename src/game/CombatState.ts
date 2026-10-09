@@ -235,7 +235,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       player: this.player,
       deck: this.deck,
       emit: (event, payload) => this.emit(event, payload),
-      calcDamage: (base, attacker, defender, fromAttackCard) => this.calcDamage(base, attacker, defender, fromAttackCard),
+      calcDamage: (base, attacker, defender, fromAttackCard, ignoring) => this.calcDamage(base, attacker, defender, fromAttackCard, ignoring),
       dealDamage: (target, amount) => this.dealDamage(target, amount),
       addStatus: (target, id, stacks) => this.addStatus(target, id, stacks),
       scaledValue: (effect, target) => this.scaledValue(effect, target),
@@ -364,9 +364,10 @@ export class CombatState extends EventEmitter<CombatEventMap> {
    * Damage `attacker` would really deal for `base` to `defender`. Order: add (Strength), then
    * multiply (Weak, Empowered), then the defender's multiplier (Vulnerable), rounded down once.
    * `fromAttackCard` is false for damage that does not come from playing an attack card (a trigger,
-   * a skill's damage); statuses marked `consumedByAttack` (Empowered) then don't apply.
+   * a skill's damage); statuses marked `consumedByAttack` (Empowered) then don't apply. Statuses
+   * in `ignoring` have no damage multiplier on this hit (a damage effect's `ignoresStatuses`).
    */
-  calcDamage(base: number, attacker: Combatant, defender: Combatant, fromAttackCard = true): number {
+  calcDamage(base: number, attacker: Combatant, defender: Combatant, fromAttackCard = true, ignoring: readonly StatusId[] = []): number {
     let amount = base;
     const ctx: DamageMultContext = { attacksPlayedThisTurn: this.stats.attacksPlayedThisTurn };
     for (const [id, stacks] of activeStatuses(attacker)) {
@@ -374,7 +375,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     }
     for (const [id, stacks] of activeStatuses(attacker)) {
       if (STATUSES[id].consumedByAttack && !fromAttackCard) continue;
-      amount *= STATUSES[id].outgoingDamageMult?.(stacks, ctx) ?? 1;
+      if (ignoring.includes(id)) continue;
+      amount *=STATUSES[id].outgoingDamageMult?.(stacks, ctx) ?? 1;
     }
     for (const [id, stacks] of activeStatuses(defender)) {
       amount *= STATUSES[id].incomingDamageMult?.(stacks) ?? 1;
@@ -498,7 +500,10 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     }
 
     // After the effects, so "earlier this turn" counts never include the card itself.
-    if (isAttack) this.consumeAttackStatuses();
+    if (isAttack) {
+      this.consumeAttackStatuses();
+      this.grantAttackStatuses();
+    }
     this.stats.cardsPlayedThisTurn += 1;
     if (isAttack) this.stats.attacksPlayedThisTurn += 1;
     for (const tag of new Set(definition.tags ?? [])) {
@@ -680,6 +685,14 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     }
   }
 
+  /** Each status that "grants on attack" (Fuming) gives its holder what it grants, once per attack card played. */
+  private grantAttackStatuses(): void {
+    for (const [id] of activeStatuses(this.player)) {
+      const grant = STATUSES[id].grantsOnAttack;
+      if (grant) this.emit('statusChanged', this.addStatus(this.player, grant.status, grant.stacks));
+    }
+  }
+
   private addTriggers(triggers: Trigger[] | undefined): void {
     for (const trigger of triggers ?? []) this.triggers.push({ trigger, firedThisTurn: false });
   }
@@ -746,9 +759,11 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
   /** Adds stacks and returns the matching event for the caller to emit. */
   private addStatus(target: Combatant, id: StatusId, stacks: number): CombatEventMap['statusChanged'] {
-    target.statuses[id] = (target.statuses[id] ?? 0) + stacks;
+    const before = target.statuses[id] ?? 0;
+    target.statuses[id] = Math.min(STATUSES[id].maxStacks ?? Infinity, before + stacks);
+    const delta = target.statuses[id]! - before; // less than `stacks` when a cap (Fuming's 1) trimmed it
     if (id === 'freeze' && stacks > 0) this.checkFreezeStun(target);
-    return { target: target.id, status: id, delta: stacks, statuses: { ...target.statuses } };
+    return { target: target.id, status: id, delta, statuses: { ...target.statuses } };
   }
 
   /** Mage-only Freeze: every FREEZE_STUN_THRESHOLD stacks on an enemy stuns it for one move and
