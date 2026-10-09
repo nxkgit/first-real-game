@@ -374,7 +374,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       amount += STATUSES[id].outgoingDamageAdd?.(stacks) ?? 0;
     }
     for (const [id, stacks] of activeStatuses(attacker)) {
-      if (STATUSES[id].consumedByAttack && !fromAttackCard) continue;
+      if ((STATUSES[id].consumedByAttack || STATUSES[id].attackCardsOnly) && !fromAttackCard) continue;
       if (ignoring.includes(id)) continue;
       amount *=STATUSES[id].outgoingDamageMult?.(stacks, ctx) ?? 1;
     }

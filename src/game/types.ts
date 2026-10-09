@@ -47,6 +47,9 @@ export interface StatusDefinition {
    *  modifier (Intangible). The lowest active cap wins if more than one status has one. */
   incomingDamageCap?(stacks: number): number;
   consumedByAttack?: boolean;
+  /** The damage multiplier only applies to damage from an attack card (not a skill's damage or a trigger's),
+   *  without being used up (ignite). `consumedByAttack` statuses are already attack-card-only. */
+  attackCardsOnly?: boolean;
   /** After each attack card the holder plays, the holder gains this status (fuming grants 1 ignite). */
   grantsOnAttack?: { status: StatusId; stacks: number };
   /** The most stacks the holder can have; more stacks added are lost (fuming is 1). */

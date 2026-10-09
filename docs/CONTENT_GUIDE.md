@@ -349,6 +349,7 @@ A status is stacks on a fighter. Each has a `kind`: `duration` stacks drop by 1 
 | `incomingDamageCap` | Caps all damage the holder takes at this amount, applied last (Intangible). |
 | `consumedByAttack` | Loses one stack after each attack card the holder plays (Empowered). |
 | `clearAtTurnEnd` | Removed entirely (not decremented) at the next end-of-round tick, regardless of `kind` (Ignite, Fuming). |
+| `attackCardsOnly` | The damage multiplier only applies to damage from an attack card, not a skill's or a trigger's, and is not used up (Ignite). |
 | `grantsOnAttack` | After each attack card the holder plays, the holder gains this status (Fuming grants 1 Ignite). |
 | `maxStacks` | The most stacks the holder can have; more are lost (Fuming is 1). |
 | `gainText` | What a card that gives the holder this status says, instead of "Gain N <name>." (Fuming). |
@@ -368,7 +369,7 @@ The existing statuses (a status id must be one of these; adding one needs a code
 | `frail` | Duration, StS-style keyword (engine-only, see "Keyword mechanics" below). The holder gains less block. |
 | `intangible` | Duration, StS-style keyword (engine-only). All damage the holder takes is capped at a fixed amount. |
 | `buffer` | Intensity, StS-style keyword (engine-only). Prevents the next instance of HP loss entirely, one stack at a time. |
-| `ignite` | Intensity, Mage only, placeholder name, `clearAtTurnEnd`. The holder's attacks deal 2^N times damage; a damage effect can ignore it (`ignoresStatuses`, Scorching Wind). Gained from Fuming. |
+| `ignite` | Intensity, Mage only, placeholder name, `clearAtTurnEnd`. The holder's attack cards deal 2^N times damage (a skill's or trigger's damage is not boosted); a damage effect can ignore it (`ignoresStatuses`, Scorching Wind). Gained from Fuming. |
 | `fuming` | Intensity, Mage only, placeholder name, `clearAtTurnEnd`, cannot stack above 1. Each attack card the holder plays grants 1 Ignite (Heating Up). |
 <!-- /names -->
 
