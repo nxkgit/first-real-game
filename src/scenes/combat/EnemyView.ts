@@ -43,6 +43,7 @@ export class EnemyView {
   private readonly intentValue: Phaser.GameObjects.Text;
   /** Shown in the intent slot, instead of the move, while the enemy is stunned by Freeze (#14). */
   private readonly stunMark: Phaser.GameObjects.Image | Phaser.GameObjects.Text;
+  private readonly statusZones: Phaser.GameObjects.Zone[] = [];
   private dead = false;
 
   constructor(scene: Phaser.Scene, state: EnemyState, x: number, crowded: boolean, combat: CombatState, tooltips: Tooltips) {
@@ -96,15 +97,16 @@ export class EnemyView {
     drawShield(this.blockIcon);
     this.blockText = scene.add.text(x + 3, BLOCK_Y + 3, '', { fontSize: '14px', color: '#9fd3ff', fontStyle: 'bold' }).setOrigin(0, 0.5);
 
-    // one slot per status kind, centered under the enemy
-    this.statusRow = new StatusRow(scene, x - ((STATUS_ORDER.length - 1) * STATUS_SLOT_WIDTH) / 2, STATUS_Y);
+    // the badges that exist, packed and centered under the enemy (#26); a hover zone per possible slot
+    // follows them (see syncFrom)
+    this.statusRow = new StatusRow(scene, x, STATUS_Y, true);
 
     tooltips.add(x, INTENT_Y, INTENT_SIZE.width, INTENT_SIZE.height, () => this.intentTooltip());
     tooltips.add(x, BLOCK_Y + 1, 50, 24, () =>
       this.state.block > 0 ? `Block: absorbs the next ${this.state.block} damage. Resets at the start of its turn.` : null
     );
     for (let i = 0; i < STATUS_ORDER.length; i++) {
-      tooltips.add(this.statusRow.slotX(i), STATUS_Y, STATUS_SLOT_WIDTH - 4, 28, () => this.statusRow.textAt(i));
+      this.statusZones.push(tooltips.add(this.statusRow.slotX(i), STATUS_Y, STATUS_SLOT_WIDTH - 4, 28, () => this.statusRow.textAt(i)));
     }
 
     this.syncFrom();
@@ -128,6 +130,11 @@ export class EnemyView {
     this.hpFill.width = Math.max(0, (e.hp / e.maxHp) * this.barWidth);
     this.setBlock(e.block);
     this.statusRow.set(e.statuses);
+    // only a slot with a badge in it takes the hover: an empty one would swallow the neighbouring enemy's
+    this.statusZones.forEach((zone, i) => {
+      zone.setX(this.statusRow.slotX(i));
+      if (zone.input) zone.input.enabled = this.statusRow.textAt(i) !== null;
+    });
     this.showIntent();
   }
 
