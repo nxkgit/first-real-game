@@ -2,6 +2,24 @@
 
 A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built with TypeScript and Phaser. This is a learning/portfolio project — an exercise in building a real, working game end-to-end with Claude Code.
 
+## Latest changes
+
+The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
+
+<!-- patchnotes:start -->
+## 2026-10-09 (fix commit 55f2f04)
+
+### Fixed
+- #7 (game breaking): in fights, the Hero Power button no longer covers an enemy's next-move icons (the sword, shield and arrow readouts). It now sits to the left of End Turn instead of below it, and the short combat log at the top of the screen was narrowed to fit beside it.
+
+### Not fixed
+- Nothing: every ticket in this batch was fixed.
+
+### Checked
+- Unit tests and the full automated browser suite pass. Played in a real browser: fights against one, two and three enemies, an elite fight, using the Hero Power from its new place, and a whole enemy turn, checked against screenshots.
+- Not checked: touch screens.
+<!-- patchnotes:end -->
+
 Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.
 
 All visuals are built from Phaser's drawing primitives (shapes, not image assets) — a simple vector mage and goblin, card UI with tweened animation, particle effects, and procedurally-generated sound. Placeholder-quality by design; final art direction is a separate, later pass.

@@ -25,6 +25,8 @@ import {
   upgradeComparison,
 } from './browse';
 import type { CardFilters, CardRecord, CardSim, SimStats } from './browse';
+import patchNotesText from '../../PATCHNOTES.md?raw';
+import { parsePatchNotes } from './patchNotes';
 import { toCsv, toMarkdown } from './tableExport';
 import type { Table } from './tableExport';
 import { formatIssues, validateContent } from './validate';
@@ -129,6 +131,38 @@ function checkTable(issues: Issue[]): Table {
     headers: ['Severity', 'Kind', 'Id', 'Problem', 'Fix'],
     rows: issues.map((i) => [i.severity, i.kind, i.id, i.message, i.fix]),
   };
+}
+
+/** Text with `code` spans drawn as <code> (everything else stays plain text: nothing from the notes is read as HTML). */
+function inline(text: string): (Node | string)[] {
+  return text.split('`').map((part, i) => (i % 2 === 1 ? el('code', { text: part }) : part));
+}
+
+/** Every batch of fixes from PATCHNOTES.md, newest first. Shown first on the page. */
+function patchNotesSection(): HTMLElement | null {
+  const entries = parsePatchNotes(patchNotesText);
+  if (entries.length === 0) return null;
+  const section = el(
+    'section',
+    { id: 'patchnotes' },
+    el('h2', { text: 'Patch notes' }),
+    el('p', { className: 'note', text: 'What changed in each batch of fixes, newest first. Read from PATCHNOTES.md in the repository.' })
+  );
+  for (const entry of entries) {
+    const box = el('div', { className: 'patch-entry' }, el('h3', { text: entry.heading }));
+    for (const part of entry.sections) {
+      if (part.title) box.appendChild(el('h4', { text: part.title }));
+      for (const block of part.blocks) {
+        if (block.kind === 'list') {
+          box.appendChild(el('ul', { className: 'patch-list' }, ...block.items.map((item) => el('li', {}, ...inline(item)))));
+        } else {
+          box.appendChild(el('p', {}, ...inline(block.items[0] ?? '')));
+        }
+      }
+    }
+    section.appendChild(box);
+  }
+  return section;
 }
 
 // ---------- small DOM helpers ----------
@@ -427,7 +461,9 @@ async function main(): Promise<void> {
   const records = baseCards().map((c) => cardRecord(c, upgradedVersion(c)));
   const stats = await loadSimStats();
   const simple: Table[] = [relicsTable(), enemiesTable(), statusesTable(), eventsTable(), actTable(), tunablesTable(), checkTable(issues)];
+  const patchNotes = patchNotesSection();
   render([
+    ...(patchNotes ? [{ id: 'patchnotes', title: 'Patch notes', node: patchNotes }] : []),
     { id: 'cards', title: 'Cards', node: cardsSection(records, issues, stats) },
     ...simple.map((t) => ({ id: t.id, title: t.title, node: simpleSection(t) })),
   ]);

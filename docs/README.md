@@ -27,6 +27,7 @@ Written 2026-10-07; index brought up to date the same day after the art pass, ma
 | `content.html` (`npm run dev`, `/content.html`) | Content browser: search, sort, filter, card upgrade side by side, simulation stats, Markdown/CSV copy. | `CONTENT_GUIDE.md` |
 | `npm run balance`, `balance:report`, `balance:check`, `balance:baseline` | Simulation experiments and baselines (`balance/`). | `BALANCE.md` |
 | `npm run balance -- <gold, rests, events, relics, maps, paths, pressure, picks, decksize, upgrades, synergy, runs>`, `npm run balance:evidence` | Design-evidence experiments: whole acts with shop price, removal, gold, rest and map-shape parameters changed in memory. Reports in `balance/reports/design-evidence/`. | `BALANCE.md` ("Design-evidence commands"), `design/EVIDENCE.md` |
+| `npm run patchnotes:sync` (`patchnotes:check`) | Copies the newest `PATCHNOTES.md` entry into the README's "Latest changes" block (GitHub's front page). `--check` only reports. A test fails if the README is behind. The content site's Patch notes section needs no command. | `QA_FIX_WORKFLOW.md` |
 | `npm run verify` | Typecheck, all tests, build. Must pass before anything merges. | `AUTOMATION.md` |
 | `npm run e2e` (once: `npm run e2e:install`) | Browser tests that play the real game (about 5 minutes). Pull-request CI runs everything except the whole-act test; the nightly run has all of it. | `E2E.md` |
 | `python tools/prepareAssets.py` | Rebuilds `public/assets/` from the raw packs in `assets/` (needs Pillow). | `ART.md` |
