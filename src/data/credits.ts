@@ -3,7 +3,7 @@
 // whenever a new pack's files go into public/assets (tools/prepareAssets.py).
 
 export interface Credit {
-  /** What the art is used for, in the game's words. */
+  /** What the art (or music) is used for, in the game's words. */
   usedFor: string;
   /** The pack's name. */
   source: string;
@@ -62,5 +62,12 @@ export const CREDITS: readonly Credit[] = [
     url: 'https://kenney.nl/assets/background-elements-remastered',
     author: 'Kenney',
     licence: 'CC0',
+  },
+  {
+    usedFor: 'Background music',
+    source: 'alex_089 on SoundCloud',
+    url: 'https://soundcloud.com/alex_089_x',
+    author: 'alex_089',
+    licence: 'Free to use (from a licence-free site; exact terms unconfirmed)',
   },
 ];

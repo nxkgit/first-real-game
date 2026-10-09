@@ -6,6 +6,9 @@
 export interface Settings {
   /** 0 to 1. */
   volume: number;
+  /** 0 to 1: the music's own volume, separate from the sound effects. */
+  musicVolume: number;
+  /** Silences sound effects and music. */
   muted: boolean;
   /** 1 is normal; higher plays animations faster. */
   animationSpeed: number;
@@ -16,7 +19,7 @@ export interface Settings {
 export const ANIMATION_SPEEDS = [1, 1.5, 2];
 
 const KEY = 'deckbuilder.settings.v1';
-const DEFAULTS: Settings = { volume: 1, muted: false, animationSpeed: 1, reducedMotion: false };
+const DEFAULTS: Settings = { volume: 1, musicVolume: 0.5, muted: false, animationSpeed: 1, reducedMotion: false };
 
 let current: Settings = load();
 const listeners = new Set<(s: Settings) => void>();
@@ -24,9 +27,12 @@ const listeners = new Set<(s: Settings) => void>();
 function clean(raw: unknown): Settings {
   const r = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
   const volume = typeof r.volume === 'number' && r.volume >= 0 && r.volume <= 1 ? r.volume : DEFAULTS.volume;
+  const musicVolume =
+    typeof r.musicVolume === 'number' && r.musicVolume >= 0 && r.musicVolume <= 1 ? r.musicVolume : DEFAULTS.musicVolume;
   const speed = typeof r.animationSpeed === 'number' && ANIMATION_SPEEDS.includes(r.animationSpeed) ? r.animationSpeed : 1;
   return {
     volume,
+    musicVolume,
     muted: r.muted === true,
     animationSpeed: speed,
     reducedMotion: r.reducedMotion === true,
@@ -64,4 +70,9 @@ export function onSettingsChange(fn: (s: Settings) => void): () => void {
 /** The loudness to apply to the master audio gain right now. */
 export function effectiveVolume(): number {
   return current.muted ? 0 : current.volume;
+}
+
+/** The loudness to apply to the music right now (before the start-up fade). */
+export function effectiveMusicVolume(): number {
+  return current.muted ? 0 : current.musicVolume;
 }

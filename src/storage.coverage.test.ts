@@ -184,19 +184,35 @@ describe('settings', () => {
 
   it('defaults when nothing is stored', async () => {
     const { settings } = await load();
-    expect(settings.getSettings()).toEqual({ volume: 1, muted: false, animationSpeed: 1, reducedMotion: false });
+    expect(settings.getSettings()).toEqual({ volume: 1, musicVolume: 0.5, muted: false, animationSpeed: 1, reducedMotion: false });
   });
 
   it('loads valid stored values', async () => {
-    store.data.set(KEY, JSON.stringify({ volume: 0.4, muted: true, animationSpeed: 2, reducedMotion: true }));
+    store.data.set(KEY, JSON.stringify({ volume: 0.4, musicVolume: 0.25, muted: true, animationSpeed: 2, reducedMotion: true }));
     const { settings } = await load();
-    expect(settings.getSettings()).toEqual({ volume: 0.4, muted: true, animationSpeed: 2, reducedMotion: true });
+    expect(settings.getSettings()).toEqual({ volume: 0.4, musicVolume: 0.25, muted: true, animationSpeed: 2, reducedMotion: true });
+  });
+
+  it('an older save without a music volume gets the default; a bad one falls back too', async () => {
+    store.data.set(KEY, JSON.stringify({ volume: 0.4, muted: false, animationSpeed: 1, reducedMotion: false }));
+    expect((await load()).settings.getSettings().musicVolume).toBe(0.5);
+    store.data.set(KEY, JSON.stringify({ musicVolume: 3 }));
+    expect((await load()).settings.getSettings().musicVolume).toBe(0.5);
+  });
+
+  it('muting silences the music as well as the effects', async () => {
+    const { settings } = await load();
+    settings.updateSettings({ musicVolume: 0.75 });
+    expect(settings.effectiveMusicVolume()).toBe(0.75);
+    settings.updateSettings({ muted: true });
+    expect(settings.effectiveMusicVolume()).toBe(0);
+    expect(settings.effectiveVolume()).toBe(0);
   });
 
   it('bad entries fall back to defaults per field: out-of-range volume, unlisted speed, wrong types', async () => {
     store.data.set(KEY, JSON.stringify({ volume: 7, muted: 'yes', animationSpeed: 3, reducedMotion: 1 }));
     const { settings } = await load();
-    expect(settings.getSettings()).toEqual({ volume: 1, muted: false, animationSpeed: 1, reducedMotion: false });
+    expect(settings.getSettings()).toEqual({ volume: 1, musicVolume: 0.5, muted: false, animationSpeed: 1, reducedMotion: false });
     store.data.set(KEY, JSON.stringify({ volume: -0.1 }));
     expect((await load()).settings.getSettings().volume).toBe(1);
     store.data.set(KEY, JSON.stringify({ volume: '0.5' }));
@@ -206,7 +222,7 @@ describe('settings', () => {
   it('corrupt JSON, or non-object JSON, gives defaults', async () => {
     for (const text of ['{{{', 'null', '5', '[]', '"x"']) {
       store.data.set(KEY, text);
-      expect((await load()).settings.getSettings(), text).toEqual({ volume: 1, muted: false, animationSpeed: 1, reducedMotion: false });
+      expect((await load()).settings.getSettings(), text).toEqual({ volume: 1, musicVolume: 0.5, muted: false, animationSpeed: 1, reducedMotion: false });
     }
   });
 

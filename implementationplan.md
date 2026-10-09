@@ -334,7 +334,7 @@ behaviour moved. `npm run verify` is green (831 tests, several rewritten where t
 pool composition or fixed starter-deck phase); balance baseline and sample report regenerated for the
 grown reward pool (`npm run balance:baseline`/`balance:report`), no numbers tuned.
 
-## Background music (planned 2026-10-09, not built)
+## Background music (planned and built 2026-10-09)
 
 One theme track plays through the whole game. The track is the user's choice and is not Claude's to name or replace.
 
