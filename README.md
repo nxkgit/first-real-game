@@ -7,19 +7,19 @@ A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built w
 The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
 
 <!-- patchnotes:start -->
-## 2026-10-09 (fix commit bd2a4e5)
+## 2026-10-09 (fix commit 84bb4d7)
 
 ### Fixed
 - #32 (minor fix): the Credits screen no longer has text drawn on top of other text. The list is now laid out in two columns so every line has room, and long web addresses wrap instead of running into the next column.
 - #26 (minor fix): status icons (Freeze, Vulnerable and the rest) now sit centred under the enemy they belong to. Before, a single icon could appear far to the left, under a different enemy. Hovering an icon explains it, including on enemies standing side by side.
-- #28 (big fix): Heating Up and Ignite work the way the card says. Heating Up now reads "For the rest of your turn, your attacks grant you 1 Ignite. (This effect does not apply to Scorching Wind's damage.)" Playing it gives you a new **Fuming** icon for the rest of your turn. Each attack you play while Fuming grants 1 Ignite after it hits, and Ignite makes your attacks deal double damage per stack: the first attack after Heating Up is normal, then 2x, 4x, 8x and so on. Attacks you played before Heating Up never count, and playing Heating Up twice does not stack Fuming. Scorching Wind still grants Ignite, but its own damage is not boosted by it (it still gets Strength, Empowered and the rest). Only damage from attack cards is boosted: damage from a skill card or a trigger is not multiplied by Ignite. The Ignite icon now tells you the current multiplier, and attack cards in your hand show the damage they would deal right now, Ignite included. Fuming and Ignite both wear off at the end of your turn.
+- #28 (big fix): Heating Up and Ignite work the way the card says. Heating Up now reads "For the rest of your turn, your attacks grant you 1 Ignite. (This effect does not apply to Scorching Wind's damage.)" Playing it gives you a new **Fuming** icon for the rest of your turn. Each attack you play while Fuming grants 1 Ignite after it hits, and Ignite makes your attacks deal double damage per stack: the first attack after Heating Up is normal, then 2x, 4x, 8x and so on. Attacks you played before Heating Up never count, and playing Heating Up twice does not stack Fuming. Scorching Wind still grants Ignite, but its own damage is not boosted by it (it still gets Strength, Empowered and the rest). Only damage from attack cards is boosted: damage from a skill card or a trigger is not multiplied by Ignite. Heating Up's longer card text is squeezed to stay inside the card. The Ignite icon now tells you the current multiplier, and attack cards in your hand show the damage they would deal right now, Ignite included. Fuming and Ignite both wear off at the end of your turn.
 
 ### Not fixed
 - #29 (minor fix): could not reproduce. Empowered and Ignite already multiply together (for example, Heating Up, then Empowered, then Strike dealt 12, then 12, then 24 in a test). The likely cause is that the first attack after Heating Up has no Ignite bonus yet, so with Empowered it only shows the Empowered doubling. Heating Up's rework above makes that clearer, and a test now pins that the two multiply.
 - #27 (minor fix): no change needed. Glaciate does deal 24 against a frozen enemy; the 19 seen was most likely the enemy's block absorbing 5 of it, which is how block works. A test now pins the 24. (Glaciate drops back to 8 once the Freeze stacks stun the enemy, because the stacks are used up; that is also unchanged.)
 
 ### Checked
-- Typecheck, 956 unit tests and the build pass. The new Heating Up rules, the capped Fuming, Scorching Wind's exception and Empowered together with Ignite each have a unit test.
+- Typecheck, 957 unit tests and the build pass. The new Heating Up rules, the capped Fuming, Scorching Wind's exception and Empowered together with Ignite each have a unit test.
 - Played in a real browser: the Credits screen (screenshot, two columns, no overlap), status icons under three enemies at once with hover text, and a full Heating Up turn (Heating Up, Strike, Strike, Scorching Wind, Strike dealt 6, 12, 2 and 48, the Fuming and Ignite icons showed, and both cleared at the end of the turn).
 - Not checked: touch screens, other window sizes.
 <!-- patchnotes:end -->
