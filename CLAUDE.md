@@ -45,6 +45,16 @@ Every session (or natural transition point within one — e.g. a plan just got f
 
 Whenever you add a new class/hero, or new cards, or a new build/archetype that needs testing, ship matching `?dev` panel presets in the same change so the user can test it immediately without drafting into it. Deck presets live in `src/dev/deckPresets.ts` (`DECK_PRESETS`, wired up in `src/dev/devPanel.ts`, covered by `deckPresets.test.ts`). A new class gets at least one preset deck that showcases it; new cards go into a preset that exercises them (an existing preset if they fit a build, otherwise a new one); if the dev panel needs another control to reach the content (e.g. starting as the new hero), add that too. Presets are dev-only tooling, not game content, so this isn't scope creep against the Deferred list. Mention the presets you added when reporting the work.
 
+## Reusability and repeatable processes
+
+Treat repeatability as a first-class goal. Any recurring kind of change — adding or swapping assets (sprites, backgrounds, enemy art), changing music/SFX, adding or editing cards, adding enemies or status effects — should be doable next time by following written steps, not by re-deriving them.
+
+- **Document the process the first time you do it.** When you perform a recurring kind of change for the first time (or find it undocumented), write the steps down in `docs/` (a new `docs/<TOPIC>.md`, or a new section in the existing guide that fits: `ART.md`, `CONTENT_GUIDE.md`, `BALANCE.md`, `E2E.md`) and add a row to `docs/README.md`, the index. Cover: which files to touch, naming/format/size conventions, where the data/config entry goes, any registration or preload step, and how to verify it in the browser.
+- **Follow and fix existing how-tos.** Before doing a recurring change, check `docs/README.md` first. If a step was wrong, missing, or out of date, fix the doc as part of the same change.
+- **Prefer repeatable mechanisms over one-off edits.** Make the change through data/config and shared helpers (see Architecture conventions) rather than special-casing. If the same manual step shows up a second time, consider a small script or helper for it. Don't build speculative tooling before then (see "No premature abstraction").
+- **Link, don't duplicate.** `HANDOFF.md` should point to the relevant how-tos in its code map/working notes rather than restating them.
+- **Check the doc after the work.** Before reporting a recurring-type change as done, confirm the how-to still matches what you actually did.
+
 ## Testing discipline
 
 Game *feel* cannot be verified by type-checking or unit tests alone. After any change to combat flow, card effects, or turn structure, actually run the dev server and play the loop (draw → play a card → end turn → watch the enemy act) before reporting it as working. State plainly when something has only been type-checked/logic-tested versus actually played.
