@@ -77,7 +77,13 @@ export function cardText(card: CardDefinition, liveValue?: (effect: Effect) => n
   // block.") instead of the printed number and its scaling note.
   const parts = (card.effects ?? []).map((effect) => {
     const live = liveValue?.(effect);
-    return live === undefined ? describeEffect(effect) : plainEffect(effect, live, {});
+    if (live === undefined) return describeEffect(effect);
+    // The scaling note stays beside the live number, so the card still says why the number moves (#12).
+    const scaling = acceptsScaling(effect) && 'scaling' in effect ? effect.scaling : undefined;
+    const now = plainEffect(effect, live, {});
+    if (!scaling || !('value' in effect)) return now;
+    const unit = SCALE_UNIT[scaling.per](scaling.tag);
+    return effect.value > 0 ? `${now} +${scaling.value} for each ${unit}.` : `${now} (${scaling.value} for each ${unit}.)`;
   });
   if (card.onTurnStartEffect) {
     const text = describeEffect(card.onTurnStartEffect, { atTurnStart: true });

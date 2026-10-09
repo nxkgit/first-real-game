@@ -219,7 +219,20 @@ describe('tags on card faces', () => {
     expect(cardText(card)).toContain('+3 for each card played earlier this turn');
     const live = cardText(card, (e) => (e.kind === 'block' ? 8 : undefined));
     expect(live).toContain('Gain 8 block.');
-    expect(live).not.toContain('+3 for each');
     expect(live).toContain('Draw 1 card.');
+  });
+
+  // Issue #12: the live number used to replace the whole sentence, so a scaling card (Opportunist) showed
+  // "Deal 12 damage." with nothing to explain why it was 12.
+  it('keeps the scaling note beside the live number, so the card still explains itself', () => {
+    const card = mk('combo', {
+      effects: [{ kind: 'damage', value: 4, scaling: { per: 'targetVulnerable', value: 4 } }],
+    });
+    expect(cardText(card, () => 12)).toBe('Deal 12 damage. +4 for each stack of Vulnerable on the target.');
+    // a card whose printed number is only the scaling part
+    const slam = mk('slam', { effects: [{ kind: 'damage', value: 0, scaling: { per: 'block', value: 1 } }] });
+    expect(cardText(slam, () => 7)).toBe('Deal 7 damage. (1 for each point of your block.)');
+    // no scaling: unchanged
+    expect(cardText(mk('plain', { effects: [{ kind: 'damage', value: 6 }] }), () => 9)).toBe('Deal 9 damage.');
   });
 });
