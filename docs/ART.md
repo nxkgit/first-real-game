@@ -1,6 +1,6 @@
 # Art pipeline
 
-How pictures get from a downloaded pack into the game, which code draws them, and how to swap one. Written 2026-10-07 after the first art pass. **Which picture stands in for which enemy, relic or map stop is a placeholder** (the packs are the user's picks; the pairings are not decided), and the pack styles deliberately clash for now.
+How pictures get from a downloaded pack into the game, which code draws them, and how to swap one. Written 2026-10-07 after the first art pass (enemy manifest and witch hero added 2026-10-09). **Which picture stands in for which enemy, relic or map stop is a placeholder** (the packs are the user's picks; the pairings are not decided), and the pack styles deliberately clash for now.
 
 ## The flow
 
@@ -27,8 +27,8 @@ screens
 
 | Picture | Files in `public/assets/` | Keys | Drawn by | Chosen by |
 |---|---|---|---|---|
-| Hero (idle, attack, death animation) | `hero/hero.png` (11 frames of 303x266: idle 0-3, attack 4-7, death 8-10) | `hero` | `buildHeroSprite` (used by `PlayerView`); the attack plays when an attack card is played, death on defeat (`CombatScene`) | `HERO_SHEET` |
-| Enemies | `enemies/<name>.png` | `enemy-<name>` | `buildEnemySprite` (used by `EnemyView`) | `ENEMY_ART` (enemy id to picture); size from `ENEMY_DISPLAY_HEIGHT` and the enemy's `placeholderScale` |
+| Hero (the dark-elf witch since 2026-10-09: 4 idle frames of 119x288, no attack or death art) | `hero/hero.png` | `hero` | `buildHeroSprite` (used by `PlayerView`); the attack plays when an attack card is played, death on defeat (`CombatScene`); a sheet with no attack/death frames gets a lunge and a tip-over drawn in code | `HERO_SHEET` (attack/death are optional) |
+| Enemies | `enemies/<name>.png` | `enemy-<name>` | `buildEnemySprite` (used by `EnemyView`) | `ENEMY_ART` (enemy id to manifest entry); the entries are in `src/data/enemyArt.ts`; size from `ENEMY_DISPLAY_HEIGHT` and the enemy's `placeholderScale` |
 | Map stop icons | `map/<kind>.png` | `map-<kind>` | `addMapIcon` (map nodes and legend) | file per stop kind, set in `MAP_ICONS` in the prepare script |
 | Relic badges, HP heart | `icons/<name>.png` | `icon-<name>` | `addIcon` (relic bar, `PlayerView`) | `RELIC_ICON` (relic id to icon), `ICON_FILES` |
 | Card and button borders | `ui/border.png` | `ui-border` | `addBorder` (card faces, buttons) | tinted by card type (`TYPE_COLOR` in `ui.ts`) or the button's stroke colour |
@@ -48,7 +48,8 @@ screens
 ## Swapping a picture
 
 1. **Same slot, different file from a pack you already have:** change the dictionary in `tools/prepareAssets.py` (for example `MAP_ICONS = {'shop': 'chest', ...}`), run the script, reload. No code change.
-2. **Different pairing, same files** (a different enemy gets a different picture, a relic a different icon): edit `src/data/art.ts` only. The picture must be one that is loaded (`ENEMY_PICTURES`, `ICON_FILES`, `BACKGROUNDS`).
+2. **Different pairing, same files** (a different enemy gets a different picture, a relic a different icon): edit `src/data/art.ts` only. For enemies, the value is a name in the manifest (`src/data/enemyArt.ts`); for icons and backdrops it must be in `ICON_FILES` / `BACKGROUNDS`.
+2b. **New enemy art** (the manifest, 2026-10-09): drop `<name>.png` in `public/assets/enemies/` (a still) or `public/assets/pixel/` (an animated sheet), add one entry to `ENEMY_ART_ENTRIES` in `src/data/enemyArt.ts` (a still: `paintedStill()` for a painted picture shown 150 px tall, or `pixelStill()` for 64x64-style pixel art at a whole-number zoom; a sheet: frame size, scale, feet padding and frame lists), then point an enemy at it in `ENEMY_ART`. `preloadArt` loads whatever the manifest lists; `art.test.ts` checks the file exists, sheets are cut the way they claim and every pairing resolves. Raw pictures that need trimming or shrinking go through `tools/prepareAssets.py` (the seven pixel stills: raw 604x604 files in `assets/pixel_stills/`, shrunk back to 64x64 and trimmed, named `pixel-a` ... in file-name order).
 3. **A new pack:** drop the zip in `assets/`, add the file(s) to the script, add the new names to the matching list in `src/data/art.ts` (so `preloadArt` loads them; the script's `ICONS` and `ICON_FILES` in `art.ts` must list the same names), then add the pairing. Add the pack to `public/assets/CREDITS.md` in the same commit.
 4. After any change: `npm run verify`, then look at the screen. For fights and scenes that changed, `npm run e2e` (the harness waits for the art to load, see `E2E.md`).
 

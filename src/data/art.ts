@@ -6,49 +6,18 @@ import type { MapNodeKind } from '../game/actMap';
 import type { FightTier } from '../game/RunState';
 import { MAP_EARLY_FLOORS, MAP_LATE_FLOORS_FROM } from './tunables';
 
-/** Enemy id -> a still picture (ENEMY_PICTURES) or an animated pixel sheet (ENEMY_SHEETS), by name.
- *  An enemy with no entry falls back to the drawn goblin. PLACEHOLDER pairing: some painted,
- *  some pixel, so both kinds are on screen. */
+/** Enemy id -> the name of an entry in the art manifest (src/data/enemyArt.ts: a still picture or an
+ *  animated sheet). An enemy with no entry falls back to the drawn goblin. PLACEHOLDER pairing
+ *  (2026-10-09): the seven pixel stills, the biggest looks on the elites and the boss. The user picks
+ *  the real ones. */
 export const ENEMY_ART: Readonly<Record<string, string>> = {
-  'enemy-a': 'goblin',
-  'enemy-b': 'disciple',
-  'enemy-c': 'fighter',
-  'enemy-d': 'gnu',
-  'elite-a': 'brute',
-  'elite-b': 'minion',
-  'boss-a': 'brute',
-};
-export const ENEMY_PICTURES = ['skeleton', 'goblin', 'fighter', 'brute'] as const;
-/** An animated pixel-art enemy: one sheet (public/assets/pixel/<name>.png), cut into equal frames
- *  numbered left to right, top to bottom. Idle loops; attack (optional) plays when the enemy acts;
- *  death (optional) plays when it falls, and the usual fade follows. Frame lists are by eye. */
-export interface EnemySheet {
-  frameWidth: number;
-  frameHeight: number;
-  /** Whole-number zoom, so the pixels stay square (the sheets are drawn at 1x). */
-  scale: number;
-  /** Empty rows of pixels under the feet in the frame, so the feet land on the ground line. */
-  feetPad: number;
-  idle: { frames: readonly number[]; frameRate: number; yoyo?: boolean };
-  attack?: { frames: readonly number[]; frameRate: number };
-  death?: { frames: readonly number[]; frameRate: number };
-}
-
-export const ENEMY_SHEETS: Readonly<Record<string, EnemySheet>> = {
-  // hooded figure; dissolves into dust when it falls (no attack frames)
-  disciple: { frameWidth: 45, frameHeight: 51, scale: 3, feetPad: 0, idle: { frames: [0, 1, 2, 3], frameRate: 5 }, death: { frames: [4, 5, 6, 7, 8, 9, 10], frameRate: 8 } },
-  // horned figure with a staff; the staff flourish doubles as its attack, and it topples over
-  gnu: {
-    frameWidth: 120,
-    frameHeight: 100,
-    scale: 2,
-    feetPad: 5,
-    idle: { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8], frameRate: 6, yoyo: true },
-    attack: { frames: [9, 10, 9], frameRate: 10 },
-    death: { frames: [9, 10, 11, 12, 13, 14, 15, 16], frameRate: 7 },
-  },
-  // tentacled head; idle only (it just fades when it falls)
-  minion: { frameWidth: 45, frameHeight: 66, scale: 2, feetPad: 0, idle: { frames: [0, 1, 2, 3, 4, 5], frameRate: 6, yoyo: true } },
+  'enemy-a': 'pixel-a',
+  'enemy-b': 'pixel-e',
+  'enemy-c': 'pixel-g',
+  'enemy-d': 'pixel-d',
+  'elite-a': 'pixel-b',
+  'elite-b': 'pixel-f',
+  'boss-a': 'pixel-c',
 };
 
 /** On-screen height of an enemy picture at scale 1 (the pictures are 200px tall). */
@@ -69,16 +38,26 @@ export const ICON_FILES = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen',
 /** Map stop kind -> icon in public/assets/map (the file is named after the kind). */
 export const MAP_ICON_KINDS: readonly MapNodeKind[] = ['combat', 'elite', 'rest', 'shop', 'event', 'boss'];
 
-/** The hero's picture sheet: frame size, and which frames are which animation. */
-export const HERO_SHEET = {
-  frameWidth: 303,
-  frameHeight: 266,
-  idle: { start: 0, end: 3, frameRate: 5 },
-  attack: { start: 4, end: 7, frameRate: 12 },
-  death: { start: 8, end: 10, frameRate: 6 },
+/** The hero's picture sheet: frame size, and which frames are which animation. `attack` and `death`
+ *  are optional: a sheet without them gets a lunge and a tip-over drawn in code (`buildHeroSprite`).
+ *  The dark-elf witch (2026-10-09) has only four idle frames, so she uses those substitutes. */
+export interface HeroSheet {
+  frameWidth: number;
+  frameHeight: number;
+  idle: { start: number; end: number; frameRate: number };
+  attack?: { start: number; end: number; frameRate: number };
+  death?: { start: number; end: number; frameRate: number };
   /** On-screen scale; the hero stands about 145px tall. */
-  scale: 0.68,
-} as const;
+  scale: number;
+  /** True for pixel art: drawn with crisp edges. */
+  pixel?: boolean;
+}
+export const HERO_SHEET: HeroSheet = {
+  frameWidth: 119,
+  frameHeight: 288,
+  idle: { start: 0, end: 3, frameRate: 3 },
+  scale: 0.5, // half size is not a whole-number zoom, so no crisp-edge flag: she is drawn smoothed
+};
 
 export const BACKGROUNDS = ['grass', 'forest', 'fall', 'desert', 'castles'] as const;
 
