@@ -2,6 +2,19 @@
 
 What changed in each batch of fixes, newest first. Written so playtesters can read them; issue numbers are for the maintainer. The procedure that produces these is `docs/QA_FIX_WORKFLOW.md`.
 
+## 2026-10-09 (final boss and campfire art)
+
+### Added
+- The final boss (Boss A) now wears the animated lava dino picture, and it is drawn at its own pixel size, so it is a little smaller on screen than the old stand-in picture.
+- Rest stops now show the campfire picture (with a small flicker) in place of the drawn placeholder fire, and rest stops on the map use the same campfire as their icon.
+
+### Not fixed
+- Nothing was a bug fix in this batch.
+
+### Checked
+- Typecheck, unit tests and the build pass. Played in a real browser: a boss fight (the dino animates, fits inside the fight panel, and the boss acts after End Turn), the rest stop screen, and the map icons.
+- Not checked: the boss's lunge and defeat animation (idle only was watched), touch screens.
+
 ## 2026-10-09 (batch c: restart run from Settings)
 
 ### Added

@@ -7,18 +7,18 @@ A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built w
 The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
 
 <!-- patchnotes:start -->
-## 2026-10-09 (batch c: restart run from Settings)
+## 2026-10-09 (final boss and campfire art)
 
 ### Added
-- A "Restart run" button in the Settings panel during a run (map, fights, rest sites, shops, events, rewards and the starting-deck draft). It asks "Abandon this run?"; Yes takes you to the hero select screen for a new run, Cancel goes back to Settings. The button is not shown on the start screen, the hero select screen or the end-of-run screen, which already offer a new run. An abandoned run is not recorded anywhere.
+- The final boss (Boss A) now wears the animated lava dino picture, and it is drawn at its own pixel size, so it is a little smaller on screen than the old stand-in picture.
+- Rest stops now show the campfire picture (with a small flicker) in place of the drawn placeholder fire, and rest stops on the map use the same campfire as their icon.
 
 ### Not fixed
 - Nothing was a bug fix in this batch.
 
 ### Checked
-- Typecheck, unit tests and the build pass. Played in a real browser: the button and the confirm box, Cancel returning to Settings, Yes landing on hero select, and the button being absent on the start screen.
-- Not checked: restarting in the middle of a fight, touch screens.
-- The other two changes in this batch only touch the project's working guidance (`CLAUDE.md`, a new reflecting-mode doc and log) and have no effect in the game.
+- Typecheck, unit tests and the build pass. Played in a real browser: a boss fight (the dino animates, fits inside the fight panel, and the boss acts after End Turn), the rest stop screen, and the map icons.
+- Not checked: the boss's lunge and defeat animation (idle only was watched), touch screens.
 <!-- patchnotes:end -->
 
 Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.

@@ -64,6 +64,9 @@ export const ENEMY_ART_ENTRIES: Readonly<Record<string, EnemyArtEntry>> = {
       death: { frames: [9, 10, 11, 12, 13, 14, 15, 16], frameRate: 7 },
     },
   },
+  // the final boss (user's LavaDino.gif, 2026-10-09): 8 frames of 181x90 built by `python tools/prepareAssets.py lavadino`.
+  // The GIF's own 1000 ms a frame would read as a slideshow, so it plays at 6 fps. Idle only (lunge and fade are drawn in code).
+  'lava-dino': { kind: 'sheet', sheet: { frameWidth: 181, frameHeight: 90, scale: 1, feetPad: 0, idle: { frames: [0, 1, 2, 3, 4, 5, 6, 7], frameRate: 6 } } },
   // tentacled head; idle only (it just fades when it falls)
   minion: { kind: 'sheet', sheet: { frameWidth: 45, frameHeight: 66, scale: 2, feetPad: 0, idle: { frames: [0, 1, 2, 3, 4, 5], frameRate: 6, yoyo: true } } },
 };
