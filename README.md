@@ -7,16 +7,18 @@ A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built w
 The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
 
 <!-- patchnotes:start -->
-## 2026-10-09 (content page: Resource column)
+## 2026-10-09 (batch c: restart run from Settings)
 
 ### Added
-- The Cards table on the content page has a new "Resource" column right after "Cost", saying whether a card's cost is paid in Energy or Radiant Light (before, both showed just a number). There is a matching "Resource" filter beside the Owner filter, and the card detail panel now reads, for example, "cost 2 (Radiant Light)".
+- A "Restart run" button in the Settings panel during a run (map, fights, rest sites, shops, events, rewards and the starting-deck draft). It asks "Abandon this run?"; Yes takes you to the hero select screen for a new run, Cancel goes back to Settings. The button is not shown on the start screen, the hero select screen or the end-of-run screen, which already offer a new run. An abandoned run is not recorded anywhere.
 
 ### Not fixed
 - Nothing was a bug fix in this batch.
 
 ### Checked
-- Unit tests and the typecheck pass. Looked at the real content page in a browser: the new column, its position and its values (page text only; a screenshot could not be taken). The Resource filter was tested in code but not clicked in the browser.
+- Typecheck, unit tests and the build pass. Played in a real browser: the button and the confirm box, Cancel returning to Settings, Yes landing on hero select, and the button being absent on the start screen.
+- Not checked: restarting in the middle of a fight, touch screens.
+- The other two changes in this batch only touch the project's working guidance (`CLAUDE.md`, a new reflecting-mode doc and log) and have no effect in the game.
 <!-- patchnotes:end -->
 
 Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.
