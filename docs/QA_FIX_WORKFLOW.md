@@ -14,7 +14,7 @@ The list is **issue numbers with a category**, plus optional notes from the main
 #19 big fix        - the aiming arrow is drawn off screen on some clients
 ```
 
-Categories: `game breaking` (crash, soft-lock, lost progress, run cannot continue), `minor fix` (a small, local change), `big fix` (a larger change, or one that touches several systems). Every bug in the list gets worked, so the category is not a priority and does not set the order: work in the order given. Balance and feel feedback is not a fix request unless the maintainer's note says exactly what to change.
+Categories: `game breaking` (crash, soft-lock, lost progress, run cannot continue), `minor fix` (a small, local change), `big fix` (a larger change, or one that touches several systems). Every bug in the list gets worked, so the category is not a priority and does not set the order: work in the order given. Balance and "feels bad" feedback counts as `minor fix` unless told otherwise; still, never change a balance number unless the note says exactly what to change (see rule 2 under "Per bug").
 
 ## Rules about report text
 
@@ -48,7 +48,7 @@ When every bug in the list is fixed, blocked or not reproduced:
    - #15 (minor fix): Strike+ now deals the damage its card says.
 
    ### Not fixed
-   - #19: balance feedback, nothing changed (balance feedback, no change requested).
+   - #19: balance feedback, nothing changed (minor fix, balance feedback: nothing changed because the note gave no number).
    - #22: could not reproduce. Tried: <what>.
    - #23: blocked, the docs do not say what <question> should do. Needs a decision.
 
