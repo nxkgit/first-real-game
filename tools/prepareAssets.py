@@ -6,6 +6,7 @@ Needs Pillow (pip install pillow). Sources and licences are listed in public/ass
 """
 import io
 import os
+import sys
 import zipfile
 
 from PIL import Image
@@ -40,7 +41,26 @@ def save(img: Image.Image, *parts: str) -> None:
     print('wrote', os.path.relpath(path, ROOT), img.size)
 
 
+def build_ashlands() -> None:
+    """The animated ashlands backdrop: assets/backgrounds/Ashlands_1.gif becomes one PNG per frame
+    (backgrounds/ashlands-0.png ...). The game plays them in order (src/data/art.ts ASHLANDS)."""
+    path = os.path.join(RAW, 'backgrounds', 'Ashlands_1.gif')
+    if not os.path.exists(path):
+        print('skipped ashlands: no', os.path.relpath(path, ROOT))
+        return
+    gif = Image.open(path)
+    durations = set()
+    for i in range(gif.n_frames):
+        gif.seek(i)
+        durations.add(gif.info.get('duration'))
+        save(gif.convert('RGB'), 'backgrounds', f'ashlands-{i}.png')
+    print(f'ashlands: {gif.n_frames} frames of {gif.size[0]}x{gif.size[1]}, frame time(s) in ms: {sorted(durations)} (ASHLANDS in src/data/art.ts must match)')
+
+
 def main() -> None:
+    if 'ashlands' in sys.argv[1:]:  # only the animated backdrop, when the other raw packs are not at hand
+        build_ashlands()
+        return
     for kind, name in MAP_ICONS.items():
         save(zip_image('kenney_cartography-pack.zip', f'PNG/Default/{name}.png'), 'map', f'{kind}.png')
     for name in ICONS:
@@ -49,6 +69,7 @@ def main() -> None:
 
     for name, file in BACKGROUNDS.items():
         save(zip_image('kenney_background-elements-remastered.zip', f'Backgrounds/{file}.png').convert('RGB'), 'backgrounds', f'{name}.png')
+    build_ashlands()
 
     for name, file in PIXEL_SHEETS.items():
         save(zip_image('spritesheets.zip', f'/{file}.png'), 'pixel', f'{name}.png')

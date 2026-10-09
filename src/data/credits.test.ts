@@ -12,16 +12,23 @@ const rows = readFileSync('public/assets/CREDITS.md', 'utf8')
 
 describe('credits', () => {
   it('has the same rows in credits.ts and CREDITS.md', () => {
-    const fromData = CREDITS.map((c) => [c.usedFor, `${c.source}, ${c.url}`, c.author, c.licence]);
+    const fromData = CREDITS.map((c) => [c.usedFor, c.url ? `${c.source}, ${c.url}` : c.source, c.author, c.licence]);
     expect(rows).toEqual(fromData);
   });
 
-  it('gives every row a source, author and licence, with a web address', () => {
+  it('gives every row a source, author and licence, and a web address when the source page is known', () => {
     for (const c of CREDITS) {
       expect(c.usedFor, c.source).not.toBe('');
       expect(c.author, c.source).not.toBe('');
       expect(c.licence, c.source).not.toBe('');
-      expect(c.url, c.source).toMatch(/^https:\/\//);
+      if (c.url !== '') expect(c.url, c.source).toMatch(/^https:\/\//);
+    }
+  });
+
+  it('says so in CREDITS.md whenever a row has no web address or a licence still to confirm', () => {
+    const notes = readFileSync('public/assets/CREDITS.md', 'utf8');
+    for (const c of CREDITS) {
+      if (c.url === '' || /not yet confirmed/i.test(c.licence)) expect(notes, `${c.source} needs its caveat`).toMatch(/not confirmed yet/i);
     }
   });
 });

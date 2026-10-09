@@ -7,7 +7,7 @@ export interface Credit {
   usedFor: string;
   /** The pack's name. */
   source: string;
-  /** Where the pack came from. */
+  /** Where the pack came from. Empty when the source page is not known yet (say so in CREDITS.md). */
   url: string;
   author: string;
   licence: string;
@@ -62,5 +62,14 @@ export const CREDITS: readonly Credit[] = [
     url: 'https://kenney.nl/assets/background-elements-remastered',
     author: 'Kenney',
     licence: 'CC0',
+  },
+  {
+    usedFor: 'Combat backdrop (animated ashlands)',
+    source: 'Ashlands animated background',
+    // PROVISIONAL: the user supplied the picture and named the artist; where it came from and its
+    // licence are not known yet. Fill both in (and CREDITS.md) once they are.
+    url: '',
+    author: 'trowheel',
+    licence: 'Licence not yet confirmed',
   },
 ];
