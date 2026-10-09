@@ -91,3 +91,9 @@ A card can ship without art: it shows the default picture. Your own art goes in 
 - Is the template missing a field you think about when designing (flavour text? art id?). Flavour and art are yours; today there is no field for them.
 - Should Tier 2 browser checks always be committed as scenarios, or only when you ask?
 - A tiny helper that prints a card's base and upgraded numbers was offered and not decided.
+
+## Temporary: long-text cards drop the placeholder picture
+
+While every card shows the shared placeholder picture (`public/assets/cards/default.png`), the picture window leaves about 63 px for the card text instead of 80. A card whose text does not fit in that space (Heating Up's wording is the one so far) is drawn **without** the picture, in the layout cards had before pictures: `descriptionFitsBesidePlaceholder` in `src/scenes/ui.ts`. A card with its **own** picture (`hasOwnCardArt`, a file listed in `CARD_ART_IDS`) always keeps it, so the rule fades out as real art is added.
+
+**Remove it** (the function, the `showArt` check in `buildCardFace`, the second test in `e2e/cardart.e2e.ts`, and this section) once real card art exists and the layout has room for the longest card text. Decided by the user on 2026-10-09; see `DESIGN_LOG.md`.

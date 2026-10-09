@@ -202,6 +202,11 @@ export function addBorder(
   return scene.add.nineslice(0, 0, 'ui-border', undefined, width, height, s, s, s, s).setTint(color);
 }
 
+/** True if the card (or the card it upgrades) has its own picture, not just the shared default. */
+export function hasOwnCardArt(scene: Phaser.Scene, card: { id: string; upgradeOf?: string }): boolean {
+  return [card.id, card.upgradeOf].some((id) => id !== undefined && scene.textures.exists(`card-art-${id}`));
+}
+
 /** A card's picture, cropped to fill `width` x `height` centered on (x, y) (never stretched), or
  *  null if even the default did not load. Looks for the card's own file, then its base card's (for
  *  an upgrade), then the default. */

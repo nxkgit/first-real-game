@@ -11,7 +11,7 @@ import { BUILD_ID } from '../qa/buildInfo';
 import { browserEnvironment, openReportDialog } from '../qa/reportDialog';
 import { buildSnapshot } from '../qa/snapshot';
 import { RELIC_ICON } from '../data/art';
-import { addBorder, addCardArt, addIcon } from './art';
+import { addBorder, addCardArt, addIcon, hasOwnCardArt } from './art';
 import { toggleCredits } from './credits';
 import { gameKeyFrom } from './keyFilter';
 
@@ -41,7 +41,8 @@ export function buildCardFace(scene: Phaser.Scene, card: CardDefinition): Phaser
 
   // picture window along the top (the cost badge sits over its corner); without one the text
   // keeps the layout it had before cards had pictures
-  const art = addCardArt(scene, card, { x: 0, y: ART_Y, width: ART_WIDTH, height: ART_HEIGHT });
+  const showArt = hasOwnCardArt(scene, card) || descriptionFitsBesidePlaceholder(scene, card);
+  const art = showArt ? addCardArt(scene, card, { x: 0, y: ART_Y, width: ART_WIDTH, height: ART_HEIGHT }) : null;
   const top = art ? WITH_ART : NO_ART;
   const artFrame = art ? scene.add.rectangle(0, ART_Y, ART_WIDTH, ART_HEIGHT).setStrokeStyle(1, accent) : null;
 
@@ -103,14 +104,36 @@ const NO_ART: TextTop = { name: -36, type: -19, descTop: -10, descCenter: 28 };
 /** Space for the description: just under the type line down to the bottom edge (or the tags line). */
 const DESC_BOTTOM = CARD_HEIGHT / 2 - 5;
 
+/**
+ * TEMPORARY (user, 2026-10-09): while every card shows the shared placeholder picture, a card whose
+ * text cannot fit beside the picture window (Heating Up's long wording) is drawn without the picture,
+ * in the layout cards had before they had pictures. A card with its own picture always keeps it (see
+ * `hasOwnCardArt`). REMOVE this check, and its mention in docs/CARD_WORKFLOW.md, once real card art
+ * exists and the layout has room for the longest text.
+ */
+function descriptionFitsBesidePlaceholder(scene: Phaser.Scene, card: CardDefinition): boolean {
+  const wrap = { width: CARD_WIDTH - 16 };
+  const desc = scene.add.text(0, 0, cardText(card), { fontSize: '9px', wordWrap: wrap, align: 'center' });
+  const tagsLine = cardTagsText(card);
+  const tags = scene.add.text(0, 0, tagsLine, { fontSize: '9px', wordWrap: { width: CARD_WIDTH - 14 }, align: 'center' });
+  const bottom = tagsLine === '' ? DESC_BOTTOM : CARD_HEIGHT / 2 - 5 - tags.height - 2;
+  const fits = desc.height <= bottom - WITH_ART.descTop;
+  desc.destroy();
+  tags.destroy();
+  return fits;
+}
+
 /** Centers the description on its usual spot, nudging it up (and shrinking the font, down to 9px)
  *  if it would run into the tags line or off the card. */
 function fitDescription(desc: Phaser.GameObjects.Text, tags: Phaser.GameObjects.Text | null, top: TextTop): void {
   const bottom = tags ? tags.y - tags.height - 2 : DESC_BOTTOM;
+  desc.setLineSpacing(0);
   for (let size = 11; size >= 9; size--) {
     desc.setFontSize(size);
     if (desc.height <= bottom - top.descTop) break;
   }
+  // a very long text (Heating Up's) still does not fit at 9px: pull the lines closer together
+  for (let spacing = -1; spacing >= -5 && desc.height > bottom - top.descTop; spacing--) desc.setLineSpacing(spacing);
   const center = Math.min(top.descCenter, bottom - desc.height / 2);
   desc.setY(Math.max(center, top.descTop + desc.height / 2));
 }
