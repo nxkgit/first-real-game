@@ -10,6 +10,7 @@ import type { ActMap, MapNode } from './actMap';
 import { Rng, randomSeed } from './rng';
 import {
   ELITE_REWARD_GOLD,
+  HERO_CARD_WEIGHT,
   PLAYER_MAX_HP,
   REST_HEAL_FRACTION,
   REWARD_CARD_CHOICES,
@@ -613,12 +614,21 @@ export class RunState {
 
   /** Up to `count` distinct cards from the reward pool, in random order. */
   private rollCards(count: number): CardDefinition[] {
-    return this.rollCardsFrom(this.world.rewardPool, count);
+    return this.rollCardsFrom(this.world.rewardPool, count, HERO_CARD_WEIGHT);
   }
 
-  /** Up to `count` distinct cards from `pool`, in random order (shared by reward rolls, the shop, and the starter draft). */
-  private rollCardsFrom(pool: CardDefinition[], count: number): CardDefinition[] {
+  /**
+   * Up to `count` distinct cards from `pool`, in random order (shared by reward rolls, the shop, and the starter draft).
+   * `heroWeight` > 1 makes a non-neutral (hero) card that many times as likely to be picked as a neutral one
+   * (weighted sampling without replacement; at 1 it is a plain shuffle and the random stream is unchanged).
+   */
+  private rollCardsFrom(pool: CardDefinition[], count: number, heroWeight = 1): CardDefinition[] {
     const shuffled = [...new Set(pool)];
+    if (heroWeight !== 1) {
+      const keyed = shuffled.map((card) => ({ card, key: Math.pow(this.rng.next(), 1 / (card.owner === 'neutral' ? 1 : heroWeight)) }));
+      keyed.sort((a, b) => b.key - a.key);
+      return keyed.slice(0, count).map((k) => k.card);
+    }
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(this.rng.next() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];

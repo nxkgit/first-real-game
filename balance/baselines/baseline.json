@@ -1,9 +1,9 @@
 {
  "version": 1,
- "generated": "2026-10-08",
+ "generated": "2026-10-09",
  "note": "Content at the time was placeholder. Regenerate with `npm run balance:baseline`. See docs/BALANCE.md.",
  "content": {
-  "hash": "f4d5bece",
+  "hash": "3f1d0ad0",
   "cards": [
    "absolute-zero",
    "absolute-zero+",
@@ -394,153 +394,153 @@
    "n": 100
   },
   "ladder/random/mid/enemy-a/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.87,
+   "sd": 0.336865,
    "n": 300
   },
   "ladder/random/mid/enemy-a/hpLost": {
-   "mean": 30.63,
-   "sd": 9.282618,
+   "mean": 36.253333,
+   "sd": 14.47345,
    "n": 300
   },
   "ladder/random/mid/enemy-a/turns": {
-   "mean": 7.08,
-   "sd": 0.884803,
+   "mean": 7.206667,
+   "sd": 1.955343,
    "n": 300
   },
   "ladder/random/mid/enemy-d+enemy-d/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.99,
+   "sd": 0.099665,
    "n": 300
   },
   "ladder/random/mid/enemy-d+enemy-d/hpLost": {
-   "mean": 29.69,
-   "sd": 8.292353,
+   "mean": 32.156667,
+   "sd": 11.193589,
    "n": 300
   },
   "ladder/random/mid/enemy-d+enemy-d/turns": {
-   "mean": 7.473333,
-   "sd": 1.01952,
+   "mean": 7.286667,
+   "sd": 1.941749,
    "n": 300
   },
   "ladder/random/mid/enemy-b/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.976667,
+   "sd": 0.151212,
    "n": 300
   },
   "ladder/random/mid/enemy-b/hpLost": {
-   "mean": 25.673333,
-   "sd": 7.997488,
+   "mean": 30.2,
+   "sd": 13.436336,
    "n": 300
   },
   "ladder/random/mid/enemy-b/turns": {
-   "mean": 9.35,
-   "sd": 1.156991,
+   "mean": 9.51,
+   "sd": 2.93233,
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-d/win": {
-   "mean": 0.723333,
-   "sd": 0.448098,
+   "mean": 0.553333,
+   "sd": 0.497978,
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-d/hpLost": {
-   "mean": 49.15,
-   "sd": 10.737714,
+   "mean": 51.986667,
+   "sd": 9.221892,
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-d/turns": {
-   "mean": 11.313333,
-   "sd": 1.670666,
+   "mean": 9.65,
+   "sd": 2.041583,
    "n": 300
   },
   "ladder/random/mid/enemy-c/win": {
-   "mean": 0.49,
-   "sd": 0.500735,
+   "mean": 0.52,
+   "sd": 0.500435,
    "n": 300
   },
   "ladder/random/mid/enemy-c/hpLost": {
-   "mean": 51.83,
-   "sd": 11.291861,
+   "mean": 52.466667,
+   "sd": 9.541437,
    "n": 300
   },
   "ladder/random/mid/enemy-c/turns": {
-   "mean": 10.37,
-   "sd": 1.467519,
+   "mean": 8.836667,
+   "sd": 1.584833,
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-d/win": {
-   "mean": 0.276667,
-   "sd": 0.448098,
+   "mean": 0.256667,
+   "sd": 0.437524,
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-d/hpLost": {
-   "mean": 57.223333,
-   "sd": 5.659229,
+   "mean": 57.516667,
+   "sd": 5.06906,
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-d/turns": {
-   "mean": 7.563333,
-   "sd": 1.844994,
+   "mean": 6.413333,
+   "sd": 1.400844,
    "n": 300
   },
   "ladder/random/mid/enemy-d+enemy-d+enemy-d/win": {
-   "mean": 0.243333,
-   "sd": 0.429812,
+   "mean": 0.273333,
+   "sd": 0.446415,
    "n": 300
   },
   "ladder/random/mid/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 58.06,
-   "sd": 4.672885,
+   "mean": 57.236667,
+   "sd": 5.834449,
    "n": 300
   },
   "ladder/random/mid/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 7.223333,
-   "sd": 1.973094,
+   "mean": 6.34,
+   "sd": 1.310263,
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-b/win": {
-   "mean": 0.006667,
-   "sd": 0.081513,
+   "mean": 0.013333,
+   "sd": 0.114889,
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-b/hpLost": {
-   "mean": 59.99,
-   "sd": 0.173205,
+   "mean": 59.956667,
+   "sd": 0.410712,
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-b/turns": {
-   "mean": 6.256667,
-   "sd": 1.394251,
+   "mean": 5.686667,
+   "sd": 0.874283,
    "n": 300
   },
   "ladder/random/mid/enemy-c+enemy-d/win": {
-   "mean": 0.143333,
-   "sd": 0.350998,
+   "mean": 0.113333,
+   "sd": 0.317529,
    "n": 300
   },
   "ladder/random/mid/enemy-c+enemy-d/hpLost": {
-   "mean": 58.946667,
-   "sd": 3.307611,
+   "mean": 58.98,
+   "sd": 3.521496,
    "n": 300
   },
   "ladder/random/mid/enemy-c+enemy-d/turns": {
-   "mean": 8.756667,
-   "sd": 2.558504,
+   "mean": 7.19,
+   "sd": 1.316438,
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-d+enemy-d/win": {
-   "mean": 0.04,
-   "sd": 0.196287,
+   "mean": 0.056667,
+   "sd": 0.231591,
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-d+enemy-d/hpLost": {
-   "mean": 59.77,
-   "sd": 1.462039,
+   "mean": 59.593333,
+   "sd": 2.056385,
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-d+enemy-d/turns": {
-   "mean": 6.966667,
-   "sd": 2.380008,
+   "mean": 5.91,
+   "sd": 1.267777,
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-b+enemy-d/win": {
@@ -554,8 +554,8 @@
    "n": 300
   },
   "ladder/random/mid/enemy-a+enemy-b+enemy-d/turns": {
-   "mean": 4.17,
-   "sd": 0.434045,
+   "mean": 4.1,
+   "sd": 0.321992,
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-c/win": {
@@ -569,38 +569,38 @@
    "n": 300
   },
   "ladder/random/mid/enemy-b+enemy-c/turns": {
-   "mean": 6.75,
-   "sd": 1.243377,
+   "mean": 6.203333,
+   "sd": 0.645532,
    "n": 300
   },
   "ladder/random/mid/elite-a/win": {
-   "mean": 0.033333,
-   "sd": 0.179805,
+   "mean": 0.086667,
+   "sd": 0.281816,
    "n": 300
   },
   "ladder/random/mid/elite-a/hpLost": {
-   "mean": 59.876667,
-   "sd": 0.87789,
+   "mean": 59.41,
+   "sd": 2.49988,
    "n": 300
   },
   "ladder/random/mid/elite-a/turns": {
-   "mean": 7.62,
-   "sd": 1.609628,
+   "mean": 6.94,
+   "sd": 0.81565,
    "n": 300
   },
   "ladder/random/mid/elite-b/win": {
-   "mean": 0.213333,
-   "sd": 0.410346,
+   "mean": 0.233333,
+   "sd": 0.423659,
    "n": 300
   },
   "ladder/random/mid/elite-b/hpLost": {
-   "mean": 57.75,
-   "sd": 5.448528,
+   "mean": 57.833333,
+   "sd": 5.044838,
    "n": 300
   },
   "ladder/random/mid/elite-b/turns": {
-   "mean": 10.063333,
-   "sd": 2.377287,
+   "mean": 8.6,
+   "sd": 1.318761,
    "n": 300
   },
   "ladder/random/mid/boss-a/win": {
@@ -614,8 +614,8 @@
    "n": 300
   },
   "ladder/random/mid/boss-a/turns": {
-   "mean": 7.876667,
-   "sd": 1.601041,
+   "mean": 7.2,
+   "sd": 0.698781,
    "n": 300
   },
   "ladder/random/late/enemy-a/win": {
@@ -624,13 +624,13 @@
    "n": 300
   },
   "ladder/random/late/enemy-a/hpLost": {
-   "mean": 23.143333,
-   "sd": 8.102776,
+   "mean": 25.51,
+   "sd": 9.475363,
    "n": 300
   },
   "ladder/random/late/enemy-a/turns": {
-   "mean": 8.103333,
-   "sd": 1.507835,
+   "mean": 7.31,
+   "sd": 1.433206,
    "n": 300
   },
   "ladder/random/late/enemy-d+enemy-d/win": {
@@ -639,13 +639,13 @@
    "n": 300
   },
   "ladder/random/late/enemy-d+enemy-d/hpLost": {
-   "mean": 22.243333,
-   "sd": 7.468381,
+   "mean": 25.136667,
+   "sd": 9.127011,
    "n": 300
   },
   "ladder/random/late/enemy-d+enemy-d/turns": {
-   "mean": 8.686667,
-   "sd": 1.674665,
+   "mean": 8.06,
+   "sd": 1.50019,
    "n": 300
   },
   "ladder/random/late/enemy-b/win": {
@@ -654,118 +654,118 @@
    "n": 300
   },
   "ladder/random/late/enemy-b/hpLost": {
-   "mean": 17.026667,
-   "sd": 8.058687,
+   "mean": 21.076667,
+   "sd": 9.333157,
    "n": 300
   },
   "ladder/random/late/enemy-b/turns": {
-   "mean": 10.726667,
-   "sd": 2.058985,
+   "mean": 9.643333,
+   "sd": 1.745359,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-d/win": {
-   "mean": 0.906667,
-   "sd": 0.291385,
+   "mean": 0.826667,
+   "sd": 0.379168,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-d/hpLost": {
-   "mean": 40.336667,
-   "sd": 11.750044,
+   "mean": 44.616667,
+   "sd": 12.516333,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-d/turns": {
-   "mean": 13.94,
-   "sd": 3.548479,
+   "mean": 12.753333,
+   "sd": 2.425993,
    "n": 300
   },
   "ladder/random/late/enemy-c/win": {
-   "mean": 0.886667,
-   "sd": 0.317529,
+   "mean": 0.763333,
+   "sd": 0.425746,
    "n": 300
   },
   "ladder/random/late/enemy-c/hpLost": {
-   "mean": 42.94,
-   "sd": 11.700402,
+   "mean": 46.723333,
+   "sd": 12.526365,
    "n": 300
   },
   "ladder/random/late/enemy-c/turns": {
-   "mean": 12.77,
-   "sd": 2.88644,
+   "mean": 11.133333,
+   "sd": 2.025479,
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-d/win": {
-   "mean": 0.563333,
-   "sd": 0.496801,
+   "mean": 0.4,
+   "sd": 0.490716,
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-d/hpLost": {
-   "mean": 53.55,
-   "sd": 8.086541,
+   "mean": 55.25,
+   "sd": 7.980798,
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-d/turns": {
-   "mean": 9.966667,
-   "sd": 2.915572,
+   "mean": 8.826667,
+   "sd": 2.28927,
    "n": 300
   },
   "ladder/random/late/enemy-d+enemy-d+enemy-d/win": {
-   "mean": 0.49,
-   "sd": 0.500735,
+   "mean": 0.353333,
+   "sd": 0.478804,
    "n": 300
   },
   "ladder/random/late/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 54.92,
-   "sd": 7.263801,
+   "mean": 55.983333,
+   "sd": 7.488434,
    "n": 300
   },
   "ladder/random/late/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 9.546667,
-   "sd": 2.912519,
+   "mean": 8.74,
+   "sd": 2.543087,
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-b/win": {
-   "mean": 0.006667,
-   "sd": 0.081513,
+   "mean": 0.03,
+   "sd": 0.170872,
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-b/hpLost": {
-   "mean": 59.92,
-   "sd": 1.008459,
+   "mean": 59.816667,
+   "sd": 1.249638,
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-b/turns": {
-   "mean": 7.426667,
-   "sd": 1.898236,
+   "mean": 7.33,
+   "sd": 2.471463,
    "n": 300
   },
   "ladder/random/late/enemy-c+enemy-d/win": {
-   "mean": 0.203333,
-   "sd": 0.403151,
+   "mean": 0.09,
+   "sd": 0.28666,
    "n": 300
   },
   "ladder/random/late/enemy-c+enemy-d/hpLost": {
-   "mean": 58.086667,
-   "sd": 4.832217,
+   "mean": 59.043333,
+   "sd": 4.097653,
    "n": 300
   },
   "ladder/random/late/enemy-c+enemy-d/turns": {
-   "mean": 11.08,
-   "sd": 3.592113,
+   "mean": 9.86,
+   "sd": 2.938682,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-d+enemy-d/win": {
-   "mean": 0.113333,
-   "sd": 0.317529,
+   "mean": 0.033333,
+   "sd": 0.179805,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-d+enemy-d/hpLost": {
-   "mean": 59.176667,
-   "sd": 2.952034,
+   "mean": 59.69,
+   "sd": 2.846209,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-d+enemy-d/turns": {
-   "mean": 9.03,
-   "sd": 3.184794,
+   "mean": 8.436667,
+   "sd": 2.845989,
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-b+enemy-d/win": {
@@ -779,68 +779,68 @@
    "n": 300
   },
   "ladder/random/late/enemy-a+enemy-b+enemy-d/turns": {
-   "mean": 4.726667,
-   "sd": 1.099691,
+   "mean": 4.89,
+   "sd": 1.212215,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-c/win": {
-   "mean": 0,
-   "sd": 0,
+   "mean": 0.003333,
+   "sd": 0.057735,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-c/hpLost": {
-   "mean": 60,
-   "sd": 0,
+   "mean": 59.99,
+   "sd": 0.173205,
    "n": 300
   },
   "ladder/random/late/enemy-b+enemy-c/turns": {
-   "mean": 8.256667,
-   "sd": 1.882179,
+   "mean": 7.89,
+   "sd": 2.269007,
    "n": 300
   },
   "ladder/random/late/elite-a/win": {
-   "mean": 0.13,
-   "sd": 0.336865,
+   "mean": 0.083333,
+   "sd": 0.276847,
    "n": 300
   },
   "ladder/random/late/elite-a/hpLost": {
-   "mean": 58.79,
-   "sd": 4.193389,
+   "mean": 58.946667,
+   "sd": 4.183559,
    "n": 300
   },
   "ladder/random/late/elite-a/turns": {
-   "mean": 9.853333,
-   "sd": 2.396728,
+   "mean": 8.933333,
+   "sd": 2.241794,
    "n": 300
   },
   "ladder/random/late/elite-b/win": {
-   "mean": 0.436667,
-   "sd": 0.496801,
+   "mean": 0.243333,
+   "sd": 0.429812,
    "n": 300
   },
   "ladder/random/late/elite-b/hpLost": {
-   "mean": 53.986667,
-   "sd": 9.026151,
+   "mean": 56.84,
+   "sd": 7.518165,
    "n": 300
   },
   "ladder/random/late/elite-b/turns": {
-   "mean": 13.89,
-   "sd": 4.238449,
+   "mean": 11.313333,
+   "sd": 2.938925,
    "n": 300
   },
   "ladder/random/late/boss-a/win": {
-   "mean": 0,
-   "sd": 0,
+   "mean": 0.003333,
+   "sd": 0.057735,
    "n": 300
   },
   "ladder/random/late/boss-a/hpLost": {
-   "mean": 60,
-   "sd": 0,
+   "mean": 59.95,
+   "sd": 0.866025,
    "n": 300
   },
   "ladder/random/late/boss-a/turns": {
-   "mean": 10.106667,
-   "sd": 2.754496,
+   "mean": 9.19,
+   "sd": 2.777219,
    "n": 300
   },
   "ladder/random/syn-tag/enemy-a/win": {
@@ -3334,18 +3334,18 @@
    "n": 100
   },
   "ladder/greedy/mid/enemy-a/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.996667,
+   "sd": 0.057735,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a/hpLost": {
-   "mean": 19.86,
-   "sd": 6.8109,
+   "mean": 22.403333,
+   "sd": 13.039969,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a/turns": {
-   "mean": 7.54,
-   "sd": 1.454459,
+   "mean": 8.296667,
+   "sd": 3.42946,
    "n": 300
   },
   "ladder/greedy/mid/enemy-d+enemy-d/win": {
@@ -3354,13 +3354,13 @@
    "n": 300
   },
   "ladder/greedy/mid/enemy-d+enemy-d/hpLost": {
-   "mean": 17.96,
-   "sd": 5.891868,
+   "mean": 16.866667,
+   "sd": 5.971131,
    "n": 300
   },
   "ladder/greedy/mid/enemy-d+enemy-d/turns": {
-   "mean": 7.296667,
-   "sd": 1.319517,
+   "mean": 7.926667,
+   "sd": 3.028508,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b/win": {
@@ -3369,178 +3369,178 @@
    "n": 300
   },
   "ladder/greedy/mid/enemy-b/hpLost": {
-   "mean": 17.243333,
-   "sd": 7.286593,
+   "mean": 16.366667,
+   "sd": 8.570711,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b/turns": {
-   "mean": 8.023333,
-   "sd": 1.022877,
+   "mean": 8.326667,
+   "sd": 3.055773,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b+enemy-d/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.953333,
+   "sd": 0.211276,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b+enemy-d/hpLost": {
-   "mean": 32.806667,
-   "sd": 8.519658,
+   "mean": 32.853333,
+   "sd": 12.597386,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b+enemy-d/turns": {
-   "mean": 11.09,
-   "sd": 1.456814,
+   "mean": 12.27,
+   "sd": 5.050623,
    "n": 300
   },
   "ladder/greedy/mid/enemy-c/win": {
-   "mean": 0.993333,
-   "sd": 0.081513,
+   "mean": 0.666667,
+   "sd": 0.472192,
    "n": 300
   },
   "ladder/greedy/mid/enemy-c/hpLost": {
-   "mean": 38.266667,
-   "sd": 9.338428,
+   "mean": 39.113333,
+   "sd": 15.898733,
    "n": 300
   },
   "ladder/greedy/mid/enemy-c/turns": {
-   "mean": 10.943333,
-   "sd": 1.293199,
+   "mean": 10.376667,
+   "sd": 3.065853,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-d/win": {
-   "mean": 0.96,
-   "sd": 0.196287,
+   "mean": 0.666667,
+   "sd": 0.472192,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-d/hpLost": {
-   "mean": 44.926667,
-   "sd": 8.927877,
+   "mean": 45.67,
+   "sd": 11.350354,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-d/turns": {
-   "mean": 10.306667,
-   "sd": 1.370724,
+   "mean": 9.826667,
+   "sd": 3.057414,
    "n": 300
   },
   "ladder/greedy/mid/enemy-d+enemy-d+enemy-d/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.813333,
+   "sd": 0.390295,
    "n": 300
   },
   "ladder/greedy/mid/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 39.806667,
-   "sd": 7.168023,
+   "mean": 41.993333,
+   "sd": 12.022274,
    "n": 300
   },
   "ladder/greedy/mid/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 10.033333,
-   "sd": 1.153251,
+   "mean": 10.01,
+   "sd": 3.698942,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-b/win": {
-   "mean": 0.3,
-   "sd": 0.459023,
+   "mean": 0.503333,
+   "sd": 0.500824,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-b/hpLost": {
-   "mean": 58.1,
-   "sd": 3.798873,
+   "mean": 54.783333,
+   "sd": 6.758351,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-b/turns": {
-   "mean": 9.566667,
-   "sd": 3.102306,
+   "mean": 9.023333,
+   "sd": 3.245185,
    "n": 300
   },
   "ladder/greedy/mid/enemy-c+enemy-d/win": {
-   "mean": 0.456667,
-   "sd": 0.498951,
+   "mean": 0.52,
+   "sd": 0.500435,
    "n": 300
   },
   "ladder/greedy/mid/enemy-c+enemy-d/hpLost": {
-   "mean": 56.373333,
-   "sd": 5.369363,
+   "mean": 54.336667,
+   "sd": 7.428364,
    "n": 300
   },
   "ladder/greedy/mid/enemy-c+enemy-d/turns": {
-   "mean": 12.686667,
-   "sd": 1.951371,
+   "mean": 11.016667,
+   "sd": 3.612926,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b+enemy-d+enemy-d/win": {
-   "mean": 0.65,
-   "sd": 0.477767,
+   "mean": 0.603333,
+   "sd": 0.490023,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b+enemy-d+enemy-d/hpLost": {
-   "mean": 52.68,
-   "sd": 8.269151,
+   "mean": 52.486667,
+   "sd": 7.744876,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b+enemy-d+enemy-d/turns": {
-   "mean": 13.123333,
-   "sd": 2.353704,
+   "mean": 11.116667,
+   "sd": 3.981948,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-b+enemy-d/win": {
-   "mean": 0,
-   "sd": 0,
+   "mean": 0.013333,
+   "sd": 0.114889,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-b+enemy-d/hpLost": {
-   "mean": 60,
-   "sd": 0,
+   "mean": 59.953333,
+   "sd": 0.599182,
    "n": 300
   },
   "ladder/greedy/mid/enemy-a+enemy-b+enemy-d/turns": {
-   "mean": 5.27,
-   "sd": 1.020083,
+   "mean": 4.966667,
+   "sd": 1.030743,
    "n": 300
   },
   "ladder/greedy/mid/enemy-b+enemy-c/win": {
-   "mean": 0,
-   "sd": 0,
-   "n": 300
-  },
-  "ladder/greedy/mid/enemy-b+enemy-c/hpLost": {
-   "mean": 60,
-   "sd": 0,
-   "n": 300
-  },
-  "ladder/greedy/mid/enemy-b+enemy-c/turns": {
-   "mean": 8.656667,
-   "sd": 1.677748,
-   "n": 300
-  },
-  "ladder/greedy/mid/elite-a/win": {
    "mean": 0.123333,
    "sd": 0.329369,
    "n": 300
   },
+  "ladder/greedy/mid/enemy-b+enemy-c/hpLost": {
+   "mean": 59.12,
+   "sd": 2.892546,
+   "n": 300
+  },
+  "ladder/greedy/mid/enemy-b+enemy-c/turns": {
+   "mean": 8.946667,
+   "sd": 1.828012,
+   "n": 300
+  },
+  "ladder/greedy/mid/elite-a/win": {
+   "mean": 0.376667,
+   "sd": 0.48536,
+   "n": 300
+  },
   "ladder/greedy/mid/elite-a/hpLost": {
-   "mean": 59.1,
-   "sd": 3.109485,
+   "mean": 55.276667,
+   "sd": 7.733876,
    "n": 300
   },
   "ladder/greedy/mid/elite-a/turns": {
-   "mean": 8.983333,
-   "sd": 1.515711,
+   "mean": 8.25,
+   "sd": 1.767649,
    "n": 300
   },
   "ladder/greedy/mid/elite-b/win": {
-   "mean": 0.493333,
-   "sd": 0.500791,
+   "mean": 0.623333,
+   "sd": 0.48536,
    "n": 300
   },
   "ladder/greedy/mid/elite-b/hpLost": {
-   "mean": 55.56,
-   "sd": 6.439822,
+   "mean": 50.273333,
+   "sd": 9.788668,
    "n": 300
   },
   "ladder/greedy/mid/elite-b/turns": {
-   "mean": 12.833333,
-   "sd": 2.13089,
+   "mean": 11.35,
+   "sd": 3.299057,
    "n": 300
   },
   "ladder/greedy/mid/boss-a/win": {
@@ -3554,8 +3554,8 @@
    "n": 300
   },
   "ladder/greedy/mid/boss-a/turns": {
-   "mean": 9.016667,
-   "sd": 1.827802,
+   "mean": 8.756667,
+   "sd": 1.878622,
    "n": 300
   },
   "ladder/greedy/late/enemy-a/win": {
@@ -3564,13 +3564,13 @@
    "n": 300
   },
   "ladder/greedy/late/enemy-a/hpLost": {
-   "mean": 13.526667,
-   "sd": 5.896767,
+   "mean": 15.796667,
+   "sd": 8.631551,
    "n": 300
   },
   "ladder/greedy/late/enemy-a/turns": {
-   "mean": 8.036667,
-   "sd": 1.510937,
+   "mean": 6.6,
+   "sd": 0.749582,
    "n": 300
   },
   "ladder/greedy/late/enemy-d+enemy-d/win": {
@@ -3579,13 +3579,13 @@
    "n": 300
   },
   "ladder/greedy/late/enemy-d+enemy-d/hpLost": {
-   "mean": 12.626667,
-   "sd": 4.723876,
+   "mean": 13.443333,
+   "sd": 6.973441,
    "n": 300
   },
   "ladder/greedy/late/enemy-d+enemy-d/turns": {
-   "mean": 7.803333,
-   "sd": 1.276749,
+   "mean": 6.636667,
+   "sd": 0.913292,
    "n": 300
   },
   "ladder/greedy/late/enemy-b/win": {
@@ -3594,13 +3594,13 @@
    "n": 300
   },
   "ladder/greedy/late/enemy-b/hpLost": {
-   "mean": 9,
-   "sd": 6.451258,
+   "mean": 11.463333,
+   "sd": 7.924096,
    "n": 300
   },
   "ladder/greedy/late/enemy-b/turns": {
-   "mean": 9.106667,
-   "sd": 1.550258,
+   "mean": 7.446667,
+   "sd": 0.86968,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-d/win": {
@@ -3609,28 +3609,28 @@
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-d/hpLost": {
-   "mean": 20.213333,
-   "sd": 7.437217,
+   "mean": 22.58,
+   "sd": 10.905045,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-d/turns": {
-   "mean": 12.17,
-   "sd": 2.486304,
+   "mean": 10.223333,
+   "sd": 1.202056,
    "n": 300
   },
   "ladder/greedy/late/enemy-c/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.996667,
+   "sd": 0.057735,
    "n": 300
   },
   "ladder/greedy/late/enemy-c/hpLost": {
-   "mean": 22.49,
-   "sd": 8.468507,
+   "mean": 26.116667,
+   "sd": 11.898247,
    "n": 300
   },
   "ladder/greedy/late/enemy-c/turns": {
-   "mean": 12.653333,
-   "sd": 2.793894,
+   "mean": 10.053333,
+   "sd": 1.335327,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-d/win": {
@@ -3639,13 +3639,13 @@
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-d/hpLost": {
-   "mean": 31.963333,
-   "sd": 8.591938,
+   "mean": 31.903333,
+   "sd": 11.457964,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-d/turns": {
-   "mean": 11.346667,
-   "sd": 2.667748,
+   "mean": 9.34,
+   "sd": 1.164296,
    "n": 300
   },
   "ladder/greedy/late/enemy-d+enemy-d+enemy-d/win": {
@@ -3654,133 +3654,133 @@
    "n": 300
   },
   "ladder/greedy/late/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 31.583333,
-   "sd": 7.748755,
+   "mean": 29.773333,
+   "sd": 11.11367,
    "n": 300
   },
   "ladder/greedy/late/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 11.066667,
-   "sd": 2.389124,
+   "mean": 9.456667,
+   "sd": 1.262313,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-b/win": {
-   "mean": 0.826667,
-   "sd": 0.379168,
+   "mean": 0.723333,
+   "sd": 0.448098,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-b/hpLost": {
-   "mean": 47.183333,
-   "sd": 10.298702,
+   "mean": 46.866667,
+   "sd": 13.378797,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-b/turns": {
-   "mean": 14.15,
-   "sd": 4.283534,
+   "mean": 11.65,
+   "sd": 2.34503,
    "n": 300
   },
   "ladder/greedy/late/enemy-c+enemy-d/win": {
-   "mean": 0.943333,
-   "sd": 0.231591,
+   "mean": 0.853333,
+   "sd": 0.354364,
    "n": 300
   },
   "ladder/greedy/late/enemy-c+enemy-d/hpLost": {
-   "mean": 39.876667,
-   "sd": 10.25208,
+   "mean": 42.76,
+   "sd": 13.99698,
    "n": 300
   },
   "ladder/greedy/late/enemy-c+enemy-d/turns": {
-   "mean": 16.223333,
-   "sd": 4.004194,
+   "mean": 13.013333,
+   "sd": 1.449192,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-d+enemy-d/win": {
-   "mean": 0.983333,
-   "sd": 0.128233,
+   "mean": 0.94,
+   "sd": 0.237884,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-d+enemy-d/hpLost": {
-   "mean": 40.263333,
-   "sd": 9.076818,
+   "mean": 39.336667,
+   "sd": 13.073115,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-d+enemy-d/turns": {
-   "mean": 15.606667,
-   "sd": 3.91019,
+   "mean": 13.153333,
+   "sd": 1.787121,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-b+enemy-d/win": {
-   "mean": 0.073333,
-   "sd": 0.261118,
+   "mean": 0.17,
+   "sd": 0.37626,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-b+enemy-d/hpLost": {
-   "mean": 59.66,
-   "sd": 1.491694,
+   "mean": 58.1,
+   "sd": 5.464694,
    "n": 300
   },
   "ladder/greedy/late/enemy-a+enemy-b+enemy-d/turns": {
-   "mean": 7.743333,
-   "sd": 3.515487,
+   "mean": 8.48,
+   "sd": 4.055171,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-c/win": {
-   "mean": 0.203333,
-   "sd": 0.403151,
+   "mean": 0.28,
+   "sd": 0.449749,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-c/hpLost": {
-   "mean": 57.99,
-   "sd": 5.1144,
+   "mean": 55.943333,
+   "sd": 8.650794,
    "n": 300
   },
   "ladder/greedy/late/enemy-b+enemy-c/turns": {
-   "mean": 13.633333,
-   "sd": 5.387855,
+   "mean": 12.99,
+   "sd": 4.08561,
    "n": 300
   },
   "ladder/greedy/late/elite-a/win": {
-   "mean": 0.663333,
-   "sd": 0.473359,
+   "mean": 0.576667,
+   "sd": 0.494913,
    "n": 300
   },
   "ladder/greedy/late/elite-a/hpLost": {
-   "mean": 49.743333,
-   "sd": 11.122492,
+   "mean": 49.46,
+   "sd": 13.044113,
    "n": 300
   },
   "ladder/greedy/late/elite-a/turns": {
-   "mean": 12.363333,
-   "sd": 2.910824,
+   "mean": 10.023333,
+   "sd": 1.493393,
    "n": 300
   },
   "ladder/greedy/late/elite-b/win": {
-   "mean": 0.966667,
-   "sd": 0.179805,
+   "mean": 0.873333,
+   "sd": 0.333155,
    "n": 300
   },
   "ladder/greedy/late/elite-b/hpLost": {
-   "mean": 35.176667,
-   "sd": 12.369403,
+   "mean": 40.986667,
+   "sd": 14.019808,
    "n": 300
   },
   "ladder/greedy/late/elite-b/turns": {
-   "mean": 15.256667,
-   "sd": 3.524039,
+   "mean": 12.256667,
+   "sd": 1.603963,
    "n": 300
   },
   "ladder/greedy/late/boss-a/win": {
-   "mean": 0.036667,
-   "sd": 0.188256,
+   "mean": 0.046667,
+   "sd": 0.211276,
    "n": 300
   },
   "ladder/greedy/late/boss-a/hpLost": {
-   "mean": 59.673333,
-   "sd": 2.031513,
+   "mean": 59.606667,
+   "sd": 2.09122,
    "n": 300
   },
   "ladder/greedy/late/boss-a/turns": {
-   "mean": 15.526667,
-   "sd": 5.817396,
+   "mean": 12.363333,
+   "sd": 4.107012,
    "n": 300
   },
   "ladder/greedy/syn-tag/enemy-a/win": {
@@ -6279,13 +6279,13 @@
    "n": 300
   },
   "ladder/smart/mid/enemy-a/hpLost": {
-   "mean": 29.19,
-   "sd": 7.004578,
+   "mean": 29.976667,
+   "sd": 8.654428,
    "n": 300
   },
   "ladder/smart/mid/enemy-a/turns": {
-   "mean": 5.616667,
-   "sd": 0.597981,
+   "mean": 5.486667,
+   "sd": 1.335077,
    "n": 300
   },
   "ladder/smart/mid/enemy-d+enemy-d/win": {
@@ -6294,13 +6294,13 @@
    "n": 300
   },
   "ladder/smart/mid/enemy-d+enemy-d/hpLost": {
-   "mean": 23.98,
-   "sd": 5.23491,
+   "mean": 23.993333,
+   "sd": 5.147323,
    "n": 300
   },
   "ladder/smart/mid/enemy-d+enemy-d/turns": {
-   "mean": 5.666667,
-   "sd": 0.695582,
+   "mean": 5.383333,
+   "sd": 1.113788,
    "n": 300
   },
   "ladder/smart/mid/enemy-b/win": {
@@ -6309,178 +6309,178 @@
    "n": 300
   },
   "ladder/smart/mid/enemy-b/hpLost": {
-   "mean": 22.916667,
-   "sd": 6.986589,
+   "mean": 22.776667,
+   "sd": 7.755899,
    "n": 300
   },
   "ladder/smart/mid/enemy-b/turns": {
-   "mean": 6.876667,
-   "sd": 0.639912,
+   "mean": 6.786667,
+   "sd": 1.777175,
    "n": 300
   },
   "ladder/smart/mid/enemy-b+enemy-d/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.97,
+   "sd": 0.170872,
    "n": 300
   },
   "ladder/smart/mid/enemy-b+enemy-d/hpLost": {
-   "mean": 38.95,
-   "sd": 6.771534,
+   "mean": 42.403333,
+   "sd": 8.859399,
    "n": 300
   },
   "ladder/smart/mid/enemy-b+enemy-d/turns": {
-   "mean": 8.783333,
-   "sd": 1.281352,
+   "mean": 8.656667,
+   "sd": 2.673815,
    "n": 300
   },
   "ladder/smart/mid/enemy-c/win": {
-   "mean": 0.973333,
-   "sd": 0.161376,
+   "mean": 0.68,
+   "sd": 0.467256,
    "n": 300
   },
   "ladder/smart/mid/enemy-c/hpLost": {
-   "mean": 46.386667,
-   "sd": 8.887469,
+   "mean": 51.21,
+   "sd": 9.057558,
    "n": 300
   },
   "ladder/smart/mid/enemy-c/turns": {
-   "mean": 8.493333,
-   "sd": 0.923471,
+   "mean": 7.816667,
+   "sd": 1.883671,
    "n": 300
   },
   "ladder/smart/mid/enemy-a+enemy-d/win": {
-   "mean": 0.916667,
-   "sd": 0.276847,
+   "mean": 0.73,
+   "sd": 0.444701,
    "n": 300
   },
   "ladder/smart/mid/enemy-a+enemy-d/hpLost": {
-   "mean": 52.67,
-   "sd": 7.182366,
+   "mean": 53.99,
+   "sd": 7.996439,
    "n": 300
   },
   "ladder/smart/mid/enemy-a+enemy-d/turns": {
-   "mean": 7.733333,
-   "sd": 1.36201,
+   "mean": 6.623333,
+   "sd": 1.69441,
    "n": 300
   },
   "ladder/smart/mid/enemy-d+enemy-d+enemy-d/win": {
-   "mean": 0.996667,
-   "sd": 0.057735,
+   "mean": 0.993333,
+   "sd": 0.081513,
    "n": 300
   },
   "ladder/smart/mid/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 47.833333,
-   "sd": 6.243034,
+   "mean": 49.166667,
+   "sd": 7.149074,
    "n": 300
   },
   "ladder/smart/mid/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 7.713333,
-   "sd": 1.231345,
+   "mean": 7.026667,
+   "sd": 1.568702,
    "n": 300
   },
   "ladder/smart/mid/enemy-a+enemy-b/win": {
-   "mean": 0.44,
-   "sd": 0.497216,
+   "mean": 0.296667,
+   "sd": 0.457552,
    "n": 300
   },
   "ladder/smart/mid/enemy-a+enemy-b/hpLost": {
-   "mean": 58.306667,
-   "sd": 3.346134,
+   "mean": 57.796667,
+   "sd": 4.936587,
    "n": 300
   },
   "ladder/smart/mid/enemy-a+enemy-b/turns": {
-   "mean": 9.186667,
-   "sd": 3.077346,
+   "mean": 6.603333,
+   "sd": 1.757732,
    "n": 300
   },
   "ladder/smart/mid/enemy-c+enemy-d/win": {
-   "mean": 0.38,
-   "sd": 0.486197,
+   "mean": 0.216667,
+   "sd": 0.412662,
    "n": 300
   },
   "ladder/smart/mid/enemy-c+enemy-d/hpLost": {
-   "mean": 57.22,
-   "sd": 4.955143,
+   "mean": 59.096667,
+   "sd": 2.722504,
    "n": 300
   },
   "ladder/smart/mid/enemy-c+enemy-d/turns": {
-   "mean": 9.766667,
-   "sd": 2.166688,
+   "mean": 7.853333,
+   "sd": 1.228898,
    "n": 300
   },
   "ladder/smart/mid/enemy-b+enemy-d+enemy-d/win": {
-   "mean": 0.686667,
-   "sd": 0.464624,
+   "mean": 0.45,
+   "sd": 0.498325,
    "n": 300
   },
   "ladder/smart/mid/enemy-b+enemy-d+enemy-d/hpLost": {
-   "mean": 56.516667,
-   "sd": 4.365767,
+   "mean": 57.6,
+   "sd": 4.615663,
    "n": 300
   },
   "ladder/smart/mid/enemy-b+enemy-d+enemy-d/turns": {
-   "mean": 10.853333,
-   "sd": 2.296971,
+   "mean": 8.786667,
+   "sd": 2.359317,
    "n": 300
   },
   "ladder/smart/mid/enemy-a+enemy-b+enemy-d/win": {
+   "mean": 0.02,
+   "sd": 0.140234,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-a+enemy-b+enemy-d/hpLost": {
+   "mean": 59.903333,
+   "sd": 0.758886,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-a+enemy-b+enemy-d/turns": {
+   "mean": 4.363333,
+   "sd": 0.720917,
+   "n": 300
+  },
+  "ladder/smart/mid/enemy-b+enemy-c/win": {
    "mean": 0.003333,
    "sd": 0.057735,
    "n": 300
   },
-  "ladder/smart/mid/enemy-a+enemy-b+enemy-d/hpLost": {
-   "mean": 59.99,
-   "sd": 0.173205,
-   "n": 300
-  },
-  "ladder/smart/mid/enemy-a+enemy-b+enemy-d/turns": {
-   "mean": 4.486667,
-   "sd": 0.847871,
-   "n": 300
-  },
-  "ladder/smart/mid/enemy-b+enemy-c/win": {
-   "mean": 0,
-   "sd": 0,
-   "n": 300
-  },
   "ladder/smart/mid/enemy-b+enemy-c/hpLost": {
-   "mean": 60,
-   "sd": 0,
+   "mean": 59.986667,
+   "sd": 0.23094,
    "n": 300
   },
   "ladder/smart/mid/enemy-b+enemy-c/turns": {
-   "mean": 6.716667,
-   "sd": 1.238886,
+   "mean": 5.993333,
+   "sd": 0.617435,
    "n": 300
   },
   "ladder/smart/mid/elite-a/win": {
-   "mean": 0.093333,
-   "sd": 0.291385,
+   "mean": 0.24,
+   "sd": 0.427797,
    "n": 300
   },
   "ladder/smart/mid/elite-a/hpLost": {
-   "mean": 59.573333,
-   "sd": 1.759244,
+   "mean": 58.816667,
+   "sd": 3.15853,
    "n": 300
   },
   "ladder/smart/mid/elite-a/turns": {
-   "mean": 7.853333,
-   "sd": 1.348288,
+   "mean": 6.796667,
+   "sd": 0.798403,
    "n": 300
   },
   "ladder/smart/mid/elite-b/win": {
-   "mean": 0.376667,
-   "sd": 0.48536,
+   "mean": 0.293333,
+   "sd": 0.456051,
    "n": 300
   },
   "ladder/smart/mid/elite-b/hpLost": {
-   "mean": 56.373333,
-   "sd": 6.7942,
+   "mean": 57.006667,
+   "sd": 6.054376,
    "n": 300
   },
   "ladder/smart/mid/elite-b/turns": {
-   "mean": 9.903333,
-   "sd": 1.640006,
+   "mean": 8.153333,
+   "sd": 1.450345,
    "n": 300
   },
   "ladder/smart/mid/boss-a/win": {
@@ -6494,8 +6494,8 @@
    "n": 300
   },
   "ladder/smart/mid/boss-a/turns": {
-   "mean": 8.193333,
-   "sd": 1.836809,
+   "mean": 7.09,
+   "sd": 0.585699,
    "n": 300
   },
   "ladder/smart/late/enemy-a/win": {
@@ -6504,13 +6504,13 @@
    "n": 300
   },
   "ladder/smart/late/enemy-a/hpLost": {
-   "mean": 19.713333,
-   "sd": 7.248883,
+   "mean": 23.723333,
+   "sd": 8.664315,
    "n": 300
   },
   "ladder/smart/late/enemy-a/turns": {
-   "mean": 6.42,
-   "sd": 0.863763,
+   "mean": 5.823333,
+   "sd": 0.99436,
    "n": 300
   },
   "ladder/smart/late/enemy-d+enemy-d/win": {
@@ -6519,13 +6519,13 @@
    "n": 300
   },
   "ladder/smart/late/enemy-d+enemy-d/hpLost": {
-   "mean": 17.01,
-   "sd": 5.60189,
+   "mean": 19.773333,
+   "sd": 6.764205,
    "n": 300
   },
   "ladder/smart/late/enemy-d+enemy-d/turns": {
-   "mean": 6.453333,
-   "sd": 0.950878,
+   "mean": 5.9,
+   "sd": 1.092694,
    "n": 300
   },
   "ladder/smart/late/enemy-b/win": {
@@ -6534,193 +6534,193 @@
    "n": 300
   },
   "ladder/smart/late/enemy-b/hpLost": {
-   "mean": 13.783333,
-   "sd": 7.394049,
+   "mean": 16.533333,
+   "sd": 8.04142,
    "n": 300
   },
   "ladder/smart/late/enemy-b/turns": {
-   "mean": 7.91,
-   "sd": 1.205575,
+   "mean": 6.98,
+   "sd": 1.23478,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-d/win": {
-   "mean": 1,
-   "sd": 0,
+   "mean": 0.996667,
+   "sd": 0.057735,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-d/hpLost": {
-   "mean": 27.31,
-   "sd": 8.330981,
+   "mean": 31.193333,
+   "sd": 10.011496,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-d/turns": {
-   "mean": 10.05,
-   "sd": 2.000209,
+   "mean": 8.936667,
+   "sd": 1.701658,
    "n": 300
   },
   "ladder/smart/late/enemy-c/win": {
-   "mean": 0.993333,
-   "sd": 0.081513,
+   "mean": 0.996667,
+   "sd": 0.057735,
    "n": 300
   },
   "ladder/smart/late/enemy-c/hpLost": {
-   "mean": 31.346667,
-   "sd": 10.276763,
+   "mean": 37.08,
+   "sd": 11.65216,
    "n": 300
   },
   "ladder/smart/late/enemy-c/turns": {
-   "mean": 9.853333,
-   "sd": 1.907165,
+   "mean": 8.623333,
+   "sd": 1.640251,
    "n": 300
   },
   "ladder/smart/late/enemy-a+enemy-d/win": {
+   "mean": 0.936667,
+   "sd": 0.243968,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a+enemy-d/hpLost": {
+   "mean": 43.776667,
+   "sd": 11.437198,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-a+enemy-d/turns": {
+   "mean": 7.943333,
+   "sd": 1.463076,
+   "n": 300
+  },
+  "ladder/smart/late/enemy-d+enemy-d+enemy-d/win": {
    "mean": 0.986667,
    "sd": 0.114889,
    "n": 300
   },
-  "ladder/smart/late/enemy-a+enemy-d/hpLost": {
-   "mean": 40.086667,
-   "sd": 9.352579,
-   "n": 300
-  },
-  "ladder/smart/late/enemy-a+enemy-d/turns": {
-   "mean": 8.626667,
-   "sd": 1.694163,
-   "n": 300
-  },
-  "ladder/smart/late/enemy-d+enemy-d+enemy-d/win": {
-   "mean": 0.993333,
-   "sd": 0.081513,
-   "n": 300
-  },
   "ladder/smart/late/enemy-d+enemy-d+enemy-d/hpLost": {
-   "mean": 38.08,
-   "sd": 8.5403,
+   "mean": 40.323333,
+   "sd": 9.729044,
    "n": 300
   },
   "ladder/smart/late/enemy-d+enemy-d+enemy-d/turns": {
-   "mean": 8.763333,
-   "sd": 1.72547,
+   "mean": 7.983333,
+   "sd": 1.565639,
    "n": 300
   },
   "ladder/smart/late/enemy-a+enemy-b/win": {
-   "mean": 0.78,
-   "sd": 0.414938,
+   "mean": 0.603333,
+   "sd": 0.490023,
    "n": 300
   },
   "ladder/smart/late/enemy-a+enemy-b/hpLost": {
-   "mean": 50.866667,
-   "sd": 9.294992,
+   "mean": 53.91,
+   "sd": 8.936523,
    "n": 300
   },
   "ladder/smart/late/enemy-a+enemy-b/turns": {
-   "mean": 11.413333,
-   "sd": 3.522857,
+   "mean": 9.533333,
+   "sd": 2.890803,
    "n": 300
   },
   "ladder/smart/late/enemy-c+enemy-d/win": {
-   "mean": 0.85,
-   "sd": 0.357668,
+   "mean": 0.66,
+   "sd": 0.4745,
    "n": 300
   },
   "ladder/smart/late/enemy-c+enemy-d/hpLost": {
-   "mean": 48.706667,
-   "sd": 9.450131,
+   "mean": 53.436667,
+   "sd": 8.323275,
    "n": 300
   },
   "ladder/smart/late/enemy-c+enemy-d/turns": {
-   "mean": 11.906667,
-   "sd": 2.963201,
+   "mean": 9.99,
+   "sd": 2.265762,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-d+enemy-d/win": {
-   "mean": 0.926667,
-   "sd": 0.261118,
+   "mean": 0.8,
+   "sd": 0.400668,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-d+enemy-d/hpLost": {
-   "mean": 47.29,
-   "sd": 9.243957,
+   "mean": 49.953333,
+   "sd": 9.926712,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-d+enemy-d/turns": {
-   "mean": 12.093333,
-   "sd": 3.150297,
+   "mean": 10.756667,
+   "sd": 2.451698,
    "n": 300
   },
   "ladder/smart/late/enemy-a+enemy-b+enemy-d/win": {
-   "mean": 0.076667,
-   "sd": 0.266506,
+   "mean": 0.083333,
+   "sd": 0.276847,
    "n": 300
   },
   "ladder/smart/late/enemy-a+enemy-b+enemy-d/hpLost": {
-   "mean": 59.433333,
-   "sd": 2.632233,
+   "mean": 59.43,
+   "sd": 2.684982,
    "n": 300
   },
   "ladder/smart/late/enemy-a+enemy-b+enemy-d/turns": {
-   "mean": 7.003333,
-   "sd": 4.022095,
+   "mean": 6.343333,
+   "sd": 3.074132,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-c/win": {
-   "mean": 0.126667,
-   "sd": 0.333155,
+   "mean": 0.153333,
+   "sd": 0.360911,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-c/hpLost": {
-   "mean": 59.18,
-   "sd": 2.878986,
+   "mean": 58.64,
+   "sd": 4.584808,
    "n": 300
   },
   "ladder/smart/late/enemy-b+enemy-c/turns": {
-   "mean": 10.443333,
-   "sd": 4.075392,
+   "mean": 9.253333,
+   "sd": 2.840667,
    "n": 300
   },
   "ladder/smart/late/elite-a/win": {
-   "mean": 0.563333,
-   "sd": 0.496801,
+   "mean": 0.49,
+   "sd": 0.500735,
    "n": 300
   },
   "ladder/smart/late/elite-a/hpLost": {
-   "mean": 52.623333,
-   "sd": 10.314849,
+   "mean": 54.66,
+   "sd": 9.15663,
    "n": 300
   },
   "ladder/smart/late/elite-a/turns": {
-   "mean": 10.17,
-   "sd": 2.355049,
+   "mean": 8.736667,
+   "sd": 1.823478,
    "n": 300
   },
   "ladder/smart/late/elite-b/win": {
-   "mean": 0.913333,
-   "sd": 0.281816,
+   "mean": 0.746667,
+   "sd": 0.435647,
    "n": 300
   },
   "ladder/smart/late/elite-b/hpLost": {
-   "mean": 44.67,
-   "sd": 11.633812,
+   "mean": 49.636667,
+   "sd": 10.920111,
    "n": 300
   },
   "ladder/smart/late/elite-b/turns": {
-   "mean": 11.71,
-   "sd": 2.933927,
+   "mean": 10.07,
+   "sd": 2.174287,
    "n": 300
   },
   "ladder/smart/late/boss-a/win": {
-   "mean": 0.02,
-   "sd": 0.140234,
+   "mean": 0.066667,
+   "sd": 0.249861,
    "n": 300
   },
   "ladder/smart/late/boss-a/hpLost": {
-   "mean": 59.93,
-   "sd": 0.528549,
+   "mean": 59.163333,
+   "sd": 4.078247,
    "n": 300
   },
   "ladder/smart/late/boss-a/turns": {
-   "mean": 12.566667,
-   "sd": 4.872167,
+   "mean": 9.853333,
+   "sd": 2.884364,
    "n": 300
   },
   "ladder/smart/syn-tag/enemy-a/win": {

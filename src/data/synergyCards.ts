@@ -59,6 +59,7 @@ export const HAND_STRIKE: CardDefinition = {
 
 export const PRIME_A: CardDefinition = {
   ...base,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   id: 'prime-a',
   name: 'Prime A',
   type: 'skill',
@@ -70,6 +71,7 @@ export const PRIME_A: CardDefinition = {
 
 export const TAG_A_PAYOFF: CardDefinition = {
   ...base,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   id: 'tag-a-payoff',
   name: 'Tag A Payoff',
   type: 'attack',
@@ -81,6 +83,7 @@ export const TAG_A_PAYOFF: CardDefinition = {
 
 export const TAG_A_ECHO: CardDefinition = {
   ...base,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   id: 'tag-a-echo',
   name: 'Tag A Echo',
   type: 'power',
@@ -116,6 +119,7 @@ export const DOUBLE_STRENGTH: CardDefinition = {
 
 export const ATTACK_ECHO: CardDefinition = {
   ...base,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   id: 'attack-echo',
   name: 'Attack Echo',
   type: 'power',
@@ -126,6 +130,7 @@ export const ATTACK_ECHO: CardDefinition = {
 
 export const BLOCK_SPARK: CardDefinition = {
   ...base,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   id: 'block-spark',
   name: 'Block Spark',
   type: 'power',
@@ -217,6 +222,7 @@ export const CULL: CardDefinition = {
 
 export const SINGLE_USE_STRIKE: CardDefinition = {
   ...base,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   id: 'single-use-strike',
   name: 'Single Use Strike',
   type: 'attack',
@@ -229,6 +235,7 @@ export const SINGLE_USE_STRIKE: CardDefinition = {
 
 export const EXHAUST_PAYOFF: CardDefinition = {
   ...base,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   id: 'exhaust-payoff',
   name: 'Exhaust Payoff',
   type: 'attack',

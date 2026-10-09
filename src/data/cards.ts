@@ -42,7 +42,7 @@ export const BOLT: CardDefinition = {
   target: 'enemy',
   cost: 2,
   owner: MAGE,
-  inRewardPool: true,
+  inRewardPool: false, // removed from the reward pool by the user, 2026-10-08
   inStarterPool: true,
   effects: [{ kind: 'damage', value: 12 }],
   upgrade: { effects: [{ kind: 'damage', value: 16 }] },

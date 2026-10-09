@@ -1,6 +1,6 @@
 # Balance report
 
-Generated 2026-10-08 by `npm run balance -- report` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: random, greedy, smart. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md.
+Generated 2026-10-09 by `npm run balance -- report` from the current registries. **The content measured here is all placeholder** (see implementationplan.md): treat the numbers as an example of the process, not as findings about the real game. Bot skills: random, greedy, smart. Target bands are provisional placeholders (src/sim/targets.ts). How to read this: docs/BALANCE.md.
 
 
 ## Fight difficulty ladder
@@ -16,12 +16,12 @@ Tier rollup (unweighted mean of the fights in the tier)
 | starter | normal | 12 | 29.5% | 41.3 | 8.4 |
 | starter | elite | 2 | 0.0% | n/a | 8.9 |
 | starter | boss | 1 | 0.0% | n/a | 7.5 |
-| mid | normal | 12 | 41.0% | 44.2 | 7.8 |
-| mid | elite | 2 | 12.3% | 52.9 | 8.8 |
-| mid | boss | 1 | 0.0% | n/a | 7.9 |
-| late | normal | 12 | 51.4% | 39.1 | 9.5 |
-| late | elite | 2 | 28.3% | 48.5 | 11.9 |
-| late | boss | 1 | 0.0% | n/a | 10.1 |
+| mid | normal | 12 | 38.5% | 44.6 | 7.0 |
+| mid | elite | 2 | 16.0% | 52.0 | 7.8 |
+| mid | boss | 1 | 0.0% | n/a | 7.2 |
+| late | normal | 12 | 45.8% | 40.6 | 8.7 |
+| late | elite | 2 | 16.3% | 47.2 | 10.1 |
+| late | boss | 1 | 0.3% | n/a | 9.2 |
 | syn-tag | normal | 12 | 46.6% | 35.8 | 8.7 |
 | syn-tag | elite | 2 | 3.0% | 54.7 | 9.8 |
 | syn-tag | boss | 1 | 0.0% | n/a | 8.0 |
@@ -58,36 +58,36 @@ Tier rollup (unweighted mean of the fights in the tier)
 | elite-a | elite | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 7.6 [7.4, 7.8] |  |
 | elite-b | elite | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 10.2 [9.9, 10.6] |  |
 | boss-a | boss | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 7.5 [7.3, 7.6] |  |
-| enemy-a | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 30.6 [29.6, 31.7] | 7.1 [7.0, 7.2] | win HIGH, HP HIGH, turns HIGH |
-| enemy-d+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 29.7 [28.8, 30.6] | 7.5 [7.4, 7.6] | win HIGH, HP HIGH, turns HIGH |
-| enemy-b | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 25.7 [24.8, 26.6] | 9.3 [9.2, 9.5] | win HIGH, HP HIGH, turns HIGH |
-| enemy-b+enemy-d | normal | mid | 300 | 72.3% [67.0%, 77.1%] | 45.0 [43.7, 46.3] | 11.3 [11.1, 11.5] | win ok, HP HIGH, turns HIGH |
-| enemy-c | normal | mid | 300 | 49.0% [43.4%, 54.6%] | 43.3 [41.6, 45.1] | 10.4 [10.2, 10.5] | win ok, HP HIGH, turns HIGH |
-| enemy-a+enemy-d | normal | mid | 300 | 27.7% [22.9%, 33.0%] | 50.0 [48.5, 51.4] | 7.6 [7.4, 7.8] | win LOW, HP HIGH, turns HIGH |
-| enemy-d+enemy-d+enemy-d | normal | mid | 300 | 24.3% [19.8%, 29.5%] | 52.0 [50.5, 53.5] | 7.2 [7.0, 7.4] | win LOW, HP HIGH, turns HIGH |
-| enemy-a+enemy-b | normal | mid | 300 | 0.7% [0.2%, 2.4%] | 58.5 [39.4, 77.6] | 6.3 [6.1, 6.4] | win LOW, HP HIGH, turns HIGH |
-| enemy-c+enemy-d | normal | mid | 300 | 14.3% [10.8%, 18.8%] | 52.7 [51.0, 54.3] | 8.8 [8.5, 9.0] | win LOW, HP HIGH, turns HIGH |
-| enemy-b+enemy-d+enemy-d | normal | mid | 300 | 4.0% [2.3%, 6.9%] | 54.3 [51.2, 57.3] | 7.0 [6.7, 7.2] | win LOW, HP HIGH, turns HIGH |
-| enemy-a+enemy-b+enemy-d | normal | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 4.2 [4.1, 4.2] | win LOW, HP n/a, turns ok |
-| enemy-b+enemy-c | normal | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 6.8 [6.6, 6.9] | win LOW, HP n/a, turns HIGH |
-| elite-a | elite | mid | 300 | 3.3% [1.8%, 6.0%] | 56.3 [53.9, 58.7] | 7.6 [7.4, 7.8] | win LOW, HP HIGH, turns ok |
-| elite-b | elite | mid | 300 | 21.3% [17.1%, 26.3%] | 49.5 [47.7, 51.2] | 10.1 [9.8, 10.3] | win ok, HP HIGH, turns HIGH |
-| boss-a | boss | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 7.9 [7.7, 8.1] | win ok, HP n/a, turns LOW |
-| enemy-a | normal | late | 300 | 100.0% [98.7%, 100.0%] | 23.1 [22.2, 24.1] | 8.1 [7.9, 8.3] |  |
-| enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 22.2 [21.4, 23.1] | 8.7 [8.5, 8.9] |  |
-| enemy-b | normal | late | 300 | 100.0% [98.7%, 100.0%] | 17.0 [16.1, 17.9] | 10.7 [10.5, 11.0] |  |
-| enemy-b+enemy-d | normal | late | 300 | 90.7% [86.8%, 93.5%] | 38.3 [37.1, 39.5] | 13.9 [13.5, 14.3] |  |
-| enemy-c | normal | late | 300 | 88.7% [84.6%, 91.8%] | 40.8 [39.5, 42.0] | 12.8 [12.4, 13.1] |  |
-| enemy-a+enemy-d | normal | late | 300 | 56.3% [50.7%, 61.8%] | 48.6 [47.4, 49.7] | 10.0 [9.6, 10.3] |  |
-| enemy-d+enemy-d+enemy-d | normal | late | 300 | 49.0% [43.4%, 54.6%] | 49.6 [48.5, 50.8] | 9.5 [9.2, 9.9] |  |
-| enemy-a+enemy-b | normal | late | 300 | 0.7% [0.2%, 2.4%] | 48.0 [9.9, 86.1] | 7.4 [7.2, 7.6] |  |
-| enemy-c+enemy-d | normal | late | 300 | 20.3% [16.2%, 25.2%] | 50.6 [48.9, 52.3] | 11.1 [10.7, 11.5] |  |
-| enemy-b+enemy-d+enemy-d | normal | late | 300 | 11.3% [8.2%, 15.4%] | 52.7 [50.8, 54.7] | 9.0 [8.7, 9.4] |  |
-| enemy-a+enemy-b+enemy-d | normal | late | 300 | 0.0% [0.0%, 1.3%] | n/a | 4.7 [4.6, 4.9] |  |
-| enemy-b+enemy-c | normal | late | 300 | 0.0% [0.0%, 1.3%] | n/a | 8.3 [8.0, 8.5] |  |
-| elite-a | elite | late | 300 | 13.0% [9.7%, 17.3%] | 50.7 [48.2, 53.2] | 9.9 [9.6, 10.1] |  |
-| elite-b | elite | late | 300 | 43.7% [38.2%, 49.3%] | 46.2 [44.7, 47.8] | 13.9 [13.4, 14.4] |  |
-| boss-a | boss | late | 300 | 0.0% [0.0%, 1.3%] | n/a | 10.1 [9.8, 10.4] |  |
+| enemy-a | normal | mid | 300 | 87.0% [82.7%, 90.3%] | 32.7 [31.3, 34.2] | 7.2 [7.0, 7.4] | win ok, HP HIGH, turns HIGH |
+| enemy-d+enemy-d | normal | mid | 300 | 99.0% [97.1%, 99.7%] | 31.9 [30.6, 33.1] | 7.3 [7.1, 7.5] | win HIGH, HP HIGH, turns HIGH |
+| enemy-b | normal | mid | 300 | 97.7% [95.3%, 98.9%] | 29.5 [28.0, 31.0] | 9.5 [9.2, 9.8] | win HIGH, HP HIGH, turns HIGH |
+| enemy-b+enemy-d | normal | mid | 300 | 55.3% [49.7%, 60.9%] | 45.5 [44.3, 46.7] | 9.7 [9.4, 9.9] | win ok, HP HIGH, turns HIGH |
+| enemy-c | normal | mid | 300 | 52.0% [46.4%, 57.6%] | 45.5 [44.2, 46.9] | 8.8 [8.7, 9.0] | win ok, HP HIGH, turns HIGH |
+| enemy-a+enemy-d | normal | mid | 300 | 25.7% [21.1%, 30.9%] | 50.3 [49.1, 51.6] | 6.4 [6.3, 6.6] | win LOW, HP HIGH, turns HIGH |
+| enemy-d+enemy-d+enemy-d | normal | mid | 300 | 27.3% [22.6%, 32.6%] | 49.9 [48.3, 51.4] | 6.3 [6.2, 6.5] | win LOW, HP HIGH, turns HIGH |
+| enemy-a+enemy-b | normal | mid | 300 | 1.3% [0.5%, 3.4%] | 56.8 [54.0, 59.5] | 5.7 [5.6, 5.8] | win LOW, HP HIGH, turns ok |
+| enemy-c+enemy-d | normal | mid | 300 | 11.3% [8.2%, 15.4%] | 51.0 [48.9, 53.1] | 7.2 [7.0, 7.3] | win LOW, HP HIGH, turns HIGH |
+| enemy-b+enemy-d+enemy-d | normal | mid | 300 | 5.7% [3.6%, 8.9%] | 52.8 [50.1, 55.5] | 5.9 [5.8, 6.1] | win LOW, HP HIGH, turns ok |
+| enemy-a+enemy-b+enemy-d | normal | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 4.1 [4.1, 4.1] | win LOW, HP n/a, turns ok |
+| enemy-b+enemy-c | normal | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 6.2 [6.1, 6.3] | win LOW, HP n/a, turns HIGH |
+| elite-a | elite | mid | 300 | 8.7% [6.0%, 12.4%] | 53.2 [51.0, 55.4] | 6.9 [6.8, 7.0] | win ok, HP HIGH, turns ok |
+| elite-b | elite | mid | 300 | 23.3% [18.9%, 28.4%] | 50.7 [49.2, 52.3] | 8.6 [8.5, 8.7] | win ok, HP HIGH, turns ok |
+| boss-a | boss | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 7.2 [7.1, 7.3] | win ok, HP n/a, turns LOW |
+| enemy-a | normal | late | 300 | 100.0% [98.7%, 100.0%] | 25.5 [24.4, 26.6] | 7.3 [7.1, 7.5] |  |
+| enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 25.1 [24.1, 26.2] | 8.1 [7.9, 8.2] |  |
+| enemy-b | normal | late | 300 | 100.0% [98.7%, 100.0%] | 21.1 [20.0, 22.1] | 9.6 [9.4, 9.8] |  |
+| enemy-b+enemy-d | normal | late | 300 | 82.7% [78.0%, 86.5%] | 41.4 [40.0, 42.8] | 12.8 [12.5, 13.0] |  |
+| enemy-c | normal | late | 300 | 76.3% [71.2%, 80.8%] | 42.6 [41.1, 44.1] | 11.1 [10.9, 11.4] |  |
+| enemy-a+enemy-d | normal | late | 300 | 40.0% [34.6%, 45.6%] | 48.1 [46.6, 49.7] | 8.8 [8.6, 9.1] |  |
+| enemy-d+enemy-d+enemy-d | normal | late | 300 | 35.3% [30.1%, 40.9%] | 48.6 [47.0, 50.3] | 8.7 [8.5, 9.0] |  |
+| enemy-a+enemy-b | normal | late | 300 | 3.0% [1.6%, 5.6%] | 53.9 [50.7, 57.1] | 7.3 [7.1, 7.6] |  |
+| enemy-c+enemy-d | normal | late | 300 | 9.0% [6.3%, 12.8%] | 49.4 [45.7, 53.0] | 9.9 [9.5, 10.2] |  |
+| enemy-b+enemy-d+enemy-d | normal | late | 300 | 3.3% [1.8%, 6.0%] | 50.7 [41.2, 60.2] | 8.4 [8.1, 8.8] |  |
+| enemy-a+enemy-b+enemy-d | normal | late | 300 | 0.0% [0.0%, 1.3%] | n/a | 4.9 [4.8, 5.0] |  |
+| enemy-b+enemy-c | normal | late | 300 | 0.3% [0.1%, 1.9%] | n/a | 7.9 [7.6, 8.1] |  |
+| elite-a | elite | late | 300 | 8.3% [5.7%, 12.0%] | 47.4 [44.0, 50.7] | 8.9 [8.7, 9.2] |  |
+| elite-b | elite | late | 300 | 24.3% [19.8%, 29.5%] | 47.0 [44.6, 49.4] | 11.3 [11.0, 11.6] |  |
+| boss-a | boss | late | 300 | 0.3% [0.1%, 1.9%] | n/a | 9.2 [8.9, 9.5] |  |
 | enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 20.3 [19.1, 21.4] | 7.0 [6.8, 7.1] |  |
 | enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 20.9 [19.3, 22.5] | 7.8 [7.6, 8.0] |  |
 | enemy-b | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 18.8 [17.3, 20.3] | 9.4 [9.2, 9.6] |  |
@@ -187,12 +187,12 @@ Tier rollup (unweighted mean of the fights in the tier)
 | starter | normal | 12 | 63.7% | 32.9 | 11.7 |
 | starter | elite | 2 | 1.0% | 56.5 | 12.5 |
 | starter | boss | 1 | 0.0% | n/a | 10.0 |
-| mid | normal | 12 | 69.7% | 36.5 | 9.5 |
-| mid | elite | 2 | 30.8% | 51.9 | 10.9 |
-| mid | boss | 1 | 0.0% | n/a | 9.0 |
-| late | normal | 12 | 83.6% | 30.8 | 11.6 |
-| late | elite | 2 | 81.5% | 39.4 | 13.8 |
-| late | boss | 1 | 3.7% | 51.1 | 15.5 |
+| mid | normal | 12 | 65.5% | 37.3 | 9.3 |
+| mid | elite | 2 | 50.0% | 45.9 | 9.8 |
+| mid | boss | 1 | 0.0% | n/a | 8.8 |
+| late | normal | 12 | 83.0% | 30.4 | 9.9 |
+| late | elite | 2 | 72.5% | 40.0 | 11.1 |
+| late | boss | 1 | 4.7% | 51.6 | 12.4 |
 | syn-tag | normal | 12 | 67.8% | 34.6 | 9.8 |
 | syn-tag | elite | 2 | 13.0% | 53.3 | 10.4 |
 | syn-tag | boss | 1 | 0.0% | n/a | 8.4 |
@@ -229,36 +229,36 @@ Tier rollup (unweighted mean of the fights in the tier)
 | elite-a | elite | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 9.6 [9.3, 9.9] |  |
 | elite-b | elite | starter | 100 | 2.0% [0.6%, 7.0%] | 56.5 [24.7, 88.3] | 15.4 [15.0, 15.7] |  |
 | boss-a | boss | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 10.0 [9.7, 10.3] |  |
-| enemy-a | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 19.9 [19.1, 20.6] | 7.5 [7.4, 7.7] | win ok, HP HIGH, turns HIGH |
-| enemy-d+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 18.0 [17.3, 18.6] | 7.3 [7.1, 7.4] | win ok, HP HIGH, turns HIGH |
-| enemy-b | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 17.2 [16.4, 18.1] | 8.0 [7.9, 8.1] | win ok, HP HIGH, turns HIGH |
-| enemy-b+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 32.8 [31.8, 33.8] | 11.1 [10.9, 11.3] | win ok, HP HIGH, turns HIGH |
-| enemy-c | normal | mid | 300 | 99.3% [97.6%, 99.8%] | 38.1 [37.1, 39.2] | 10.9 [10.8, 11.1] | win ok, HP HIGH, turns HIGH |
-| enemy-a+enemy-d | normal | mid | 300 | 96.0% [93.1%, 97.7%] | 44.3 [43.3, 45.3] | 10.3 [10.2, 10.5] | win ok, HP HIGH, turns HIGH |
-| enemy-d+enemy-d+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 39.8 [39.0, 40.6] | 10.0 [9.9, 10.2] | win ok, HP HIGH, turns HIGH |
-| enemy-a+enemy-b | normal | mid | 300 | 30.0% [25.1%, 35.4%] | 53.7 [52.7, 54.6] | 9.6 [9.2, 9.9] | win LOW, HP HIGH, turns HIGH |
-| enemy-c+enemy-d | normal | mid | 300 | 45.7% [40.1%, 51.3%] | 52.1 [51.2, 53.0] | 12.7 [12.5, 12.9] | win LOW, HP HIGH, turns HIGH |
-| enemy-b+enemy-d+enemy-d | normal | mid | 300 | 65.0% [59.4%, 70.2%] | 48.7 [47.6, 49.8] | 13.1 [12.9, 13.4] | win LOW, HP HIGH, turns HIGH |
-| enemy-a+enemy-b+enemy-d | normal | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 5.3 [5.2, 5.4] | win LOW, HP n/a, turns ok |
-| enemy-b+enemy-c | normal | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 8.7 [8.5, 8.8] | win LOW, HP n/a, turns HIGH |
-| elite-a | elite | mid | 300 | 12.3% [9.1%, 16.5%] | 52.7 [50.8, 54.6] | 9.0 [8.8, 9.2] | win LOW, HP HIGH, turns ok |
-| elite-b | elite | mid | 300 | 49.3% [43.7%, 55.0%] | 51.0 [49.9, 52.1] | 12.8 [12.6, 13.1] | win LOW, HP HIGH, turns HIGH |
-| boss-a | boss | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 9.0 [8.8, 9.2] | win LOW, HP n/a, turns ok |
-| enemy-a | normal | late | 300 | 100.0% [98.7%, 100.0%] | 13.5 [12.9, 14.2] | 8.0 [7.9, 8.2] |  |
-| enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 12.6 [12.1, 13.2] | 7.8 [7.7, 7.9] |  |
-| enemy-b | normal | late | 300 | 100.0% [98.7%, 100.0%] | 9.0 [8.3, 9.7] | 9.1 [8.9, 9.3] |  |
-| enemy-b+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 20.2 [19.4, 21.1] | 12.2 [11.9, 12.5] |  |
-| enemy-c | normal | late | 300 | 100.0% [98.7%, 100.0%] | 22.5 [21.5, 23.4] | 12.7 [12.3, 13.0] |  |
-| enemy-a+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 32.0 [31.0, 32.9] | 11.3 [11.0, 11.6] |  |
-| enemy-d+enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 31.6 [30.7, 32.5] | 11.1 [10.8, 11.3] |  |
-| enemy-a+enemy-b | normal | late | 300 | 82.7% [78.0%, 86.5%] | 44.5 [43.3, 45.7] | 14.2 [13.7, 14.6] |  |
-| enemy-c+enemy-d | normal | late | 300 | 94.3% [91.1%, 96.4%] | 38.7 [37.6, 39.7] | 16.2 [15.8, 16.7] |  |
-| enemy-b+enemy-d+enemy-d | normal | late | 300 | 98.3% [96.2%, 99.3%] | 39.9 [38.9, 40.9] | 15.6 [15.2, 16.0] |  |
-| enemy-a+enemy-b+enemy-d | normal | late | 300 | 7.3% [4.9%, 10.9%] | 55.4 [53.9, 56.8] | 7.7 [7.3, 8.1] |  |
-| enemy-b+enemy-c | normal | late | 300 | 20.3% [16.2%, 25.2%] | 50.1 [48.3, 51.9] | 13.6 [13.0, 14.2] |  |
-| elite-a | elite | late | 300 | 66.3% [60.8%, 71.4%] | 44.5 [43.1, 46.0] | 12.4 [12.0, 12.7] |  |
-| elite-b | elite | late | 300 | 96.7% [94.0%, 98.2%] | 34.3 [33.0, 35.7] | 15.3 [14.9, 15.7] |  |
-| boss-a | boss | late | 300 | 3.7% [2.1%, 6.4%] | 51.1 [46.9, 55.3] | 15.5 [14.9, 16.2] |  |
+| enemy-a | normal | mid | 300 | 99.7% [98.1%, 99.9%] | 22.3 [20.8, 23.7] | 8.3 [7.9, 8.7] | win ok, HP HIGH, turns HIGH |
+| enemy-d+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 16.9 [16.2, 17.5] | 7.9 [7.6, 8.3] | win ok, HP HIGH, turns HIGH |
+| enemy-b | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 16.4 [15.4, 17.3] | 8.3 [8.0, 8.7] | win ok, HP HIGH, turns HIGH |
+| enemy-b+enemy-d | normal | mid | 300 | 95.3% [92.3%, 97.2%] | 31.5 [30.2, 32.8] | 12.3 [11.7, 12.8] | win ok, HP HIGH, turns HIGH |
+| enemy-c | normal | mid | 300 | 66.7% [61.2%, 71.8%] | 28.7 [27.7, 29.7] | 10.4 [10.0, 10.7] | win LOW, HP HIGH, turns HIGH |
+| enemy-a+enemy-d | normal | mid | 300 | 66.7% [61.2%, 71.8%] | 38.5 [37.6, 39.4] | 9.8 [9.5, 10.2] | win LOW, HP HIGH, turns HIGH |
+| enemy-d+enemy-d+enemy-d | normal | mid | 300 | 81.3% [76.5%, 85.3%] | 37.9 [36.7, 39.0] | 10.0 [9.6, 10.4] | win LOW, HP HIGH, turns HIGH |
+| enemy-a+enemy-b | normal | mid | 300 | 50.3% [44.7%, 56.0%] | 49.6 [48.7, 50.6] | 9.0 [8.7, 9.4] | win LOW, HP HIGH, turns HIGH |
+| enemy-c+enemy-d | normal | mid | 300 | 52.0% [46.4%, 57.6%] | 49.1 [48.0, 50.2] | 11.0 [10.6, 11.4] | win LOW, HP HIGH, turns HIGH |
+| enemy-b+enemy-d+enemy-d | normal | mid | 300 | 60.3% [54.7%, 65.7%] | 47.5 [46.7, 48.4] | 11.1 [10.7, 11.6] | win LOW, HP HIGH, turns HIGH |
+| enemy-a+enemy-b+enemy-d | normal | mid | 300 | 1.3% [0.5%, 3.4%] | 56.5 [49.4, 63.6] | 5.0 [4.9, 5.1] | win LOW, HP HIGH, turns ok |
+| enemy-b+enemy-c | normal | mid | 300 | 12.3% [9.1%, 16.5%] | 52.9 [51.3, 54.5] | 8.9 [8.7, 9.2] | win LOW, HP HIGH, turns HIGH |
+| elite-a | elite | mid | 300 | 37.7% [32.4%, 43.3%] | 47.5 [46.0, 48.9] | 8.3 [8.0, 8.5] | win LOW, HP HIGH, turns ok |
+| elite-b | elite | mid | 300 | 62.3% [56.7%, 67.6%] | 44.4 [43.3, 45.5] | 11.3 [11.0, 11.7] | win ok, HP HIGH, turns HIGH |
+| boss-a | boss | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 8.8 [8.5, 9.0] | win LOW, HP n/a, turns ok |
+| enemy-a | normal | late | 300 | 100.0% [98.7%, 100.0%] | 15.8 [14.8, 16.8] | 6.6 [6.5, 6.7] |  |
+| enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 13.4 [12.7, 14.2] | 6.6 [6.5, 6.7] |  |
+| enemy-b | normal | late | 300 | 100.0% [98.7%, 100.0%] | 11.5 [10.6, 12.4] | 7.4 [7.3, 7.5] |  |
+| enemy-b+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 22.6 [21.3, 23.8] | 10.2 [10.1, 10.4] |  |
+| enemy-c | normal | late | 300 | 99.7% [98.1%, 99.9%] | 26.0 [24.7, 27.3] | 10.1 [9.9, 10.2] |  |
+| enemy-a+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 31.9 [30.6, 33.2] | 9.3 [9.2, 9.5] |  |
+| enemy-d+enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 29.8 [28.5, 31.0] | 9.5 [9.3, 9.6] |  |
+| enemy-a+enemy-b | normal | late | 300 | 72.3% [67.0%, 77.1%] | 41.8 [40.2, 43.5] | 11.7 [11.4, 11.9] |  |
+| enemy-c+enemy-d | normal | late | 300 | 85.3% [80.9%, 88.9%] | 39.8 [38.2, 41.4] | 13.0 [12.8, 13.2] |  |
+| enemy-b+enemy-d+enemy-d | normal | late | 300 | 94.0% [90.7%, 96.2%] | 38.0 [36.6, 39.5] | 13.2 [13.0, 13.4] |  |
+| enemy-a+enemy-b+enemy-d | normal | late | 300 | 17.0% [13.2%, 21.7%] | 48.8 [46.4, 51.2] | 8.5 [8.0, 8.9] |  |
+| enemy-b+enemy-c | normal | late | 300 | 28.0% [23.2%, 33.3%] | 45.5 [43.2, 47.8] | 13.0 [12.5, 13.5] |  |
+| elite-a | elite | late | 300 | 57.7% [52.0%, 63.1%] | 41.7 [39.9, 43.6] | 10.0 [9.9, 10.2] |  |
+| elite-b | elite | late | 300 | 87.3% [83.1%, 90.6%] | 38.2 [36.7, 39.8] | 12.3 [12.1, 12.4] |  |
+| boss-a | boss | late | 300 | 4.7% [2.8%, 7.7%] | 51.6 [48.5, 54.6] | 12.4 [11.9, 12.8] |  |
 | enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 16.6 [15.2, 17.9] | 6.5 [6.3, 6.6] |  |
 | enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 11.2 [10.5, 12.0] | 7.0 [6.8, 7.2] |  |
 | enemy-b | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 17.0 [15.6, 18.4] | 9.2 [9.0, 9.4] |  |
@@ -358,12 +358,12 @@ Tier rollup (unweighted mean of the fights in the tier)
 | starter | normal | 12 | 54.9% | 43.3 | 8.5 |
 | starter | elite | 2 | 0.0% | n/a | 8.9 |
 | starter | boss | 1 | 0.0% | n/a | 8.2 |
-| mid | normal | 12 | 70.0% | 42.5 | 7.7 |
-| mid | elite | 2 | 23.5% | 52.9 | 8.9 |
-| mid | boss | 1 | 0.0% | n/a | 8.2 |
-| late | normal | 12 | 81.1% | 36.2 | 9.2 |
-| late | elite | 2 | 73.8% | 45.1 | 10.9 |
-| late | boss | 1 | 2.0% | 56.5 | 12.6 |
+| mid | normal | 12 | 61.3% | 44.1 | 6.8 |
+| mid | elite | 2 | 26.7% | 52.4 | 7.5 |
+| mid | boss | 1 | 0.0% | n/a | 7.1 |
+| late | normal | 12 | 76.8% | 38.5 | 8.2 |
+| late | elite | 2 | 61.8% | 47.6 | 9.4 |
+| late | boss | 1 | 6.7% | 47.5 | 9.9 |
 | syn-tag | normal | 12 | 71.1% | 34.8 | 8.5 |
 | syn-tag | elite | 2 | 19.5% | 53.2 | 9.6 |
 | syn-tag | boss | 1 | 0.0% | n/a | 8.3 |
@@ -400,36 +400,36 @@ Tier rollup (unweighted mean of the fights in the tier)
 | elite-a | elite | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 7.8 [7.6, 8.0] |  |
 | elite-b | elite | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 10.1 [9.8, 10.4] |  |
 | boss-a | boss | starter | 100 | 0.0% [0.0%, 3.7%] | n/a | 8.2 [8.0, 8.4] |  |
-| enemy-a | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 29.2 [28.4, 30.0] | 5.6 [5.5, 5.7] | win ok, HP HIGH, turns ok |
-| enemy-d+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 24.0 [23.4, 24.6] | 5.7 [5.6, 5.7] | win ok, HP HIGH, turns ok |
-| enemy-b | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 22.9 [22.1, 23.7] | 6.9 [6.8, 6.9] | win ok, HP HIGH, turns HIGH |
-| enemy-b+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 39.0 [38.2, 39.7] | 8.8 [8.6, 8.9] | win ok, HP HIGH, turns HIGH |
-| enemy-c | normal | mid | 300 | 97.3% [94.8%, 98.6%] | 46.0 [45.0, 47.0] | 8.5 [8.4, 8.6] | win ok, HP HIGH, turns HIGH |
-| enemy-a+enemy-d | normal | mid | 300 | 91.7% [88.0%, 94.3%] | 52.0 [51.2, 52.8] | 7.7 [7.6, 7.9] | win LOW, HP HIGH, turns HIGH |
-| enemy-d+enemy-d+enemy-d | normal | mid | 300 | 99.7% [98.1%, 99.9%] | 47.8 [47.1, 48.5] | 7.7 [7.6, 7.9] | win ok, HP HIGH, turns HIGH |
-| enemy-a+enemy-b | normal | mid | 300 | 44.0% [38.5%, 49.7%] | 56.2 [55.4, 56.9] | 9.2 [8.8, 9.5] | win LOW, HP HIGH, turns HIGH |
-| enemy-c+enemy-d | normal | mid | 300 | 38.0% [32.7%, 43.6%] | 52.7 [51.6, 53.7] | 9.8 [9.5, 10.0] | win LOW, HP HIGH, turns HIGH |
-| enemy-b+enemy-d+enemy-d | normal | mid | 300 | 68.7% [63.2%, 73.7%] | 54.9 [54.3, 55.5] | 10.9 [10.6, 11.1] | win LOW, HP HIGH, turns HIGH |
-| enemy-a+enemy-b+enemy-d | normal | mid | 300 | 0.3% [0.1%, 1.9%] | n/a | 4.5 [4.4, 4.6] | win LOW, HP HIGH, turns ok |
-| enemy-b+enemy-c | normal | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 6.7 [6.6, 6.9] | win LOW, HP n/a, turns HIGH |
-| elite-a | elite | mid | 300 | 9.3% [6.5%, 13.2%] | 55.4 [53.9, 56.9] | 7.9 [7.7, 8.0] | win LOW, HP HIGH, turns ok |
-| elite-b | elite | mid | 300 | 37.7% [32.4%, 43.3%] | 50.4 [48.9, 51.9] | 9.9 [9.7, 10.1] | win LOW, HP HIGH, turns HIGH |
-| boss-a | boss | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 8.2 [8.0, 8.4] | win LOW, HP n/a, turns ok |
-| enemy-a | normal | late | 300 | 100.0% [98.7%, 100.0%] | 19.7 [18.9, 20.5] | 6.4 [6.3, 6.5] |  |
-| enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 17.0 [16.4, 17.6] | 6.5 [6.3, 6.6] |  |
-| enemy-b | normal | late | 300 | 100.0% [98.7%, 100.0%] | 13.8 [12.9, 14.6] | 7.9 [7.8, 8.0] |  |
-| enemy-b+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 27.3 [26.4, 28.3] | 10.1 [9.8, 10.3] |  |
-| enemy-c | normal | late | 300 | 99.3% [97.6%, 99.8%] | 31.2 [30.0, 32.3] | 9.9 [9.6, 10.1] |  |
-| enemy-a+enemy-d | normal | late | 300 | 98.7% [96.6%, 99.5%] | 39.8 [38.8, 40.9] | 8.6 [8.4, 8.8] |  |
-| enemy-d+enemy-d+enemy-d | normal | late | 300 | 99.3% [97.6%, 99.8%] | 37.9 [37.0, 38.9] | 8.8 [8.6, 9.0] |  |
-| enemy-a+enemy-b | normal | late | 300 | 78.0% [73.0%, 82.3%] | 48.3 [47.1, 49.4] | 11.4 [11.0, 11.8] |  |
-| enemy-c+enemy-d | normal | late | 300 | 85.0% [80.5%, 88.6%] | 46.7 [45.6, 47.8] | 11.9 [11.6, 12.2] |  |
-| enemy-b+enemy-d+enemy-d | normal | late | 300 | 92.7% [89.1%, 95.1%] | 46.3 [45.2, 47.3] | 12.1 [11.7, 12.4] |  |
-| enemy-a+enemy-b+enemy-d | normal | late | 300 | 7.7% [5.2%, 11.2%] | 52.6 [49.8, 55.4] | 7.0 [6.5, 7.5] |  |
-| enemy-b+enemy-c | normal | late | 300 | 12.7% [9.4%, 16.9%] | 53.5 [51.7, 55.3] | 10.4 [10.0, 10.9] |  |
-| elite-a | elite | late | 300 | 56.3% [50.7%, 61.8%] | 46.9 [45.3, 48.5] | 10.2 [9.9, 10.4] |  |
-| elite-b | elite | late | 300 | 91.3% [87.6%, 94.0%] | 43.2 [41.9, 44.5] | 11.7 [11.4, 12.0] |  |
-| boss-a | boss | late | 300 | 2.0% [0.9%, 4.3%] | 56.5 [54.9, 58.1] | 12.6 [12.0, 13.1] |  |
+| enemy-a | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 30.0 [29.0, 31.0] | 5.5 [5.3, 5.6] | win ok, HP HIGH, turns ok |
+| enemy-d+enemy-d | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 24.0 [23.4, 24.6] | 5.4 [5.3, 5.5] | win ok, HP HIGH, turns ok |
+| enemy-b | normal | mid | 300 | 100.0% [98.7%, 100.0%] | 22.8 [21.9, 23.7] | 6.8 [6.6, 7.0] | win ok, HP HIGH, turns HIGH |
+| enemy-b+enemy-d | normal | mid | 300 | 97.0% [94.4%, 98.4%] | 41.9 [40.9, 42.8] | 8.7 [8.4, 9.0] | win ok, HP HIGH, turns HIGH |
+| enemy-c | normal | mid | 300 | 68.0% [62.5%, 73.0%] | 47.1 [45.9, 48.2] | 7.8 [7.6, 8.0] | win LOW, HP HIGH, turns HIGH |
+| enemy-a+enemy-d | normal | mid | 300 | 73.0% [67.7%, 77.7%] | 51.8 [50.7, 52.9] | 6.6 [6.4, 6.8] | win LOW, HP HIGH, turns HIGH |
+| enemy-d+enemy-d+enemy-d | normal | mid | 300 | 99.3% [97.6%, 99.8%] | 49.1 [48.3, 49.9] | 7.0 [6.8, 7.2] | win ok, HP HIGH, turns HIGH |
+| enemy-a+enemy-b | normal | mid | 300 | 29.7% [24.8%, 35.1%] | 52.6 [51.2, 54.0] | 6.6 [6.4, 6.8] | win LOW, HP HIGH, turns HIGH |
+| enemy-c+enemy-d | normal | mid | 300 | 21.7% [17.4%, 26.7%] | 55.8 [54.7, 57.0] | 7.9 [7.7, 8.0] | win LOW, HP HIGH, turns HIGH |
+| enemy-b+enemy-d+enemy-d | normal | mid | 300 | 45.0% [39.5%, 50.7%] | 54.7 [53.7, 55.6] | 8.8 [8.5, 9.1] | win LOW, HP HIGH, turns HIGH |
+| enemy-a+enemy-b+enemy-d | normal | mid | 300 | 2.0% [0.9%, 4.3%] | 55.2 [52.4, 57.9] | 4.4 [4.3, 4.4] | win LOW, HP HIGH, turns ok |
+| enemy-b+enemy-c | normal | mid | 300 | 0.3% [0.1%, 1.9%] | n/a | 6.0 [5.9, 6.1] | win LOW, HP HIGH, turns ok |
+| elite-a | elite | mid | 300 | 24.0% [19.5%, 29.1%] | 55.1 [53.9, 56.2] | 6.8 [6.7, 6.9] | win LOW, HP HIGH, turns ok |
+| elite-b | elite | mid | 300 | 29.3% [24.5%, 34.7%] | 49.8 [48.3, 51.3] | 8.2 [8.0, 8.3] | win LOW, HP HIGH, turns ok |
+| boss-a | boss | mid | 300 | 0.0% [0.0%, 1.3%] | n/a | 7.1 [7.0, 7.2] | win LOW, HP n/a, turns LOW |
+| enemy-a | normal | late | 300 | 100.0% [98.7%, 100.0%] | 23.7 [22.7, 24.7] | 5.8 [5.7, 5.9] |  |
+| enemy-d+enemy-d | normal | late | 300 | 100.0% [98.7%, 100.0%] | 19.8 [19.0, 20.5] | 5.9 [5.8, 6.0] |  |
+| enemy-b | normal | late | 300 | 100.0% [98.7%, 100.0%] | 16.5 [15.6, 17.4] | 7.0 [6.8, 7.1] |  |
+| enemy-b+enemy-d | normal | late | 300 | 99.7% [98.1%, 99.9%] | 31.1 [30.0, 32.2] | 8.9 [8.7, 9.1] |  |
+| enemy-c | normal | late | 300 | 99.7% [98.1%, 99.9%] | 37.0 [35.7, 38.3] | 8.6 [8.4, 8.8] |  |
+| enemy-a+enemy-d | normal | late | 300 | 93.7% [90.3%, 95.9%] | 42.7 [41.4, 44.0] | 7.9 [7.8, 8.1] |  |
+| enemy-d+enemy-d+enemy-d | normal | late | 300 | 98.7% [96.6%, 99.5%] | 40.1 [39.0, 41.1] | 8.0 [7.8, 8.2] |  |
+| enemy-a+enemy-b | normal | late | 300 | 60.3% [54.7%, 65.7%] | 49.9 [48.5, 51.3] | 9.5 [9.2, 9.9] |  |
+| enemy-c+enemy-d | normal | late | 300 | 66.0% [60.5%, 71.1%] | 50.1 [48.9, 51.2] | 10.0 [9.7, 10.2] |  |
+| enemy-b+enemy-d+enemy-d | normal | late | 300 | 80.0% [75.1%, 84.1%] | 47.4 [46.2, 48.7] | 10.8 [10.5, 11.0] |  |
+| enemy-a+enemy-b+enemy-d | normal | late | 300 | 8.3% [5.7%, 12.0%] | 53.2 [50.4, 55.9] | 6.3 [6.0, 6.7] |  |
+| enemy-b+enemy-c | normal | late | 300 | 15.3% [11.7%, 19.8%] | 51.1 [48.6, 53.6] | 9.3 [8.9, 9.6] |  |
+| elite-a | elite | late | 300 | 49.0% [43.4%, 54.6%] | 49.1 [47.4, 50.8] | 8.7 [8.5, 8.9] |  |
+| elite-b | elite | late | 300 | 74.7% [69.5%, 79.3%] | 46.1 [44.7, 47.5] | 10.1 [9.8, 10.3] |  |
+| boss-a | boss | late | 300 | 6.7% [4.4%, 10.1%] | 47.5 [42.6, 52.3] | 9.9 [9.5, 10.2] |  |
 | enemy-a | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 17.9 [16.6, 19.2] | 5.7 [5.5, 5.8] |  |
 | enemy-d+enemy-d | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 12.8 [12.0, 13.6] | 6.0 [5.9, 6.2] |  |
 | enemy-b | normal | syn-tag | 100 | 100.0% [96.3%, 100.0%] | 16.7 [15.3, 18.0] | 7.5 [7.4, 7.7] |  |
@@ -529,578 +529,609 @@ Turns per fight with the mid deck set (starter + 5 sampled cards). Mean has a 95
 ### random bot
 | fight | tier | mean [95% CI] | p10 | median | p90 | target band | status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| enemy-a | normal | 7.08 [6.98, 7.18] | 6 | 7 | 8 | 3-6 | HIGH |
-| enemy-d+enemy-d | normal | 7.47 [7.36, 7.59] | 6 | 8 | 9 | 3-6 | HIGH |
-| enemy-b | normal | 9.35 [9.22, 9.48] | 8 | 9 | 11 | 3-6 | HIGH |
-| enemy-b+enemy-d | normal | 11.31 [11.12, 11.50] | 10 | 11 | 13 | 3-6 | HIGH |
-| enemy-c | normal | 10.37 [10.20, 10.54] | 8 | 11 | 12 | 3-6 | HIGH |
-| enemy-a+enemy-d | normal | 7.56 [7.35, 7.77] | 5 | 8 | 10 | 3-6 | HIGH |
-| enemy-d+enemy-d+enemy-d | normal | 7.22 [7.00, 7.45] | 5 | 7 | 10 | 3-6 | HIGH |
-| enemy-a+enemy-b | normal | 6.26 [6.10, 6.41] | 4.900000000000002 | 6 | 8 | 3-6 | HIGH |
-| enemy-c+enemy-d | normal | 8.76 [8.47, 9.05] | 6 | 8 | 13 | 3-6 | HIGH |
-| enemy-b+enemy-d+enemy-d | normal | 6.97 [6.70, 7.24] | 5 | 6 | 10 | 3-6 | HIGH |
-| enemy-a+enemy-b+enemy-d | normal | 4.17 [4.12, 4.22] | 4 | 4 | 5 | 3-6 | ok |
-| enemy-b+enemy-c | normal | 6.75 [6.61, 6.89] | 6 | 6 | 8 | 3-6 | HIGH |
-| elite-a | elite | 7.62 [7.44, 7.80] | 5 | 7 | 9 | 5-9 | ok |
-| elite-b | elite | 10.06 [9.79, 10.33] | 7 | 9 | 14 | 5-9 | HIGH |
-| boss-a | boss | 7.88 [7.70, 8.06] | 7 | 7 | 9 | 8-14 | LOW |
+| enemy-a | normal | 7.21 [6.99, 7.43] | 5 | 7 | 10 | 3-6 | HIGH |
+| enemy-d+enemy-d | normal | 7.29 [7.07, 7.51] | 5 | 7 | 10 | 3-6 | HIGH |
+| enemy-b | normal | 9.51 [9.18, 9.84] | 6 | 9 | 13 | 3-6 | HIGH |
+| enemy-b+enemy-d | normal | 9.65 [9.42, 9.88] | 7 | 10 | 13 | 3-6 | HIGH |
+| enemy-c | normal | 8.84 [8.66, 9.02] | 7 | 8 | 11 | 3-6 | HIGH |
+| enemy-a+enemy-d | normal | 6.41 [6.25, 6.57] | 5 | 6 | 8 | 3-6 | HIGH |
+| enemy-d+enemy-d+enemy-d | normal | 6.34 [6.19, 6.49] | 5 | 7 | 8 | 3-6 | HIGH |
+| enemy-a+enemy-b | normal | 5.69 [5.59, 5.79] | 4 | 6 | 6 | 3-6 | ok |
+| enemy-c+enemy-d | normal | 7.19 [7.04, 7.34] | 6 | 7.5 | 8 | 3-6 | HIGH |
+| enemy-b+enemy-d+enemy-d | normal | 5.91 [5.77, 6.05] | 5 | 6 | 8 | 3-6 | ok |
+| enemy-a+enemy-b+enemy-d | normal | 4.10 [4.06, 4.14] | 4 | 4 | 4 | 3-6 | ok |
+| enemy-b+enemy-c | normal | 6.20 [6.13, 6.28] | 6 | 6 | 8 | 3-6 | HIGH |
+| elite-a | elite | 6.94 [6.85, 7.03] | 6 | 7 | 7 | 5-9 | ok |
+| elite-b | elite | 8.60 [8.45, 8.75] | 7 | 9 | 10 | 5-9 | ok |
+| boss-a | boss | 7.20 [7.12, 7.28] | 7 | 7 | 9 | 8-14 | LOW |
 
 ```
 enemy-a (normal)
- 5     2 
- 6    73 ############
- 7   148 ########################
- 8    56 #########
- 9    18 ###
-10     3 
+ 3     1 
+ 4    18 #######
+ 5    47 ###################
+ 6    60 ########################
+ 7    45 ##################
+ 8    43 #################
+ 9    47 ###################
+10    23 #########
+11    12 #####
+12     4 ##
 ```
 
 ```
 enemy-d+enemy-d (normal)
- 5     8 ##
- 6    46 #########
- 7    86 #################
- 8   120 ########################
- 9    36 #######
-10     4 #
-```
-
-```
-enemy-b (normal)
- 7    10 ##
- 8    48 ########
- 9   136 ########################
-10    55 ##########
-11    39 #######
-12     9 ##
-13     2 
-14     1 
-```
-
-```
-enemy-b+enemy-d (normal)
- 6     1 
- 8    17 #####
- 9    10 ###
-10    80 ########################
-11    58 #################
-12    52 ################
-13    54 ################
-14    24 #######
-15+    4 #
-```
-
-```
-enemy-c (normal)
- 6     2 #
- 8    52 #############
- 9    11 ###
-10    80 ####################
-11    96 ########################
-12    40 ##########
-13    18 #####
-14     1 
-```
-
-```
-enemy-a+enemy-d (normal)
- 4     4 #
- 5    56 ############
- 6    43 #########
- 7    10 ##
- 8   109 ########################
- 9    24 #####
-10    37 ########
-11    17 ####
-```
-
-```
-enemy-d+enemy-d+enemy-d (normal)
- 4     4 #
- 5    81 ##################
- 6    10 ##
- 7   106 ########################
- 8    31 #######
- 9    19 ####
-10    21 #####
-11    22 #####
-12     5 #
+ 4    18 ######
+ 5    41 ###############
+ 6    64 #######################
+ 7    33 ############
+ 8    67 ########################
+ 9    37 #############
+10    20 #######
+11    16 ######
+12     3 #
 13     1 
 ```
 
 ```
-enemy-a+enemy-b (normal)
- 4    30 ####
- 5    15 ##
- 6   189 ########################
- 7     9 #
- 8    47 ######
- 9     1 
-10     6 #
-12     1 
-14     2 
+enemy-b (normal)
+ 5    14 ######
+ 6    32 ##############
+ 7    53 ########################
+ 8    28 #############
+ 9    52 ########################
+10    17 ########
+11    11 #####
+12    20 #########
+13    46 #####################
+14    13 ######
+15+   14 ######
 ```
 
 ```
-enemy-c+enemy-d (normal)
- 5     9 ##
- 6    54 ##########
- 7    14 ###
- 8   130 ########################
- 9     4 #
-10    24 ####
-11    13 ##
-12     4 #
-13    28 #####
-14    11 ##
-15+    9 ##
-```
-
-```
-enemy-b+enemy-d+enemy-d (normal)
- 4    16 ####
- 5    62 ################
- 6    92 ########################
- 7    36 #########
- 8    49 #############
-10    29 ########
-12     2 #
-13     2 #
-14     4 #
-15+    8 ##
-```
-
-```
-enemy-a+enemy-b+enemy-d (normal)
- 4   256 ########################
- 5    37 ###
- 6     7 #
-```
-
-```
-enemy-b+enemy-c (normal)
- 5    11 #
- 6   189 ########################
- 7     2 
- 8    78 ##########
- 9     2 
-10    18 ##
-```
-
-```
-elite-a (elite)
- 5    31 #####
+enemy-b+enemy-d (normal)
+ 5     2 
  6     5 #
- 7   165 ########################
- 8     6 #
- 9    64 #########
-10     3 
-11    21 ###
-12     4 #
-13     1 
-```
-
-```
-elite-b (elite)
- 6    14 ##
- 7    25 ####
- 8     3 
- 9   148 ########################
-10    10 ##
-11     5 #
-12    38 ######
-13    25 ####
-14    16 ###
-15+   16 ###
-```
-
-```
-boss-a (boss)
- 6     7 #
- 7   195 ########################
- 8     6 #
- 9    69 ########
-10     2 
-12     6 #
-13    15 ##
-```
-
-### greedy bot
-| fight | tier | mean [95% CI] | p10 | median | p90 | target band | status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| enemy-a | normal | 7.54 [7.38, 7.70] | 6 | 7 | 10 | 3-6 | HIGH |
-| enemy-d+enemy-d | normal | 7.30 [7.15, 7.45] | 6 | 7 | 9 | 3-6 | HIGH |
-| enemy-b | normal | 8.02 [7.91, 8.14] | 7 | 8 | 9 | 3-6 | HIGH |
-| enemy-b+enemy-d | normal | 11.09 [10.93, 11.25] | 9 | 11 | 13 | 3-6 | HIGH |
-| enemy-c | normal | 10.94 [10.80, 11.09] | 9 | 11 | 12 | 3-6 | HIGH |
-| enemy-a+enemy-d | normal | 10.31 [10.15, 10.46] | 9 | 10 | 11 | 3-6 | HIGH |
-| enemy-d+enemy-d+enemy-d | normal | 10.03 [9.90, 10.16] | 9 | 10 | 12 | 3-6 | HIGH |
-| enemy-a+enemy-b | normal | 9.57 [9.22, 9.92] | 6 | 10 | 13 | 3-6 | HIGH |
-| enemy-c+enemy-d | normal | 12.69 [12.47, 12.91] | 10 | 13 | 14 | 3-6 | HIGH |
-| enemy-b+enemy-d+enemy-d | normal | 13.12 [12.86, 13.39] | 10 | 13 | 15 | 3-6 | HIGH |
-| enemy-a+enemy-b+enemy-d | normal | 5.27 [5.15, 5.39] | 4 | 6 | 6 | 3-6 | ok |
-| enemy-b+enemy-c | normal | 8.66 [8.47, 8.85] | 6.900000000000002 | 8 | 11 | 3-6 | HIGH |
-| elite-a | elite | 8.98 [8.81, 9.15] | 7 | 9 | 11 | 5-9 | ok |
-| elite-b | elite | 12.83 [12.59, 13.07] | 9 | 13 | 16 | 5-9 | HIGH |
-| boss-a | boss | 9.02 [8.81, 9.22] | 7 | 9 | 12 | 8-14 | ok |
-
-```
-enemy-a (normal)
- 6    60 #########
- 7   155 ########################
- 8    10 ##
- 9    33 #####
-10    22 ###
-11    20 ###
-```
-
-```
-enemy-d+enemy-d (normal)
- 5     2 
- 6   105 ########################
- 7    84 ###################
- 8    42 ##########
- 9    52 ############
-10     8 ##
-11     7 ##
-```
-
-```
-enemy-b (normal)
- 7   114 ########################
- 8    92 ###################
- 9    79 #################
-10     3 #
-11    12 ###
-```
-
-```
-enemy-b+enemy-d (normal)
- 9    38 #######
-10    54 ##########
-11   126 ########################
-12    39 #######
-13    30 ######
-14     2 
-15+   11 ##
-```
-
-```
-enemy-c (normal)
- 8     1 
- 9    54 ##############
-10    50 #############
-11    82 #####################
-12    92 ########################
-13    11 ###
-14    10 ###
-```
-
-```
-enemy-a+enemy-d (normal)
- 7     2 
- 8     9 ##
- 9    69 ###############
-10   107 ########################
-11    84 ###################
-12     5 #
-13    12 ###
-14     5 #
-15+    7 ##
-```
-
-```
-enemy-d+enemy-d+enemy-d (normal)
- 8     4 #
- 9   122 ########################
-10    88 #################
-11    37 #######
-12    45 #########
-13     3 #
-14     1 
-```
-
-```
-enemy-a+enemy-b (normal)
- 4     3 #
- 5     2 #
- 6    85 ########################
- 7    12 ###
- 8    27 ########
- 9    16 #####
-10    41 ############
-11    10 ###
-12    20 ######
-13    59 #################
-14    12 ###
-15+   13 ####
-```
-
-```
-enemy-c+enemy-d (normal)
- 8    10 ##
- 9     3 #
-10    40 ##########
-11    27 ######
+ 7    33 ########
+ 8    62 ###############
+ 9    29 #######
+10    99 ########################
+11    19 #####
 12    20 #####
-13   101 ########################
-14    70 #################
-15+   29 #######
-```
-
-```
-enemy-b+enemy-d+enemy-d (normal)
- 6     9 ##
- 7     2 
- 8     3 #
- 9     3 #
-10    28 #######
-11     8 ##
-12    21 #####
-13    98 ########################
-14    49 ############
-15+   79 ###################
-```
-
-```
-enemy-a+enemy-b+enemy-d (normal)
- 4   101 ################
- 5    34 #####
- 6   156 ########################
- 7     1 
- 8     8 #
-```
-
-```
-enemy-b+enemy-c (normal)
- 6    30 #####
- 7    12 ##
- 8   153 ########################
- 9     8 #
-10    61 ##########
-11    21 ###
-12     4 #
-13     8 #
-14     1 
-15+    2 
-```
-
-```
-elite-a (elite)
- 5     3 
- 6     2 
- 7    66 ###########
- 8     5 #
- 9   150 ########################
-10    17 ###
-11    44 #######
-12     7 #
-13     6 #
-```
-
-```
-elite-b (elite)
- 8     1 
- 9    37 ###########
-10     7 ##
-11    11 ###
-12    79 ########################
-13    49 ###############
-14    54 ################
-15+   62 ###################
-```
-
-```
-boss-a (boss)
- 6     2 
- 7    80 ##############
- 8    18 ###
- 9   141 ########################
-10     2 
-11     8 #
-12    25 ####
-13    24 ####
-```
-
-### smart bot
-| fight | tier | mean [95% CI] | p10 | median | p90 | target band | status |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| enemy-a | normal | 5.62 [5.55, 5.68] | 5 | 6 | 6 | 3-6 | ok |
-| enemy-d+enemy-d | normal | 5.67 [5.59, 5.75] | 5 | 6 | 6 | 3-6 | ok |
-| enemy-b | normal | 6.88 [6.80, 6.95] | 6 | 7 | 8 | 3-6 | HIGH |
-| enemy-b+enemy-d | normal | 8.78 [8.64, 8.93] | 7 | 9 | 11 | 3-6 | HIGH |
-| enemy-c | normal | 8.49 [8.39, 8.60] | 7 | 8 | 10 | 3-6 | HIGH |
-| enemy-a+enemy-d | normal | 7.73 [7.58, 7.89] | 6 | 8 | 9 | 3-6 | HIGH |
-| enemy-d+enemy-d+enemy-d | normal | 7.71 [7.57, 7.85] | 6 | 8 | 9 | 3-6 | HIGH |
-| enemy-a+enemy-b | normal | 9.19 [8.84, 9.53] | 6 | 9 | 13 | 3-6 | HIGH |
-| enemy-c+enemy-d | normal | 9.77 [9.52, 10.01] | 8 | 9 | 13 | 3-6 | HIGH |
-| enemy-b+enemy-d+enemy-d | normal | 10.85 [10.59, 11.11] | 8 | 10 | 14 | 3-6 | HIGH |
-| enemy-a+enemy-b+enemy-d | normal | 4.49 [4.39, 4.58] | 4 | 4 | 6 | 3-6 | ok |
-| enemy-b+enemy-c | normal | 6.72 [6.58, 6.86] | 6 | 6 | 8 | 3-6 | HIGH |
-| elite-a | elite | 7.85 [7.70, 8.01] | 7 | 7 | 10 | 5-9 | ok |
-| elite-b | elite | 9.90 [9.72, 10.09] | 9 | 9 | 12 | 5-9 | HIGH |
-| boss-a | boss | 8.19 [7.99, 8.40] | 7 | 7 | 12 | 8-14 | ok |
-
-```
-enemy-a (normal)
- 4     1 
- 5   129 ####################
- 6   155 ########################
- 7    14 ##
- 8     1 
-```
-
-```
-enemy-d+enemy-d (normal)
- 4     8 #
- 5   114 ##################
- 6   149 ########################
- 7    28 #####
- 8     1 
-```
-
-```
-enemy-b (normal)
- 6    77 ##########
- 7   188 ########################
- 8    30 ####
- 9     5 #
-```
-
-```
-enemy-b+enemy-d (normal)
- 6     2 #
- 7    52 ##############
- 8    76 #####################
- 9    88 ########################
-10    45 ############
-11    35 ##########
-12     2 #
+13    13 ###
+14    15 ####
+15+    3 #
 ```
 
 ```
 enemy-c (normal)
- 7    34 ######
- 8   130 ########################
- 9   100 ##################
-10    26 #####
-11    10 ##
+ 6    12 ###
+ 7    45 ##########
+ 8   113 ########################
+ 9    13 ###
+10    52 ###########
+11    59 #############
+12     5 #
+14     1 
 ```
 
 ```
 enemy-a+enemy-d (normal)
- 4     1 
- 5    20 #####
- 6    41 ##########
- 7    48 ############
- 8    98 ########################
- 9    75 ##################
-10    12 ###
-11     5 #
+ 4     3 #
+ 5   103 ########################
+ 6    75 #################
+ 7    27 ######
+ 8    78 ##################
+ 9     7 ##
+10     6 #
+11     1 
 ```
 
 ```
 enemy-d+enemy-d+enemy-d (normal)
- 5    16 ###
- 6    37 ########
- 7    55 ###########
- 8   118 ########################
- 9    60 ############
-10    11 ##
+ 4     5 #
+ 5   107 #####################
+ 6    29 ######
+ 7   124 ########################
+ 8    23 ####
+ 9     2 
+10     7 #
 11     3 #
 ```
 
 ```
 enemy-a+enemy-b (normal)
- 4     9 ##
- 5     2 
- 6   100 ########################
- 8     5 #
- 9    46 ###########
-10    52 ############
-11     4 #
-12    15 ####
-13    39 #########
-14    19 #####
-15+    9 ##
+ 4    35 ####
+ 5    52 ######
+ 6   200 ########################
+ 7     2 
+ 8     7 #
+ 9     4 
 ```
 
 ```
 enemy-c+enemy-d (normal)
- 6    12 ##
- 7     1 
- 8   134 ########################
- 9     5 #
-10    39 #######
-11    22 ####
-12    37 #######
-13    43 ########
-14     6 #
-15+    1 
+ 5    22 ####
+ 6    98 ###################
+ 7    30 ######
+ 8   123 ########################
+ 9     6 #
+10    20 ####
+11     1 
 ```
 
 ```
 enemy-b+enemy-d+enemy-d (normal)
- 4     1 
- 6    14 ####
- 7     6 ##
- 8    18 #####
- 9    41 ############
-10    79 ########################
-11    15 #####
-12    27 ########
-13    64 ###################
-14    24 #######
-15+   11 ###
+ 4    29 #######
+ 5    97 #######################
+ 6   101 ########################
+ 7    30 #######
+ 8    35 ########
+ 9     4 #
+10     4 #
 ```
 
 ```
 enemy-a+enemy-b+enemy-d (normal)
- 4   212 ########################
- 5    37 ####
- 6    48 #####
- 8     2 
+ 4   272 ########################
+ 5    26 ##
+ 6     2 
+```
+
+```
+enemy-b+enemy-c (normal)
+ 5     5 
+ 6   262 ########################
+ 8    33 ###
+```
+
+```
+elite-a (elite)
+ 5    27 ###
+ 6     8 #
+ 7   240 ########################
+ 8     7 #
+ 9    17 ##
+10     1 
+```
+
+```
+elite-b (elite)
+ 6    20 ###
+ 7    50 #######
+ 8    26 ####
+ 9   170 ########################
+10    18 ###
+12    16 ##
+```
+
+```
+boss-a (boss)
+ 6     8 #
+ 7   259 ########################
+ 8     1 
+ 9    31 ###
+12     1 
+```
+
+### greedy bot
+| fight | tier | mean [95% CI] | p10 | median | p90 | target band | status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| enemy-a | normal | 8.30 [7.91, 8.68] | 4 | 7 | 14 | 3-6 | HIGH |
+| enemy-d+enemy-d | normal | 7.93 [7.58, 8.27] | 5 | 7 | 12 | 3-6 | HIGH |
+| enemy-b | normal | 8.33 [7.98, 8.67] | 5 | 8 | 13 | 3-6 | HIGH |
+| enemy-b+enemy-d | normal | 12.27 [11.70, 12.84] | 6 | 11 | 20 | 3-6 | HIGH |
+| enemy-c | normal | 10.38 [10.03, 10.72] | 6 | 11 | 13 | 3-6 | HIGH |
+| enemy-a+enemy-d | normal | 9.83 [9.48, 10.17] | 6 | 11 | 14 | 3-6 | HIGH |
+| enemy-d+enemy-d+enemy-d | normal | 10.01 [9.59, 10.43] | 6 | 10 | 16 | 3-6 | HIGH |
+| enemy-a+enemy-b | normal | 9.02 [8.66, 9.39] | 6 | 8 | 15 | 3-6 | HIGH |
+| enemy-c+enemy-d | normal | 11.02 [10.61, 11.43] | 7 | 10 | 17 | 3-6 | HIGH |
+| enemy-b+enemy-d+enemy-d | normal | 11.12 [10.67, 11.57] | 7 | 10 | 17 | 3-6 | HIGH |
+| enemy-a+enemy-b+enemy-d | normal | 4.97 [4.85, 5.08] | 4 | 5 | 6 | 3-6 | ok |
+| enemy-b+enemy-c | normal | 8.95 [8.74, 9.15] | 8 | 8 | 11 | 3-6 | HIGH |
+| elite-a | elite | 8.25 [8.05, 8.45] | 6 | 8 | 11 | 5-9 | ok |
+| elite-b | elite | 11.35 [10.98, 11.72] | 7 | 12 | 16 | 5-9 | HIGH |
+| boss-a | boss | 8.76 [8.54, 8.97] | 7 | 9 | 12 | 8-14 | ok |
+
+```
+enemy-a (normal)
+ 3     2 #
+ 4    36 ###############
+ 5    52 ######################
+ 6    10 ####
+ 7    57 ########################
+ 8    16 #######
+ 9    29 ############
+10     6 ###
+11    36 ###############
+12     5 ##
+13    17 #######
+14    20 ########
+15+   14 ######
+```
+
+```
+enemy-d+enemy-d (normal)
+ 4    26 ###########
+ 5    55 ########################
+ 6    47 #####################
+ 7    27 ############
+ 8    44 ###################
+ 9    16 #######
+10     4 ##
+11    22 ##########
+12    40 #################
+13     6 ###
+14     3 #
+15+   10 ####
+```
+
+```
+enemy-b (normal)
+ 4     2 #
+ 5    83 ########################
+ 6    14 ####
+ 7    48 ##############
+ 8    42 ############
+ 9    11 ###
+10     1 
+11    41 ############
+12    15 ####
+13    33 ##########
+14     1 
+15+    9 ###
+```
+
+```
+enemy-b+enemy-d (normal)
+ 5     3 #
+ 6    31 ########
+ 7    59 ##############
+ 8     7 ##
+ 9     1 
+10     1 
+11    64 ################
+12    13 ###
+13    20 #####
+14     3 #
+15+   98 ########################
+```
+
+```
+enemy-c (normal)
+ 5     7 ###
+ 6    42 ###############
+ 7    49 ##################
+ 8     2 #
+ 9     8 ###
+10     9 ###
+11    37 #############
+12    56 ####################
+13    66 ########################
+15+   24 #########
+```
+
+```
+enemy-a+enemy-d (normal)
+ 4     1 
+ 5    15 #######
+ 6    45 #####################
+ 7    40 ##################
+ 8    20 #########
+ 9     6 ###
+10    17 ########
+11    52 ########################
+12    46 #####################
+13    26 ############
+14    17 ########
+15+   15 #######
+```
+
+```
+enemy-d+enemy-d+enemy-d (normal)
+ 4     1 
+ 5     9 ####
+ 6    51 #####################
+ 7    34 ##############
+ 8    23 ##########
+ 9    25 ###########
+10    30 #############
+11    57 ########################
+12    19 ########
+13     4 ##
+14     6 ###
+15+   41 #################
+```
+
+```
+enemy-a+enemy-b (normal)
+ 4     2 #
+ 5     1 
+ 6    79 ########################
+ 7    36 ###########
+ 8    71 ######################
+ 9    19 ######
+10    20 ######
+12     1 
+13    28 #########
+14    11 ###
+15+   32 ##########
+```
+
+```
+enemy-c+enemy-d (normal)
+ 6     3 #
+ 7    40 #############
+ 8    74 ########################
+ 9    13 ####
+10    41 #############
+11    27 #########
+13    17 ######
+14    13 ####
+15+   72 #######################
+```
+
+```
+enemy-b+enemy-d+enemy-d (normal)
+ 5     2 #
+ 6    12 ###
+ 7    33 #########
+ 8    71 ###################
+ 9    26 #######
+10    47 ############
+11     2 #
+12     1 
+13     1 
+14    14 ####
+15+   91 ########################
+```
+
+```
+enemy-a+enemy-b+enemy-d (normal)
+ 4   132 ########################
+ 5    67 ############
+ 6    90 ################
+ 7     2 
+ 8     8 #
  9     1 
 ```
 
 ```
 enemy-b+enemy-c (normal)
- 6   211 ########################
- 8    73 ########
-10    15 ##
-15+    1 
+ 6    15 ##
+ 7     3 
+ 8   162 ########################
+ 9    17 ###
+10    70 ##########
+11    13 ##
+13    14 ##
+15+    6 #
 ```
 
 ```
 elite-a (elite)
- 5     5 #
- 7   189 ########################
- 9    74 #########
-10    12 ##
-11    18 ##
-12     2 
-```
-
-```
-elite-b (elite)
- 6     5 #
- 7     9 #
- 8     7 #
- 9   167 ########################
-10    10 #
-11    33 #####
-12    42 ######
-13    26 ####
+ 5     3 #
+ 6    40 ##########
+ 7    99 ########################
+ 8     9 ##
+ 9   101 ########################
+11    33 ########
+12    13 ###
+13     1 
 14     1 
 ```
 
 ```
+elite-b (elite)
+ 5     1 
+ 6    12 ####
+ 7    50 ################
+ 8    35 ###########
+ 9    12 ####
+10     1 
+12    77 ########################
+13     7 ##
+14    46 ##############
+15+   59 ##################
+```
+
+```
 boss-a (boss)
- 6     3 
- 7   178 ########################
- 9    86 ############
-12     9 #
-13    24 ###
+ 7   116 #####################
+ 8     6 #
+ 9   132 ########################
+12    19 ###
+13    27 #####
+```
+
+### smart bot
+| fight | tier | mean [95% CI] | p10 | median | p90 | target band | status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| enemy-a | normal | 5.49 [5.34, 5.64] | 4 | 5 | 7 | 3-6 | ok |
+| enemy-d+enemy-d | normal | 5.38 [5.26, 5.51] | 4 | 5 | 7 | 3-6 | ok |
+| enemy-b | normal | 6.79 [6.59, 6.99] | 5 | 6 | 9 | 3-6 | HIGH |
+| enemy-b+enemy-d | normal | 8.66 [8.35, 8.96] | 6 | 8 | 13 | 3-6 | HIGH |
+| enemy-c | normal | 7.82 [7.60, 8.03] | 6 | 8 | 11 | 3-6 | HIGH |
+| enemy-a+enemy-d | normal | 6.62 [6.43, 6.82] | 5 | 6 | 9 | 3-6 | HIGH |
+| enemy-d+enemy-d+enemy-d | normal | 7.03 [6.85, 7.20] | 5 | 7 | 9 | 3-6 | HIGH |
+| enemy-a+enemy-b | normal | 6.60 [6.40, 6.80] | 5 | 6 | 10 | 3-6 | HIGH |
+| enemy-c+enemy-d | normal | 7.85 [7.71, 7.99] | 6 | 8 | 10 | 3-6 | HIGH |
+| enemy-b+enemy-d+enemy-d | normal | 8.79 [8.52, 9.05] | 6 | 10 | 12 | 3-6 | HIGH |
+| enemy-a+enemy-b+enemy-d | normal | 4.36 [4.28, 4.44] | 4 | 4 | 6 | 3-6 | ok |
+| enemy-b+enemy-c | normal | 5.99 [5.92, 6.06] | 5 | 6 | 6 | 3-6 | ok |
+| elite-a | elite | 6.80 [6.71, 6.89] | 6 | 7 | 7 | 5-9 | ok |
+| elite-b | elite | 8.15 [7.99, 8.32] | 6 | 9 | 9 | 5-9 | ok |
+| boss-a | boss | 7.09 [7.02, 7.16] | 7 | 7 | 7 | 8-14 | LOW |
+
+```
+enemy-a (normal)
+ 3     4 #
+ 4    76 ##################
+ 5   104 ########################
+ 6    25 ######
+ 7    72 #################
+ 8    15 ###
+ 9     4 #
+```
+
+```
+enemy-d+enemy-d (normal)
+ 3    10 ###
+ 4    63 ################
+ 5    83 #####################
+ 6    93 ########################
+ 7    48 ############
+ 8     3 #
+```
+
+```
+enemy-b (normal)
+ 4     8 ##
+ 5    86 ########################
+ 6    76 #####################
+ 7    30 ########
+ 8    10 ###
+ 9    75 #####################
+10    12 ###
+11     3 #
+```
+
+```
+enemy-b+enemy-d (normal)
+ 5    27 ###########
+ 6    59 ########################
+ 7    35 ##############
+ 8    51 #####################
+ 9    28 ###########
+10     9 ####
+11    16 #######
+12    43 #################
+13    28 ###########
+14     3 #
+15+    1 
+```
+
+```
+enemy-c (normal)
+ 4     1 
+ 5    21 ######
+ 6    65 ##################
+ 7    52 ###############
+ 8    85 ########################
+ 9     4 #
+10    37 ##########
+11    29 ########
+12     1 
+13     5 #
+```
+
+```
+enemy-a+enemy-d (normal)
+ 4    18 #####
+ 5    91 ########################
+ 6    50 #############
+ 7    26 #######
+ 8    73 ###################
+ 9    28 #######
+10    12 ###
+11     2 #
+```
+
+```
+enemy-d+enemy-d+enemy-d (normal)
+ 4    15 #####
+ 5    53 ###################
+ 6    45 ################
+ 7    52 ###################
+ 8    67 ########################
+ 9    67 ########################
+10     1 
+```
+
+```
+enemy-a+enemy-b (normal)
+ 4    18 ##
+ 5    17 ##
+ 6   187 ########################
+ 7    24 ###
+ 8    14 ##
+ 9     4 #
+10    18 ##
+11    11 #
+12     6 #
+13     1 
+```
+
+```
+enemy-c+enemy-d (normal)
+ 5     1 
+ 6    51 #######
+ 7    27 ####
+ 8   183 ########################
+10    28 ####
+11     9 #
+13     1 
+```
+
+```
+enemy-b+enemy-d+enemy-d (normal)
+ 5    11 ###
+ 6    73 ##################
+ 7    18 #####
+ 8    40 ##########
+ 9     6 ##
+10    95 ########################
+11    21 #####
+12    15 ####
+13    13 ###
+14     7 ##
+15+    1 
+```
+
+```
+enemy-a+enemy-b+enemy-d (normal)
+ 4   229 ########################
+ 5    37 ####
+ 6    31 ###
+ 7     2 
+ 8     1 
+```
+
+```
+enemy-b+enemy-c (normal)
+ 4     1 
+ 5    37 ####
+ 6   243 ########################
+ 7     1 
+ 8    18 ##
+```
+
+```
+elite-a (elite)
+ 5    26 ###
+ 6    39 ####
+ 7   220 ########################
+ 9    15 ##
+```
+
+```
+elite-b (elite)
+ 5     3 
+ 6    59 ########
+ 7    46 ######
+ 8     2 
+ 9   177 ########################
+10     5 #
+11     1 
+12     6 #
+13     1 
+```
+
+```
+boss-a (boss)
+ 6    17 ##
+ 7   261 ########################
+ 9    22 ##
 ```
 
 
@@ -1116,13 +1147,13 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | test-buffer | skill | 1 | no | +51.7 [+48.4, +54.9] pts | -23.0 [-24.4, -21.7] | +7.93 [+7.40, +8.47] | better |
 | end-guard | power | 1 | yes | +13.6 [+11.3, +15.9] pts | -4.1 [-4.6, -3.6] | +1.85 [+1.69, +2.01] | better |
 | test-intangible | skill | 1 | no | +16.8 [+14.3, +19.3] pts | -4.0 [-4.5, -3.4] | +3.51 [+3.28, +3.75] | better |
-| attack-echo | power | 1 | yes | +13.7 [+11.4, +16.0] pts | -3.9 [-4.3, -3.4] | +1.70 [+1.54, +1.85] | better |
+| attack-echo | power | 1 | no | +13.7 [+11.4, +16.0] pts | -3.9 [-4.3, -3.4] | +1.70 [+1.54, +1.85] | better |
 | heat-flash | attack | 0 | yes | +12.2 [+10.0, +14.5] pts | -3.6 [-4.1, -3.1] | +0.79 [+0.63, +0.94] | better |
 | cryofreeze | power | 2 | yes | +12.8 [+10.5, +15.0] pts | -3.0 [-3.4, -2.5] | +1.63 [+1.46, +1.80] | better |
 | pain-engine | power | 1 | yes | +15.2 [+12.8, +17.6] pts | -2.1 [-2.5, -1.7] | -0.49 [-0.62, -0.37] | better |
 | fortify | power | 2 | yes | +8.3 [+6.4, +10.3] pts | -1.9 [-2.4, -1.5] | +1.26 [+1.10, +1.41] | better |
 | test-innate | skill | 0 | no | +6.7 [+4.8, +8.6] pts | -1.8 [-2.2, -1.4] | +0.88 [+0.74, +1.01] | better |
-| prime-a | skill | 0 | yes | +5.6 [+3.7, +7.4] pts | -1.8 [-2.2, -1.4] | +0.98 [+0.84, +1.12] | better |
+| prime-a | skill | 0 | no | +5.6 [+3.7, +7.4] pts | -1.8 [-2.2, -1.4] | +0.98 [+0.84, +1.12] | better |
 | guarded-strike | attack | 1 | yes | +6.2 [+4.5, +7.9] pts | -1.7 [-2.1, -1.3] | +0.61 [+0.48, +0.74] | better |
 | ice-barrier | skill | 1 | yes | +5.0 [+3.3, +6.7] pts | -1.5 [-1.9, -1.1] | +1.72 [+1.56, +1.88] | better |
 | strengthen | power | 1 | yes | +6.6 [+4.8, +8.3] pts | -1.3 [-1.7, -1.0] | -0.46 [-0.58, -0.34] | better |
@@ -1133,7 +1164,7 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | heat-warning | attack | 1 | yes | +5.1 [+3.4, +6.8] pts | -0.9 [-1.2, -0.5] | -0.59 [-0.71, -0.46] | better |
 | weaken | skill | 1 | yes | +2.7 [+1.3, +4.1] pts | -0.7 [-1.1, -0.4] | +1.26 [+1.11, +1.40] | better |
 | opening-spark | power | 1 | yes | +3.1 [+1.5, +4.7] pts | -0.7 [-1.0, -0.3] | -0.42 [-0.54, -0.30] | better |
-| block-spark | power | 1 | yes | +2.9 [+1.3, +4.5] pts | -0.7 [-1.0, -0.3] | -0.41 [-0.53, -0.29] | better |
+| block-spark | power | 1 | no | +2.9 [+1.3, +4.5] pts | -0.7 [-1.0, -0.3] | -0.41 [-0.53, -0.29] | better |
 | heavy-hit | attack | 3 | yes | +3.0 [+1.4, +4.6] pts | -0.6 [-0.9, -0.3] | -0.75 [-0.87, -0.63] | better |
 | crippling-heat | attack | 1 | yes | +3.3 [+1.8, +4.9] pts | -0.6 [-0.9, -0.3] | +0.34 [+0.21, +0.47] | better |
 | cauterize | skill | 1 | yes | +1.0 [-0.3, +2.3] pts | -0.6 [-0.9, -0.2] | +1.00 [+0.86, +1.13] | better |
@@ -1144,7 +1175,7 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | test-retain | skill | 1 | no | +0.8 [-0.5, +2.0] pts | -0.3 [-0.6, +0.0] | +0.91 [+0.76, +1.05] | negligible |
 | ice-block | skill | 3 | yes | +1.8 [+0.4, +3.1] pts | -0.2 [-0.6, +0.2] | +1.78 [+1.60, +1.96] | negligible |
 | defend | skill | 1 | yes | +0.6 [-0.7, +1.8] pts | -0.2 [-0.5, +0.1] | +0.80 [+0.67, +0.93] | negligible |
-| single-use-strike | attack | 1 | yes | +0.3 [-1.0, +1.6] pts | -0.1 [-0.5, +0.2] | -0.23 [-0.35, -0.12] | negligible |
+| single-use-strike | attack | 1 | no | +0.3 [-1.0, +1.6] pts | -0.1 [-0.5, +0.2] | -0.23 [-0.35, -0.12] | negligible |
 | cull | skill | 0 | yes | -0.3 [-1.5, +0.8] pts | -0.1 [-0.4, +0.2] | -0.00 [-0.13, +0.13] | negligible |
 | test-ethereal | attack | 1 | no | +1.1 [-0.1, +2.3] pts | -0.0 [-0.3, +0.3] | -0.31 [-0.43, -0.20] | negligible |
 | power-up | skill | 1 | yes | +0.6 [-0.7, +1.8] pts | +0.0 [-0.3, +0.3] | -0.44 [-0.56, -0.32] | negligible |
@@ -1152,10 +1183,10 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | sunder | attack | 2 | yes | +0.7 [-0.7, +2.1] pts | +0.1 [-0.2, +0.4] | -0.75 [-0.87, -0.63] | negligible |
 | expose | skill | 1 | yes | +1.1 [-0.2, +2.4] pts | +0.1 [-0.2, +0.5] | -0.44 [-0.56, -0.32] | negligible |
 | test-unplayable | skill | 0 | no | +0.8 [-0.5, +2.1] pts | +0.1 [-0.2, +0.5] | +0.09 [-0.03, +0.20] | negligible |
-| bolt | attack | 2 | yes | -0.4 [-1.6, +0.7] pts | +0.2 [-0.1, +0.6] | -0.70 [-0.81, -0.58] | negligible |
+| bolt | attack | 2 | no | -0.4 [-1.6, +0.7] pts | +0.2 [-0.1, +0.6] | -0.70 [-0.81, -0.58] | negligible |
 | kill-reward | power | 1 | yes | +0.0 [-1.4, +1.4] pts | +0.4 [+0.1, +0.7] | -0.13 [-0.25, -0.00] | worse |
 | meteor-shower | attack | 2 | yes | +0.3 [-1.0, +1.6] pts | +0.5 [+0.2, +0.8] | -0.56 [-0.68, -0.44] | worse |
-| tag-a-echo | power | 1 | yes | -0.3 [-1.5, +0.9] pts | +0.5 [+0.2, +0.8] | -0.13 [-0.25, -0.01] | worse |
+| tag-a-echo | power | 1 | no | -0.3 [-1.5, +0.9] pts | +0.5 [+0.2, +0.8] | -0.13 [-0.25, -0.01] | worse |
 | double-strength | skill | 1 | yes | -0.3 [-1.5, +0.9] pts | +0.5 [+0.2, +0.8] | -0.13 [-0.25, -0.01] | worse |
 | exhaust-engine | power | 1 | yes | -0.3 [-1.5, +0.9] pts | +0.5 [+0.2, +0.8] | -0.13 [-0.25, -0.01] | worse |
 | hungering-cold | power | 1 | yes | -0.3 [-1.5, +0.9] pts | +0.5 [+0.2, +0.8] | -0.13 [-0.25, -0.01] | worse |
@@ -1163,10 +1194,10 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | opportunist | attack | 1 | yes | -0.2 [-1.5, +1.0] pts | +0.7 [+0.4, +1.1] | -0.30 [-0.42, -0.19] | worse |
 | blood-strike | attack | 1 | yes | +0.0 [-1.1, +1.1] pts | +0.8 [+0.5, +1.1] | -1.39 [-1.51, -1.27] | worse |
 | block-slam | attack | 1 | yes | -0.9 [-2.0, +0.2] pts | +1.0 [+0.7, +1.4] | -0.26 [-0.38, -0.15] | worse |
-| tag-a-payoff | attack | 1 | yes | -0.7 [-1.9, +0.5] pts | +1.0 [+0.7, +1.4] | -0.25 [-0.37, -0.13] | worse |
+| tag-a-payoff | attack | 1 | no | -0.7 [-1.9, +0.5] pts | +1.0 [+0.7, +1.4] | -0.25 [-0.37, -0.13] | worse |
 | heating-up | skill | 1 | yes | -1.1 [-2.3, +0.0] pts | +1.1 [+0.7, +1.4] | -0.28 [-0.41, -0.16] | worse |
 | glaciate | attack | 2 | yes | -1.4 [-2.6, -0.3] pts | +1.1 [+0.8, +1.5] | -0.56 [-0.68, -0.44] | worse |
-| exhaust-payoff | attack | 1 | yes | -1.0 [-2.1, +0.1] pts | +1.3 [+1.0, +1.7] | -0.21 [-0.33, -0.09] | worse |
+| exhaust-payoff | attack | 1 | no | -1.0 [-2.1, +0.1] pts | +1.3 [+1.0, +1.7] | -0.21 [-0.33, -0.09] | worse |
 | arctic-strike | attack | 1 | yes | -1.0 [-2.1, +0.1] pts | +1.3 [+1.0, +1.7] | -0.21 [-0.33, -0.09] | worse |
 | hypothermia | skill | 1 | yes | -1.7 [-2.7, -0.7] pts | +1.6 [+1.2, +2.0] | -0.07 [-0.20, +0.05] | worse |
 | glacial-spike | skill | 1 | yes | -1.7 [-2.7, -0.7] pts | +1.6 [+1.2, +2.0] | -0.07 [-0.20, +0.05] | worse |
@@ -1183,9 +1214,9 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | test-intangible | skill | 1 | no | +16.1 [+13.6, +18.6] pts | -4.5 [-5.1, -3.9] | +5.01 [+4.73, +5.28] | better |
 | end-guard | power | 1 | yes | +14.4 [+12.1, +16.8] pts | -4.4 [-4.9, -3.9] | +2.76 [+2.59, +2.94] | better |
 | cryofreeze | power | 2 | yes | +14.4 [+12.1, +16.8] pts | -3.8 [-4.3, -3.3] | +2.66 [+2.47, +2.85] | better |
-| attack-echo | power | 1 | yes | +11.2 [+9.0, +13.4] pts | -3.6 [-4.1, -3.2] | +2.33 [+2.18, +2.49] | better |
+| attack-echo | power | 1 | no | +11.2 [+9.0, +13.4] pts | -3.6 [-4.1, -3.2] | +2.33 [+2.18, +2.49] | better |
 | fortify | power | 2 | yes | +10.6 [+8.4, +12.7] pts | -2.6 [-3.1, -2.2] | +2.20 [+2.03, +2.37] | better |
-| prime-a | skill | 0 | yes | +7.9 [+6.0, +9.8] pts | -2.6 [-3.0, -2.2] | +1.73 [+1.59, +1.87] | better |
+| prime-a | skill | 0 | no | +7.9 [+6.0, +9.8] pts | -2.6 [-3.0, -2.2] | +1.73 [+1.59, +1.87] | better |
 | pain-engine | power | 1 | yes | +15.7 [+13.3, +18.1] pts | -2.6 [-3.0, -2.2] | +0.07 [-0.06, +0.19] | better |
 | test-innate | skill | 0 | no | +6.6 [+4.7, +8.4] pts | -2.4 [-2.8, -2.0] | +1.80 [+1.65, +1.94] | better |
 | ice-barrier | skill | 1 | yes | +5.7 [+3.9, +7.5] pts | -2.2 [-2.6, -1.7] | +2.64 [+2.46, +2.81] | better |
@@ -1199,7 +1230,7 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | big-block | skill | 2 | yes | +3.2 [+1.7, +4.7] pts | -1.1 [-1.5, -0.7] | +2.70 [+2.52, +2.88] | better |
 | weaken | skill | 1 | yes | +2.3 [+1.1, +3.6] pts | -1.0 [-1.3, -0.8] | +2.03 [+1.91, +2.15] | better |
 | cauterize | skill | 1 | yes | +1.8 [+0.4, +3.1] pts | -1.0 [-1.3, -0.6] | +1.91 [+1.75, +2.06] | better |
-| block-spark | power | 1 | yes | +3.8 [+2.2, +5.4] pts | -0.9 [-1.2, -0.6] | +0.13 [+0.01, +0.25] | better |
+| block-spark | power | 1 | no | +3.8 [+2.2, +5.4] pts | -0.9 [-1.2, -0.6] | +0.13 [+0.01, +0.25] | better |
 | opening-spark | power | 1 | yes | +3.6 [+2.0, +5.1] pts | -0.9 [-1.2, -0.6] | +0.14 [+0.02, +0.26] | better |
 | endless-winter | power | 1 | yes | +3.7 [+2.1, +5.2] pts | -0.9 [-1.2, -0.6] | +1.27 [+1.12, +1.41] | better |
 | heavy-hit | attack | 3 | yes | +3.8 [+2.2, +5.3] pts | -0.8 [-1.2, -0.5] | -0.34 [-0.47, -0.22] | better |
@@ -1211,16 +1242,16 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | combo-strike | attack | 1 | yes | +2.0 [+1.0, +3.0] pts | -0.5 [-0.6, -0.3] | -0.10 [-0.14, -0.06] | better |
 | ice-block | skill | 3 | yes | +1.0 [-0.5, +2.5] pts | -0.5 [-0.8, -0.1] | +2.72 [+2.53, +2.92] | better |
 | sunder | attack | 2 | yes | +1.8 [+0.4, +3.2] pts | -0.3 [-0.6, -0.0] | -0.29 [-0.41, -0.18] | better |
-| single-use-strike | attack | 1 | yes | +0.7 [-0.5, +1.9] pts | -0.2 [-0.5, +0.1] | +0.41 [+0.29, +0.54] | negligible |
+| single-use-strike | attack | 1 | no | +0.7 [-0.5, +1.9] pts | -0.2 [-0.5, +0.1] | +0.41 [+0.29, +0.54] | negligible |
 | test-unplayable | skill | 0 | no | +0.8 [-0.5, +2.0] pts | -0.2 [-0.5, +0.1] | +0.69 [+0.57, +0.81] | negligible |
 | cull | skill | 0 | yes | +0.4 [-0.8, +1.7] pts | -0.1 [-0.4, +0.2] | +0.62 [+0.47, +0.78] | negligible |
 | test-ethereal | attack | 1 | no | +1.4 [+0.2, +2.7] pts | -0.1 [-0.3, +0.1] | +0.29 [+0.19, +0.38] | negligible |
-| bolt | attack | 2 | yes | -0.1 [-1.2, +1.0] pts | -0.1 [-0.4, +0.2] | -0.23 [-0.34, -0.11] | negligible |
+| bolt | attack | 2 | no | -0.1 [-1.2, +1.0] pts | -0.1 [-0.4, +0.2] | -0.23 [-0.34, -0.11] | negligible |
 | expose | skill | 1 | yes | +0.8 [-0.0, +1.6] pts | -0.0 [-0.2, +0.1] | -0.05 [-0.09, -0.01] | negligible |
 | strike | attack | 1 | yes | +0.0 [+0.0, +0.0] pts | +0.0 [+0.0, +0.0] | +0.00 [+0.00, +0.00] | negligible |
 | kill-reward | power | 1 | yes | -0.1 [-1.2, +1.0] pts | +0.3 [-0.0, +0.5] | +0.51 [+0.38, +0.64] | negligible |
 | focus | power | 1 | yes | -0.3 [-1.6, +0.9] pts | +0.3 [-0.0, +0.6] | +0.64 [+0.51, +0.76] | negligible |
-| tag-a-echo | power | 1 | yes | -0.9 [-1.9, +0.1] pts | +0.4 [+0.1, +0.7] | +0.51 [+0.39, +0.64] | worse |
+| tag-a-echo | power | 1 | no | -0.9 [-1.9, +0.1] pts | +0.4 [+0.1, +0.7] | +0.51 [+0.39, +0.64] | worse |
 | double-strength | skill | 1 | yes | -0.9 [-1.9, +0.1] pts | +0.4 [+0.1, +0.7] | +0.51 [+0.39, +0.64] | worse |
 | exhaust-engine | power | 1 | yes | -0.9 [-1.9, +0.1] pts | +0.4 [+0.1, +0.7] | +0.51 [+0.39, +0.64] | worse |
 | hungering-cold | power | 1 | yes | -0.9 [-1.9, +0.1] pts | +0.4 [+0.1, +0.7] | +0.51 [+0.39, +0.64] | worse |
@@ -1229,9 +1260,9 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | blood-strike | attack | 1 | yes | +0.7 [-0.3, +1.6] pts | +0.8 [+0.6, +0.9] | -1.13 [-1.21, -1.05] | worse |
 | glaciate | attack | 2 | yes | -0.8 [-1.8, +0.3] pts | +0.8 [+0.5, +1.1] | -0.05 [-0.17, +0.07] | worse |
 | block-slam | attack | 1 | yes | -0.9 [-1.5, -0.3] pts | +0.8 [+0.6, +1.0] | +0.16 [+0.11, +0.20] | worse |
-| tag-a-payoff | attack | 1 | yes | -1.2 [-1.9, -0.5] pts | +1.0 [+0.8, +1.2] | +0.17 [+0.13, +0.22] | worse |
+| tag-a-payoff | attack | 1 | no | -1.2 [-1.9, -0.5] pts | +1.0 [+0.8, +1.2] | +0.17 [+0.13, +0.22] | worse |
 | heating-up | skill | 1 | yes | -1.3 [-2.5, -0.2] pts | +1.0 [+0.7, +1.4] | +0.26 [+0.13, +0.39] | worse |
-| exhaust-payoff | attack | 1 | yes | -1.6 [-2.4, -0.7] pts | +1.3 [+1.1, +1.6] | +0.25 [+0.19, +0.31] | worse |
+| exhaust-payoff | attack | 1 | no | -1.6 [-2.4, -0.7] pts | +1.3 [+1.1, +1.6] | +0.25 [+0.19, +0.31] | worse |
 | arctic-strike | attack | 1 | yes | -1.6 [-2.4, -0.7] pts | +1.3 [+1.1, +1.6] | +0.25 [+0.19, +0.31] | worse |
 | hypothermia | skill | 1 | yes | -1.3 [-2.2, -0.5] pts | +1.3 [+1.1, +1.6] | +0.43 [+0.34, +0.51] | worse |
 | glacial-spike | skill | 1 | yes | -1.3 [-2.2, -0.5] pts | +1.3 [+1.1, +1.6] | +0.43 [+0.34, +0.51] | worse |
@@ -1254,7 +1285,7 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | guarded-strike | attack | 1 | yes | +8.0 [+6.1, +9.9] pts | -4.4 [-4.9, -4.0] | +0.44 [+0.29, +0.59] | better |
 | pain-engine | power | 1 | yes | +16.6 [+14.1, +19.0] pts | -4.0 [-4.5, -3.5] | -1.50 [-1.66, -1.34] | better |
 | ice-barrier | skill | 1 | yes | +6.4 [+4.7, +8.2] pts | -4.0 [-4.5, -3.4] | +1.21 [+1.03, +1.39] | better |
-| attack-echo | power | 1 | yes | +6.0 [+4.3, +7.7] pts | -3.4 [-3.8, -3.0] | +1.11 [+0.97, +1.25] | better |
+| attack-echo | power | 1 | no | +6.0 [+4.3, +7.7] pts | -3.4 [-3.8, -3.0] | +1.11 [+0.97, +1.25] | better |
 | frozen-shield | skill | 1 | yes | +6.3 [+4.4, +8.3] pts | -3.3 [-3.8, -2.8] | +2.28 [+2.10, +2.46] | better |
 | test-retain | skill | 1 | no | +2.8 [+1.3, +4.2] pts | -3.3 [-3.8, -2.8] | +2.02 [+1.86, +2.18] | better |
 | cauterize | skill | 1 | yes | +4.0 [+2.4, +5.6] pts | -3.1 [-3.5, -2.6] | +1.65 [+1.48, +1.82] | better |
@@ -1263,32 +1294,32 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | focus | power | 1 | yes | +2.8 [+1.6, +4.0] pts | -2.0 [-2.4, -1.6] | +1.17 [+1.02, +1.32] | better |
 | weaken | skill | 1 | yes | +5.0 [+2.9, +7.1] pts | -2.0 [-2.5, -1.5] | +2.35 [+2.14, +2.56] | better |
 | test-innate | skill | 0 | no | +3.6 [+2.1, +5.0] pts | -2.0 [-2.4, -1.6] | +0.05 [-0.08, +0.19] | better |
-| prime-a | skill | 0 | yes | +2.6 [+1.0, +4.1] pts | -1.9 [-2.3, -1.5] | -0.00 [-0.15, +0.15] | better |
+| prime-a | skill | 0 | no | +2.6 [+1.0, +4.1] pts | -1.9 [-2.3, -1.5] | -0.00 [-0.15, +0.15] | better |
 | defend | skill | 1 | yes | +0.4 [-0.8, +1.7] pts | -1.5 [-2.0, -1.1] | +1.39 [+1.24, +1.54] | better |
 | crippling-heat | attack | 1 | yes | +4.8 [+3.0, +6.5] pts | -1.5 [-1.9, -1.1] | +0.62 [+0.46, +0.78] | better |
 | heavy-hit | attack | 3 | yes | +3.2 [+1.7, +4.8] pts | -0.8 [-1.2, -0.4] | -1.74 [-1.89, -1.59] | better |
 | opening-spark | power | 1 | yes | +1.6 [-0.1, +3.2] pts | -0.8 [-1.2, -0.4] | -0.94 [-1.07, -0.80] | better |
-| block-spark | power | 1 | yes | +0.3 [-1.2, +1.8] pts | -0.7 [-1.0, -0.3] | -0.79 [-0.92, -0.66] | better |
+| block-spark | power | 1 | no | +0.3 [-1.2, +1.8] pts | -0.7 [-1.0, -0.3] | -0.79 [-0.92, -0.66] | better |
 | power-up | skill | 1 | yes | +1.6 [+0.1, +3.0] pts | -0.6 [-1.0, -0.2] | -1.50 [-1.64, -1.36] | better |
 | endless-winter | power | 1 | yes | +3.3 [+1.7, +5.0] pts | -0.5 [-0.9, -0.0] | +0.80 [+0.64, +0.96] | better |
 | jab | attack | 0 | yes | +0.4 [-0.9, +1.8] pts | -0.4 [-0.8, -0.0] | -1.28 [-1.42, -1.13] | better |
-| single-use-strike | attack | 1 | yes | +0.1 [-1.1, +1.4] pts | +0.0 [-0.3, +0.4] | -0.26 [-0.38, -0.14] | negligible |
+| single-use-strike | attack | 1 | no | +0.1 [-1.1, +1.4] pts | +0.0 [-0.3, +0.4] | -0.26 [-0.38, -0.14] | negligible |
 | apocalyptic-flame | attack | 3 | yes | +7.4 [+5.3, +9.6] pts | +0.0 [-0.4, +0.5] | -4.15 [-4.33, -3.97] | negligible |
 | expose | skill | 1 | yes | +0.4 [-0.8, +1.7] pts | +0.1 [-0.3, +0.4] | -1.47 [-1.61, -1.33] | negligible |
 | test-ethereal | attack | 1 | no | +0.0 [-1.2, +1.2] pts | +0.1 [-0.3, +0.4] | -0.71 [-0.83, -0.58] | negligible |
 | sunder | attack | 2 | yes | +0.2 [-1.1, +1.5] pts | +0.5 [+0.1, +0.8] | -2.18 [-2.32, -2.04] | worse |
 | combo-strike | attack | 1 | yes | -0.9 [-2.2, +0.4] pts | +0.7 [+0.4, +1.1] | -1.14 [-1.28, -1.00] | worse |
-| bolt | attack | 2 | yes | -0.9 [-2.3, +0.6] pts | +0.8 [+0.4, +1.2] | -1.04 [-1.18, -0.90] | worse |
+| bolt | attack | 2 | no | -0.9 [-2.3, +0.6] pts | +0.8 [+0.4, +1.2] | -1.04 [-1.18, -0.90] | worse |
 | scorching-wind | attack | 0 | yes | -1.0 [-2.4, +0.4] pts | +0.9 [+0.5, +1.3] | -1.02 [-1.16, -0.88] | worse |
 | kill-reward | power | 1 | yes | -1.9 [-3.1, -0.6] pts | +1.1 [+0.8, +1.5] | -0.22 [-0.34, -0.10] | worse |
 | hand-strike | attack | 1 | yes | -1.8 [-3.2, -0.4] pts | +1.2 [+0.8, +1.6] | -1.07 [-1.21, -0.93] | worse |
 | strike | attack | 1 | yes | -2.1 [-3.5, -0.8] pts | +1.2 [+0.8, +1.6] | -1.06 [-1.20, -0.91] | worse |
-| tag-a-echo | power | 1 | yes | -2.6 [-3.9, -1.2] pts | +1.4 [+1.0, +1.7] | -0.10 [-0.22, +0.02] | worse |
+| tag-a-echo | power | 1 | no | -2.6 [-3.9, -1.2] pts | +1.4 [+1.0, +1.7] | -0.10 [-0.22, +0.02] | worse |
 | exhaust-engine | power | 1 | yes | -2.6 [-3.9, -1.2] pts | +1.4 [+1.0, +1.7] | -0.10 [-0.22, +0.02] | worse |
 | hungering-cold | power | 1 | yes | -2.6 [-3.9, -1.2] pts | +1.4 [+1.0, +1.7] | -0.10 [-0.22, +0.02] | worse |
 | opportunist | attack | 1 | yes | -2.9 [-4.4, -1.4] pts | +1.8 [+1.4, +2.2] | -0.92 [-1.06, -0.77] | worse |
-| tag-a-payoff | attack | 1 | yes | -3.1 [-4.6, -1.6] pts | +1.9 [+1.5, +2.3] | -0.90 [-1.04, -0.76] | worse |
-| exhaust-payoff | attack | 1 | yes | -3.1 [-4.6, -1.6] pts | +2.0 [+1.6, +2.4] | -0.87 [-1.01, -0.72] | worse |
+| tag-a-payoff | attack | 1 | no | -3.1 [-4.6, -1.6] pts | +1.9 [+1.5, +2.3] | -0.90 [-1.04, -0.76] | worse |
+| exhaust-payoff | attack | 1 | no | -3.1 [-4.6, -1.6] pts | +2.0 [+1.6, +2.4] | -0.87 [-1.01, -0.72] | worse |
 | arctic-strike | attack | 1 | yes | -3.1 [-4.6, -1.6] pts | +2.0 [+1.6, +2.4] | -0.87 [-1.01, -0.72] | worse |
 | block-slam | attack | 1 | yes | -4.4 [-6.1, -2.8] pts | +2.4 [+2.0, +2.8] | -0.84 [-0.99, -0.69] | worse |
 | double-strength | skill | 1 | yes | -4.4 [-6.1, -2.8] pts | +2.4 [+2.0, +2.8] | -0.84 [-0.99, -0.69] | worse |
@@ -1322,38 +1353,38 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | ice-barrier | skill | 1 | yes | +9.9 [+7.9, +11.9] pts | -6.1 [-6.7, -5.5] | +2.55 [+2.36, +2.74] | better |
 | cauterize | skill | 1 | yes | +8.7 [+6.8, +10.6] pts | -6.0 [-6.5, -5.6] | +3.21 [+3.03, +3.40] | better |
 | test-retain | skill | 1 | no | +6.4 [+4.8, +8.1] pts | -5.7 [-6.2, -5.2] | +3.72 [+3.53, +3.92] | better |
-| attack-echo | power | 1 | yes | +5.8 [+4.2, +7.3] pts | -5.2 [-5.7, -4.7] | +2.45 [+2.28, +2.63] | better |
+| attack-echo | power | 1 | no | +5.8 [+4.2, +7.3] pts | -5.2 [-5.7, -4.7] | +2.45 [+2.28, +2.63] | better |
 | focus | power | 1 | yes | +8.0 [+6.1, +9.9] pts | -5.1 [-5.6, -4.6] | +2.84 [+2.65, +3.03] | better |
 | crippling-heat | attack | 1 | yes | +10.6 [+8.5, +12.6] pts | -4.2 [-4.6, -3.8] | +1.99 [+1.82, +2.15] | better |
 | heat-warning | attack | 1 | yes | +12.2 [+10.1, +14.4] pts | -4.2 [-4.6, -3.8] | -1.21 [-1.36, -1.06] | better |
 | strengthen | power | 1 | yes | +10.1 [+8.1, +12.1] pts | -4.2 [-4.6, -3.8] | +0.21 [+0.06, +0.36] | better |
 | weaken | skill | 1 | yes | +7.7 [+5.5, +9.9] pts | -4.1 [-4.6, -3.5] | +4.00 [+3.77, +4.23] | better |
-| prime-a | skill | 0 | yes | +6.8 [+5.1, +8.4] pts | -4.0 [-4.4, -3.7] | +1.34 [+1.20, +1.47] | better |
+| prime-a | skill | 0 | no | +6.8 [+5.1, +8.4] pts | -4.0 [-4.4, -3.7] | +1.34 [+1.20, +1.47] | better |
 | test-innate | skill | 0 | no | +6.2 [+4.5, +7.9] pts | -4.0 [-4.4, -3.5] | +1.27 [+1.11, +1.43] | better |
 | defend | skill | 1 | yes | +2.6 [+1.4, +3.7] pts | -4.0 [-4.3, -3.6] | +2.92 [+2.76, +3.08] | better |
 | opening-spark | power | 1 | yes | +5.6 [+3.9, +7.3] pts | -3.0 [-3.4, -2.6] | +0.32 [+0.17, +0.47] | better |
-| block-spark | power | 1 | yes | +3.8 [+2.3, +5.3] pts | -2.7 [-3.0, -2.3] | +0.47 [+0.32, +0.61] | better |
+| block-spark | power | 1 | no | +3.8 [+2.3, +5.3] pts | -2.7 [-3.0, -2.3] | +0.47 [+0.32, +0.61] | better |
 | endless-winter | power | 1 | yes | +7.2 [+5.4, +9.0] pts | -2.6 [-3.0, -2.2] | +2.67 [+2.47, +2.87] | better |
 | heavy-hit | attack | 3 | yes | +6.0 [+4.4, +7.6] pts | -2.6 [-3.0, -2.2] | -0.98 [-1.10, -0.85] | better |
 | power-up | skill | 1 | yes | +4.6 [+3.2, +6.0] pts | -2.3 [-2.6, -1.9] | -0.69 [-0.82, -0.56] | better |
-| single-use-strike | attack | 1 | yes | +2.4 [+1.3, +3.5] pts | -2.2 [-2.5, -1.9] | +1.04 [+0.92, +1.16] | better |
+| single-use-strike | attack | 1 | no | +2.4 [+1.3, +3.5] pts | -2.2 [-2.5, -1.9] | +1.04 [+0.92, +1.16] | better |
 | jab | attack | 0 | yes | +2.8 [+1.6, +4.0] pts | -1.8 [-2.1, -1.5] | -0.37 [-0.46, -0.27] | better |
 | test-ethereal | attack | 1 | no | +2.3 [+1.2, +3.5] pts | -1.8 [-2.1, -1.5] | +0.65 [+0.53, +0.77] | better |
 | kill-reward | power | 1 | yes | +1.2 [+0.1, +2.4] pts | -1.3 [-1.6, -1.0] | +1.23 [+1.10, +1.37] | better |
-| tag-a-echo | power | 1 | yes | +1.2 [+0.1, +2.4] pts | -1.1 [-1.5, -0.8] | +1.37 [+1.23, +1.51] | better |
+| tag-a-echo | power | 1 | no | +1.2 [+0.1, +2.4] pts | -1.1 [-1.5, -0.8] | +1.37 [+1.23, +1.51] | better |
 | exhaust-engine | power | 1 | yes | +1.2 [+0.1, +2.4] pts | -1.1 [-1.5, -0.8] | +1.37 [+1.23, +1.51] | better |
 | hungering-cold | power | 1 | yes | +1.2 [+0.1, +2.4] pts | -1.1 [-1.5, -0.8] | +1.37 [+1.23, +1.51] | better |
 | apocalyptic-flame | attack | 3 | yes | +11.4 [+9.1, +13.8] pts | -0.8 [-1.3, -0.4] | -4.18 [-4.37, -4.00] | better |
 | combo-strike | attack | 1 | yes | +1.3 [+0.5, +2.1] pts | -0.8 [-1.0, -0.7] | -0.22 [-0.29, -0.16] | better |
-| bolt | attack | 2 | yes | +0.7 [-0.4, +1.7] pts | -0.7 [-0.9, -0.5] | -0.12 [-0.20, -0.04] | better |
+| bolt | attack | 2 | no | +0.7 [-0.4, +1.7] pts | -0.7 [-0.9, -0.5] | -0.12 [-0.20, -0.04] | better |
 | scorching-wind | attack | 0 | yes | +1.2 [+0.3, +2.2] pts | -0.5 [-0.7, -0.3] | -0.12 [-0.19, -0.04] | better |
 | hand-strike | attack | 1 | yes | +0.2 [-0.3, +0.8] pts | -0.3 [-0.4, -0.2] | -0.03 [-0.09, +0.02] | better |
 | expose | skill | 1 | yes | -0.1 [-1.4, +1.2] pts | -0.3 [-0.6, +0.0] | -0.36 [-0.47, -0.24] | negligible |
 | sunder | attack | 2 | yes | +2.0 [+0.5, +3.5] pts | -0.1 [-0.4, +0.3] | -1.66 [-1.79, -1.53] | negligible |
 | strike | attack | 1 | yes | +0.0 [+0.0, +0.0] pts | +0.0 [+0.0, +0.0] | +0.00 [+0.00, +0.00] | negligible |
 | opportunist | attack | 1 | yes | -0.8 [-1.5, -0.1] pts | +0.4 [+0.3, +0.6] | +0.21 [+0.15, +0.27] | worse |
-| tag-a-payoff | attack | 1 | yes | -0.8 [-1.5, -0.1] pts | +0.6 [+0.4, +0.7] | +0.25 [+0.18, +0.32] | worse |
-| exhaust-payoff | attack | 1 | yes | -1.1 [-1.9, -0.3] pts | +0.7 [+0.6, +0.9] | +0.29 [+0.22, +0.37] | worse |
+| tag-a-payoff | attack | 1 | no | -0.8 [-1.5, -0.1] pts | +0.6 [+0.4, +0.7] | +0.25 [+0.18, +0.32] | worse |
+| exhaust-payoff | attack | 1 | no | -1.1 [-1.9, -0.3] pts | +0.7 [+0.6, +0.9] | +0.29 [+0.22, +0.37] | worse |
 | arctic-strike | attack | 1 | yes | -1.1 [-1.9, -0.3] pts | +0.7 [+0.6, +0.9] | +0.29 [+0.22, +0.37] | worse |
 | block-slam | attack | 1 | yes | -1.7 [-2.7, -0.6] pts | +0.9 [+0.7, +1.2] | +0.33 [+0.23, +0.43] | worse |
 | double-strength | skill | 1 | yes | -1.7 [-2.7, -0.6] pts | +0.9 [+0.7, +1.2] | +0.33 [+0.23, +0.43] | worse |
@@ -1378,14 +1409,14 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | ice-block | skill | 3 | yes | +27.4 [+24.5, +30.4] pts | -10.3 [-11.2, -9.5] | +4.72 [+4.38, +5.06] | better |
 | end-guard | power | 1 | yes | +17.0 [+14.5, +19.5] pts | -6.8 [-7.3, -6.3] | +1.64 [+1.48, +1.81] | better |
 | ice-barrier | skill | 1 | yes | +9.9 [+7.8, +12.0] pts | -6.5 [-7.1, -5.9] | +2.20 [+2.04, +2.35] | better |
-| attack-echo | power | 1 | yes | +13.0 [+10.8, +15.2] pts | -6.1 [-6.6, -5.6] | +1.22 [+1.08, +1.37] | better |
+| attack-echo | power | 1 | no | +13.0 [+10.8, +15.2] pts | -6.1 [-6.6, -5.6] | +1.22 [+1.08, +1.37] | better |
 | apocalyptic-flame | attack | 3 | yes | +13.0 [+10.7, +15.3] pts | -5.3 [-5.8, -4.9] | -1.82 [-1.95, -1.68] | better |
 | big-block | skill | 2 | yes | +11.9 [+9.7, +14.1] pts | -5.0 [-5.5, -4.5] | +2.42 [+2.24, +2.60] | better |
 | heat-flash | attack | 0 | yes | +12.6 [+10.2, +14.9] pts | -4.8 [-5.4, -4.3] | +0.67 [+0.53, +0.81] | better |
 | cryofreeze | power | 2 | yes | +13.9 [+11.6, +16.1] pts | -4.0 [-4.4, -3.6] | +1.29 [+1.14, +1.45] | better |
 | block-slam | attack | 1 | yes | +5.4 [+3.6, +7.3] pts | -3.7 [-4.1, -3.3] | +0.52 [+0.41, +0.63] | better |
 | guarded-strike | attack | 1 | yes | +8.1 [+6.1, +10.1] pts | -3.0 [-3.4, -2.6] | +0.53 [+0.40, +0.66] | better |
-| prime-a | skill | 0 | yes | +5.8 [+3.9, +7.6] pts | -3.0 [-3.4, -2.6] | +0.77 [+0.65, +0.89] | better |
+| prime-a | skill | 0 | no | +5.8 [+3.9, +7.6] pts | -3.0 [-3.4, -2.6] | +0.77 [+0.65, +0.89] | better |
 | frozen-shield | skill | 1 | yes | +5.2 [+3.4, +7.0] pts | -2.9 [-3.3, -2.5] | +1.37 [+1.23, +1.51] | better |
 | fortify | power | 2 | yes | +10.7 [+8.6, +12.7] pts | -2.9 [-3.3, -2.5] | +1.14 [+1.00, +1.28] | better |
 | cauterize | skill | 1 | yes | +5.0 [+3.2, +6.8] pts | -2.9 [-3.2, -2.5] | +1.23 [+1.10, +1.36] | better |
@@ -1407,26 +1438,26 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | glaciate | attack | 2 | yes | -2.1 [-3.7, -0.5] pts | -0.6 [-0.8, -0.3] | -0.06 [-0.17, +0.05] | better |
 | opening-spark | power | 1 | yes | +2.6 [+0.7, +4.4] pts | -0.6 [-0.9, -0.2] | -0.58 [-0.69, -0.48] | better |
 | opportunist | attack | 1 | yes | -1.9 [-3.6, -0.2] pts | -0.5 [-0.8, -0.2] | -0.06 [-0.17, +0.06] | better |
-| exhaust-payoff | attack | 1 | yes | -1.9 [-3.5, -0.3] pts | -0.5 [-0.8, -0.2] | -0.00 [-0.12, +0.11] | better |
+| exhaust-payoff | attack | 1 | no | -1.9 [-3.5, -0.3] pts | -0.5 [-0.8, -0.2] | -0.00 [-0.12, +0.11] | better |
 | arctic-strike | attack | 1 | yes | -1.9 [-3.5, -0.3] pts | -0.5 [-0.8, -0.2] | -0.00 [-0.12, +0.11] | better |
-| tag-a-payoff | attack | 1 | yes | -2.3 [-4.0, -0.7] pts | -0.5 [-0.8, -0.2] | -0.05 [-0.16, +0.07] | better |
+| tag-a-payoff | attack | 1 | no | -2.3 [-4.0, -0.7] pts | -0.5 [-0.8, -0.2] | -0.05 [-0.16, +0.07] | better |
 | double-strength | skill | 1 | yes | -3.0 [-4.6, -1.4] pts | -0.4 [-0.7, -0.2] | -0.02 [-0.14, +0.10] | better |
 | test-unplayable | skill | 0 | no | -3.0 [-4.6, -1.4] pts | -0.4 [-0.7, -0.2] | -0.02 [-0.14, +0.10] | better |
-| tag-a-echo | power | 1 | yes | -2.7 [-4.2, -1.1] pts | -0.4 [-0.7, -0.1] | +0.05 [-0.07, +0.16] | better |
+| tag-a-echo | power | 1 | no | -2.7 [-4.2, -1.1] pts | -0.4 [-0.7, -0.1] | +0.05 [-0.07, +0.16] | better |
 | exhaust-engine | power | 1 | yes | -2.7 [-4.2, -1.1] pts | -0.4 [-0.7, -0.1] | +0.05 [-0.07, +0.16] | better |
 | endless-winter | power | 1 | yes | +2.3 [+0.4, +4.2] pts | -0.2 [-0.5, +0.1] | +0.48 [+0.35, +0.61] | negligible |
-| block-spark | power | 1 | yes | +1.6 [-0.3, +3.4] pts | -0.1 [-0.4, +0.2] | -0.41 [-0.52, -0.31] | negligible |
+| block-spark | power | 1 | no | +1.6 [-0.3, +3.4] pts | -0.1 [-0.4, +0.2] | -0.41 [-0.52, -0.31] | negligible |
 | sunder | attack | 2 | yes | +2.4 [+0.6, +4.3] pts | -0.1 [-0.4, +0.3] | -1.91 [-2.04, -1.79] | negligible |
 | strike | attack | 1 | yes | -2.8 [-4.4, -1.1] pts | -0.0 [-0.3, +0.2] | -0.43 [-0.54, -0.31] | negligible |
 | strengthen | power | 1 | yes | +3.8 [+1.8, +5.7] pts | +0.0 [-0.3, +0.4] | -1.52 [-1.63, -1.41] | negligible |
 | kill-reward | power | 1 | yes | -2.7 [-4.2, -1.1] pts | +0.1 [-0.2, +0.3] | -0.13 [-0.24, -0.02] | negligible |
 | test-ethereal | attack | 1 | no | +0.8 [-1.1, +2.7] pts | +0.1 [-0.2, +0.4] | -0.84 [-0.94, -0.73] | negligible |
 | expose | skill | 1 | yes | +0.9 [-0.9, +2.7] pts | +0.1 [-0.2, +0.5] | -1.61 [-1.73, -1.49] | negligible |
-| single-use-strike | attack | 1 | yes | -0.3 [-1.9, +1.3] pts | +0.2 [-0.1, +0.4] | -0.21 [-0.32, -0.11] | negligible |
+| single-use-strike | attack | 1 | no | -0.3 [-1.9, +1.3] pts | +0.2 [-0.1, +0.4] | -0.21 [-0.32, -0.11] | negligible |
 | focus | power | 1 | yes | +0.1 [-1.5, +1.8] pts | +0.6 [+0.3, +0.9] | +0.04 [-0.06, +0.15] | worse |
 | hungering-cold | power | 1 | yes | -3.0 [-4.5, -1.5] pts | +0.6 [+0.3, +0.9] | -0.12 [-0.22, -0.01] | worse |
 | heating-up | skill | 1 | yes | -4.3 [-6.3, -2.3] pts | +0.7 [+0.4, +1.0] | -1.06 [-1.18, -0.94] | worse |
-| bolt | attack | 2 | yes | -4.4 [-6.3, -2.6] pts | +1.2 [+1.0, +1.5] | -1.03 [-1.14, -0.92] | worse |
+| bolt | attack | 2 | no | -4.4 [-6.3, -2.6] pts | +1.2 [+1.0, +1.5] | -1.03 [-1.14, -0.92] | worse |
 | blood-strike | attack | 1 | yes | -3.3 [-5.2, -1.4] pts | +1.9 [+1.5, +2.2] | -1.63 [-1.74, -1.51] | worse |
 | hypothermia | skill | 1 | yes | -11.3 [-13.5, -9.2] pts | +2.0 [+1.7, +2.3] | -0.08 [-0.23, +0.06] | worse |
 | glacial-spike | skill | 1 | yes | -11.3 [-13.5, -9.2] pts | +2.0 [+1.7, +2.3] | -0.08 [-0.23, +0.06] | worse |
@@ -1444,12 +1475,12 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | end-guard | power | 1 | yes | +20.3 [+17.7, +23.0] pts | -7.6 [-8.1, -7.1] | +2.19 [+2.00, +2.38] | better |
 | ice-barrier | skill | 1 | yes | +12.1 [+9.9, +14.4] pts | -7.3 [-8.0, -6.7] | +3.18 [+3.01, +3.36] | better |
 | big-block | skill | 2 | yes | +16.0 [+13.6, +18.4] pts | -6.2 [-6.7, -5.6] | +3.30 [+3.10, +3.49] | better |
-| attack-echo | power | 1 | yes | +13.4 [+11.2, +15.7] pts | -6.1 [-6.5, -5.6] | +1.53 [+1.38, +1.68] | better |
+| attack-echo | power | 1 | no | +13.4 [+11.2, +15.7] pts | -6.1 [-6.5, -5.6] | +1.53 [+1.38, +1.68] | better |
 | heat-flash | attack | 0 | yes | +15.9 [+13.4, +18.4] pts | -5.9 [-6.4, -5.4] | +1.25 [+1.11, +1.40] | better |
 | apocalyptic-flame | attack | 3 | yes | +19.9 [+17.2, +22.6] pts | -5.5 [-6.0, -5.1] | -1.77 [-1.91, -1.64] | better |
 | block-slam | attack | 1 | yes | +8.1 [+6.1, +10.1] pts | -5.3 [-5.8, -4.8] | +1.20 [+1.08, +1.33] | better |
 | cryofreeze | power | 2 | yes | +17.6 [+15.1, +20.0] pts | -4.5 [-5.0, -4.1] | +1.87 [+1.70, +2.04] | better |
-| prime-a | skill | 0 | yes | +7.1 [+5.2, +9.1] pts | -3.8 [-4.2, -3.5] | +1.36 [+1.23, +1.48] | better |
+| prime-a | skill | 0 | no | +7.1 [+5.2, +9.1] pts | -3.8 [-4.2, -3.5] | +1.36 [+1.23, +1.48] | better |
 | guarded-strike | attack | 1 | yes | +10.9 [+8.8, +12.9] pts | -3.7 [-4.1, -3.4] | +1.07 [+0.93, +1.20] | better |
 | test-innate | skill | 0 | no | +8.0 [+6.0, +10.0] pts | -3.7 [-4.1, -3.3] | +1.43 [+1.30, +1.56] | better |
 | frozen-shield | skill | 1 | yes | +8.7 [+6.7, +10.7] pts | -3.7 [-4.0, -3.3] | +2.10 [+1.95, +2.25] | better |
@@ -1472,25 +1503,25 @@ A card added to the starter deck shows its stand-alone value. Cards that need pa
 | pain-engine | power | 1 | yes | +11.0 [+8.9, +13.1] pts | -1.0 [-1.4, -0.7] | -1.34 [-1.47, -1.21] | better |
 | glaciate | attack | 2 | yes | +0.0 [-1.2, +1.2] pts | -0.9 [-1.1, -0.7] | +0.39 [+0.31, +0.46] | better |
 | opportunist | attack | 1 | yes | -1.1 [-2.3, +0.1] pts | -0.8 [-1.0, -0.6] | +0.39 [+0.32, +0.46] | better |
-| exhaust-payoff | attack | 1 | yes | -1.3 [-2.6, -0.1] pts | -0.7 [-0.9, -0.5] | +0.47 [+0.40, +0.54] | better |
+| exhaust-payoff | attack | 1 | no | -1.3 [-2.6, -0.1] pts | -0.7 [-0.9, -0.5] | +0.47 [+0.40, +0.54] | better |
 | arctic-strike | attack | 1 | yes | -1.3 [-2.6, -0.1] pts | -0.7 [-0.9, -0.5] | +0.47 [+0.40, +0.54] | better |
-| tag-a-payoff | attack | 1 | yes | -1.3 [-2.5, -0.1] pts | -0.7 [-0.9, -0.5] | +0.43 [+0.36, +0.50] | better |
-| tag-a-echo | power | 1 | yes | +1.8 [+0.2, +3.3] pts | -0.6 [-0.9, -0.4] | +0.52 [+0.44, +0.61] | better |
+| tag-a-payoff | attack | 1 | no | -1.3 [-2.5, -0.1] pts | -0.7 [-0.9, -0.5] | +0.43 [+0.36, +0.50] | better |
+| tag-a-echo | power | 1 | no | +1.8 [+0.2, +3.3] pts | -0.6 [-0.9, -0.4] | +0.52 [+0.44, +0.61] | better |
 | exhaust-engine | power | 1 | yes | +1.8 [+0.2, +3.3] pts | -0.6 [-0.9, -0.4] | +0.52 [+0.44, +0.61] | better |
 | endless-winter | power | 1 | yes | +3.8 [+2.0, +5.5] pts | -0.6 [-0.9, -0.3] | +0.98 [+0.85, +1.10] | better |
 | double-strength | skill | 1 | yes | -0.9 [-2.3, +0.5] pts | -0.6 [-0.8, -0.4] | +0.47 [+0.39, +0.56] | better |
 | test-unplayable | skill | 0 | no | -0.9 [-2.3, +0.5] pts | -0.6 [-0.8, -0.4] | +0.47 [+0.39, +0.56] | better |
-| block-spark | power | 1 | yes | +4.1 [+2.4, +5.8] pts | -0.6 [-0.8, -0.3] | -0.03 [-0.13, +0.07] | better |
+| block-spark | power | 1 | no | +4.1 [+2.4, +5.8] pts | -0.6 [-0.8, -0.3] | -0.03 [-0.13, +0.07] | better |
 | kill-reward | power | 1 | yes | +0.4 [-1.3, +2.2] pts | -0.2 [-0.4, +0.1] | +0.34 [+0.24, +0.43] | negligible |
 | test-ethereal | attack | 1 | no | +3.2 [+1.5, +4.9] pts | -0.2 [-0.4, +0.1] | -0.54 [-0.63, -0.45] | negligible |
-| single-use-strike | attack | 1 | yes | +2.6 [+0.9, +4.2] pts | -0.1 [-0.3, +0.2] | +0.20 [+0.11, +0.30] | negligible |
+| single-use-strike | attack | 1 | no | +2.6 [+0.9, +4.2] pts | -0.1 [-0.3, +0.2] | +0.20 [+0.11, +0.30] | negligible |
 | strengthen | power | 1 | yes | +4.3 [+2.4, +6.2] pts | -0.0 [-0.3, +0.3] | -1.26 [-1.36, -1.15] | negligible |
 | strike | attack | 1 | yes | +0.0 [+0.0, +0.0] pts | +0.0 [+0.0, +0.0] | +0.00 [+0.00, +0.00] | negligible |
 | sunder | attack | 2 | yes | +1.2 [-0.6, +3.1] pts | +0.1 [-0.2, +0.4] | -1.89 [-2.02, -1.76] | negligible |
 | focus | power | 1 | yes | +5.0 [+3.2, +6.8] pts | +0.3 [+0.1, +0.5] | +0.47 [+0.37, +0.58] | worse |
 | hungering-cold | power | 1 | yes | -0.8 [-2.4, +0.9] pts | +0.4 [+0.2, +0.7] | +0.29 [+0.20, +0.39] | worse |
 | expose | skill | 1 | yes | +0.7 [-1.0, +2.4] pts | +0.7 [+0.4, +1.1] | -1.35 [-1.45, -1.24] | worse |
-| bolt | attack | 2 | yes | -2.7 [-4.3, -1.0] pts | +1.4 [+1.2, +1.7] | -0.85 [-0.94, -0.75] | worse |
+| bolt | attack | 2 | no | -2.7 [-4.3, -1.0] pts | +1.4 [+1.2, +1.7] | -0.85 [-0.94, -0.75] | worse |
 | heating-up | skill | 1 | yes | -6.1 [-8.0, -4.2] pts | +1.5 [+1.2, +1.8] | -0.77 [-0.88, -0.66] | worse |
 | blood-strike | attack | 1 | yes | -1.1 [-2.7, +0.5] pts | +2.0 [+1.7, +2.3] | -1.45 [-1.56, -1.35] | worse |
 | hypothermia | skill | 1 | yes | -11.6 [-13.6, -9.5] pts | +2.1 [+1.8, +2.4] | +0.47 [+0.33, +0.61] | worse |
@@ -1560,6 +1591,7 @@ Cards: value = how much adding the card helps on HP lost (positive = helps), com
 | card | greedy | cost 1 | test-intangible | HP lost change when added | 16.23 | 5.34 | 2.20 | outside |
 | card | greedy | cost 1 | test-buffer | HP lost change when added | 36.76 | 12.08 | 5.22 | outside |
 | card | greedy | cost 3 | ice-block | HP lost change when added | 13.26 | 5.38 | 1.47 | outside |
+| enemy-fight | greedy | normal fights | enemy-a+enemy-b+enemy-d | turns | 4.97 | -2.70 | -2.30 | outside |
 | card | smart | all cards | end-guard | HP lost change when added | 6.82 | 3.65 | 0.84 | inside |
 | card | smart | all cards | molten-core | HP lost change when added | -5.07 | -3.30 | -1.22 | outside |
 | card | smart | all cards | ice-block | HP lost change when added | 10.35 | 5.71 | 1.45 | outside |
@@ -1646,129 +1678,113 @@ Run-level results are noisy (a run is ~12 fights; one bad fight ends it). Resolv
 
 | policy | run win rate [95% CI] | avg floor [95% CI] | win change vs first | floor change vs first | verdict |
 | --- | --- | --- | --- | --- | --- |
-| reward=card (random pick) | 0.0% [0.0%, 3.7%] | 5.0 [4.8, 5.3] | - | - | baseline |
-| reward=gold (always gold) | 0.0% [0.0%, 3.7%] | 5.1 [4.8, 5.4] | +0.0 [+0.0, +0.0] pts | +0.1 [-0.1, +0.3] | negligible |
-| reward=best (trial-fight pick) | 1.0% [0.2%, 5.4%] | 5.7 [5.3, 6.1] | +1.0 [-1.0, +3.0] pts | +0.6 [+0.4, +0.8] | negligible |
-| rest=heal (never upgrade) | 0.0% [0.0%, 3.7%] | 5.0 [4.8, 5.3] | +0.0 [+0.0, +0.0] pts | +0.0 [+0.0, +0.0] | negligible |
-| path=random | 0.0% [0.0%, 3.7%] | 5.0 [4.6, 5.3] | +0.0 [+0.0, +0.0] pts | -0.1 [-0.5, +0.3] | negligible |
+| reward=card (random pick) | 0.0% [0.0%, 3.7%] | 5.1 [4.8, 5.4] | - | - | baseline |
+| reward=gold (always gold) | 0.0% [0.0%, 3.7%] | 5.1 [4.8, 5.4] | +0.0 [+0.0, +0.0] pts | -0.0 [-0.3, +0.3] | negligible |
+| reward=best (trial-fight pick) | 4.0% [1.6%, 9.8%] | 6.3 [5.8, 6.9] | +4.0 [+0.1, +7.9] pts | +1.2 [+0.8, +1.7] | better |
+| rest=heal (never upgrade) | 0.0% [0.0%, 3.7%] | 5.1 [4.8, 5.4] | +0.0 [+0.0, +0.0] pts | +0.0 [+0.0, +0.0] | negligible |
+| path=random | 1.0% [0.2%, 5.4%] | 4.9 [4.6, 5.2] | +1.0 [-1.0, +3.0] pts | -0.2 [-0.6, +0.2] | negligible |
 
 ### Pick rates under reward=card (random pick)
 Each card is offered as one of three; with three equal options a random picker takes any given offer about 33% of the time, so only distance from that matters for the random policy. For a deliberate policy, a card picked far more or less than 33% of its offers is a dominant or dominated choice.
 
 | card | offered | picked | pick rate [95% CI] |
 | --- | --- | --- | --- |
-| block-spark | 4 | 3 | 75.0% [30.1%, 95.4%] |
-| blood-strike | 17 | 10 | 58.8% [36.0%, 78.4%] |
-| heat-warning | 11 | 6 | 54.5% [28.0%, 78.7%] |
-| quick-draw | 15 | 8 | 53.3% [30.1%, 75.2%] |
-| apocalyptic-flame | 15 | 7 | 46.7% [24.8%, 69.9%] |
-| defend | 15 | 7 | 46.7% [24.8%, 69.9%] |
-| glacial-spike | 22 | 10 | 45.5% [26.9%, 65.3%] |
-| cull | 20 | 9 | 45.0% [25.8%, 65.8%] |
-| exhaust-payoff | 9 | 4 | 44.4% [18.9%, 73.3%] |
-| expose | 16 | 7 | 43.8% [23.1%, 66.8%] |
-| focus | 16 | 7 | 43.8% [23.1%, 66.8%] |
-| heavy-hit | 16 | 7 | 43.8% [23.1%, 66.8%] |
-| hypothermia | 16 | 7 | 43.8% [23.1%, 66.8%] |
-| heating-up | 14 | 6 | 42.9% [21.4%, 67.4%] |
-| opening-spark | 19 | 8 | 42.1% [23.1%, 63.7%] |
-| pain-engine | 12 | 5 | 41.7% [19.3%, 68.0%] |
-| weaken | 17 | 7 | 41.2% [21.6%, 64.0%] |
-| bolt | 15 | 6 | 40.0% [19.8%, 64.3%] |
-| end-guard | 10 | 4 | 40.0% [16.8%, 68.7%] |
-| jab | 19 | 7 | 36.8% [19.1%, 59.0%] |
-| strike | 14 | 5 | 35.7% [16.3%, 61.2%] |
-| cauterize | 17 | 6 | 35.3% [17.3%, 58.7%] |
-| tag-a-payoff | 17 | 6 | 35.3% [17.3%, 58.7%] |
-| arctic-strike | 12 | 4 | 33.3% [13.8%, 60.9%] |
-| block-slam | 12 | 4 | 33.3% [13.8%, 60.9%] |
-| crippling-heat | 12 | 4 | 33.3% [13.8%, 60.9%] |
-| prime-a | 15 | 5 | 33.3% [15.2%, 58.3%] |
-| scorching-wind | 15 | 5 | 33.3% [15.2%, 58.3%] |
-| strengthen | 18 | 6 | 33.3% [16.3%, 56.3%] |
-| sunder | 15 | 5 | 33.3% [15.2%, 58.3%] |
-| tag-a-echo | 12 | 4 | 33.3% [13.8%, 60.9%] |
-| ice-barrier | 13 | 4 | 30.8% [12.7%, 57.6%] |
-| big-block | 10 | 3 | 30.0% [10.8%, 60.3%] |
-| hand-strike | 17 | 5 | 29.4% [13.3%, 53.1%] |
-| ice-block | 14 | 4 | 28.6% [11.7%, 54.6%] |
-| frozen-shield | 11 | 3 | 27.3% [9.7%, 56.6%] |
-| molten-core | 11 | 3 | 27.3% [9.7%, 56.6%] |
-| fortify | 15 | 4 | 26.7% [10.9%, 52.0%] |
-| glaciate | 15 | 4 | 26.7% [10.9%, 52.0%] |
-| hungering-cold | 15 | 4 | 26.7% [10.9%, 52.0%] |
-| meteor-shower | 15 | 4 | 26.7% [10.9%, 52.0%] |
-| double-strength | 20 | 5 | 25.0% [11.2%, 46.9%] |
-| exhaust-engine | 16 | 4 | 25.0% [10.2%, 49.5%] |
-| absolute-zero | 9 | 2 | 22.2% [6.3%, 54.7%] |
-| endless-winter | 14 | 3 | 21.4% [7.6%, 47.6%] |
-| single-use-strike | 14 | 3 | 21.4% [7.6%, 47.6%] |
-| power-up | 10 | 2 | 20.0% [5.7%, 51.0%] |
-| heat-flash | 11 | 2 | 18.2% [5.1%, 47.7%] |
-| opportunist | 22 | 4 | 18.2% [7.3%, 38.5%] |
-| attack-echo | 18 | 3 | 16.7% [5.8%, 39.2%] |
-| combo-strike | 18 | 3 | 16.7% [5.8%, 39.2%] |
-| guarded-strike | 14 | 2 | 14.3% [4.0%, 39.9%] |
-| cryofreeze | 16 | 2 | 12.5% [3.5%, 36.0%] |
-| kill-reward | 17 | 2 | 11.8% [3.3%, 34.3%] |
+| hypothermia | 21 | 14 | 66.7% [45.4%, 82.8%] |
+| fortify | 18 | 11 | 61.1% [38.6%, 79.7%] |
+| scorching-wind | 21 | 12 | 57.1% [36.5%, 75.5%] |
+| exhaust-engine | 16 | 9 | 56.3% [33.2%, 76.9%] |
+| cryofreeze | 13 | 7 | 53.8% [29.1%, 76.8%] |
+| molten-core | 21 | 11 | 52.4% [32.4%, 71.7%] |
+| combo-strike | 12 | 6 | 50.0% [25.4%, 74.6%] |
+| strike | 17 | 8 | 47.1% [26.2%, 69.0%] |
+| blood-strike | 16 | 7 | 43.8% [23.1%, 66.8%] |
+| endless-winter | 17 | 7 | 41.2% [21.6%, 64.0%] |
+| opening-spark | 17 | 7 | 41.2% [21.6%, 64.0%] |
+| ice-block | 23 | 9 | 39.1% [22.2%, 59.2%] |
+| expose | 18 | 7 | 38.9% [20.3%, 61.4%] |
+| glaciate | 24 | 9 | 37.5% [21.2%, 57.3%] |
+| strengthen | 16 | 6 | 37.5% [18.5%, 61.4%] |
+| heating-up | 25 | 9 | 36.0% [20.2%, 55.5%] |
+| jab | 17 | 6 | 35.3% [17.3%, 58.7%] |
+| guarded-strike | 26 | 9 | 34.6% [19.4%, 53.8%] |
+| cull | 12 | 4 | 33.3% [13.8%, 60.9%] |
+| end-guard | 12 | 4 | 33.3% [13.8%, 60.9%] |
+| heat-warning | 18 | 6 | 33.3% [16.3%, 56.3%] |
+| heavy-hit | 18 | 6 | 33.3% [16.3%, 56.3%] |
+| apocalyptic-flame | 22 | 7 | 31.8% [16.4%, 52.7%] |
+| frozen-shield | 16 | 5 | 31.3% [14.2%, 55.6%] |
+| block-slam | 13 | 4 | 30.8% [12.7%, 57.6%] |
+| focus | 26 | 8 | 30.8% [16.5%, 50.0%] |
+| opportunist | 13 | 4 | 30.8% [12.7%, 57.6%] |
+| big-block | 20 | 6 | 30.0% [14.5%, 51.9%] |
+| crippling-heat | 10 | 3 | 30.0% [10.8%, 60.3%] |
+| defend | 31 | 9 | 29.0% [16.1%, 46.6%] |
+| sunder | 18 | 5 | 27.8% [12.5%, 50.9%] |
+| absolute-zero | 11 | 3 | 27.3% [9.7%, 56.6%] |
+| arctic-strike | 16 | 4 | 25.0% [10.2%, 49.5%] |
+| cauterize | 24 | 6 | 25.0% [12.0%, 44.9%] |
+| kill-reward | 8 | 2 | 25.0% [7.1%, 59.1%] |
+| meteor-shower | 16 | 4 | 25.0% [10.2%, 49.5%] |
+| pain-engine | 16 | 4 | 25.0% [10.2%, 49.5%] |
+| hungering-cold | 23 | 5 | 21.7% [9.7%, 41.9%] |
+| double-strength | 19 | 4 | 21.1% [8.5%, 43.3%] |
+| ice-barrier | 27 | 5 | 18.5% [8.2%, 36.7%] |
+| heat-flash | 22 | 4 | 18.2% [7.3%, 38.5%] |
+| quick-draw | 17 | 3 | 17.6% [6.2%, 41.0%] |
+| weaken | 19 | 3 | 15.8% [5.5%, 37.6%] |
+| power-up | 8 | 1 | 12.5% [2.2%, 47.1%] |
+| glacial-spike | 15 | 0 | 0.0% [0.0%, 20.4%] |
+| hand-strike | 11 | 0 | 0.0% [0.0%, 25.9%] |
 
 ### Pick rates under reward=best (trial-fight pick)
 Each card is offered as one of three; with three equal options a random picker takes any given offer about 33% of the time, so only distance from that matters for the random policy. For a deliberate policy, a card picked far more or less than 33% of its offers is a dominant or dominated choice.
 
 | card | offered | picked | pick rate [95% CI] |
 | --- | --- | --- | --- |
-| end-guard | 11 | 11 | 100.0% [74.1%, 100.0%] |
-| cryofreeze | 19 | 18 | 94.7% [75.4%, 99.1%] |
-| fortify | 18 | 16 | 88.9% [67.2%, 96.9%] |
-| ice-block | 15 | 13 | 86.7% [62.1%, 96.3%] |
-| focus | 17 | 14 | 82.4% [59.0%, 93.8%] |
-| ice-barrier | 17 | 14 | 82.4% [59.0%, 93.8%] |
-| heat-flash | 13 | 10 | 76.9% [49.7%, 91.8%] |
-| guarded-strike | 17 | 13 | 76.5% [52.7%, 90.4%] |
-| big-block | 12 | 9 | 75.0% [46.8%, 91.1%] |
-| pain-engine | 17 | 12 | 70.6% [46.9%, 86.7%] |
-| cauterize | 20 | 14 | 70.0% [48.1%, 85.5%] |
-| weaken | 20 | 14 | 70.0% [48.1%, 85.5%] |
-| strengthen | 19 | 12 | 63.2% [41.0%, 80.9%] |
-| attack-echo | 18 | 10 | 55.6% [33.7%, 75.4%] |
-| endless-winter | 19 | 10 | 52.6% [31.7%, 72.7%] |
-| prime-a | 22 | 11 | 50.0% [30.7%, 69.3%] |
-| block-spark | 5 | 2 | 40.0% [11.8%, 76.9%] |
-| heat-warning | 15 | 6 | 40.0% [19.8%, 64.3%] |
-| frozen-shield | 13 | 5 | 38.5% [17.7%, 64.5%] |
-| scorching-wind | 17 | 6 | 35.3% [17.3%, 58.7%] |
-| defend | 18 | 6 | 33.3% [16.3%, 56.3%] |
-| opening-spark | 21 | 7 | 33.3% [17.2%, 54.6%] |
-| power-up | 15 | 5 | 33.3% [15.2%, 58.3%] |
-| crippling-heat | 13 | 4 | 30.8% [12.7%, 57.6%] |
-| exhaust-payoff | 10 | 3 | 30.0% [10.8%, 60.3%] |
-| single-use-strike | 16 | 4 | 25.0% [10.2%, 49.5%] |
-| jab | 21 | 5 | 23.8% [10.6%, 45.1%] |
-| expose | 18 | 4 | 22.2% [9.0%, 45.2%] |
-| heavy-hit | 18 | 4 | 22.2% [9.0%, 45.2%] |
-| strike | 14 | 3 | 21.4% [7.6%, 47.6%] |
-| sunder | 14 | 3 | 21.4% [7.6%, 47.6%] |
-| combo-strike | 19 | 4 | 21.1% [8.5%, 43.3%] |
-| apocalyptic-flame | 20 | 4 | 20.0% [8.1%, 41.6%] |
-| exhaust-engine | 16 | 3 | 18.8% [6.6%, 43.0%] |
-| heating-up | 18 | 3 | 16.7% [5.8%, 39.2%] |
-| tag-a-echo | 13 | 2 | 15.4% [4.3%, 42.2%] |
-| double-strength | 21 | 3 | 14.3% [5.0%, 34.6%] |
-| kill-reward | 22 | 3 | 13.6% [4.7%, 33.3%] |
-| opportunist | 23 | 3 | 13.0% [4.5%, 32.1%] |
-| tag-a-payoff | 23 | 3 | 13.0% [4.5%, 32.1%] |
-| molten-core | 16 | 2 | 12.5% [3.5%, 36.0%] |
-| hand-strike | 19 | 2 | 10.5% [2.9%, 31.4%] |
-| block-slam | 16 | 1 | 6.3% [1.1%, 28.3%] |
-| bolt | 16 | 1 | 6.3% [1.1%, 28.3%] |
-| meteor-shower | 16 | 1 | 6.3% [1.1%, 28.3%] |
-| arctic-strike | 17 | 1 | 5.9% [1.0%, 27.0%] |
-| quick-draw | 17 | 1 | 5.9% [1.0%, 27.0%] |
-| cull | 22 | 1 | 4.5% [0.8%, 21.8%] |
-| glacial-spike | 22 | 1 | 4.5% [0.8%, 21.8%] |
-| absolute-zero | 12 | 0 | 0.0% [0.0%, 24.2%] |
-| blood-strike | 21 | 0 | 0.0% [0.0%, 15.5%] |
-| glaciate | 16 | 0 | 0.0% [0.0%, 19.4%] |
-| hungering-cold | 16 | 0 | 0.0% [0.0%, 19.4%] |
-| hypothermia | 18 | 0 | 0.0% [0.0%, 17.6%] |
+| ice-block | 25 | 25 | 100.0% [86.7%, 100.0%] |
+| end-guard | 16 | 15 | 93.8% [71.7%, 98.9%] |
+| heat-flash | 28 | 25 | 89.3% [72.8%, 96.3%] |
+| cryofreeze | 15 | 13 | 86.7% [62.1%, 96.3%] |
+| ice-barrier | 28 | 19 | 67.9% [49.3%, 82.1%] |
+| big-block | 26 | 17 | 65.4% [46.2%, 80.6%] |
+| frozen-shield | 22 | 14 | 63.6% [43.0%, 80.3%] |
+| fortify | 29 | 18 | 62.1% [44.0%, 77.3%] |
+| defend | 34 | 21 | 61.8% [45.0%, 76.1%] |
+| guarded-strike | 33 | 20 | 60.6% [43.7%, 75.3%] |
+| crippling-heat | 16 | 9 | 56.3% [33.2%, 76.9%] |
+| weaken | 20 | 11 | 55.0% [34.2%, 74.2%] |
+| cauterize | 27 | 14 | 51.9% [34.0%, 69.3%] |
+| endless-winter | 24 | 12 | 50.0% [31.4%, 68.6%] |
+| strengthen | 22 | 10 | 45.5% [26.9%, 65.3%] |
+| focus | 29 | 13 | 44.8% [28.4%, 62.5%] |
+| pain-engine | 19 | 8 | 42.1% [23.1%, 63.7%] |
+| opening-spark | 18 | 5 | 27.8% [12.5%, 50.9%] |
+| heat-warning | 22 | 6 | 27.3% [13.2%, 48.2%] |
+| expose | 20 | 5 | 25.0% [11.2%, 46.9%] |
+| heavy-hit | 20 | 5 | 25.0% [11.2%, 46.9%] |
+| apocalyptic-flame | 26 | 6 | 23.1% [11.0%, 42.1%] |
+| hungering-cold | 26 | 6 | 23.1% [11.0%, 42.1%] |
+| exhaust-engine | 21 | 4 | 19.0% [7.7%, 40.0%] |
+| jab | 21 | 4 | 19.0% [7.7%, 40.0%] |
+| combo-strike | 17 | 3 | 17.6% [6.2%, 41.0%] |
+| cull | 14 | 2 | 14.3% [4.0%, 39.9%] |
+| scorching-wind | 28 | 3 | 10.7% [3.7%, 27.2%] |
+| quick-draw | 21 | 2 | 9.5% [2.7%, 28.9%] |
+| strike | 21 | 2 | 9.5% [2.7%, 28.9%] |
+| double-strength | 22 | 2 | 9.1% [2.5%, 27.8%] |
+| power-up | 11 | 1 | 9.1% [1.6%, 37.7%] |
+| molten-core | 25 | 2 | 8.0% [2.2%, 25.0%] |
+| glaciate | 26 | 2 | 7.7% [2.1%, 24.1%] |
+| heating-up | 29 | 2 | 6.9% [1.9%, 22.0%] |
+| absolute-zero | 16 | 1 | 6.3% [1.1%, 28.3%] |
+| arctic-strike | 16 | 1 | 6.3% [1.1%, 28.3%] |
+| block-slam | 17 | 1 | 5.9% [1.0%, 27.0%] |
+| glacial-spike | 18 | 1 | 5.6% [1.0%, 25.8%] |
+| hand-strike | 18 | 1 | 5.6% [1.0%, 25.8%] |
+| meteor-shower | 22 | 1 | 4.5% [0.8%, 21.8%] |
+| blood-strike | 18 | 0 | 0.0% [0.0%, 17.6%] |
+| hypothermia | 24 | 0 | 0.0% [0.0%, 13.8%] |
+| kill-reward | 9 | 0 | 0.0% [0.0%, 29.9%] |
+| opportunist | 14 | 0 | 0.0% [0.0%, 21.5%] |
+| sunder | 23 | 0 | 0.0% [0.0%, 14.3%] |
 

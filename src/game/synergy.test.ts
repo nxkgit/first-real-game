@@ -51,6 +51,9 @@ function play(c: CombatState, id: string, targetId: string | undefined = 'enemy-
 }
 const lostHp = (c: CombatState, i = 0): number => c.enemies[i].maxHp - c.enemies[i].hp;
 
+/** Synergy cards the user took out of the reward pool on 2026-10-08 (they stay registered and usable in scenarios, presets and tests). */
+const REMOVED_FROM_POOL = ['prime-a', 'tag-a-payoff', 'tag-a-echo', 'attack-echo', 'block-spark', 'single-use-strike', 'exhaust-payoff'];
+
 describe('scaling values', () => {
   const combo = atk('combo', [{ kind: 'damage', value: 4, scaling: { per: 'cardsPlayedThisTurn', value: 3 } }]);
   const filler = mk('filler');
@@ -496,9 +499,12 @@ describe('placeholder synergy content', () => {
   it('is registered and offered by the live game (user, 2026-10-07: every placeholder is in the pool for testing)', () => {
     for (const card of SYNERGY_CARDS) {
       expect(CARDS[card.id]).toBe(card);
-      expect(card.inRewardPool).toBe(true);
+      expect(card.inRewardPool).toBe(!REMOVED_FROM_POOL.includes(card.id));
     }
-    for (const card of SYNERGY_CARDS) expect(rewardPoolFor('mage')).toContain(card);
+    for (const card of SYNERGY_CARDS) {
+      if (REMOVED_FROM_POOL.includes(card.id)) expect(rewardPoolFor('mage')).not.toContain(card);
+      else expect(rewardPoolFor('mage')).toContain(card);
+    }
     expect(RELIC_POOL.map((r) => r.id)).not.toContain('exhaust-token');
     expect(RELICS['kill-token']).toBeDefined();
   });
@@ -550,9 +556,9 @@ describe('runs with synergy content', () => {
     expect(restored!.relics.map((r) => r.id)).toContain('exhaust-token');
   });
 
-  it('the simulator starter deck has no synergy cards; the reward pool is the 14 original cards (basics included, 2026-10-08) plus all of them plus the Mage cards', () => {
+  it('the simulator starter deck has no synergy cards; the reward pool is the 14 original cards (minus Bolt) plus the synergy cards that were not removed plus the Mage cards', () => {
     const run = newPlayableRun(5);
     expect(run.deck.some((c) => SYNERGY_CARDS.includes(c))).toBe(false);
-    expect(rewardPoolFor('mage').length).toBe(14 + SYNERGY_CARDS.length + MAGE_CARDS.length);
+    expect(rewardPoolFor('mage').length).toBe(14 - 1 + (SYNERGY_CARDS.length - REMOVED_FROM_POOL.length) + MAGE_CARDS.length); // minus Bolt, and the synergy cards the user removed
   });
 });

@@ -48,6 +48,11 @@ export const REST_HEAL_FRACTION = 0.3;
 /** How many cards the post-combat reward offers to pick from. */
 export const REWARD_CARD_CHOICES = 3;
 /**
+ * How much more likely a hero's own card is to be offered than a neutral one when rolling card
+ * rewards and shop stock (user, 2026-10-08: 1.5:1 in favour of Mage cards). 1 = no preference.
+ */
+export const HERO_CARD_WEIGHT = 1.5;
+/**
  * Gold offered instead of a card after a win. Open question (implementationplan.md): gold
  * must end up a genuine toss-up against the card, which can't be tuned until a shop exists.
  */
