@@ -35,7 +35,18 @@ import { EnemyView } from './combat/EnemyView';
 import { PlayerView } from './combat/PlayerView';
 import { Targeting } from './combat/Targeting';
 import { Tooltips } from './combat/Tooltips';
-import { HAND_AREA_WIDTH, DISCARD_PILE_POS, DRAW_PILE_POS, HAND_Y, PLAYER_X, PLAYER_Y, enemySlots } from './combat/layout';
+import {
+  HAND_AREA_WIDTH,
+  DISCARD_PILE_POS,
+  DRAW_PILE_POS,
+  END_TURN_BUTTON,
+  HAND_Y,
+  HERO_POWER_BUTTON,
+  LOG_TEXT,
+  PLAYER_X,
+  PLAYER_Y,
+  enemySlots,
+} from './combat/layout';
 
 interface TrackedCard {
   container: Phaser.GameObjects.Container;
@@ -234,9 +245,9 @@ export class CombatScene extends Phaser.Scene {
     this.powersText = sideLabel(DRAW_PILE_POS.x + 20, 'powers');
     this.exhaustText = sideLabel(DISCARD_PILE_POS.x - 20, 'exhaust');
 
-    // the last couple of log lines, in the gap between the run readout and the End Turn button
+    // the last couple of log lines, in the gap between the run readout and the hero power button
     this.statusText = this.add
-      .text(495, 28, '', { fontSize: '12px', color: '#9a9aae', align: 'center', wordWrap: { width: 300 } })
+      .text(LOG_TEXT.x, LOG_TEXT.y, '', { fontSize: '12px', color: '#9a9aae', align: 'center', wordWrap: { width: LOG_TEXT.wrapWidth } })
       .setOrigin(0.5);
   }
 
@@ -264,11 +275,11 @@ export class CombatScene extends Phaser.Scene {
     this.handContainer = this.add.container(0, 0);
 
     this.endTurnButton = this.add
-      .rectangle(720, 30, 130, 50, 0x2b6b3d)
+      .rectangle(END_TURN_BUTTON.x, END_TURN_BUTTON.y, END_TURN_BUTTON.width, END_TURN_BUTTON.height, 0x2b6b3d)
       .setOrigin(0.5)
       .setStrokeStyle(2, 0x4fae6f)
       .setInteractive({ useHandCursor: true });
-    this.endTurnText = this.add.text(720, 30, 'End Turn', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
+    this.endTurnText = this.add.text(END_TURN_BUTTON.x, END_TURN_BUTTON.y, 'End Turn', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
     this.endTurnButton.on('pointerdown', () => this.onEndTurn());
     this.endTurnButton.on('pointerover', () => {
       this.tweens.add({ targets: [this.endTurnButton, this.endTurnText], scale: 1.05, duration: 100 });
@@ -279,13 +290,14 @@ export class CombatScene extends Phaser.Scene {
 
     if (this.combat.heroPower) {
       const power = this.combat.heroPower;
+      const hp = HERO_POWER_BUTTON;
       this.heroPowerButton = this.add
-        .rectangle(720, 90, 130, 50, 0x3a4b7a)
+        .rectangle(hp.x, hp.y, hp.width, hp.height, 0x3a4b7a)
         .setOrigin(0.5)
         .setStrokeStyle(2, 0x6f8fd9)
         .setInteractive({ useHandCursor: true });
       this.heroPowerText = this.add
-        .text(720, 90, `${power.name} (${power.cost})`, { fontSize: '13px', color: '#ffffff', align: 'center', wordWrap: { width: 118 } })
+        .text(hp.x, hp.y, `${power.name} (${power.cost})`, { fontSize: '13px', color: '#ffffff', align: 'center', wordWrap: { width: hp.width - 12 } })
         .setOrigin(0.5);
       this.heroPowerButton.on('pointerdown', () => this.onUseHeroPower());
       this.heroPowerButton.on('pointerover', () => {
@@ -294,7 +306,7 @@ export class CombatScene extends Phaser.Scene {
       this.heroPowerButton.on('pointerout', () => {
         this.tweens.add({ targets: [this.heroPowerButton, this.heroPowerText], scale: 1, duration: 100 });
       });
-      this.tooltips.add(720, 90, 130, 50, () => heroPowerText(power));
+      this.tooltips.add(hp.x, hp.y, hp.width, hp.height, () => heroPowerText(power));
       this.refreshHeroPowerButton();
     }
   }

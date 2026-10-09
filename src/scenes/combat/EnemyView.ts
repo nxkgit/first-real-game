@@ -6,11 +6,10 @@ import type { EnemyState } from '../../game/types';
 import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
-import { ENEMY_Y } from './layout';
+import { ENEMY_Y, INTENT_SIZE, INTENT_Y } from './layout';
 import { buildEnemySprite, isPixelEnemy, playEnemyAttack, playEnemyDeath } from '../art';
 import { addIdleBob, drawArrow, drawShield, drawSword } from './drawings';
 
-const INTENT_Y = 92;
 const NAME_Y = 130;
 const HP_BAR_Y = 345;
 const BLOCK_Y = 383;
@@ -93,7 +92,7 @@ export class EnemyView {
     // one slot per status kind, centered under the enemy
     this.statusRow = new StatusRow(scene, x - ((STATUS_ORDER.length - 1) * STATUS_SLOT_WIDTH) / 2, STATUS_Y);
 
-    tooltips.add(x, INTENT_Y, 110, 34, () => this.intentTooltip());
+    tooltips.add(x, INTENT_Y, INTENT_SIZE.width, INTENT_SIZE.height, () => this.intentTooltip());
     tooltips.add(x, BLOCK_Y + 1, 50, 24, () =>
       this.state.block > 0 ? `Block: absorbs the next ${this.state.block} damage. Resets at the start of its turn.` : null
     );
