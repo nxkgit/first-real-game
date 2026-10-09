@@ -44,6 +44,10 @@ Every session (or natural transition point within one — e.g. a plan just got f
 
 Game *feel* cannot be verified by type-checking or unit tests alone. After any change to combat flow, card effects, or turn structure, actually run the dev server and play the loop (draw → play a card → end turn → watch the enemy act) before reporting it as working. State plainly when something has only been type-checked/logic-tested versus actually played.
 
+## Patch notes
+
+Whenever work is merged to live (`main`, which auto-deploys to GitHub Pages) and it changes anything a player or tester would notice — gameplay, balance numbers, cards/enemies/relics/events, UI, bug fixes — document it in the patch notes on the content site (`content.html`) as part of that same merge. Purely internal changes (refactors, tests, docs, tooling) with no player-visible effect don't need an entry. Write entries in plain language, newest first, dated, and say what changed rather than how. Bug-fix batches follow the entry format in `QA_PLAN.md` (Fixed / Not fixed / verification statement).
+
 ## Keeping the design log current
 
 When a nontrivial gameplay decision is made, changed, or reversed in conversation, append an entry to `DESIGN_LOG.md` (new entry at the end, under the current session's heading — create a new session heading if none exists yet for today). Don't rewrite or delete prior entries, even superseded ones — the log's value is tracking how reasoning evolved over time.
