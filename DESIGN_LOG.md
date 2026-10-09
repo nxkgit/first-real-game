@@ -258,3 +258,13 @@ Played in a real browser: by hand (dev server) clicking through New Run → "Bui
 - **Tiered reproduction:** complex issues (anything touching combat, plus every `big fix`) are reproduced before the run; basic ones are reproduced by their failing regression test. `game breaking` is not automatically complex.
 - **Order is asked after the batch is picked.** Issues not picked are left untouched and are not mentioned in the patch notes.
 - Docs updated: `CLAUDE.md` (QA mode bullet), `docs/QA_FIX_WORKFLOW.md`, `QA_PLAN.md`, `HANDOFF.md`, `docs/README.md`. Nothing has been run against real issues yet, so the flow is untested.
+
+**Heating Up, Fuming and Ignite reworked (user, 2026-10-09, QA #28, big fix).** While triaging issue #28 ("Ignite does not show the current multiplier for each attack") the user restated how Heating Up should work, since the old build let attacks played before Heating Up count and was hard to read. Decisions:
+- Heating Up reads "For the rest of your turn, your attacks grant you 1 Ignite. (This effect does not apply to Scorching Wind's damage.)" and gives **no** Ignite itself, so the first attack after it is normal damage.
+- A new status, **Fuming** (the user's name for it, a badge holding Heating Up's effect), cannot stack above 1 (playing Heating Up twice does nothing the second time). While Fuming, each attack **card** grants 1 Ignite after it resolves (one per card, not per hit).
+- **Ignite** multiplies the damage of every hit by 2^stacks (1x, 2x, 4x, ...). Attacks played before Heating Up never count (this replaces the old provisional "count the whole turn" rule).
+- **Scorching Wind** still grants Ignite but its own damage ignores the Ignite multiplier; it still gets every other modifier (Strength, Weak, Empowered, Vulnerable).
+- Fuming and Ignite clear at the end of the turn.
+- Display (part of #28): the Ignite badge tooltip states the current multiplier, and attack cards in hand already show live damage through the same rules, so they show the Ignite-multiplied number (Scorching Wind's stays unmultiplied).
+- #29 ("Empowered does not stack with Ignite") was set to be checked after this rework; the rules multiply every outgoing multiplier together, covered by a test.
+- Not yet answered: whether Ignite should also multiply damage that does not come from an attack card (a power's trigger, a skill's damage). It does, as before; the card text says "your attacks". Flagged for the user.
