@@ -1,0 +1,14 @@
+name = "first-real-game-reports"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+# Secrets (GITHUB_TOKEN, REPORT_SECRET, MAINTAINER_KEY) are NOT here: set them with
+# `npx wrangler secret put <NAME>` from this folder. See ../QA_PLAN.md.
+[vars]
+GITHUB_REPO = "nxkgit/first-real-game"
+# The deployed game and the local dev server. Add a custom domain here if the game ever moves.
+ALLOWED_ORIGINS = "https://nxkgit.github.io,http://localhost:5173"
+
+[[kv_namespaces]]
+binding = "STORE"
+id = "dacf5baf82164553821766084e5f2953"
