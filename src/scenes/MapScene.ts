@@ -7,6 +7,7 @@ import { addMapIcon, addScreenBackdrop } from './art';
 import { mapLayout } from './mapLayout';
 import {
   addDeckButton,
+  addReportButton,
   addRunHud,
   addSettingsButton,
   closeDeckView,
@@ -48,6 +49,7 @@ export class MapScene extends Phaser.Scene {
     addScreenBackdrop(this, 'map');
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
+    addReportButton(this, hud.x + hud.width + 70);
     addSettingsButton(this);
     onKeyPress(this, (key) => {
       if (key === 'd') toggleDeckView(this, this.run);

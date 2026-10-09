@@ -9,6 +9,7 @@ import {
   CARD_WIDTH,
   addButton,
   addDeckButton,
+  addReportButton,
   addRunHud,
   addSettingsButton,
   buildCardFace,
@@ -40,6 +41,7 @@ export class RestScene extends Phaser.Scene {
     addScreenBackdrop(this, 'rest');
     const hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, hud.x + hud.width + 70);
+    addReportButton(this, hud.x + hud.width + 70);
     addSettingsButton(this);
     onKeyPress(this, (key) => {
       if (key === 'd') toggleDeckView(this, this.run);

@@ -16,6 +16,7 @@ import {
   CARD_WIDTH,
   addButton,
   addDeckButton,
+  addReportButton,
   addRunHud,
   addSettingsButton,
   buildCardFace,
@@ -114,6 +115,7 @@ export class CombatScene extends Phaser.Scene {
     this.buildBackground();
     const hud = addRunHud(this, this.run);
     addDeckButton(this, this.run, hud.x + hud.width + 70, () => this.targeting?.cancel());
+    addReportButton(this, hud.x + hud.width + 70);
     addSettingsButton(this);
 
     const scenario = takePendingScenario();

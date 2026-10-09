@@ -5,7 +5,7 @@ import { seedFromUrl } from '../session';
 import { clearSavedRun, loadSavedRun } from '../storage';
 import { addScreenBackdrop, preloadArt } from './art';
 import { toggleCredits } from './credits';
-import { addButton, addSettingsButton, enterCurrentNode } from './ui';
+import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /** First scene: starts a fresh run, or offers to continue the one saved in this browser. */
 export class BootScene extends Phaser.Scene {
@@ -27,6 +27,7 @@ export class BootScene extends Phaser.Scene {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
     addScreenBackdrop(this, 'start');
+    addReportButton(this);
     addSettingsButton(this);
     this.add.text(400, 150, 'Run in progress', { fontSize: '30px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     this.add

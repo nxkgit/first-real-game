@@ -31,5 +31,7 @@ export default defineConfig({
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
+    // a fake key so the Report window will send; e2e/report.e2e.ts stubs the network (docs/E2E.md)
+    env: { VITE_REPORT_SECRET: 'e2e-test-secret' },
   },
 });

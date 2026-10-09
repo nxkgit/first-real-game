@@ -10,6 +10,7 @@ import {
   CARD_WIDTH,
   addButton,
   addDeckButton,
+  addReportButton,
   addRunHud,
   addSettingsButton,
   buildCardFace,
@@ -49,6 +50,9 @@ export class RewardScene extends Phaser.Scene {
     if (!this.draft) {
       const hud = addRunHud(this, this.run, { showHp: true });
       addDeckButton(this, this.run, hud.x + hud.width + 70);
+      addReportButton(this, hud.x + hud.width + 70);
+    } else {
+      addReportButton(this); // the draft screen has no run readout or Deck button
     }
     addSettingsButton(this);
 

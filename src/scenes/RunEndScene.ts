@@ -6,7 +6,7 @@ import { buildRunReport, formatRunReport } from '../game/runReport';
 import { copyToClipboard } from '../storage';
 import { addScreenBackdrop } from './art';
 import { toggleCredits } from './credits';
-import { addButton, addSettingsButton, enterCurrentNode } from './ui';
+import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /** End of a run, won or lost: a short summary and a way to start over. */
 export class RunEndScene extends Phaser.Scene {
@@ -24,9 +24,10 @@ export class RunEndScene extends Phaser.Scene {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
     addScreenBackdrop(this, 'end');
+    addReportButton(this);
     addSettingsButton(this);
 
-    const won = this.run.phase === 'won';
+    const won =this.run.phase === 'won';
     this.add
       .text(400, 190, won ? 'ACT COMPLETE' : 'DEFEATED', {
         fontSize: '40px',

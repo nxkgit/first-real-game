@@ -3,7 +3,7 @@ import type { RunState } from '../game/RunState';
 import { STARTER_DECK_SIZE } from '../data/tunables';
 import { addScreenBackdrop } from './art';
 import { useLayoutCamera } from '../display';
-import { addButton, addSettingsButton, enterCurrentNode } from './ui';
+import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /**
  * Before the map even starts: explains the starter-deck draft, then a single "Proceed" button
@@ -25,6 +25,7 @@ export class DraftIntroScene extends Phaser.Scene {
     useLayoutCamera(this);
     this.add.rectangle(400, 300, 800, 600, 0x14141c);
     addScreenBackdrop(this, 'reward');
+    addReportButton(this);
     addSettingsButton(this);
 
     this.add.text(400, 220, 'Build your deck', { fontSize: '30px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);

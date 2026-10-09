@@ -1,9 +1,23 @@
+import { execSync } from 'node:child_process';
 import { defineConfig } from 'vite';
 import { configDefaults } from 'vitest/config';
+
+// The short git commit, stamped into the game so a bug report says which build it came from
+// (src/qa/buildInfo.ts). 'dev' when git is unavailable.
+function buildId(): string {
+  const fromCi = process.env.GITHUB_SHA?.slice(0, 7);
+  if (fromCi) return fromCi;
+  try {
+    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim() || 'dev';
+  } catch {
+    return 'dev';
+  }
+}
 
 // The game is the main page; the content browser (content.html) is a second page that shares the
 // same data files. The base path is still passed on the command line when deploying.
 export default defineConfig({
+  define: { __BUILD_ID__: JSON.stringify(buildId()) },
   // Agent worktrees live under .claude/; their copies of the tests must not run here.
   // testTimeout: the default 5000ms is too tight for the two heavy seeded-fuzz suites
   // (run.invariants.test.ts, sim/balance.test.ts), which already run thousands of simulated fights

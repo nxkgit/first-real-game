@@ -8,6 +8,7 @@ import { saveRun } from '../storage';
 import {
   addButton,
   addDeckButton,
+  addReportButton,
   addRunHud,
   addSettingsButton,
   closeDeckView,
@@ -38,6 +39,7 @@ export class EventScene extends Phaser.Scene {
     addScreenBackdrop(this, 'event');
     this.hud = addRunHud(this, this.run, { showHp: true });
     addDeckButton(this, this.run, this.hud.x + this.hud.width + 70);
+    addReportButton(this, this.hud.x + this.hud.width + 70);
     addSettingsButton(this);
     onKeyPress(this, (key) => {
       if (key === 'd') toggleDeckView(this, this.run);

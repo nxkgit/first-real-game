@@ -8,5 +8,9 @@ coverage
 test-results
 playwright-report
 
+# local settings such as the bug-report secret (see QA_PLAN.md); never committed
+.env.local
+.env.*.local
+
 # raw downloaded art packs; only the files we use get copied into the project
 /assets/

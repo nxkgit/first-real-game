@@ -4,8 +4,11 @@ import { cardTagsText, cardText, relicText } from '../game/describe';
 import { lowerIsBetterFor } from '../game/effects';
 import type { RunNode, RunState } from '../game/RunState';
 import { ANIMATION_SPEEDS, getSettings, onSettingsChange, updateSettings } from '../settings';
-import { setCurrentRun } from '../session';
+import { getCurrentCombat, getCurrentRun, setCurrentRun } from '../session';
 import { clearSavedRun, recordFinishedRun, saveRun } from '../storage';
+import { BUILD_ID } from '../qa/buildInfo';
+import { browserEnvironment, openReportDialog } from '../qa/reportDialog';
+import { buildSnapshot } from '../qa/snapshot';
 import { RELIC_ICON } from '../data/art';
 import { addBorder, addIcon } from './art';
 import { toggleCredits } from './credits';
@@ -243,6 +246,36 @@ export function addDeckButton(scene: Phaser.Scene, run: RunState, x: number, bef
       toggleDeckView(scene, run);
     },
     { width: 104, height: 28, fontSize: 13, fill: 0x2a2a3a, stroke: 0x5a5a72, once: false }
+  );
+}
+
+/** Centre-to-centre distance from the Deck button to the Report button beside it. */
+const REPORT_BUTTON_OFFSET = 102;
+
+/**
+ * Small top-bar "Report" button that opens the bug-report window (QA_PLAN.md). Put it next to the
+ * Deck button by passing that button's x; on screens with no Deck button it sits at the top left.
+ * The snapshot is taken when the window opens, from the live run and fight.
+ */
+export function addReportButton(scene: Phaser.Scene, deckX?: number): void {
+  addButton(
+    scene,
+    deckX === undefined ? 70 : deckX + REPORT_BUTTON_OFFSET,
+    22,
+    'Report',
+    () =>
+      openReportDialog({
+        getSnapshot: () =>
+          buildSnapshot({
+            run: getCurrentRun(),
+            combat: getCurrentCombat(),
+            screen: scene.scene.key,
+            build: BUILD_ID,
+            environment: browserEnvironment(),
+            now: new Date(),
+          }),
+      }),
+    { width: 84, height: 28, fontSize: 13, fill: 0x2a2a3a, stroke: 0x5a5a72, once: false }
   );
 }
 

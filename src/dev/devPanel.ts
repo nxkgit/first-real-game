@@ -4,7 +4,10 @@ import { captureScenario, formatScenario, parseScenarioText } from '../game/scen
 import { CARDS, getCard } from '../data/cards';
 import { ENEMIES, getEnemy } from '../data/enemies';
 import { RELICS, getRelic } from '../data/relics';
-import { newRun } from '../data/run';
+import { newRun, restoreSavedRun } from '../data/run';
+import { BUILD_ID } from '../qa/buildInfo';
+import { REPORT_URL } from '../qa/reportConfig';
+import { readSnapshot } from '../qa/snapshot';
 import { DECK_PRESETS } from './deckPresets';
 import { enterCurrentNode } from '../scenes/ui';
 import { getCurrentCombat, getCurrentRun, setPendingScenario } from '../session';
@@ -38,7 +41,7 @@ export function installDevPanel(game: Phaser.Game): void {
   const info = document.createElement('div');
   info.style.cssText = 'margin-bottom:6px;color:#9fd3ff;white-space:pre-wrap;';
   const status = document.createElement('div');
-  status.style.cssText = 'margin-top:6px;color:#9a9aae;';
+  status.style.cssText = 'margin-top:6px;color:#9a9aae;white-space:pre-wrap;';
 
   const row = (...els: HTMLElement[]): HTMLDivElement => {
     const d = document.createElement('div');
@@ -146,6 +149,53 @@ export function installDevPanel(game: Phaser.Game): void {
     else setPendingScenario(null); // no run, or the fight could not start: don't leave it waiting for some later fight
   };
 
+  // a tester's bug report: its snapshot ID (from the GitHub issue) and your maintainer key (QA_PLAN.md).
+  // The key is typed each time and never stored.
+  const snapshotId = document.createElement('input');
+  snapshotId.placeholder = 'snapshot ID from the issue';
+  snapshotId.setAttribute('data-dev', 'snapshot-id');
+  snapshotId.style.cssText = 'font:inherit;width:100%;box-sizing:border-box;background:#1b1b24;color:#fff;border:1px solid #5a5a72;';
+  const maintainerKey = document.createElement('input');
+  maintainerKey.type = 'password';
+  maintainerKey.placeholder = 'maintainer key';
+  maintainerKey.autocomplete = 'off';
+  maintainerKey.setAttribute('data-dev', 'maintainer-key');
+  maintainerKey.style.cssText = snapshotId.style.cssText;
+  /** Fetches a report's snapshot, loads its run, and (when it was sent mid-fight) starts that exact fight. */
+  const loadReportSnapshot = async (): Promise<void> => {
+    const id = snapshotId.value.trim();
+    const key = maintainerKey.value.trim();
+    if (!/^[0-9a-fA-F-]{8,64}$/.test(id)) return say('Enter the snapshot ID from the issue.');
+    if (key === '') return say('Paste your maintainer key.');
+    say('Fetching...');
+    let raw: unknown;
+    try {
+      const res = await fetch(`${REPORT_URL}/snapshot/${id}`, { headers: { 'X-Maintainer-Key': key } });
+      if (res.status === 401) return say('Wrong maintainer key.');
+      if (res.status === 403) return say('This page is not an allowed origin for the report server (see worker/wrangler.toml ALLOWED_ORIGINS).');
+      if (res.status === 404) return say('No snapshot with that ID (wrong ID, or it expired).');
+      if (!res.ok) return say(`Fetch failed (${res.status}).`);
+      raw = await res.json();
+    } catch {
+      return say('Could not reach the report server.');
+    }
+    const read = readSnapshot(raw);
+    if (!read.ok) return say(`Snapshot not loaded: ${read.error}`);
+    const { snapshot } = read;
+    const run = snapshot.run ? restoreSavedRun(snapshot.run) : null;
+    if (!run) return say('That snapshot has no run to load (it was sent before a run began).');
+    // a fight that was on screen: start it exactly as the tester had it, inside their real run
+    if (snapshot.fight && run.phase === 'inNode' && run.currentNode.kind === 'combat') setPendingScenario(snapshot.fight);
+    enterCurrentNode(scene(), run);
+    refresh();
+    const lines = [
+      `Loaded: ${snapshot.screen}, build ${snapshot.build}${snapshot.build === BUILD_ID ? '' : ` (this page is ${BUILD_ID}: numbers may differ)`}, ${snapshot.capturedAt}`,
+      ...(snapshot.errors.length > 0 ? [`Not captured: ${snapshot.errors.join('; ')}`] : []),
+      ...(snapshot.log.length > 0 ? ['Last log:', ...snapshot.log.slice(-5)] : []),
+    ];
+    say(lines.join('\n'));
+  };
+
   body.append(
     info,
     row(jump, button('Go to stop', () => withRun((run) => run.jumpTo(jump.value)))),
@@ -201,6 +251,9 @@ export function installDevPanel(game: Phaser.Game): void {
     ),
     row(button('Capture this fight', captureScenarioNow), button('Load scenario', loadScenarioNow)),
     scenarioBox,
+    snapshotId,
+    maintainerKey,
+    row(button('Load report snapshot', () => void loadReportSnapshot())),
     row(
       button('Copy this run', () =>
         withRun((run) => void copyToClipboard(formatRunReport(buildRunReport(run))).then((ok) => say(ok ? 'Copied.' : 'Copy failed.')), false)
