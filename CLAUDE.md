@@ -44,6 +44,20 @@ Every session (or natural transition point within one — e.g. a plan just got f
 
 Game *feel* cannot be verified by type-checking or unit tests alone. After any change to combat flow, card effects, or turn structure, actually run the dev server and play the loop (draw → play a card → end turn → watch the enemy act) before reporting it as working. State plainly when something has only been type-checked/logic-tested versus actually played.
 
+## When the user reports a pipeline failure
+
+When the user says a pipeline/CI/deploy run failed, diagnose from the actual logs before touching code. Don't guess from the branch name or the last diff.
+
+1. **Find the run.** `gh run list --limit 10` (add `--branch <name>` if useful). Workflows: `CI` (`npm run verify` on every PR), `E2E` (browser suite on PRs), `Deploy to GitHub Pages` (re-runs `tsc` + `npm test`, then builds and publishes on every push to `main`).
+2. **Read the failure.** `gh run view <id> --log-failed | tail -60`. Name the failing step and, for tests, the file and line. If E2E failed, check the uploaded artifacts/screenshots too.
+3. **Check what is live.** A red deploy on `main` means the site is still on the last green build; say which one. A merge can land with red PR checks (there's no branch protection), so also look at the PR's checks: `gh pr checks <n>`.
+4. **Reproduce locally** on a fresh `origin/main` (or the PR branch) with `npm ci` then the same command CI ran (`npm run verify`; for the patch-notes drift test, `npm run patchnotes:check`). Local green with CI red usually means a stale checkout, an untracked file the tests depend on, or a Node-version/env difference. Say so rather than retrying.
+5. **Classify and report** before fixing: cause in one sentence, whether it's the PR's own change, a merge/rebase artifact, a flaky test, or infrastructure; and what's live right now. Common ones here: README out of sync with `PATCHNOTES.md` (run `npm run patchnotes:sync`), type errors from merging `main` into a branch, a missing secret or Pages setting.
+6. **Fix forward on a new branch from `origin/main`**, never directly on `main`, and never by skipping, loosening or deleting the failing test. If the fix isn't small and obvious, say so and recommend a revert PR instead. Open a draft PR and confirm CI is green on it. Don't push to `main` or merge; the user merges.
+7. **Flaky is a claim that needs evidence**: only call a failure flaky after it passes on a re-run (`gh run rerun <id> --failed`) with no code change, and mention it in the report.
+
+Before telling the user a branch is ready to merge, run `gh pr checks <n>` and report any check that is red or still pending.
+
 ## Patch notes
 
 Whenever work is merged to live (`main`, which auto-deploys to GitHub Pages) and it changes anything a player or tester would notice — gameplay, balance numbers, cards/enemies/relics/events, UI, bug fixes — add an entry to `PATCHNOTES.md` as part of that same merge (the content site's "patchnotes" section renders that file by itself), then run `npm run patchnotes:sync` to copy the newest entry into the README's "Latest changes" block. Purely internal changes (refactors, tests, docs, tooling) with no player-visible effect don't need an entry. Entries go newest first, dated, in plain language, saying what changed rather than how, in the existing format (Fixed / Not fixed / Checked); this applies to feature and balance merges as well as QA-mode bug batches.
