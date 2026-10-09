@@ -53,12 +53,9 @@ export function toggleCredits(scene: Phaser.Scene): void {
       color: '#c8c8d8',
       wordWrap: { width: 680 },
     });
-    parts.push(
-      scene.add.text(60, y, credit.usedFor, { fontSize: '14px', color: '#e8e8f0', fontStyle: 'bold' }),
-      detail,
-      // the link goes under however many lines the author list took
-      scene.add.text(60, y + 18 + detail.height + 2, credit.url, { fontSize: '10px', color: '#6f8fb8' })
-    );
+    parts.push(scene.add.text(60, y, credit.usedFor, { fontSize: '14px', color: '#e8e8f0', fontStyle: 'bold' }), detail);
+    // the link goes under however many lines the author list took (some rows have no link yet)
+    if (credit.url) parts.push(scene.add.text(60, y + 18 + detail.height + 2, credit.url, { fontSize: '10px', color: '#6f8fb8' }));
   });
 
   const view = scene.add.container(0, 0, parts).setDepth(300);

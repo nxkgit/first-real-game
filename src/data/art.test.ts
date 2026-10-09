@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ENEMY_ART, HERO_SHEET } from './art';
+import { ASHLANDS, BACKGROUNDS, DEFAULT_COMBAT_BACKGROUND, ENEMY_ART, HERO_SHEET, backgroundFor } from './art';
 import { ENEMY_ART_ENTRIES } from './enemyArt';
 import { ENEMIES } from './enemies';
 
@@ -14,6 +14,28 @@ const fileOf = (name: string): string => {
   const entry = ENEMY_ART_ENTRIES[name];
   return `public/assets/${entry.kind === 'sheet' ? 'pixel' : entry.still.dir}/${name}.png`;
 };
+
+describe('backdrops', () => {
+  it('has a file for every still background and every frame of the ashlands animation', () => {
+    for (const name of BACKGROUNDS) expect(existsSync(`public/assets/backgrounds/${name}.png`), name).toBe(true);
+    for (let i = 0; i < ASHLANDS.frames; i++) expect(existsSync(`public/assets/backgrounds/${ASHLANDS.name}-${i}.png`), `frame ${i}`).toBe(true);
+  });
+
+  it('describes the ashlands frames the way the files really are', () => {
+    for (let i = 0; i < ASHLANDS.frames; i++) {
+      const { width, height } = pngSize(`public/assets/backgrounds/${ASHLANDS.name}-${i}.png`);
+      expect({ width, height }, `frame ${i}`).toEqual({ width: ASHLANDS.width, height: ASHLANDS.height });
+    }
+    expect(ASHLANDS.frameMs).toBeGreaterThan(0);
+  });
+
+  it('uses the default combat backdrop for every kind of fight and floor', () => {
+    expect(DEFAULT_COMBAT_BACKGROUND).toBe('ashlands'); // provisional (DESIGN_LOG.md, 2026-10-09); change this test with the constant
+    for (const tier of ['normal', 'elite', 'boss'] as const) {
+      for (const floor of [0, 3, 8, 12]) expect(backgroundFor(tier, floor), `${tier} floor ${floor}`).toBe('ashlands');
+    }
+  });
+});
 
 describe('enemy art manifest', () => {
   it('points every mapped enemy at a real enemy and a manifest entry with a file', () => {

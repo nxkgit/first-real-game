@@ -33,6 +33,7 @@ screens
 | Relic badges, HP heart | `icons/<name>.png` | `icon-<name>` | `addIcon` (relic bar, `PlayerView`) | `RELIC_ICON` (relic id to icon), `ICON_FILES` |
 | Card and button borders | `ui/border.png` | `ui-border` | `addBorder` (card faces, buttons) | tinted by card type (`TYPE_COLOR` in `ui.ts`) or the button's stroke colour |
 | Backdrops | `backgrounds/<name>.png` | `bg-<name>` | `addBackdrop` (fights), `addScreenBackdrop` (map, rest, shop, event, reward) | `backgroundFor(tier, floor)` and `SCREEN_BACKDROPS` |
+| Animated ashlands backdrop (the default combat backdrop) | `backgrounds/ashlands-<n>.png`, one per frame, built from `assets/backgrounds/Ashlands_1.gif` | `bg-ashlands-<n>` | `addBackdrop` (it hands off to an animated path for this name) | `ASHLANDS` (frame count, frame time, size) and `DEFAULT_COMBAT_BACKGROUND` in `src/data/art.ts` |
 
 ## How pictures are drawn (the tricks that matter)
 
@@ -40,6 +41,8 @@ screens
 - **Line-art icons are drawn white.** The Cartography icons are black outlines, which vanish on the dark map, so `addMapIcon` fills them white with `setTint(0xffffff).setTintMode(Phaser.TintModes.FILL)`. (Phaser 4: `setTintFill` no longer exists.)
 - **The border is white pixel art, tinted.** `addBorder` makes a 9-slice (the corners stay crisp while the middle stretches) and tints it. The 48 px source tile has 14 px corners (10 on buttons, which are shorter); the helper shrinks the slice for very small boxes.
 - **Backdrops are cropped, never stretched, and dimmed.** The source pictures are square (1024x1024). `addBackdrop` scales to the target width, shows the band around the horizon (starting 25% down the picture, or higher if the band would run off the bottom), and lays a dark rectangle over it. The `dim` value (0 to 1) is how dark: fights 0.45, text-heavy screens 0.6-0.7. Raise it if white text becomes hard to read.
+- **The ashlands backdrop is wide and animated, so it takes its own path.** Phaser cannot play a GIF, so `prepareAssets.py` (`python tools/prepareAssets.py ashlands` runs just this part) writes each GIF frame as `ashlands-<n>.png` (1350x625, about 25 KB each) and the game plays them as a looping sprite (`bg-ashlands`, 330 ms a frame, registered the first time a fight draws it). Unlike the square stills it is scaled to *cover* the rectangle and cropped around its centre (a fight panel is 680x300, nearly the picture's own shape, so only a thin strip is cut), then dimmed like the others. If a frame is missing it draws nothing and the fight panel shows its flat colour. To change the animation: replace the GIF in `assets/backgrounds/`, rerun the script, and update `ASHLANDS` to match (a test checks the size).
+- **`DEFAULT_COMBAT_BACKGROUND` is provisional.** While it names a picture, every fight uses it (user, 2026-10-09). Set it to `null` to go back to the older pairing in `backgroundFor` (boss castles, elite desert, ordinary fights grass, forest or fall by floor), which is still there.
 - **Animations are registered once** (`createArtAnimations`), globally. Phaser keeps them across scene restarts.
 
 ## Swapping a picture

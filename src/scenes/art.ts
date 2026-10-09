@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BACKGROUNDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
+import { ASHLANDS, BACKGROUNDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, HERO_SHEET, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
 import type { BackgroundName } from '../data/art';
 import { ENEMY_ART_ENTRIES, sheetOf } from '../data/enemyArt';
 import type { EnemySheet } from '../data/enemyArt';
@@ -21,6 +21,7 @@ export function preloadArt(scene: Phaser.Scene): void {
   for (const name of ICON_FILES) scene.load.image(`icon-${name}`, `icons/${name}.png`);
   scene.load.image('ui-border', 'ui/border.png');
   for (const name of BACKGROUNDS) scene.load.image(`bg-${name}`, `backgrounds/${name}.png`);
+  for (let i = 0; i < ASHLANDS.frames; i++) scene.load.image(`bg-${ASHLANDS.name}-${i}`, `backgrounds/${ASHLANDS.name}-${i}.png`);
 }
 
 /** Registers the hero's animations once (they are global to the game). */
@@ -205,6 +206,7 @@ export function addBackdrop(
   rect: { x: number; y: number; width: number; height: number },
   dim = 0.45
 ): boolean {
+  if (name === ASHLANDS.name) return addAnimatedBackdrop(scene, rect, dim);
   const key = `bg-${name}`;
   if (!scene.textures.exists(key)) return false;
   const image = scene.add.image(rect.x, rect.y, key).setOrigin(0, 0);
@@ -213,6 +215,33 @@ export function addBackdrop(
   const bandHeight = rect.height / scale;
   const top = Math.min(source - bandHeight, source * 0.25); // the band that holds the horizon
   image.setScale(scale).setCrop(0, top, source, bandHeight).setY(rect.y - top * scale);
+  scene.add.rectangle(rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width, rect.height, 0x0c0a14, dim);
+  return true;
+}
+
+/**
+ * The animated ashlands picture (a wide, looping one, unlike the square stills): scaled to cover
+ * the rectangle and cropped around its centre, then darkened like the others. Returns false, and
+ * draws nothing, unless every frame loaded.
+ */
+function addAnimatedBackdrop(scene: Phaser.Scene, rect: { x: number; y: number; width: number; height: number }, dim: number): boolean {
+  const keys = Array.from({ length: ASHLANDS.frames }, (_, i) => `bg-${ASHLANDS.name}-${i}`);
+  if (!keys.every((key) => scene.textures.exists(key))) return false;
+  const animation = `bg-${ASHLANDS.name}`;
+  if (!scene.anims.exists(animation)) {
+    scene.anims.create({ key: animation, frames: keys.map((key) => ({ key })), frameRate: 1000 / ASHLANDS.frameMs, repeat: -1 });
+  }
+  const scale = Math.max(rect.width / ASHLANDS.width, rect.height / ASHLANDS.height); // cover, never stretch
+  const cropWidth = rect.width / scale;
+  const cropHeight = rect.height / scale;
+  const left = (ASHLANDS.width - cropWidth) / 2;
+  const top = (ASHLANDS.height - cropHeight) / 2;
+  scene.add
+    .sprite(rect.x - left * scale, rect.y - top * scale, keys[0]!)
+    .setOrigin(0, 0)
+    .setScale(scale)
+    .setCrop(left, top, cropWidth, cropHeight)
+    .play(animation);
   scene.add.rectangle(rect.x + rect.width / 2, rect.y + rect.height / 2, rect.width, rect.height, 0x0c0a14, dim);
   return true;
 }

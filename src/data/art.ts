@@ -60,11 +60,27 @@ export const HERO_SHEET: HeroSheet = {
 };
 
 export const BACKGROUNDS = ['grass', 'forest', 'fall', 'desert', 'castles'] as const;
-export type BackgroundName = (typeof BACKGROUNDS)[number];
 
-/** The fight backdrop: the boss gets the castles, elites the desert, ordinary fights change with
- *  how far into the act you are. PLACEHOLDER pairing. `floor` counts from 0 at the bottom. */
+/**
+ * The animated ashlands backdrop: a short looping picture, one PNG per frame
+ * (`backgrounds/ashlands-<n>.png`, built from the GIF by tools/prepareAssets.py). The numbers
+ * describe the files and must match them (art.test.ts checks the sizes).
+ */
+export const ASHLANDS = { name: 'ashlands', frames: 3, frameMs: 330, width: 1350, height: 625 } as const;
+
+export type BackgroundName = (typeof BACKGROUNDS)[number] | typeof ASHLANDS.name;
+
+/**
+ * PROVISIONAL (user, 2026-10-09: "default combat background for now"): every fight uses this
+ * backdrop. Set it to `null` to go back to the older pairing in `backgroundFor` below, which is kept.
+ */
+export const DEFAULT_COMBAT_BACKGROUND: BackgroundName | null = 'ashlands';
+
+/** The fight backdrop: `DEFAULT_COMBAT_BACKGROUND` while one is set; otherwise the boss gets the
+ *  castles, elites the desert, ordinary fights change with how far into the act you are.
+ *  PLACEHOLDER pairing. `floor` counts from 0 at the bottom. */
 export function backgroundFor(tier: FightTier, floor: number): BackgroundName {
+  if (DEFAULT_COMBAT_BACKGROUND) return DEFAULT_COMBAT_BACKGROUND;
   if (tier === 'boss') return 'castles';
   if (tier === 'elite') return 'desert';
   if (floor <= MAP_EARLY_FLOORS) return 'grass';
