@@ -40,6 +40,10 @@ Every session (or natural transition point within one — e.g. a plan just got f
 - **Centralized tunables.** Balance numbers (HP, damage, costs, hand size, etc.) live in one obvious place. Expect these to change frequently once playtesting starts — don't scatter them inline.
 - **No premature abstraction.** This is a small solo project at MVP stage. Don't build generic systems for hypothetical future content (e.g., a full hero-plugin architecture) before there's more than one hero to support it.
 
+## Dev-panel presets for new content
+
+Whenever you add a new class/hero, or new cards, or a new build/archetype that needs testing, ship matching `?dev` panel presets in the same change so the user can test it immediately without drafting into it. Deck presets live in `src/dev/deckPresets.ts` (`DECK_PRESETS`, wired up in `src/dev/devPanel.ts`, covered by `deckPresets.test.ts`). A new class gets at least one preset deck that showcases it; new cards go into a preset that exercises them (an existing preset if they fit a build, otherwise a new one); if the dev panel needs another control to reach the content (e.g. starting as the new hero), add that too. Presets are dev-only tooling, not game content, so this isn't scope creep against the Deferred list. Mention the presets you added when reporting the work.
+
 ## Testing discipline
 
 Game *feel* cannot be verified by type-checking or unit tests alone. After any change to combat flow, card effects, or turn structure, actually run the dev server and play the loop (draw → play a card → end turn → watch the enemy act) before reporting it as working. State plainly when something has only been type-checked/logic-tested versus actually played.
