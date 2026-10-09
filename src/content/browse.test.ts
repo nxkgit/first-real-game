@@ -63,6 +63,25 @@ describe('card records and filters', () => {
     expect(both.every((c) => c.type === 'attack' && c.inRewardPool && c.cost === 1)).toBe(true);
   });
 
+  it('says what each card is paid in: energy unless the card costs Radiant Light', () => {
+    expect(records.every((r) => r.resource === 'energy' || r.resource === 'radiantLight')).toBe(true);
+    for (const c of baseCards()) {
+      expect(records.find((r) => r.id === c.id)?.resource).toBe(c.costResource ?? 'energy');
+    }
+    const light = records.filter((r) => r.resource === 'radiantLight');
+    expect(light.length).toBeGreaterThan(0);
+    expect(light.every((r) => r.owner === 'paladin')).toBe(true);
+    expect(records.some((r) => r.id === 'strike' && r.resource === 'energy')).toBe(true);
+    // the table shows the label, and the Resource filter uses the stable id
+    const col = CARD_HEADERS.indexOf('Resource');
+    expect(col).toBe(CARD_HEADERS.indexOf('Cost') + 1);
+    expect(cardRow(light[0])[col]).toBe('Radiant Light');
+    expect(cardRow(records.find((r) => r.resource === 'energy') as (typeof records)[number])[col]).toBe('Energy');
+    const filtered = filterCards(records, { ...NO_FILTERS, resource: 'radiantLight' });
+    expect(filtered.map((c) => c.id).sort()).toEqual(light.map((c) => c.id).sort());
+    expect(filterCards(records, { ...NO_FILTERS, resource: 'energy' }).length + filtered.length).toBe(records.length);
+  });
+
   it('searches names, text and the upgraded text', () => {
     expect(filterCards(records, { ...NO_FILTERS, query: 'jab' }).map((c) => c.id)).toContain('jab');
     expect(filterCards(records, { ...NO_FILTERS, query: 'exhaust' }).length).toBeGreaterThan(0);

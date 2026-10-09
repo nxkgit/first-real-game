@@ -2,6 +2,17 @@
 
 What changed in each batch of fixes, newest first. Written so playtesters can read them; issue numbers are for the maintainer. The procedure that produces these is `docs/QA_FIX_WORKFLOW.md`.
 
+## 2026-10-09 (content page: Resource column)
+
+### Added
+- The Cards table on the content page has a new "Resource" column right after "Cost", saying whether a card's cost is paid in Energy or Radiant Light (before, both showed just a number). There is a matching "Resource" filter beside the Owner filter, and the card detail panel now reads, for example, "cost 2 (Radiant Light)".
+
+### Not fixed
+- Nothing was a bug fix in this batch.
+
+### Checked
+- Unit tests and the typecheck pass. Looked at the real content page in a browser: the new column, its position and its values (page text only; a screenshot could not be taken). The Resource filter was tested in code but not clicked in the browser.
+
 ## 2026-10-09 (second hero and hero selection)
 
 ### Added
