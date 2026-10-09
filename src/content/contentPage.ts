@@ -12,6 +12,7 @@ import { copyToClipboard } from '../storage';
 import {
   CARD_HEADERS,
   NO_FILTERS,
+  RESOURCE_LABELS,
   cardRecord,
   cardRow,
   distinct,
@@ -349,6 +350,7 @@ function cardsSection(records: CardRecord[], issues: Issue[], stats: SimStats | 
     search,
     select('Type', [any, ...distinct(records.map((r) => r.type)).map((v): [string, string] => [v, v])], (type) => set({ type })),
     select('Cost', [any, ...distinct(records.map((r) => String(r.cost))).map((v): [string, string] => [v, v])], (cost) => set({ cost })),
+    select('Resource', [any, ...distinct(records.map((r) => r.resource)).map((v): [string, string] => [v, RESOURCE_LABELS[v as CardRecord['resource']]])], (resource) => set({ resource })),
     select('Owner', [any, ...distinct(records.map((r) => r.owner)).map((v): [string, string] => [v, v])], (owner) => set({ owner })),
     select('Tag', [any, ...distinct(records.flatMap((r) => r.tags)).map((v): [string, string] => [v, v])], (tag) => set({ tag })),
     select('In reward pool', [['any', 'any'], ['yes', 'yes'], ['no', 'no']], (pool) => set({ pool: pool as CardFilters['pool'] }))
@@ -372,7 +374,7 @@ function cardsSection(records: CardRecord[], issues: Issue[], stats: SimStats | 
       draw();
     };
     detail.append(el('div', { className: 'detail-head' }, el('h3', { text: `${card.name} (${card.id})` }), close));
-    const meta = [`${card.type}`, `cost ${card.cost}`, `owner ${card.owner}`, card.inRewardPool ? 'in reward pool' : 'not in reward pool', card.exhaust ? 'exhaust' : '', card.tags.length ? `tags: ${card.tags.join(', ')}` : ''].filter(Boolean);
+    const meta = [`${card.type}`, `cost ${card.cost} (${RESOURCE_LABELS[card.resource]})`, `owner ${card.owner}`, card.inRewardPool ? 'in reward pool' : 'not in reward pool', card.exhaust ? 'exhaust' : '', card.tags.length ? `tags: ${card.tags.join(', ')}` : ''].filter(Boolean);
     detail.append(el('p', { className: 'note', text: meta.join(' | ') }));
 
     const cmp = el('div', { className: 'compare' });

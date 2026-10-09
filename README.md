@@ -7,23 +7,16 @@ A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built w
 The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
 
 <!-- patchnotes:start -->
-## 2026-10-09 (second hero and hero selection)
+## 2026-10-09 (content page: Resource column)
 
 ### Added
-- A hero select screen when you start a new run (and on "New Run" at the end of a run). Pick the Mage or the new Paladin; each shows max HP, energy, resource and hero power. "Continue" goes straight back into your saved run as the hero you picked.
-- The Paladin, a second hero made only of placeholders: 54 max HP, 3 energy, a placeholder hero power (1 energy: draw a card), and 10 placeholder cards. The Paladin's own resource, Radiant Light, starts at 0 each fight, carries between turns and is gained from cards; some Paladin cards (gold cost badge, "LIGHT" on the card) are paid for with it instead of energy. The Paladin uses an animated picture supplied by the project owner (a hooded figure with a staff; its source and licence are not confirmed yet).
-- A run now belongs to a hero. The same seed number gives a different run for a different hero. Add `?hero=paladin` to the address to skip the select screen.
-
-### Changed
-- Strike, Defend and every card that used to belong to the Mage except the fire and frost cards are now colorless: either hero can be offered them. Cards of your own hero are offered twice as often as colorless ones (it was 1.5 times).
-- Old saved runs from before this update cannot be continued; the game starts a new run instead.
+- The Cards table on the content page has a new "Resource" column right after "Cost", saying whether a card's cost is paid in Energy or Radiant Light (before, both showed just a number). There is a matching "Resource" filter beside the Owner filter, and the card detail panel now reads, for example, "cost 2 (Radiant Light)".
 
 ### Not fixed
 - Nothing was a bug fix in this batch.
 
 ### Checked
-- Unit tests and the full automated browser suite pass. Played in a real browser: the select screen, picking each hero, Continue skipping the select screen, a Paladin fight (hero power, Radiant Light gained, spent and carried to the next turn), checked against screenshots.
-- Not checked: touch screens; how the Paladin's numbers feel; balance (deliberately left alone).
+- Unit tests and the typecheck pass. Looked at the real content page in a browser: the new column, its position and its values (page text only; a screenshot could not be taken). The Resource filter was tested in code but not clicked in the browser.
 <!-- patchnotes:end -->
 
 Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.

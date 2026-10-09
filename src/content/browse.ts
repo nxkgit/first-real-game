@@ -45,12 +45,18 @@ export function sortRows(rows: readonly string[][], column: number, direction: '
 
 // ---------- cards ----------
 
+/** What a card's cost is paid in. The ids are stable (filters and any future API use them); the labels are for display. */
+export type CardResource = 'energy' | 'radiantLight';
+export const RESOURCE_LABELS: Record<CardResource, string> = { energy: 'Energy', radiantLight: 'Radiant Light' };
+
 /** One card as the browser shows it. Built from the registry; nothing here is stored. */
 export interface CardRecord {
   id: string;
   name: string;
   type: string;
   cost: number;
+  /** What `cost` (and `upCost`) is paid in. Always set: the game data leaves it out to mean energy. */
+  resource: CardResource;
   owner: string;
   inRewardPool: boolean;
   tags: string[];
@@ -88,6 +94,7 @@ export function cardRecord(card: CardDefinition, upgraded: CardDefinition | unde
     name: card.name,
     type: card.type,
     cost: card.cost,
+    resource: card.costResource ?? 'energy',
     owner: card.owner,
     inRewardPool: card.inRewardPool,
     tags: card.tags ?? [],
@@ -105,18 +112,21 @@ export interface CardFilters {
   type: string;
   /** A cost as text ("0", "1", ...), or '' for any. */
   cost: string;
+  /** A resource id ('energy', 'radiantLight'), or '' for any. */
+  resource: string;
   owner: string;
   tag: string;
   pool: 'any' | 'yes' | 'no';
 }
 
-export const NO_FILTERS: CardFilters = { query: '', type: '', cost: '', owner: '', tag: '', pool: 'any' };
+export const NO_FILTERS: CardFilters = { query: '', type: '', cost: '', resource: '', owner: '', tag: '', pool: 'any' };
 
 export function filterCards(records: readonly CardRecord[], f: CardFilters): CardRecord[] {
   return records.filter(
     (c) =>
       (f.type === '' || c.type === f.type) &&
       (f.cost === '' || String(c.cost) === f.cost) &&
+      (f.resource === '' || c.resource === f.resource) &&
       (f.owner === '' || c.owner === f.owner) &&
       (f.tag === '' || c.tags.includes(f.tag)) &&
       (f.pool === 'any' || (f.pool === 'yes') === c.inRewardPool) &&
@@ -129,13 +139,14 @@ export function distinct(values: readonly string[]): string[] {
   return [...new Set(values.filter((v) => v !== ''))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 }
 
-export const CARD_HEADERS = ['Name', 'Type', 'Cost', 'Text', 'Upgraded text', 'Upgraded cost', 'Owner', 'Reward pool', 'Tags', 'Exhaust', 'Scaling', 'Triggers'];
+export const CARD_HEADERS = ['Name', 'Type', 'Cost', 'Resource', 'Text', 'Upgraded text', 'Upgraded cost', 'Owner', 'Reward pool', 'Tags', 'Exhaust', 'Scaling', 'Triggers'];
 
 export function cardRow(c: CardRecord): string[] {
   return [
     c.name,
     c.type,
     String(c.cost),
+    RESOURCE_LABELS[c.resource],
     c.text,
     c.upText ?? '(none)',
     c.upCost === undefined ? '' : String(c.upCost),
