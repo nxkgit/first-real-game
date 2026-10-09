@@ -281,7 +281,8 @@ statuses, both `clearAtTurnEnd` (gone at the end of the turn):
   (`maxStacks`). Each attack *card* played while Fuming grants 1 Ignite after the card resolves
   (`grantsOnAttack`), once per card however many hits it has. Heating Up itself gives no Ignite.
 - **Ignite**: a stack counter; every hit of an attack deals `2^stacks` times damage (so 1x, 2x, 4x, 8x,
-  uncapped), multiplied with Strength, Weak, Empowered and Vulnerable like any other multiplier.
+  uncapped), multiplied with Strength, Weak, Empowered and Vulnerable like any other multiplier. Only
+  damage from attack cards is multiplied (a skill's or a trigger's damage is not).
 - **Scorching Wind** still grants Ignite (it is an attack) but its own damage ignores Ignite: a
   damage effect can list `ignoresStatuses: ['ignite']`; every other modifier still applies to it.
 - The live numbers on cards in hand and the Ignite badge tooltip ("Ignite N: your attacks deal 2^N x

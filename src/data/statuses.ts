@@ -95,6 +95,7 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
     name: 'Ignite',
     kind: 'intensity',
     clearAtTurnEnd: true,
+    attackCardsOnly: true,
     describe: (n) =>
       `Ignite ${n}: your attacks deal ${2 ** n}x damage (2^${n}). Does not apply to Scorching Wind's damage. Clears at the end of the turn.`,
     outgoingDamageMult: (stacks) => 2 ** stacks,

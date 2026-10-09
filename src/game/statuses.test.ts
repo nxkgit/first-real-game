@@ -395,6 +395,30 @@ describe('statuses', () => {
       expect(combat.previewCardEffect(SCORCH, SCORCH.effects![0], target)).toBe(10);
     });
 
+    it('Ignite only buffs damage from attack cards, not a skill\'s damage or a trigger\'s (user, 2026-10-09)', () => {
+      const SKILL_HIT: CardDefinition = {
+        id: 'skill-hit',
+        name: 'Skill Hit',
+        type: 'skill',
+        target: 'enemy',
+        cost: 0,
+        owner: 'test',
+        inRewardPool: false,
+        effects: [{ kind: 'damage', value: 10 }],
+      };
+      const combat = started([FUME_SELF, HIT, HIT, SKILL_HIT, HIT]);
+      play(combat, 'fume-self');
+      play(combat, 'hit');
+      play(combat, 'hit'); // Ignite 2
+      const before = combat.enemies[0].hp;
+      expect(combat.previewCardEffect(SKILL_HIT, SKILL_HIT.effects![0], combat.enemies[0])).toBe(10);
+      play(combat, 'skill-hit');
+      expect(combat.enemies[0].hp).toBe(before - 10); // not x4
+      expect(combat.player.statuses.ignite).toBe(2); // a skill is not an attack: no Ignite granted either
+      expect(combat.calcDamage(10, combat.player, combat.enemies[0], false)).toBe(10); // a trigger's damage
+      expect(combat.calcDamage(10, combat.player, combat.enemies[0], true)).toBe(40);
+    });
+
     it('Ignite and Fuming are not consumed by attacks, and both clear at the end of the turn', () => {
       const combat = started([FUME_SELF, HIT, HIT, HIT, HIT]);
       play(combat, 'fume-self');
