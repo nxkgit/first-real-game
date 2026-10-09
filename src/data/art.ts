@@ -17,7 +17,7 @@ export const ENEMY_ART: Readonly<Record<string, string>> = {
   'enemy-d': 'pixel-d',
   'elite-a': 'pixel-b',
   'elite-b': 'pixel-f',
-  'boss-a': 'pixel-c',
+  'boss-a': 'lava-dino', // the user's final boss art (2026-10-09)
 };
 
 /** On-screen height of an enemy picture at scale 1 (the pictures are 200px tall). */
@@ -33,7 +33,7 @@ export const RELIC_ICON: Readonly<Record<string, string>> = {
   'exhaust-token': 'potionGreen',
   'kill-token': 'dagger',
 };
-export const ICON_FILES = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger', 'coin', 'tome', 'wand', 'gemBlue'] as const;
+export const ICON_FILES = ['axe', 'heart', 'shield', 'potionRed', 'potionGreen', 'scroll', 'dagger', 'coin', 'tome', 'wand', 'gemBlue', 'campfire'] as const;
 
 /** Map stop kind -> icon in public/assets/map (the file is named after the kind). */
 export const MAP_ICON_KINDS: readonly MapNodeKind[] = ['combat', 'elite', 'rest', 'shop', 'event', 'boss'];

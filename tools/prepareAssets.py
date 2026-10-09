@@ -104,7 +104,58 @@ def build_paladin() -> None:
     print(f'paladin: {len(frames)} frames of {width}x{height}, frame time(s) in ms: {durations} (HERO_ART.paladin in src/data/art.ts must match)')
 
 
+def build_lava_dino() -> None:
+    """The final boss: public/assets/enemies/LavaDino.gif (1600x1000, 8 frames, pixel art drawn 8x too big)
+    is shrunk back to its native pixels and becomes one horizontal strip, pixel/lava-dino.png, every frame
+    cropped to the same box so it does not jitter. The GIF's 1000 ms frame time is an export default: the
+    game plays it faster (src/data/enemyArt.ts, entry lava-dino, must match the printed numbers)."""
+    path = os.path.join(OUT, 'enemies', 'LavaDino.gif')
+    if not os.path.exists(path):
+        print('skipped lava dino: no public/assets/enemies/LavaDino.gif')
+        return
+    gif = Image.open(path)
+    zoom = 8
+    frames = []
+    box = None
+    for i in range(gif.n_frames):
+        gif.seek(i)
+        frame = gif.convert('RGBA')
+        frame = frame.resize((frame.width // zoom, frame.height // zoom), Image.NEAREST)
+        frames.append(frame)
+        b = frame.getbbox()
+        if b:
+            box = b if box is None else (min(box[0], b[0]), min(box[1], b[1]), max(box[2], b[2]), max(box[3], b[3]))
+    assert box is not None, 'the lava dino GIF is empty'
+    width, height = box[2] - box[0], box[3] - box[1]
+    strip = Image.new('RGBA', (width * len(frames), height), (0, 0, 0, 0))
+    for i, frame in enumerate(frames):
+        strip.paste(frame.crop(box), (i * width, 0))
+    save(strip, 'pixel', 'lava-dino.png')
+    print(f'lava dino: {len(frames)} frames of {width}x{height} (enemyArt.ts lava-dino must match)')
+
+
+def build_campfire() -> None:
+    """The rest stop campfire: public/assets/icons/CampFire.gif (a single still frame) is trimmed to the
+    flame as icons/campfire.png (rest stop screen), and fitted to the 64px square map icon map/rest.png."""
+    path = os.path.join(OUT, 'icons', 'CampFire.gif')
+    if not os.path.exists(path):
+        print('skipped campfire: no public/assets/icons/CampFire.gif')
+        return
+    gif = Image.open(path)
+    gif.seek(0)
+    fire = gif.convert('RGBA')
+    fire = fire.crop(fire.getbbox())
+    save(fire, 'icons', 'campfire.png')
+    save(square_trim(fire).resize((64, 64), Image.LANCZOS), 'map', 'rest.png')
+
+
 def main() -> None:
+    if 'lavadino' in sys.argv[1:]:  # only the final boss, when the other raw packs are not at hand
+        build_lava_dino()
+        return
+    if 'campfire' in sys.argv[1:]:  # only the campfire (rest stop picture and map icon)
+        build_campfire()
+        return
     if 'paladin' in sys.argv[1:]:  # only the Paladin, when the other raw packs are not at hand
         build_paladin()
         return
@@ -124,6 +175,8 @@ def main() -> None:
         save(zip_image('kenney_background-elements-remastered.zip', f'Backgrounds/{file}.png').convert('RGB'), 'backgrounds', f'{name}.png')
     build_ashlands()
     build_paladin()
+    build_lava_dino()
+    build_campfire()  # after the map icons above: overwrites the pack's rest icon
 
     for name, file in PIXEL_SHEETS.items():
         save(zip_image('spritesheets.zip', f'/{file}.png'), 'pixel', f'{name}.png')

@@ -19,6 +19,9 @@ import {
   toggleDeckView,
 } from './ui';
 
+/** On-screen height of the campfire picture (between the title and the message). */
+const FIRE_DISPLAY_HEIGHT = 130;
+
 /** A rest stop: heal a fraction of max HP, or upgrade one card, then move on. */
 export class RestScene extends Phaser.Scene {
   private run!: RunState;
@@ -52,7 +55,7 @@ export class RestScene extends Phaser.Scene {
     });
 
     this.add.text(400, 100, 'Rest stop', { fontSize: '28px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
-    this.buildPlaceholderFire(400, 220);
+    this.buildFire(400, 220);
 
     const heal = this.run.restHealAmount;
     const fullHeal = Math.round(this.run.maxHp * REST_HEAL_FRACTION);
@@ -165,7 +168,27 @@ export class RestScene extends Phaser.Scene {
     this.picker = this.add.container(0, 0, [backdrop, title, left, arrow, right, confirm, back]).setDepth(100);
   }
 
-  /** Placeholder campfire from primitives: logs plus a flickering flame. */
+  /** The campfire picture (a still, so it gets a small code-driven flicker), or the drawn stand-in if it did not load. */
+  private buildFire(x: number, y: number): void {
+    if (!this.textures.exists('icon-campfire')) {
+      this.buildPlaceholderFire(x, y);
+      return;
+    }
+    const fire = this.add.image(x, y + 70, 'icon-campfire').setOrigin(0.5, 1);
+    const scale = FIRE_DISPLAY_HEIGHT / fire.height;
+    fire.setScale(scale);
+    this.tweens.add({
+      targets: fire,
+      scaleY: { from: scale * 0.98, to: scale * 1.03 },
+      scaleX: { from: scale * 1.01, to: scale * 0.99 },
+      duration: 380,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
+  /** Fallback campfire from primitives: logs plus a flickering flame. */
   private buildPlaceholderFire(x: number, y: number): void {
     const logs = this.add.graphics();
     logs.fillStyle(0x6b4a2a, 1);

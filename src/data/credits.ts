@@ -88,6 +88,22 @@ export const CREDITS: readonly Credit[] = [
     licence: 'Licence not yet confirmed',
   },
   {
+    usedFor: 'Final boss (animated lava dino)',
+    source: 'Lava dino (animated GIF)',
+    // PROVISIONAL: the user supplied the picture; its author, source page and licence are not known yet.
+    url: '',
+    author: 'Unknown (supplied by the project owner)',
+    licence: 'Licence not yet confirmed',
+  },
+  {
+    usedFor: 'Rest stop campfire',
+    source: 'Campfire (GIF)',
+    // PROVISIONAL: the user supplied the picture; its author, source page and licence are not known yet.
+    url: '',
+    author: 'Unknown (supplied by the project owner)',
+    licence: 'Licence not yet confirmed',
+  },
+  {
     usedFor: 'Background music',
     source: 'alex_089 on SoundCloud',
     url: 'https://soundcloud.com/alex_089_x',
