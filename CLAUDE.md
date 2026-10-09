@@ -46,7 +46,7 @@ Game *feel* cannot be verified by type-checking or unit tests alone. After any c
 
 ## Patch notes
 
-Whenever work is merged to live (`main`, which auto-deploys to GitHub Pages) and it changes anything a player or tester would notice — gameplay, balance numbers, cards/enemies/relics/events, UI, bug fixes — document it in the patch notes on the content site (`content.html`) as part of that same merge. Purely internal changes (refactors, tests, docs, tooling) with no player-visible effect don't need an entry. Write entries in plain language, newest first, dated, and say what changed rather than how. Bug-fix batches follow the entry format in `QA_PLAN.md` (Fixed / Not fixed / verification statement).
+Whenever work is merged to live (`main`, which auto-deploys to GitHub Pages) and it changes anything a player or tester would notice — gameplay, balance numbers, cards/enemies/relics/events, UI, bug fixes — add an entry to `PATCHNOTES.md` as part of that same merge (the content site's "patchnotes" section renders that file by itself), then run `npm run patchnotes:sync` to copy the newest entry into the README's "Latest changes" block. Purely internal changes (refactors, tests, docs, tooling) with no player-visible effect don't need an entry. Entries go newest first, dated, in plain language, saying what changed rather than how, in the existing format (Fixed / Not fixed / Checked); this applies to feature and balance merges as well as QA-mode bug batches.
 
 ## Keeping the design log current
 
