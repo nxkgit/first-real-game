@@ -15,11 +15,18 @@ export interface Credit {
 
 export const CREDITS: readonly Credit[] = [
   {
-    usedFor: 'Hero (idle, attack and death frames)',
-    source: 'Free Animated Fantasy Character Vector 2D',
-    url: 'https://opengameart.org/content/free-animated-fantasy-character-vector-2d',
-    author: 'rgsdev',
-    licence: 'CC-BY 4.0',
+    usedFor: 'Hero (dark-elf witch portraits)',
+    source: 'Free Dark Elf Pixel Art Asset Pack',
+    url: 'https://craftpix.net/freebies/free-dark-elf-pixel-art-asset-pack/',
+    author: 'craftpix.net team',
+    licence: 'UNCONFIRMED (craftpix freebie: check their licence page)',
+  },
+  {
+    usedFor: 'Pixel enemies (seven still pictures)',
+    source: 'Unknown pack, files named *Instagram_last.png',
+    url: 'https://www.instagram.com/',
+    author: 'UNKNOWN (source not yet found)',
+    licence: 'UNCONFIRMED',
   },
   {
     usedFor: 'Painted enemies (four characters)',
