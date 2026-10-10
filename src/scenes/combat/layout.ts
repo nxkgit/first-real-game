@@ -1,6 +1,19 @@
 export const HAND_Y = 515;
 /** Width the hand may spread across before the cards start to overlap. */
 export const HAND_AREA_WIDTH = 640;
+/** Space between neighbouring cards in the hand. */
+export const HAND_GAP = 10;
+
+/**
+ * How the hand sits in `HAND_AREA_WIDTH`: cards keep full size and a gap while they fit; a bigger
+ * hand shrinks every card so none overlaps another (issue #44). `step` is the distance between
+ * card centres. The hovered card is drawn larger, so a small card can still be read.
+ */
+export function handLayout(count: number, cardWidth: number): { scale: number; step: number } {
+  const scale = Math.min(1, (HAND_AREA_WIDTH - Math.max(0, count - 1) * HAND_GAP) / (Math.max(1, count) * cardWidth));
+  return { scale, step: cardWidth * scale + HAND_GAP };
+}
+
 export const DRAW_PILE_POS = { x: 40, y: 515 };
 export const DISCARD_PILE_POS = { x: 760, y: 515 };
 
