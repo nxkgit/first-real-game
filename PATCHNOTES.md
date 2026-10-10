@@ -2,6 +2,18 @@
 
 What changed in each batch of fixes, newest first. Written so playtesters can read them; issue numbers are for the maintainer. The procedure that produces these is `docs/QA_FIX_WORKFLOW.md`.
 
+## 2026-10-10 (fix commit 0be7c4a)
+
+### Fixed
+- #44 (minor fix): a big hand no longer piles up on itself. With 9 or 10 cards in hand, the cards used to overlap and their names and text were cut off. Now every card shrinks just enough to sit side by side, and the card under your mouse grows back to a readable size. Hands of 5 or fewer look exactly as before.
+
+### Not fixed
+- #46: could not reproduce. Tried: the rest stop screen on the current build in a real browser. The backdrop, the campfire picture and both buttons show, with no white screen. If it happens again, note which browser and device it was on.
+
+### Checked
+- Typecheck, 962 unit tests and the build pass, and a new test fails on the old hand layout and passes now. Played in a real browser: a full 10-card hand, hovering a card, and playing a card from it.
+- Not checked: touch screens. At 10 cards the small cards are hard to read until you point at one.
+
 ## 2026-10-09 (card picture slot)
 
 ### Added
