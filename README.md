@@ -7,17 +7,17 @@ A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built w
 The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
 
 <!-- patchnotes:start -->
-## 2026-10-09 (card picture slot)
+## 2026-10-10 (fix commit 0be7c4a)
 
-### Added
-- Cards now have a picture window along the top, showing a plain placeholder picture until real card art is made (each card can get its own picture later). A card whose text is too long to fit beside the picture (Heating Up) is drawn without it so the text stays readable; this is temporary and goes away once real card art exists.
+### Fixed
+- #44 (minor fix): a big hand no longer piles up on itself. With 9 or 10 cards in hand, the cards used to overlap and their names and text were cut off. Now every card shrinks just enough to sit side by side, and the card under your mouse grows back to a readable size. Hands of 5 or fewer look exactly as before.
 
 ### Not fixed
-- Nothing was a bug fix in this batch.
+- #46: could not reproduce. Tried: the rest stop screen on the current build in a real browser. The backdrop, the campfire picture and both buttons show, with no white screen. If it happens again, note which browser and device it was on.
 
 ### Checked
-- Typecheck, unit tests and the build pass. Played in a real browser: a hand of cards with and without the picture, and Heating Up's text staying inside its card.
-- Not checked: touch screens, the deck and reward screens' card layouts beyond the hand.
+- Typecheck, 962 unit tests and the build pass, and a new test fails on the old hand layout and passes now. Played in a real browser: a full 10-card hand, hovering a card, and playing a card from it.
+- Not checked: touch screens. At 10 cards the small cards are hard to read until you point at one.
 <!-- patchnotes:end -->
 
 Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.
