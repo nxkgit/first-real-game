@@ -35,7 +35,6 @@ import { PlayerView } from './combat/PlayerView';
 import { Targeting } from './combat/Targeting';
 import { Tooltips } from './combat/Tooltips';
 import {
-  HAND_AREA_WIDTH,
   DISCARD_PILE_POS,
   DRAW_PILE_POS,
   END_TURN_BUTTON,
@@ -45,6 +44,7 @@ import {
   PLAYER_X,
   PLAYER_Y,
   enemySlots,
+  handLayout,
 } from './combat/layout';
 
 interface TrackedCard {
@@ -539,8 +539,8 @@ export class CombatScene extends Phaser.Scene {
     this.discardCountText.setText(`${snapshot.discardPile}`);
     this.exhaustText.setText(`Exhausted: ${snapshot.exhaustPile}`).setVisible(snapshot.exhaustPile > 0);
     const hand = snapshot.hand;
-    // cards overlap when the hand is too wide for the screen (up to MAX_HAND_SIZE cards)
-    const step = hand.length > 1 ? Math.min(CARD_WIDTH + 10, (HAND_AREA_WIDTH - CARD_WIDTH) / (hand.length - 1)) : 0;
+    // a hand too wide for the screen (up to MAX_HAND_SIZE cards) shrinks its cards instead of overlapping them
+    const { scale: handScale, step } = handLayout(hand.length, CARD_WIDTH);
     const startX = 400 - (step * (hand.length - 1)) / 2;
 
     const seenIds = new Set<string>();
@@ -553,12 +553,14 @@ export class CombatScene extends Phaser.Scene {
       const canPlay = this.combat.canPlay(card);
 
       if (existing) {
-        this.tweens.add({ targets: existing.container, x: slotX, y: HAND_Y, duration: 220, ease: 'Cubic.easeOut' });
+        existing.container.setData('handScale', handScale);
+        this.tweens.add({ targets: existing.container, x: slotX, y: HAND_Y, scale: handScale, duration: 220, ease: 'Cubic.easeOut' });
         this.setCardPlayable(existing.container, canPlay);
       } else {
         const container = this.buildCardVisual(card, canPlay);
         container.setPosition(DRAW_PILE_POS.x, DRAW_PILE_POS.y);
         container.setScale(0.6);
+        container.setData('handScale', handScale);
         container.setAlpha(0);
         this.handContainer.add(container);
         this.handCards.set(card.instanceId, { container });
@@ -569,7 +571,7 @@ export class CombatScene extends Phaser.Scene {
             targets: container,
             x: slotX,
             y: HAND_Y,
-            scale: 1,
+            scale: handScale,
             alpha: targetAlpha,
             duration: 280,
             ease: 'Back.Out',
@@ -609,11 +611,13 @@ export class CombatScene extends Phaser.Scene {
     hitZone.on('pointerover', () => {
       if (this.targeting.isHolding(container)) return;
       this.handContainer.bringToTop(container);
-      this.tweens.add({ targets: container, y: HAND_Y - 22, scale: 1.06, duration: 120, ease: 'Sine.easeOut' });
+      // a card shrunk to fit a big hand grows past full size so it can be read
+      const base = container.getData('handScale') ?? 1;
+      this.tweens.add({ targets: container, y: HAND_Y - 22, scale: base < 1 ? 1.1 : 1.06, duration: 120, ease: 'Sine.easeOut' });
     });
     hitZone.on('pointerout', () => {
       if (this.targeting.isHolding(container)) return;
-      this.tweens.add({ targets: container, y: HAND_Y, scale: 1, duration: 120, ease: 'Sine.easeOut' });
+      this.tweens.add({ targets: container, y: HAND_Y, scale: container.getData('handScale') ?? 1, duration: 120, ease: 'Sine.easeOut' });
     });
     hitZone.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (this.combat.phase !== 'playerTurn' || pointer.rightButtonDown()) return;

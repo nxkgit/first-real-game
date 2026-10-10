@@ -98,7 +98,7 @@ export class Targeting {
     if (!held) return;
     this.clear();
     if (held.container.active) {
-      this.scene.tweens.add({ targets: held.container, y: HAND_Y, scale: 1, duration: 120, ease: 'Sine.easeOut' });
+      this.scene.tweens.add({ targets: held.container, y: HAND_Y, scale: held.container.getData('handScale') ?? 1, duration: 120, ease: 'Sine.easeOut' });
     }
   }
 
@@ -112,7 +112,7 @@ export class Targeting {
     if (!held) return;
     this.clear();
     if (!this.playCard(held.card, view.id)) {
-      this.scene.tweens.add({ targets: held.container, y: HAND_Y, scale: 1, duration: 120, ease: 'Sine.easeOut' });
+      this.scene.tweens.add({ targets: held.container, y: HAND_Y, scale: held.container.getData('handScale') ?? 1, duration: 120, ease: 'Sine.easeOut' });
     }
   }
 
