@@ -4,6 +4,8 @@ The procedure for analysing the open issues and fixing the batch the maintainer 
 
 ## When this applies
 
+First do the session-start check from `CLAUDE.md` (fetch, compare with `origin/main`). If the checkout is stale, report it and wait; this file may be out of date until the maintainer has updated the checkout.
+
 Only when the maintainer says "QA mode". No ticket list is needed: the trigger phrase is what allows you to read the issues. Without it, never start a fix run and never go looking through the issues for work.
 
 A run has two phases: **analysis** (interactive, you and the maintainer settle everything) and **the run** (autonomous, from the first branch to the final report).

@@ -22,3 +22,21 @@ Entry format: **Observed** / **Decision** (or **REJECTED**, with the reason) / *
 
 - **Decision:** REJECTED for now — the mode does not ask "should this be a hook or check instead of a rule?".
 - **Why:** The user wants to start with guidance only. Revisit by logging a new decision.
+
+## Session 2026-10-10
+
+### Session-start check that the checkout is current
+
+- **Observed:** The session opened on `hero-select`, 39 commits behind `origin/main`. Claude read the stale `CLAUDE.md` and QA workflow, which said QA mode needs a ticket list, and answered "needs input: ticket list" four times. The current docs say "qa mode" alone starts phase 1 (analyse every open issue). Nothing in the guidance said to check the checkout was current, and the background-job text says to ask before switching branches.
+- **Decision:** Added a short `CLAUDE.md` section plus a pointer in `docs/QA_FIX_WORKFLOW.md`: at session start only, `git fetch` and compare with `origin/main`; if on another branch or behind, say so first and report and wait.
+- **Why:** Stale docs silently change behaviour, and the user's own checkout should not be moved without them. Limited to session start to avoid constant checking.
+
+### REJECTED: Claude fast-forwarding a stale checkout itself
+
+- **Decision:** REJECTED. The rule is report and wait.
+- **Why:** Moving the user's checkout can disturb their work in progress; one question to them is cheaper.
+
+### REJECTED: re-checking before every command
+
+- **Decision:** REJECTED. Session start only.
+- **Why:** Over-checking adds noise; the observed failure happened at session start.

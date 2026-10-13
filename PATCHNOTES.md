@@ -2,20 +2,17 @@
 
 What changed in each batch of fixes, newest first. Written so playtesters can read them; issue numbers are for the maintainer. The procedure that produces these is `docs/QA_FIX_WORKFLOW.md`.
 
-## 2026-10-13 (Keeper of the Wild)
+## 2026-10-10 (fix commit 0be7c4a)
 
-### Added
-- A third hero, the **Keeper of the Wild**, on the hero select screen. It has the Mage's health and energy, a placeholder hero power (1 energy: gain 3 block) and ten placeholder cards.
-- **Animal forms.** Three of the Keeper's cards put it into a form. The form lasts until your next turn, or until you enter another form, and it changes the hero's picture. **Tortoise**: +3 Dexterity, -2 Strength. **Form A** (placeholder name): +3 Strength, -2 Dexterity. **Form B** (placeholder name): every card and your hero power draws 1 more card. Playing the form you are already in does not stack; the card does a different effect instead (Tortoise Form gives 8 block on entering, 10 if you were already a tortoise).
-- **Dexterity**: every block you gain is increased by it. Strength and Dexterity can now go below zero (block and damage never go below zero).
-- New pictures: the Paladin is now the black knight, and the Mage uses the Paladin's old picture. The Keeper has its own picture and an animated tortoise.
+### Fixed
+- #44 (minor fix): a big hand no longer piles up on itself. With 9 or 10 cards in hand, the cards used to overlap and their names and text were cut off. Now every card shrinks just enough to sit side by side, and the card under your mouse grows back to a readable size. Hands of 5 or fewer look exactly as before.
 
 ### Not fixed
-- Nothing was a bug fix in this batch. Forms B and A look like a recoloured Keeper until they get real pictures.
+- #46: could not reproduce. Tried: the rest stop screen on the current build in a real browser. The backdrop, the campfire picture and both buttons show, with no white screen. If it happens again, note which browser and device it was on.
 
 ### Checked
-- Typecheck, unit tests and the build pass. Played in a real browser: a Keeper fight with Form B (a 2-card draw drew 3), Tortoise (picture swapped, +3 Dexterity and -2 Strength badges, live card numbers changed, the enemy's 11 damage was absorbed by 11 block) and the form ending at the start of the next turn.
-- Not checked: touch screens, the Keeper's hero select portrait on small windows, sound.
+- Typecheck, 962 unit tests and the build pass, and a new test fails on the old hand layout and passes now. Played in a real browser: a full 10-card hand, hovering a card, and playing a card from it.
+- Not checked: touch screens. At 10 cards the small cards are hard to read until you point at one.
 
 ## 2026-10-09 (card picture slot)
 
