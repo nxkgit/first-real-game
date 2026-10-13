@@ -1,19 +1,19 @@
-import { RunState } from '../game/RunState';
-import type { FightTier, RunWorld } from '../game/RunState';
-import { generateActMap } from '../game/actMap';
-import type { MapNode, MapNodeKind, MapParams } from '../game/actMap';
-import { Rng } from '../game/rng';
-import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
-import { allDraftableCards, buildStarterDeck, getCard } from '../data/cards';
-import { getEnemy } from '../data/enemies';
-import { ACT_CONTENT, RUN_WORLD } from '../game/newRun';
-import { getRelic } from '../data/relics';
+import { RunState } from '../src/game/RunState';
+import type { FightTier, RunWorld } from '../src/game/RunState';
+import { generateActMap } from '../src/game/actMap';
+import type { MapNode, MapNodeKind, MapParams } from '../src/game/actMap';
+import { Rng } from '../src/game/rng';
+import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../src/model';
+import { allDraftableCards, buildStarterDeck, getCard } from '../src/data/cards';
+import { getEnemy } from '../src/data/enemies';
+import { ACT_CONTENT, RUN_WORLD } from '../src/game/newRun';
+import { getRelic } from '../src/data/relics';
 import { unitSeed } from './engine';
 import { runFight } from './fight';
 import { rngStartFromSeed, rngStartOf } from './fightCore';
 import { mergeMapParams } from './mapstats';
 import type { SkillLevel } from './skills';
-import { MAGE } from '../data/heroes/ids';
+import { MAGE } from '../src/data/heroes/ids';
 
 /**
  * The configurable whole-act simulator (the evidence toolkit's run model).

@@ -1,6 +1,6 @@
-import type { CombatState } from '../game/CombatState';
-import type { CardDefinition, CardInstance, Effect, EnemyState, Scaling } from '../model';
-import { MAX_HAND_SIZE } from '../data/tunables';
+import type { CombatState } from '../src/game/CombatState';
+import type { CardDefinition, CardInstance, Effect, EnemyState, Scaling } from '../src/model';
+import { MAX_HAND_SIZE } from '../src/data/tunables';
 
 /**
  * The `smart` bot's brain: a per-step ranking of every playable card (`smartChoices`), played

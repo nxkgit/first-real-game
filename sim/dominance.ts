@@ -1,5 +1,5 @@
-import { baseCards } from '../data/cards';
-import type { CardDefinition, Effect } from '../model';
+import { baseCards } from '../src/data/cards';
+import type { CardDefinition, Effect } from '../src/model';
 import { heading, table } from './report';
 import type { ExperimentResult } from './report';
 

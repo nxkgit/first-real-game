@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getEnemy } from '../data/enemies';
-import { Rng } from '../game/rng';
+import { getEnemy } from '../src/data/enemies';
+import { Rng } from '../src/game/rng';
 import { DUMMY, PLAY_CAP, combosExperiment, comboUniverse, dummyRun } from './combos';
 import { unitSeed } from './engine';
 import { runFight } from './fight';

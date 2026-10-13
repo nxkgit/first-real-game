@@ -1,6 +1,6 @@
-import { getEnemy } from '../data/enemies';
-import { PLAYER_MAX_HP } from '../data/tunables';
-import type { CardDefinition } from '../model';
+import { getEnemy } from '../src/data/enemies';
+import { PLAYER_MAX_HP } from '../src/data/tunables';
+import type { CardDefinition } from '../src/model';
 import { runFight } from './fight';
 import { rngStartFromSeed } from './fightCore';
 import type { SkillLevel } from './skills';

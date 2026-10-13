@@ -1,4 +1,4 @@
-import { Rng } from '../game/rng';
+import { Rng } from '../src/game/rng';
 import { createFight, rngStartFromSeed, startingHp } from './fightCore';
 import type { FightSpec, RngStart } from './fightCore';
 import { BOTS, endTurn } from './skills';

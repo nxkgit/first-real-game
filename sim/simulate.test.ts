@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { Rng } from '../game/rng';
-import { buildStarterDeck } from '../data/cards';
-import { ENEMY_A } from '../data/enemies';
-import { PLAYER_MAX_HP } from '../data/tunables';
+import { Rng } from '../src/game/rng';
+import { buildStarterDeck } from '../src/data/cards';
+import { ENEMY_A } from '../src/data/enemies';
+import { PLAYER_MAX_HP } from '../src/data/tunables';
 import { compareSummaries, playFight, playRun, simulateFight, simulateRuns } from './simulate';
 import type { SimOptions } from './simulate';
 

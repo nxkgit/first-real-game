@@ -1,7 +1,7 @@
-import type { CombatState } from '../game/CombatState';
-import { Rng } from '../game/rng';
-import type { CardInstance } from '../model';
-import { EMPOWERED_DAMAGE_MULT, HAND_SIZE } from '../data/tunables';
+import type { CombatState } from '../src/game/CombatState';
+import { Rng } from '../src/game/rng';
+import type { CardInstance } from '../src/model';
+import { EMPOWERED_DAMAGE_MULT, HAND_SIZE } from '../src/data/tunables';
 import { playBotTurn } from './bot';
 import { reconstruct } from './fightCore';
 import { smartChoices, threat } from './smart';

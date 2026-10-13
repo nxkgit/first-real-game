@@ -1,7 +1,7 @@
-import { CombatState } from '../game/CombatState';
-import { Rng } from '../game/rng';
-import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
-import { PLAYER_MAX_HP } from '../data/tunables';
+import { CombatState } from '../src/game/CombatState';
+import { Rng } from '../src/game/rng';
+import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../src/model';
+import { PLAYER_MAX_HP } from '../src/data/tunables';
 
 /**
  * Everything needed to build a fight from nothing, so any state of it can be rebuilt by replaying

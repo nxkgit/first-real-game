@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getCard } from '../data/cards';
+import { getCard } from '../src/data/cards';
 import { runCommand } from './commands';
 import { loopsExperiment } from './loops';
 import { applyAssignments, parseAssignments } from './tweak';

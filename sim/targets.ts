@@ -1,4 +1,4 @@
-import { PLAYER_MAX_HP } from '../data/tunables';
+import { PLAYER_MAX_HP } from '../src/data/tunables';
 import type { SkillLevel } from './skills';
 import type { Tier } from './suites';
 

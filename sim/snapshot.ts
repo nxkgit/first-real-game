@@ -1,8 +1,8 @@
-import { CARDS } from '../data/cards';
-import { ENEMIES } from '../data/enemies';
-import { ACT_CONTENT } from '../game/newRun';
-import { RELIC_POOL } from '../data/relics';
-import * as tunables from '../data/tunables';
+import { CARDS } from '../src/data/cards';
+import { ENEMIES } from '../src/data/enemies';
+import { ACT_CONTENT } from '../src/game/newRun';
+import { RELIC_POOL } from '../src/data/relics';
+import * as tunables from '../src/data/tunables';
 import { Evaluator, METRIC_IDS, METRICS } from './engine';
 import type { MetricId, Samples } from './engine';
 import { cardCandidates } from './experiments';

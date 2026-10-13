@@ -1,9 +1,9 @@
-import { baseCards } from '../data/cards';
-import { SYNERGY_CARDS } from '../data/neutral/synergy';
-import { getEnemy } from '../data/enemies';
-import { PLAYER_MAX_HP } from '../data/tunables';
-import { Rng } from '../game/rng';
-import type { CardDefinition, EnemyDefinition } from '../model';
+import { baseCards } from '../src/data/cards';
+import { SYNERGY_CARDS } from '../src/data/neutral/synergy';
+import { getEnemy } from '../src/data/enemies';
+import { PLAYER_MAX_HP } from '../src/data/tunables';
+import { Rng } from '../src/game/rng';
+import type { CardDefinition, EnemyDefinition } from '../src/model';
 import { unitSeed } from './engine';
 import { runFight } from './fight';
 import { createFight, rngStartFromSeed } from './fightCore';

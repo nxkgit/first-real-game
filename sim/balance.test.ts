@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { buildStarterDeck, getCard } from '../data/cards';
-import { ENEMIES, getEnemy } from '../data/enemies';
+import { buildStarterDeck, getCard } from '../src/data/cards';
+import { ENEMIES, getEnemy } from '../src/data/enemies';
 import { Evaluator } from './engine';
 import { runCommand } from './commands';
 import { runFight } from './fight';
@@ -10,11 +10,11 @@ import { compareSnapshots } from './snapshot';
 import type { Snapshot } from './snapshot';
 import { SKILL_LEVELS, BOTS, endTurn } from './skills';
 import type { FightContext } from './skills';
-import { Rng } from '../game/rng';
+import { Rng } from '../src/game/rng';
 import { flagOutliers, intervalOf, meanCI, pairedDiff, quantile, tCrit95, unitsNeeded, verdict, welchDiff, wilson } from './stats';
 import { actFights, withAdded, withReplaced } from './suites';
-import type { CardDefinition } from '../model';
-import { BOLT, STRIKE } from '../data/neutral/basics';
+import type { CardDefinition } from '../src/model';
+import { BOLT, STRIKE } from '../src/data/neutral/basics';
 
 describe('statistics helpers', () => {
   it('mean CI uses the t distribution', () => {

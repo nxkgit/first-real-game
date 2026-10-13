@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../model';
+import type { CardDefinition } from '../src/model';
 import { Evaluator, METRICS, METRIC_IDS } from './engine';
 import type { MetricId } from './engine';
 import { VERDICT_TEXT, heading, r6, table } from './report';

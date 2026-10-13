@@ -1,4 +1,4 @@
-import { PLAYER_MAX_HP } from '../data/tunables';
+import { PLAYER_MAX_HP } from '../src/data/tunables';
 import { compareRuns, runTable } from './evidenceRuns';
 import type { RunExpOptions } from './evidenceRuns';
 import { DEFAULT_RUN_POLICY, withPolicy } from './runsim';
