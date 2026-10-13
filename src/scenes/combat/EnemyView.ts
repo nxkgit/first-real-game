@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { CombatState } from '../../game/CombatState';
 import { intentIcons } from '../../game/intent';
 import type { IntentIcon } from '../../game/intent';
-import type { EnemyState } from '../../game/types';
+import type { EnemyState } from '../../model';
 import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';

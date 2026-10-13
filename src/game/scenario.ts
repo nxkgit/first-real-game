@@ -1,6 +1,6 @@
 import { CombatState } from './CombatState';
 import type { CombatSnapshot, CombatStats } from './CombatState';
-import type { CardDefinition, FormId, EnemyDefinition, HeroPowerDefinition, RelicDefinition, StatusId, Statuses } from './types';
+import type { CardDefinition, FormId, EnemyDefinition, HeroPowerDefinition, RelicDefinition, StatusId, Statuses } from '../model';
 import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';

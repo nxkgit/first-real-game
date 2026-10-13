@@ -3,7 +3,7 @@ import { SYNERGY_CARDS } from '../data/synergyCards';
 import { getEnemy } from '../data/enemies';
 import { PLAYER_MAX_HP } from '../data/tunables';
 import { Rng } from '../game/rng';
-import type { CardDefinition, EnemyDefinition } from '../game/types';
+import type { CardDefinition, EnemyDefinition } from '../model';
 import { unitSeed } from './engine';
 import { runFight } from './fight';
 import { createFight, rngStartFromSeed } from './fightCore';

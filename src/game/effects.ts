@@ -1,7 +1,7 @@
 ﻿import type { Deck } from './Deck';
 import type { CombatEventMap, DamageResult } from './CombatState';
 import type { IntentIcon } from './intent';
-import type { CardDefinition, CardInstance, Combatant, Effect, EffectKind, EnemyState, FormId, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
+import type { CardDefinition, CardInstance, Combatant, Effect, EffectKind, EnemyState, FormId, Scaling, ScaleSource, StatusId, TriggerOn } from '../model';
 import { STATUSES } from '../data/statuses';
 import { getCard } from '../data/cards';
 import { FORMS, describeForm, formLabel } from '../data/forms';

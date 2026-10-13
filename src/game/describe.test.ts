@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { cardText, describeEffect } from './describe';
 import { intentIcons } from './intent';
-import type { CardDefinition } from './types';
+import type { CardDefinition } from '../model';
 import { CARDS, MAGE, getCard, rewardPoolFor } from '../data/cards';
 import { ENEMY_A, ENEMY_B, ENEMY_C, ENEMY_D } from '../data/enemies';
 

@@ -1,6 +1,6 @@
 import { CombatState } from '../game/CombatState';
 import { Rng } from '../game/rng';
-import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../game/types';
+import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
 import { PLAYER_MAX_HP } from '../data/tunables';
 
 /**

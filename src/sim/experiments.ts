@@ -1,7 +1,7 @@
 import { baseCards, upgradedVersion } from '../data/cards';
 import { SYNERGY_CARDS } from '../data/synergyCards';
 import { Rng } from '../game/rng';
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 import { Evaluator, METRICS, METRIC_IDS } from './engine';
 import type { MetricId, Samples } from './engine';
 import { VERDICT_TEXT, bar, heading, r6, table } from './report';

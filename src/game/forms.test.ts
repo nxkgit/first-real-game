@@ -3,7 +3,7 @@ import { CombatState } from './CombatState';
 import { captureScenario, restoreScenario } from './scenario';
 import { Rng } from './rng';
 import { cardText } from './describe';
-import type { CardDefinition, EnemyDefinition, HeroPowerDefinition } from './types';
+import type { CardDefinition, EnemyDefinition, HeroPowerDefinition } from '../model';
 import { FORMS } from '../data/forms';
 import { DRUID_HERO } from '../data/heroes';
 import { PLACEHOLDER_FORM_A, PLACEHOLDER_FORM_B, PLACEHOLDER_TORTOISE_FORM } from '../data/druidCards';

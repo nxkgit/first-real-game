@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 
 // PLACEHOLDER synergy-test cards. They exist to exercise the synergy engine (scaling values,
 // multipliers, triggers, tags, exhaust, energy, self-damage) and give the simulator and tests

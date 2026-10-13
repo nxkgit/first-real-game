@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 import { SYNERGY_CARDS } from './synergyCards';
 import { MAGE_CARDS } from './mageCards';
 import { KEYWORD_CARDS } from './keywordCards';

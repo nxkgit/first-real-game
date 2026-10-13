@@ -1,4 +1,4 @@
-import type { StatusDefinition, StatusId } from '../game/types';
+import type { StatusDefinition, StatusId } from '../model';
 import {
   EMPOWERED_DAMAGE_MULT,
   FRAIL_BLOCK_MULT,

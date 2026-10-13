@@ -1,10 +1,10 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { STATUSES } from '../data/statuses';
 import { CARD_TYPES, EFFECT_KINDS, EVENT_OUTCOME_KINDS, RUN_EFFECT_KINDS, SCALE_SOURCES, STATUS_IDS, TRIGGER_EVENTS } from './vocabulary';
 
 // docs/CONTENT_GUIDE.md lists everything a content author can use. This test keeps that list honest:
-// the names in the guide's marked lists must be EXACTLY the names in src/game/types.ts (read as
+// the names in the guide's marked lists must be EXACTLY the names in the schema, src/model/ (read as
 // text), and the vocabulary tables the content check uses must match too. If you add an effect
 // kind, status, trigger event, scaling source or field and this test fails, update the marked list
 // in the guide (and src/content/vocabulary.ts, which also fails to compile until you do).
@@ -12,7 +12,11 @@ import { CARD_TYPES, EFFECT_KINDS, EVENT_OUTCOME_KINDS, RUN_EFFECT_KINDS, SCALE_
 // (checkouts on Windows may have CRLF line endings)
 const readText = (path: string): string => readFileSync(path, 'utf8').split('\r\n').join('\n');
 const guide = readText('docs/CONTENT_GUIDE.md');
-const types = readText('src/game/types.ts');
+// the schema is one file per entity (index.ts only re-exports them)
+const types = readdirSync('src/model')
+  .filter((f) => f.endsWith('.ts') && f !== 'index.ts')
+  .map((f) => readText(`src/model/${f}`))
+  .join('\n\n');
 
 /** The text between `<!-- names:KEY -->` and `<!-- /names -->`, as the first `backticked` name of each table row or bullet. */
 function guideNames(key: string): string[] {
@@ -33,7 +37,7 @@ function block(name: string): string {
   if (iface) return iface[1];
   const alias = types.match(new RegExp(`export type ${name} =([\\s\\S]*?)\\n\\n`));
   if (alias) return alias[1];
-  throw new Error(`types.ts has no ${name}`);
+  throw new Error(`src/model/ has no ${name}`);
 }
 
 /** Property names declared at the top level (two-space indent) of an interface. */
@@ -80,7 +84,7 @@ describe('the content guide matches the code', () => {
 
   it.each(lists)('lists exactly the real %s names', (key, fromCode) => {
     const inCode = fromCode();
-    expect(inCode.length, `could not read ${key} from types.ts`).toBeGreaterThan(0);
+    expect(inCode.length, `could not read ${key} from src/model`).toBeGreaterThan(0);
     const inGuide = guideNames(key);
     expect(sorted(inGuide), `names:${key} in docs/CONTENT_GUIDE.md`).toEqual(sorted(inCode));
   });
@@ -94,7 +98,7 @@ describe('the content guide matches the code', () => {
 });
 
 describe('the vocabulary tables match the code', () => {
-  it('cover exactly the union members in types.ts', () => {
+  it('cover exactly the union members in src/model', () => {
     expect(sorted(Object.keys(EFFECT_KINDS))).toEqual(sorted(unionKinds('Effect')));
     expect(sorted(Object.keys(SCALE_SOURCES))).toEqual(sorted(unionStrings('ScaleSource')));
     expect(sorted(Object.keys(TRIGGER_EVENTS))).toEqual(sorted(unionStrings('TriggerOn')));

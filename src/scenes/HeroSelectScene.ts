@@ -3,7 +3,7 @@ import { HEROES } from '../data/heroes';
 import { newRun } from '../data/run';
 import { useLayoutCamera } from '../display';
 import { heroPowerText } from '../game/describe';
-import type { HeroDefinition } from '../game/types';
+import type { HeroDefinition } from '../model';
 import { seedFromUrl } from '../session';
 import { addHeroPortrait, addScreenBackdrop } from './art';
 import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';

@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 
 // 'paladin' is not imported from cards.ts (circular import): same pattern as mageCards.ts.
 export const PALADIN = 'paladin';

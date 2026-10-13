@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 
 // 'druid' is not imported from cards.ts (circular import): same pattern as paladinCards.ts.
 export const DRUID = 'druid';

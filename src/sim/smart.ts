@@ -1,5 +1,5 @@
 import type { CombatState } from '../game/CombatState';
-import type { CardDefinition, CardInstance, Effect, EnemyState, Scaling } from '../game/types';
+import type { CardDefinition, CardInstance, Effect, EnemyState, Scaling } from '../model';
 import { MAX_HAND_SIZE } from '../data/tunables';
 
 /**

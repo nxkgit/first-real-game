@@ -1,7 +1,7 @@
 ﻿import { Deck } from './Deck';
 import { EventEmitter } from './EventEmitter';
 import { Rng } from './rng';
-import { PLAYER_ID } from './types';
+import { PLAYER_ID } from '../model';
 import { intentBlockOf, intentDamageOf, previewEffectValue, resolveEnemyEffect, resolvePlayerEffect } from './effects';
 import type { EffectHost, EnemyMoveOutcome } from './effects';
 import type {
@@ -23,7 +23,7 @@ import type {
   Statuses,
   Trigger,
   TriggerOn,
-} from './types';
+} from '../model';
 import { STATUSES } from '../data/statuses';
 import { FORMS, formLabel } from '../data/forms';
 import {

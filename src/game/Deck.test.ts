@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Deck } from './Deck';
-import type { CardDefinition } from './types';
+import type { CardDefinition } from '../model';
 
 function card(id: string): CardDefinition {
   return { id, name: id, type: 'skill', cost: 1, owner: 'test', inRewardPool: false };

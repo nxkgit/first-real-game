@@ -3,7 +3,7 @@ import { ASHLANDS, BACKGROUNDS, CARD_ART_IDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY
 import type { BackgroundName, HeroSheet } from '../data/art';
 import { ENEMY_ART_ENTRIES, sheetOf } from '../data/enemyArt';
 import type { EnemySheet } from '../data/enemyArt';
-import type { EnemyDefinition, FormId, HeroDefinition } from '../game/types';
+import type { EnemyDefinition, FormId, HeroDefinition } from '../model';
 import { buildGoblinCharacter } from './combat/drawings';
 
 // Loading and building the picture-based visuals (hero, enemies, map icons, icons, card border).

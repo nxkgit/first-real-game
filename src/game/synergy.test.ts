@@ -3,7 +3,7 @@ import { CombatState } from './CombatState';
 import type { CombatEventMap } from './CombatState';
 import { cardText, describeEffect, describeTrigger, relicText } from './describe';
 import { Rng } from './rng';
-import type { CardDefinition, EnemyDefinition, Effect, RelicDefinition, Trigger } from './types';
+import type { CardDefinition, EnemyDefinition, Effect, RelicDefinition, Trigger } from '../model';
 import { CARDS, allDraftableCards, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
 import { SYNERGY_CARDS } from '../data/synergyCards';

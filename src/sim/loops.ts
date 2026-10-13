@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 import { dummyRun, summarizeDeck } from './combos';
 import { heading, table } from './report';
 import type { ExperimentResult } from './report';

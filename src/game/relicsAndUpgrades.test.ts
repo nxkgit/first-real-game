@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
 import { cardText, describeOutcome, relicText } from './describe';
-import type { CardDefinition, EnemyDefinition } from './types';
+import type { CardDefinition, EnemyDefinition } from '../model';
 import { CARDS, MAGE, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';

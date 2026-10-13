@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { CombatState } from '../../game/CombatState';
-import type { FormId, HeroDefinition } from '../../game/types';
+import type { FormId, HeroDefinition } from '../../model';
 import { FORMS, describeForm, formLabel } from '../../data/forms';
 import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';

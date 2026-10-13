@@ -13,7 +13,7 @@ import type { FightContext } from './skills';
 import { Rng } from '../game/rng';
 import { flagOutliers, intervalOf, meanCI, pairedDiff, quantile, tCrit95, unitsNeeded, verdict, welchDiff, wilson } from './stats';
 import { actFights, withAdded, withReplaced } from './suites';
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 
 describe('statistics helpers', () => {
   it('mean CI uses the t distribution', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
-import type { CardDefinition, CardInstance, EnemyDefinition, EnemyMove } from './types';
+import type { CardDefinition, CardInstance, EnemyDefinition, EnemyMove } from '../model';
 
 // Test-only content, independent of the placeholder data in src/data so balance tweaks there
 // don't break these rule checks.

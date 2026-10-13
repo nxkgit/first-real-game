@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
 import { card, FOE } from './testHelpers';
 import { MAX_HAND_SIZE } from '../data/tunables';
-import type { EnemyDefinition } from './types';
+import type { EnemyDefinition } from '../model';
 
 const IDLE: EnemyDefinition = { ...FOE, maxHp: 999, movePattern: [{ name: 'Idle', effects: [] }] };
 

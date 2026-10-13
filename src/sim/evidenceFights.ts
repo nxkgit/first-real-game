@@ -1,4 +1,4 @@
-import type { CardDefinition, RelicDefinition } from '../game/types';
+import type { CardDefinition, RelicDefinition } from '../model';
 import { Rng } from '../game/rng';
 import { MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { getEnemy } from '../data/enemies';

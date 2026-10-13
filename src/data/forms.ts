@@ -1,4 +1,4 @@
-import type { FormDefinition, FormId } from '../game/types';
+import type { FormDefinition, FormId } from '../model';
 import { FORM_A_DEXTERITY, FORM_A_STRENGTH, FORM_B_DRAW_BONUS, TORTOISE_DEXTERITY, TORTOISE_STRENGTH } from './tunables';
 
 // The Druid's forms (user, 2026-10-13). A form is not a different character: it is an effect that adds or

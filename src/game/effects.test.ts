@@ -3,7 +3,7 @@ import { CombatState } from './CombatState';
 import { ALL_SCALE_SOURCES, EFFECTS, acceptsScaling, intentIconOf } from './effects';
 import { describeEffect } from './describe';
 import { intentIcons } from './intent';
-import type { Effect, EffectKind, EnemyDefinition } from './types';
+import type { Effect, EffectKind, EnemyDefinition } from '../model';
 import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';

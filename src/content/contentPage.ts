@@ -1,5 +1,5 @@
 import { describeEffect, describeOutcome, relicText } from '../game/describe';
-import type { EnemyMove } from '../game/types';
+import type { EnemyMove } from '../model';
 import { DEFAULT_MAP_PARAMS } from '../game/actMap';
 import { baseCards, upgradedVersion } from '../data/cards';
 import { ENEMIES } from '../data/enemies';

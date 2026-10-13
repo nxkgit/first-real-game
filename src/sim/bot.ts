@@ -1,5 +1,5 @@
 import type { CombatState } from '../game/CombatState';
-import type { CardInstance, EnemyState } from '../game/types';
+import type { CardInstance, EnemyState } from '../model';
 
 /**
  * A deliberately simple, greedy player used to measure the game, not to win it. Its results are

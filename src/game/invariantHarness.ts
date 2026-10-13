@@ -11,7 +11,7 @@ import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
 import { STATUSES } from '../data/statuses';
-import type { CardDefinition, CardInstance, EnemyDefinition, RelicDefinition } from './types';
+import type { CardDefinition, CardInstance, EnemyDefinition, RelicDefinition } from '../model';
 
 // ---------- small utilities ----------
 

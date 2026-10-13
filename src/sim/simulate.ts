@@ -1,7 +1,7 @@
 import type { FightTier, RunState } from '../game/RunState';
 import type { MapNode } from '../game/actMap';
 import { Rng } from '../game/rng';
-import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../game/types';
+import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
 import { PLAYER_MAX_HP, SHOP_CARD_PRICE } from '../data/tunables';
 import { buildStarterDeck } from '../data/cards';
 import { getEnemy } from '../data/enemies';

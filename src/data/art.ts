@@ -3,7 +3,7 @@
 // Files live in public/assets (built by tools/prepareAssets.py; sources in public/assets/CREDITS.md).
 
 import type { MapNodeKind } from '../game/actMap';
-import type { FormId } from '../game/types';
+import type { FormId } from '../model';
 import type { FightTier } from '../game/RunState';
 import { MAP_EARLY_FLOORS, MAP_LATE_FLOORS_FROM } from './tunables';
 

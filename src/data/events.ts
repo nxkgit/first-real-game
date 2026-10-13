@@ -1,4 +1,4 @@
-import type { EventDefinition } from '../game/types';
+import type { EventDefinition } from '../model';
 
 // PLACEHOLDER events: generic text and rough numbers, only to exercise the event system and its
 // outcomes. Real event writing is the user's (see CLAUDE.md).

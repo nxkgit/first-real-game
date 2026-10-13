@@ -5,7 +5,7 @@ import type { CombatEventMap } from './CombatState';
 import { cardText, describeEffect, relicText } from './describe';
 import { intentIcons } from './intent';
 import { Rng } from './rng';
-import type { CardDefinition, Effect, EnemyDefinition, HeroPowerDefinition, RelicDefinition, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
+import type { CardDefinition, Effect, EnemyDefinition, HeroPowerDefinition, RelicDefinition, Scaling, ScaleSource, StatusId, TriggerOn } from '../model';
 import golden from './fixtures/effectsGolden.json';
 
 /**

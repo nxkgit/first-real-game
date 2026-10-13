@@ -12,7 +12,7 @@ import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
 import { STATUSES } from '../data/statuses';
 import { ACT_CONTENT, RUN_WORLD } from '../data/run';
 import { REWARD_CARD_CHOICES } from '../data/tunables';
-import type { CardDefinition, Effect, EnemyDefinition } from './types';
+import type { CardDefinition, Effect, EnemyDefinition } from '../model';
 
 // Registry-wide property tests. Everything iterates the registries, so new content is covered
 // the moment it is registered.

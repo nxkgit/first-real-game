@@ -9,7 +9,7 @@ import { ACT_CONTENT, RUN_WORLD, newPlayableRun, newRun } from './run';
 import { KEYWORD_CARDS } from './keywordCards';
 import { generateActMap } from '../game/actMap';
 import { Rng } from '../game/rng';
-import type { Effect } from '../game/types';
+import type { Effect } from '../model';
 
 const effectsOf = (c: { effects?: Effect[]; onTurnStartEffect?: Effect }): Effect[] => [
   ...(c.effects ?? []),

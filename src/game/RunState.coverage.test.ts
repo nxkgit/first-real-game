@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { RunState } from './RunState';
 import type { MapNodeKind } from './actMap';
 import { Rng } from './rng';
-import type { EventDefinition, RelicDefinition } from './types';
+import type { EventDefinition, RelicDefinition } from '../model';
 import { POOL, STARTER, card, chainMap, world } from './testHelpers';
 import {
   ELITE_REWARD_GOLD,

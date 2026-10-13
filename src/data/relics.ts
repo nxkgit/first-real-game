@@ -1,4 +1,4 @@
-import type { RelicDefinition } from '../game/types';
+import type { RelicDefinition } from '../model';
 
 // PLACEHOLDER relics: simple, functional effects with plain descriptive names, to exercise the relic
 // system. Real relic design and names are the user's to author (see CLAUDE.md). Text is generated

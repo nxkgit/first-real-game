@@ -1,5 +1,5 @@
 import { getCard } from '../data/cards';
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 import { Evaluator, METRICS, METRIC_IDS } from './engine';
 import type { EvalConfig, MetricId } from './engine';
 import { contextDeck } from './experiments';

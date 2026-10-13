@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { CardDefinition, Effect } from '../game/types';
+import type { CardDefinition, Effect } from '../model';
 import { cardTagsText, cardText, relicText } from '../game/describe';
 import { lowerIsBetterFor } from '../game/effects';
 import type { RunNode, RunState } from '../game/RunState';

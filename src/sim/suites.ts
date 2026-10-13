@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 import { Rng } from '../game/rng';
 import { MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { SYNERGY_CARDS } from '../data/synergyCards';

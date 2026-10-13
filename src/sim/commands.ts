@@ -23,7 +23,7 @@ import { heading, table } from './report';
 import { actFights, deckFromSpec, parseFights, referenceDeckSets } from './suites';
 import type { DeckSet } from './suites';
 import { buildStarterDeck, getCard } from '../data/cards';
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 import type { CardSet } from './experiments';
 import { EVIDENCE_COMMANDS, EVIDENCE_USAGE, runEvidenceCommand } from './evidenceCommands';
 

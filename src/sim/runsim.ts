@@ -3,7 +3,7 @@ import type { FightTier, RunWorld } from '../game/RunState';
 import { generateActMap } from '../game/actMap';
 import type { MapNode, MapNodeKind, MapParams } from '../game/actMap';
 import { Rng } from '../game/rng';
-import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../game/types';
+import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
 import { MAGE, allDraftableCards, buildStarterDeck, getCard } from '../data/cards';
 import { getEnemy } from '../data/enemies';
 import { ACT_CONTENT, RUN_WORLD } from '../data/run';

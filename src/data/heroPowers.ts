@@ -1,4 +1,4 @@
-import type { HeroPowerDefinition } from '../game/types';
+import type { HeroPowerDefinition } from '../model';
 import { MAGE } from './cards';
 import { DRUID } from './druidCards';
 import { PALADIN } from './paladinCards';

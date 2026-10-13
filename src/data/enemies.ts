@@ -1,4 +1,4 @@
-import type { EnemyDefinition, EnemyMove } from '../game/types';
+import type { EnemyDefinition, EnemyMove } from '../model';
 
 // PLACEHOLDER enemies. HP/damage numbers and move patterns are rough stand-ins
 // to exercise the turn loop, intent telegraphing, and a short run with rising

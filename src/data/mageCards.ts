@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../game/types';
+import type { CardDefinition } from '../model';
 
 // 'mage' is not imported from cards.ts (circular import): see synergyCards.ts for the same pattern.
 const MAGE = 'mage';

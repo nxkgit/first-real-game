@@ -6,7 +6,7 @@ import type {
   HeroDefinition,
   RelicDefinition,
   RunEffect,
-} from './types';
+} from '../model';
 import type { ActMap, MapNode } from './actMap';
 import { Rng, randomSeed } from './rng';
 import {

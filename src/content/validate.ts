@@ -12,7 +12,7 @@ import type {
   RunEffect,
   StatusDefinition,
   Trigger,
-} from '../game/types';
+} from '../model';
 import { RADIANT_LIGHT_MAX } from '../data/tunables';
 import { EFFECT_KINDS, SCALE_SOURCES, TRIGGER_EVENTS } from './vocabulary';
 
