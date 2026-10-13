@@ -1,4 +1,5 @@
-import type { RelicDefinition } from '../game/types';
+import type { RelicDefinition } from '../model';
+import { createRegistry } from './registry';
 
 // PLACEHOLDER relics: simple, functional effects with plain descriptive names, to exercise the relic
 // system. Real relic design and names are the user's to author (see CLAUDE.md). Text is generated
@@ -53,17 +54,9 @@ export const KILL_TOKEN: RelicDefinition = {
 
 export const SYNERGY_RELICS: RelicDefinition[] = [EXHAUST_TOKEN, KILL_TOKEN];
 
-export const RELICS: Readonly<Record<string, RelicDefinition>> = Object.fromEntries(
-  [...ALL_RELICS, ...SYNERGY_RELICS].map((relic): [string, RelicDefinition] => [relic.id, relic])
-);
-
-if (Object.keys(RELICS).length !== ALL_RELICS.length + SYNERGY_RELICS.length) throw new Error('duplicate relic id');
-
-export function getRelic(id: string): RelicDefinition {
-  const relic = RELICS[id];
-  if (!relic) throw new Error(`unknown relic id: ${id}`);
-  return relic;
-}
+const relicTable = createRegistry('relic', [...ALL_RELICS, ...SYNERGY_RELICS]);
+export const RELICS: Readonly<Record<string, RelicDefinition>> = relicTable.byId;
+export const getRelic = relicTable.get;
 
 /** Relics that can be found during a run. */
 export const RELIC_POOL: RelicDefinition[] = ALL_RELICS;

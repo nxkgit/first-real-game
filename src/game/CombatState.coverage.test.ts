@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
 import { Deck } from './Deck';
 import { Rng } from './rng';
-import type { CardDefinition, CardInstance, EnemyDefinition, EnemyMove, RelicDefinition } from './types';
+import type { CardDefinition, CardInstance, EnemyDefinition, EnemyMove, RelicDefinition } from '../model';
 import { ENEMIES } from '../data/enemies';
 import { HAND_SIZE, MAX_ENERGY, MAX_HAND_SIZE, VULNERABLE_DAMAGE_MULT, WEAK_DAMAGE_MULT } from '../data/tunables';
 

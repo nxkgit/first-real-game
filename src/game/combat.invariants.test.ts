@@ -5,7 +5,7 @@ import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
 import { fuzzFight, pickOne, checkCombatInvariants, totalCards } from './invariantHarness';
-import type { CardDefinition, EnemyDefinition, RelicDefinition } from './types';
+import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
 
 // Seeded fuzzing of whole fights. Decks, enemies and relics are drawn from the registries, so
 // content added later is covered with no edits here.

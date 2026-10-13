@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { CardDefinition, EnemyDefinition, EventDefinition, RelicDefinition } from '../game/types';
+import type { CardDefinition, EnemyDefinition, EventDefinition, RelicDefinition } from '../model';
 import { countBySeverity, formatIssues, median, validateContent } from './validate';
 import type { ContentWorld, Issue } from './validate';
 import { realWorld } from './world';

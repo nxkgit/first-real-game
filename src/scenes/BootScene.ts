@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-import { useLayoutCamera } from '../display';
-import { loadSavedRun } from '../storage';
-import { addScreenBackdrop, preloadArt } from './art';
+import { useLayoutCamera } from '../app/display';
+import { loadSavedRun } from '../app/storage';
+import { addScreenBackdrop, preloadArt } from './artLoader';
 import { preloadMusic, startMusic } from '../audio/Music';
 import { toggleCredits } from './credits';
 import { addButton, addReportButton, addSettingsButton, enterCurrentNode, startNewRun } from './ui';

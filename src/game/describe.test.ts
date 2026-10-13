@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { cardText, describeEffect } from './describe';
 import { intentIcons } from './intent';
-import type { CardDefinition } from './types';
-import { CARDS, MAGE, getCard, rewardPoolFor } from '../data/cards';
+import type { CardDefinition } from '../model';
+import { CARDS, getCard, rewardPoolFor } from '../data/cards';
 import { ENEMY_A, ENEMY_B, ENEMY_C, ENEMY_D } from '../data/enemies';
+import { MAGE } from '../data/heroes/ids';
 
 function card(partial: Partial<CardDefinition>): CardDefinition {
   return { id: 'x', name: 'X', type: 'skill', cost: 1, owner: 'test', inRewardPool: false, ...partial };

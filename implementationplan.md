@@ -31,7 +31,7 @@ Creative/aesthetic/narrative content (hero identity, art, flavor, names) is auth
 A short linear sequence of a few fights plus non-combat nodes, deployed somewhere shareable for friend playtesting.
 
 **Decided and built (2026-10-06), all numbers provisional:**
-- **Run skeleton:** a fixed linear path — fight, fight, rest, fight (`src/data/run.ts`). HP, deck, and gold carry between fights. Losing any fight ends the run; winning the last one wins it. Run-end screen offers a new run.
+- **Run skeleton:** a fixed linear path — fight, fight, rest, fight (`src/game/newRun.ts`). HP, deck, and gold carry between fights. Losing any fight ends the run; winning the last one wins it. Run-end screen offers a new run.
 - **Reward after each won fight (except the last):** pick 1 of 3 cards from a reward pool, *or* take gold. Gold is banked and shown but has nothing to spend on yet — the shop is still deferred, and gold's value vs. a card is still an open question.
 - **Rest stop:** heals 30% of max HP (capped at max), then moves on.
 - **Placeholder content:** Enemies A/B/C with rising difficulty (same placeholder drawing, different colors) and a 7-card reward pool built only from the existing damage/block/draw effects. Final cards/enemies are the user's to design.
@@ -114,11 +114,11 @@ Decided-without-asking calls the user didn't specify are logged in `DESIGN_LOG.m
 
 Each hero can have one **hero power**: a fixed ability outside the hand (never drawn, discarded or
 exhausted), usable once per the player's turn for its energy cost, from its own button. This is new
-engine surface (`HeroPowerDefinition` in `game/types.ts`, `CombatState.useHeroPower` /
+engine surface (`HeroPowerDefinition` in `model/`, `CombatState.useHeroPower` /
 `canUseHeroPower`), separate from Power *cards* (which stay in play and act every turn once played).
 It answers the open item from HANDOFF.md ("each hero gets one ability usable once per turn").
 
-The Mage's power (`src/data/heroPowers.ts`; display name "Hero Power" — a real name is the user's to
+The Mage's power (`src/data/heroes/<hero>/power.ts`; display name "Hero Power" — a real name is the user's to
 give it): **1 cost, for the next 2 turns gain 1 extra energy at the start of your turn.** Built as a
 new generic effect, `gainEnergizedTurns`, so the mechanic is available to any future card or power,
 not special-cased to this one button.
@@ -147,7 +147,7 @@ once). A stunned enemy skips its next move without its intent advancing, so it s
 and then performs — the same move once the stun wears off. The enemy's intent icon does not yet show
 that a stun is pending (a known UI gap; the player only learns from the combat log when it happens).
 
-### The 20 cards (`src/data/mageCards.ts`)
+### The 20 cards (`src/data/heroes/mage/cards.ts`)
 
 All in the Mage's reward pool. Where the user wrote "X" for a value, or left a cost or effect
 unspecified, a placeholder was chosen and is flagged in the file's comments; two answers came from
@@ -223,8 +223,8 @@ a balance/design decision on the user's behalf).
   absorbs normally first); consumed one stack at a time. Wired into both `dealDamage` (enemy hits and
   player-dealt damage) and the `loseHp` effect (self-damage cards), which previously had no shared path.
 
-**Demo cards:** `src/data/keywordCards.ts`, one "Test: ..." card per keyword (7 total), same pattern
-as `synergyCards.ts` — `owner: 'neutral'`, `inRewardPool: false`, reachable via the `?dev` panel's
+**Demo cards:** `src/data/neutral/keyword.ts`, one "Test: ..." card per keyword (7 total), same pattern
+as `neutral/synergy.ts` — `owner: 'neutral'`, `inRewardPool: false`, reachable via the `?dev` panel's
 "Add card" dropdown and the scenario system, registered as known test cards (`testCardIds` in
 `content/world.ts`) so the content checker treats them as intentionally unreachable rather than a
 content bug.
@@ -299,7 +299,7 @@ Planned in an explicit planning-mode session, then built the same day (full back
 player-drafted starting deck, on top of a small generalized card-typing addition that also sets up
 future heroes/archetypes. `buildStarterDeck()` itself is unchanged and still lives in `data/cards.ts`
 as the simulator/balance toolkit's reference starter deck (and as a test convenience, `newPlayableRun`
-in `data/run.ts`) — the live game simply no longer calls it directly.
+in `game/newRun.ts`) — the live game simply no longer calls it directly.
 
 **Mechanic:** the **New Run** button (and a fresh boot with no save) no longer jumps straight to the
 map. `RunState` gets a new `'draft'` phase: an intro screen (`DraftIntroScene`, styled like the
@@ -323,7 +323,7 @@ save is discarded like any other outdated save — never a crash).
 `ALL_CARDS` (`data/cards.ts`) is now `inStarterPool: true`, and the three basics that were
 starter-only before (Strike, Defend, Focus — Bolt was already in the reward pool) are now
 `inRewardPool: true` as well, so the reward pool grew from 51 to **54** cards. **Judgment call,
-documented rather than asked:** the 7 engine-only "Test: ..." cards in `keywordCards.ts` are
+documented rather than asked:** the 7 engine-only "Test: ..." cards in `neutral/keyword.ts` are
 deliberately left out of both pools — they are demonstration fixtures for Innate/Retain/Ethereal/
 Buffer/etc. (see "Keyword mechanics" below), never meant to be real player-facing content, and
 including them would silently promote test fixtures to shipped content. `buildUpgraded` (which
@@ -361,7 +361,7 @@ grown reward pool (`npm run balance:baseline`/`balance:report`), no numbers tune
 
 One theme track plays through the whole game. The track is the user's choice and is not Claude's to name or replace.
 
-- **Settings.** `musicVolume` (0 to 1, default 0.5) joins `Settings` in `src/settings.ts`; missing values fall back to the default, so the storage key stays `v1`. The Settings panel gets a "Music" row (cycling 0/25/50/75/100%); the existing "Volume" row is relabeled "Effects volume". The existing Sound On/Off toggle (`muted`) mutes music as well.
+- **Settings.** `musicVolume` (0 to 1, default 0.5) joins `Settings` in `src/app/settings.ts`; missing values fall back to the default, so the storage key stays `v1`. The Settings panel gets a "Music" row (cycling 0/25/50/75/100%); the existing "Volume" row is relabeled "Effects volume". The existing Sound On/Off toggle (`muted`) mutes music as well.
 - **Playback.** `src/audio/Music.ts` owns a single looping track through Phaser's sound manager, loaded in `BootScene.preload` beside `preloadArt`. It starts once (a guard makes repeat calls do nothing) and carries across scene changes. Browsers block audio until the first click or key press, so it begins then. It follows `onSettingsChange`. Skipped under `?e2e` so the browser tests are unaffected.
 - **Fade and loop.** Fade-in on start, about 2 s (`tunables.ts`, provisional). The track is not made to loop cleanly; it hard-loops with an audible jump, to improve later.
 - **Credits.** An entry for alex_089 in `src/data/credits.ts` and `public/assets/CREDITS.md` (a test keeps them in step). Needs the licence from the user first.
@@ -369,14 +369,14 @@ One theme track plays through the whole game. The track is the user's choice and
 
 ## Multiple heroes and hero selection (planned and built 2026-10-09)
 
-**Status: built** on branch `hero-select` (not yet merged). Where things live: `src/data/heroes.ts` (the registry and the stats), `src/data/paladinCards.ts` (10 placeholder cards), `PALADIN_HERO_POWER` in `heroPowers.ts`, `HeroSelectScene`, `worldFor(heroId)` and `newRun(seed, heroId)` in `data/run.ts`, `HERO_ART` in `data/art.ts`, Radiant Light in `CombatState` (`radiantLight`, `costResource`, the `gainRadiantLight` effect). Tests: `data/heroes.test.ts`, `game/radiantLight.test.ts`, `e2e/heroselect.e2e.ts`. The details below are the plan as decided; where building filled a gap it is noted in `DESIGN_LOG.md`.
+**Status: built** on branch `hero-select` (not yet merged). Where things live: `src/data/heroes/index.ts` (the registry and the stats), `src/data/heroes/paladin/cards.ts` (10 placeholder cards), `PALADIN_HERO_POWER` in `heroes/<hero>/power.ts`, `HeroSelectScene`, `worldFor(heroId)` and `newRun(seed, heroId)` in `game/newRun.ts`, `HERO_ART` in `data/art.ts`, Radiant Light in `CombatState` (`radiantLight`, `costResource`, the `gainRadiantLight` effect). Tests: `data/heroes.test.ts`, `game/radiantLight.test.ts`, `e2e/heroselect.e2e.ts`. The details below are the plan as decided; where building filled a gap it is noted in `DESIGN_LOG.md`.
 
 Planned with the user in an explicit planning session; reasoning in `DESIGN_LOG.md` "Multiple heroes and hero selection". The second hero is the **Paladin**. Hero identity is the user's: the docs name only its archetypes (Crusader = offense, Life Binder = defense, `docs/classbrainstorming.md`), so everything Paladin below is clearly-marked placeholder content that exists to prove the plumbing.
 
 ### Decided
 
 - **`HeroDefinition` record and registry** (the long-deferred item from HANDOFF.md). It holds: id, display name, base stats (max HP, energy per turn), the hero power (**every hero has one; not optional**), the hero's own resource (see below), the art entry, and the select-screen text. It does not hold card lists: cards keep pointing at their hero through `owner`.
-- **Card ownership.** `owner` is a hero id or `'neutral'`; "colorless" in conversation means `'neutral'`, and the code name stays. **Strike, Defend and every other existing non-fire/frost card (the 14 originals in `cards.ts` and the 20 synergy placeholders) become `'neutral'`.** Mage owns only its 20 fire/frost cards (`mageCards.ts`). **Strike and Defend are shared** (one card each, colorless), because the starter-deck draft means a hero no longer needs a block of basics (the user wants to move away from "start with N Strikes and Defends").
+- **Card ownership.** `owner` is a hero id or `'neutral'`; "colorless" in conversation means `'neutral'`, and the code name stays. **Strike, Defend and every other existing non-fire/frost card (the 14 originals in `cards.ts` and the 20 synergy placeholders) become `'neutral'`.** Mage owns only its 20 fire/frost cards (`heroes/mage/cards.ts`). **Strike and Defend are shared** (one card each, colorless), because the starter-deck draft means a hero no longer needs a block of basics (the user wants to move away from "start with N Strikes and Defends").
 - **Pools.** A hero's reward pool, shop stock and starter-draft pool = its own cards + `'neutral'` cards (`rewardPoolFor` / `starterPoolFor` already work this way). The same `HERO_CARD_WEIGHT` applies for every hero, **raised from 1.5:1 to 2:1** (user, 2026-10-09, after the consequence below was flagged): with so many cards now colorless, Mage-owned cards are a smaller share of Mage's pool than before. The starter draft stays uniform, as before.
 - **Colorless cards may not depend on a hero-only resource or status** (Temperature, Radiant Light, Freeze). A content-check rule should enforce it.
 - **The run knows its hero.** `RunState.heroId`; `RunWorld` is built per hero (pools, hero power); `CombatScene` takes the hero power and base stats from the run instead of the hardcoded `MAGE_HERO_POWER`; scenarios/bug-report snapshots carry the hero id so a loaded snapshot restores the right hero. Anything that offers "a card" or "a random card" (rewards, shop, events) uses the run's hero pool. Save format gets `heroId` and the version bumps 3 to 4 (old saves are discarded, never a crash).
@@ -434,9 +434,9 @@ Planned with the user in an explicit planning session; reasoning in `DESIGN_LOG.
 
 ## Druid and animal forms (planned and built 2026-10-13)
 
-The third hero, **Keeper of the Wild** (id `druid`): Mage numbers, no resource, hero power "1 energy: gain 3 block" (placeholder), 10 placeholder cards (`src/data/druidCards.ts`). The hero's mechanic is **animal forms**, a learning-purposes build the user may or may not keep. Reasoning and every decision: `DESIGN_LOG.md` Session 5; how to add a form: `docs/CONTENT_GUIDE.md` "Druid forms".
+The third hero, **Keeper of the Wild** (id `druid`): Mage numbers, no resource, hero power "1 energy: gain 3 block" (placeholder), 10 placeholder cards (`src/data/heroes/druid/cards.ts`). The hero's mechanic is **animal forms**, a learning-purposes build the user may or may not keep. Reasoning and every decision: `DESIGN_LOG.md` Session 5; how to add a form: `docs/CONTENT_GUIDE.md` "Druid forms".
 
-- A form is an effect (`enterForm {form, onEnter, ifAlready}`) that adds or removes Strength and Dexterity (data in `src/data/forms.ts`, numbers in `tunables.ts`) and swaps the hero picture (`HERO_ART.druid.forms`). One at a time, entered only by cards, ended at the start of the player's next turn or when another form is entered. Entering the form you are in changes nothing and resolves `ifAlready`.
+- A form is an effect (`enterForm {form, onEnter, ifAlready}`) that adds or removes Strength and Dexterity (data in `src/data/heroes/druid/forms.ts`, numbers in `tunables.ts`) and swaps the hero picture (`HERO_ART.druid.forms`). One at a time, entered only by cards, ended at the start of the player's next turn or when another form is entered. Entering the form you are in changes nothing and resolves `ifAlready`.
 - Forms: Tortoise (+3 Dexterity, -2 Strength), Form A (+3 Strength, -2 Dexterity), Form B (card and hero-power draws draw 1 more). Tortoise has its own animated picture; A and B are tinted stand-ins.
 - New engine surface: the Dexterity status (`blockAdd`), `allowNegative` on Strength and Dexterity (negative stacks; block and damage floored at 0), `CombatState.form`, the `formChanged` event, `form` in scenarios and snapshots.
 - Not built: a scaling source for "in a form", a form-related hero power, real art or animals for A and B.

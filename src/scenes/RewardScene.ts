@@ -3,8 +3,8 @@ import type { RunState } from '../game/RunState';
 import { relicText } from '../game/describe';
 import { Sfx } from '../audio/Sfx';
 import { STARTER_DECK_SIZE } from '../data/tunables';
-import { addScreenBackdrop } from './art';
-import { useLayoutCamera } from '../display';
+import { addScreenBackdrop } from './artLoader';
+import { useLayoutCamera } from '../app/display';
 import {
   CARD_HEIGHT,
   CARD_WIDTH,

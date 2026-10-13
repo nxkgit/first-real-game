@@ -1,4 +1,5 @@
-import type { EnemyDefinition, EnemyMove } from '../game/types';
+import type { EnemyDefinition, EnemyMove } from '../model';
+import { createRegistry } from './registry';
 
 // PLACEHOLDER enemies. HP/damage numbers and move patterns are rough stand-ins
 // to exercise the turn loop, intent telegraphing, and a short run with rising
@@ -99,14 +100,6 @@ export const BOSS_A: EnemyDefinition = {
 
 const ALL_ENEMIES: EnemyDefinition[] = [ENEMY_A, ENEMY_B, ENEMY_C, ENEMY_D, ELITE_A, ELITE_B, BOSS_A];
 
-export const ENEMIES: Readonly<Record<string, EnemyDefinition>> = Object.fromEntries(
-  ALL_ENEMIES.map((enemy): [string, EnemyDefinition] => [enemy.id, enemy])
-);
-
-if (Object.keys(ENEMIES).length !== ALL_ENEMIES.length) throw new Error('duplicate enemy id in ALL_ENEMIES');
-
-export function getEnemy(id: string): EnemyDefinition {
-  const enemy = ENEMIES[id];
-  if (!enemy) throw new Error(`unknown enemy id: ${id}`);
-  return enemy;
-}
+const enemyTable = createRegistry('enemy', ALL_ENEMIES);
+export const ENEMIES: Readonly<Record<string, EnemyDefinition>> = enemyTable.byId;
+export const getEnemy = enemyTable.get;

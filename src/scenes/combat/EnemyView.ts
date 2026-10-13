@@ -2,12 +2,12 @@ import Phaser from 'phaser';
 import type { CombatState } from '../../game/CombatState';
 import { intentIcons } from '../../game/intent';
 import type { IntentIcon } from '../../game/intent';
-import type { EnemyState } from '../../game/types';
+import type { EnemyState } from '../../model';
 import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { ENEMY_Y, INTENT_SIZE, INTENT_Y } from './layout';
-import { addIcon, buildEnemySprite, isPixelEnemy, playEnemyAttack, playEnemyDeath } from '../art';
+import { addIcon, buildEnemySprite, isPixelEnemy, playEnemyAttack, playEnemyDeath } from '../artLoader';
 import { addIdleBob, drawArrow, drawShield, drawSword } from './drawings';
 
 const NAME_Y = 130;

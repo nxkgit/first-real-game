@@ -1,6 +1,6 @@
 # Synergy content: balance findings (October 2026)
 
-First real analysis of the synergy engine's placeholder content with the balance toolkit. **Everything measured here is placeholder** (the cards in `src/data/synergyCards.ts`, the enemies, the reward pool, every number). These are findings about the numbers as they stand and about the engine's mechanics, meant to show where the process points. Nothing here is a design decision; the proposals in section 10 are for the designer to accept, change or reject, and nothing in `src/data` was changed.
+First real analysis of the synergy engine's placeholder content with the balance toolkit. **Everything measured here is placeholder** (the cards in `src/data/neutral/synergy.ts`, the enemies, the reward pool, every number). These are findings about the numbers as they stand and about the engine's mechanics, meant to show where the process points. Nothing here is a design decision; the proposals in section 10 are for the designer to accept, change or reject, and nothing in `src/data` was changed.
 
 - Date: 2026-10-07. Code: branch `auto/balance-synergy` at commit `fdde0fa`. Content fingerprint `ef2efd31` (`balance/baselines/baseline.json`).
 - Rules in force: powers stay in play after being played, hand capped at 10, combat-start block survives turn 1 (the three rule changes since the toolkit was first written).
@@ -20,7 +20,7 @@ First real analysis of the synergy engine's placeholder content with the balance
 
 ## 2. The smart bot and the synergy mechanics
 
-What it does now (`src/sim/smart.ts`; heuristics over `CombatState`'s public API only, deterministic):
+What it does now (`sim/smart.ts`; heuristics over `CombatState`'s public API only, deterministic):
 
 - energy gain before spending (Cull-style cards only when the energy is needed, since they exhaust a random card);
 - Empowered only when there is a hit to put it on, and then on the biggest hit, not a cheap one;
@@ -41,7 +41,7 @@ Evidence, per synergy deck: damage dealt to a never-dying Dummy in 5 turns (100 
 | syn-combo | 129 [125, 134] | 141 [137, 144] | 185 [180, 189] |
 | syn-mixed (first sample) | 78 [76, 81] | 101 [99, 103] | 111 [110, 113] |
 
-(`npm run balance -- deck --set syn-tag --fights enemy-d --seeds 100 --skills random,greedy,smart --turns 5`.) Tests in `src/sim/smart.test.ts` pin the behaviours: a hand of two Prime A, Tag A Payoff, Strike and Defend deals 19 with `smart` and less with `greedy`; Empowered lands on the Bolt (27 total); Cull is played only when the hand needs the energy; Blood Strike is refused at 6 HP facing 8 damage and played at 40 HP; `smart` out-damages `greedy` by 20% on the combo deck and 15% on the tag deck, and wins the exhaust deck at least as often.
+(`npm run balance -- deck --set syn-tag --fights enemy-d --seeds 100 --skills random,greedy,smart --turns 5`.) Tests in `sim/smart.test.ts` pin the behaviours: a hand of two Prime A, Tag A Payoff, Strike and Defend deals 19 with `smart` and less with `greedy`; Empowered lands on the Bolt (27 total); Cull is played only when the hand needs the energy; Blood Strike is refused at 6 HP facing 8 damage and played at 40 HP; `smart` out-damages `greedy` by 20% on the combo deck and 15% on the tag deck, and wins the exhaust deck at least as often.
 
 Against the previous `smart` (measured during development, paired, 9 fights x 30 seeds per deck; the old bot is not kept in the repo): identical on the starter deck by construction; HP lost -3.0 [-3.5, -2.6] in the mid decks and -1.5 [-1.9, -1.1] in the late ones; -2.1 [-2.8, -1.4] on syn-combo and -0.8 on syn-tag; and -18.0 [-20.4, -15.6] HP with +27.8 points of win rate on syn-exhaust (the Quick Draw stall).
 
@@ -49,7 +49,7 @@ Against the previous `smart` (measured during development, paired, 9 fights x 30
 
 ## 3. Where the fights fall against the provisional bands
 
-Mid reference deck (reward-pool cards only; the bands apply to this set), 3 sampled decks x 100 seeds per fight. "ok / LOW / HIGH" are the toolkit's flags against `src/sim/targets.ts`; the win flag is for the bot named in the column.
+Mid reference deck (reward-pool cards only; the bands apply to this set), 3 sampled decks x 100 seeds per fight. "ok / LOW / HIGH" are the toolkit's flags against `sim/targets.ts`; the win flag is for the bot named in the column.
 
 | fight | tier | smart: win | HP lost (won) | turns | random: win | greedy: win |
 | --- | --- | --- | --- | --- | --- | --- |

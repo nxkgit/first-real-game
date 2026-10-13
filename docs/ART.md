@@ -9,10 +9,10 @@ assets/                       raw packs (zips, pngs). GIT-IGNORED: never committ
    |  python tools/prepareAssets.py        (needs Pillow: pip install pillow)
    v
 public/assets/                only the files the game uses, resized/cropped. COMMITTED, served by the site
-   |  loaded once in BootScene.preload() -> preloadArt() in src/scenes/art.ts
+   |  loaded once in BootScene.preload() -> preloadArt() in src/scenes/artLoader.ts
    v
 Phaser texture cache          keys: hero-<id>, enemy-<name>, map-<kind>, icon-<name>, ui-border, bg-<name>
-   |  drawn through the helpers in src/scenes/art.ts, chosen by the data in src/data/art.ts
+   |  drawn through the helpers in src/scenes/artLoader.ts, chosen by the data in src/data/art.ts
    v
 screens
 ```
@@ -20,7 +20,7 @@ screens
 - **Raw packs** live in `assets/` at the repository root (not `public/`, which would publish them). `.gitignore` excludes `/assets/`, so a fresh clone has none; the committed `public/assets/` is all the game needs to run. You only need the raw packs to rebuild.
 - **`tools/prepareAssets.py`** reads the zips in `assets/` directly (no unzipping needed) and writes `public/assets/`. It trims and downsizes (enemy pictures are capped at 200 px tall), cuts the four painted characters out of `characters.png`, and packs the hero's frames into one strip. The dictionaries at the top of the script say which pack file feeds which output (`MAP_ICONS`, `ICONS`, `BACKGROUNDS`, `ENEMIES`, `HERO_FRAMES`). It prints one `wrote ...` line per file. It needs `assets/` to contain: `kenney_cartography-pack.zip`, `RavenmoreIconPack.02.2014.zip`, `kenney_fantasy-ui-borders.zip`, `kenney_background-elements-remastered.zip`, `characters.png`, `fantasy_vector_character.zip`.
 - **`src/data/art.ts`** is the data: the pairings (enemy id to picture, relic id to icon, fight tier and floor to backdrop, screen to backdrop and dimming), the hero's frame size and which frames are idle/attack/death, and the list of files to load. A pairing is one line.
-- **`src/scenes/art.ts`** is the code: `preloadArt`, the builders, and the helpers below.
+- **`src/scenes/artLoader.ts`** is the code: `preloadArt`, the builders, and the helpers below.
 - The loader path is `import.meta.env.BASE_URL + 'assets/'`, so it works both on the dev server (`/`) and on GitHub Pages (`/first-real-game/`).
 
 ## Where each picture appears

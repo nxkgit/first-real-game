@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
 import type { DamageResult } from './CombatState';
-import type { EnemyDefinition } from './types';
+import type { EnemyDefinition } from '../model';
 import { getCard } from '../data/cards';
 
 // Issue #27: a tester reported "Glaciate did 19 damage instead of 24". Glaciate is 8 damage, tripled

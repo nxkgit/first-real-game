@@ -1,4 +1,4 @@
-import type { CardDefinition, CardInstance } from './types';
+import type { CardDefinition, CardInstance } from '../model';
 import { MAX_HAND_SIZE } from '../data/tunables';
 
 let instanceCounter = 0;

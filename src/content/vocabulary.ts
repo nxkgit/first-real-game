@@ -1,7 +1,7 @@
-import type { CardType, Effect, EventOutcome, RunEffect, ScaleSource, StatusId, TriggerOn } from '../game/types';
+import type { CardType, Effect, EventOutcome, RunEffect, ScaleSource, StatusId, TriggerOn } from '../model';
 
 // The vocabulary a content author can use, as data. Each table is a Record keyed by the union from
-// game/types.ts, so adding a member to a union without adding it here is a COMPILE error. The
+// src/model/, so adding a member to a union without adding it here is a COMPILE error. The
 // content check (validate.ts) reads these tables, and a test (guide.test.ts) fails if
 // docs/CONTENT_GUIDE.md stops listing exactly these names.
 

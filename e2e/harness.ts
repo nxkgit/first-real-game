@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 
 // Shared driver for the browser tests. See docs/E2E.md.
 //
-// Everything here goes through the page's `?e2e` hook (src/main.ts): `window.__game` (the Phaser
+// Everything here goes through the page's `?e2e` hook (src/app/main.ts): `window.__game` (the Phaser
 // game) and `window.__step(frames, dtMs)` (run frames on a virtual clock). The real render loop is
 // stopped, so the game only moves when a test steps it. Game modules are reached with dynamic
 // imports of /src/... through the Vite dev server (the same module instances the game uses).
@@ -100,11 +100,11 @@ export class Harness {
    */
   async completeDraftIfPending(): Promise<void> {
     const changed = await this.page.evaluate(async () => {
-      const session = await (window as Any).__imp('/src/session.ts');
+      const session = await (window as Any).__imp('/src/app/session.ts');
       const run = session.getCurrentRun();
       if (!run || run.phase !== 'draft') return false;
       const { buildStarterDeck } = await (window as Any).__imp('/src/data/cards.ts');
-      const { enterCurrentNode } = await (window as Any).__imp('/src/scenes/ui.ts');
+      const { enterCurrentNode } = await (window as Any).__imp('/src/scenes/ui/navigation.ts');
       const scene = (window as Any).__game.scene.getScenes(true)[0];
       run.skipDraftWith(buildStarterDeck());
       enterCurrentNode(scene, run);
@@ -189,7 +189,7 @@ export class Harness {
     const labels = await this.labels();
     const slots: number[] = await this.page.evaluate(async () => {
       const layout = await (window as Any).__imp('/src/scenes/combat/layout.ts');
-      const combat = (await (window as Any).__imp('/src/session.ts')).getCurrentCombat();
+      const combat = (await (window as Any).__imp('/src/app/session.ts')).getCurrentCombat();
       return layout.enemySlots(combat.enemies.length);
     });
     const near = (l: Label, x: number, y: number, tol = 12): boolean => Math.abs(l.cx - x) <= tol && Math.abs(l.cy - y) <= tol;
@@ -210,7 +210,7 @@ export class Harness {
   /** The fight's real state, read straight from CombatState. */
   async combatTruth(): Promise<CombatTruth> {
     return this.page.evaluate(async () => {
-      const c = (await (window as Any).__imp('/src/session.ts')).getCurrentCombat();
+      const c = (await (window as Any).__imp('/src/app/session.ts')).getCurrentCombat();
       return {
         phase: c.phase,
         energy: c.energy,
@@ -256,7 +256,7 @@ export class Harness {
     nodes: { id: string; kind: string; floor: number; lane: number }[];
   }> {
     return this.page.evaluate(async () => {
-      const r = (await (window as Any).__imp('/src/session.ts')).getCurrentRun();
+      const r = (await (window as Any).__imp('/src/app/session.ts')).getCurrentRun();
       const node = (n: Any) => ({ id: n.id, kind: n.kind, floor: n.floor, lane: n.lane });
       return {
         seed: r.seed,
@@ -325,7 +325,7 @@ export class Harness {
         const game = (window as Any).__game;
         const scene = game.scene.getScene('CombatScene');
         if (!scene || !scene.sys.isActive()) return false;
-        const combat = (await (window as Any).__imp('/src/session.ts')).getCurrentCombat();
+        const combat = (await (window as Any).__imp('/src/app/session.ts')).getCurrentCombat();
         const locked = scene.inputLocked && combat.phase === 'playerTurn';
         const finite = scene.tweens.getTweens().some((t: Any) => !t.isInfinite);
         return locked || combat.phase === 'enemyTurn' || scene.sequencer !== null || finite || scene.time._active.length > 0;
@@ -338,7 +338,7 @@ export class Harness {
 
   /** Wins the fight at once (CombatState.devKillAllEnemies, what the dev panel's button calls) and clicks Continue. */
   async winFightQuickly(): Promise<void> {
-    await this.page.evaluate(async () => (await (window as Any).__imp('/src/session.ts')).getCurrentCombat().devKillAllEnemies());
+    await this.page.evaluate(async () => (await (window as Any).__imp('/src/app/session.ts')).getCurrentCombat().devKillAllEnemies());
     await this.settle();
     expect(await this.hasText('VICTORY')).toBe(true);
     await this.clickText('Continue');
@@ -361,14 +361,14 @@ export class Harness {
     const spot = await this.handCard(name);
     if (!spot) throw new Error(`${name} is not in the hand`);
     const needsTarget = await this.page.evaluate(async (cardName) => {
-      const combat = (await (window as Any).__imp('/src/session.ts')).getCurrentCombat();
+      const combat = (await (window as Any).__imp('/src/app/session.ts')).getCurrentCombat();
       return combat.deck.hand.find((c: Any) => c.definition.name === cardName)?.definition.target === 'enemy';
     }, name);
     await this.click(spot.x, spot.y);
     if (needsTarget) {
       const slots: number[] = await this.page.evaluate(async () => {
         const layout = await (window as Any).__imp('/src/scenes/combat/layout.ts');
-        const combat = (await (window as Any).__imp('/src/session.ts')).getCurrentCombat();
+        const combat = (await (window as Any).__imp('/src/app/session.ts')).getCurrentCombat();
         return layout.enemySlots(combat.enemies.length);
       });
       await this.click(slots[enemyIndex], 250);
@@ -389,8 +389,8 @@ export class Harness {
     await this.page.evaluate(
       async ([ids, foes]) => {
         const cards = await (window as Any).__imp('/src/data/cards.ts');
-        const session = await (window as Any).__imp('/src/session.ts');
-        const ui = await (window as Any).__imp('/src/scenes/ui.ts');
+        const session = await (window as Any).__imp('/src/app/session.ts');
+        const ui = await (window as Any).__imp('/src/scenes/ui/navigation.ts');
         const run = session.getCurrentRun();
         run.deck.length = 0;
         for (const id of ids) run.deck.push(cards.getCard(id));

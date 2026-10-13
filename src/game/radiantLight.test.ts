@@ -3,7 +3,7 @@ import { CombatState } from './CombatState';
 import { captureScenario, restoreScenario } from './scenario';
 import { Rng } from './rng';
 import { cardText } from './describe';
-import type { CardDefinition, EnemyDefinition } from './types';
+import type { CardDefinition, EnemyDefinition } from '../model';
 import { RADIANT_LIGHT_MAX } from '../data/tunables';
 
 // Radiant Light: the Paladin's placeholder resource (implementationplan.md "Multiple heroes and hero

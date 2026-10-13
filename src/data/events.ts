@@ -1,4 +1,5 @@
-import type { EventDefinition } from '../game/types';
+import type { EventDefinition } from '../model';
+import { createRegistry } from './registry';
 
 // PLACEHOLDER events: generic text and rough numbers, only to exercise the event system and its
 // outcomes. Real event writing is the user's (see CLAUDE.md).
@@ -46,14 +47,6 @@ export const EVENT_D: EventDefinition = {
 
 const ALL_EVENTS: EventDefinition[] = [EVENT_A, EVENT_B, EVENT_C, EVENT_D];
 
-export const EVENTS: Readonly<Record<string, EventDefinition>> = Object.fromEntries(
-  ALL_EVENTS.map((event): [string, EventDefinition] => [event.id, event])
-);
-
-if (Object.keys(EVENTS).length !== ALL_EVENTS.length) throw new Error('duplicate event id');
-
-export function getEvent(id: string): EventDefinition {
-  const event = EVENTS[id];
-  if (!event) throw new Error(`unknown event id: ${id}`);
-  return event;
-}
+const eventTable = createRegistry('event', ALL_EVENTS);
+export const EVENTS: Readonly<Record<string, EventDefinition>> = eventTable.byId;
+export const getEvent = eventTable.get;

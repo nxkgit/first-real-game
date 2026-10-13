@@ -22,7 +22,7 @@ The whole suite takes about 5 minutes locally: the other tests are quick (5 to 2
 
 ## The `?e2e` hook and the frame stepper
 
-`src/main.ts` adds, only when the address has `?e2e`:
+`src/app/main.ts` adds, only when the address has `?e2e`:
 
 - `window.__game`: the Phaser game.
 - `window.__step(frames, dtMs)`: runs `frames` calls of `game.step(clock, dtMs)` on a virtual clock, yielding to the event loop between frames (a `MessageChannel` task) so the combat scene's promise-based animation queue can advance. Returns the clock.

@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 import { HEROES } from '../data/heroes';
-import { newRun } from '../data/run';
-import { useLayoutCamera } from '../display';
+import { newRun } from '../game/newRun';
+import { useLayoutCamera } from '../app/display';
 import { heroPowerText } from '../game/describe';
-import type { HeroDefinition } from '../game/types';
-import { seedFromUrl } from '../session';
-import { addHeroPortrait, addScreenBackdrop } from './art';
+import type { HeroDefinition } from '../model';
+import { seedFromUrl } from '../app/session';
+import { addHeroPortrait, addScreenBackdrop } from './artLoader';
 import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
 
 const RESOURCE_NAME: Record<NonNullable<HeroDefinition['resource']>, string> = {

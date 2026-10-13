@@ -1,4 +1,4 @@
-import type { StatusDefinition, StatusId } from '../game/types';
+import type { StatusDefinition, StatusId } from '../model';
 import {
   EMPOWERED_DAMAGE_MULT,
   FRAIL_BLOCK_MULT,
@@ -69,7 +69,7 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
     badge: { symbol: 'F', color: 0x6fd3e8 },
   },
   // Generic StS-style keyword statuses (engine-only for now: no real card applies them yet, see
-  // src/data/keywordCards.ts and implementationplan.md's "Keyword mechanics" section).
+  // src/data/neutral/keyword.ts and implementationplan.md's "Keyword mechanics" section).
   frail: {
     id: 'frail',
     name: 'Frail',

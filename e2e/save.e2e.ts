@@ -35,7 +35,7 @@ test('(f) reload on the reward screen offers the same cards; reload on the map k
   await game.winFightQuickly();
   await game.waitForScene('RewardScene');
   const offered = await game.page.evaluate(async () => {
-    const run = (await (window as any).__imp('/src/session.ts')).getCurrentRun();
+    const run = (await (window as any).__imp('/src/app/session.ts')).getCurrentRun();
     return run.pendingReward.cards.map((c: any) => c.id as string);
   });
 
@@ -44,7 +44,7 @@ test('(f) reload on the reward screen offers the same cards; reload on the map k
   await game.clickText('Continue');
   await game.waitForScene('RewardScene');
   const again = await game.page.evaluate(async () => {
-    const run = (await (window as any).__imp('/src/session.ts')).getCurrentRun();
+    const run = (await (window as any).__imp('/src/app/session.ts')).getCurrentRun();
     return run.pendingReward.cards.map((c: any) => c.id as string);
   });
   expect(again).toEqual(offered);

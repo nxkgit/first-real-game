@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { buildStarterDeck } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
-import { newPlayableRun, restoreSavedRun } from '../data/run';
+import { newPlayableRun, restoreSavedRun } from '../game/newRun';
 import { CombatState } from '../game/CombatState';
 import { Rng } from '../game/rng';
 import { BUILD_ID } from './buildInfo';

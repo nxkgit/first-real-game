@@ -1,6 +1,6 @@
-import { HOUR_MS, LIMITS } from './config.ts';
-import { buildIssue, parseReport } from './report.ts';
-import type { Deps, Env, KV } from './types.ts';
+import { HOUR_MS, LIMITS } from './config';
+import { buildIssue, parseReport } from './report';
+import type { Deps, Env, KV } from './types';
 
 const defaultDeps: Deps = {
   fetch: (...args) => fetch(...args),

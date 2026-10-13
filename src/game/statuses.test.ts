@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
-import type { CardDefinition, Effect, EnemyDefinition, EnemyMove } from './types';
+import type { CardDefinition, Effect, EnemyDefinition, EnemyMove } from '../model';
 
 // Test-only content, independent of src/data balance numbers (but using the real status rules).
 

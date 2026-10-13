@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
-import { addScreenBackdrop } from './art';
-import { useLayoutCamera } from '../display';
+import { addScreenBackdrop } from './artLoader';
+import { useLayoutCamera } from '../app/display';
 import { REST_HEAL_FRACTION } from '../data/tunables';
 import {
   CARD_HEIGHT,

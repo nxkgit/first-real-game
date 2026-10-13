@@ -102,7 +102,7 @@ test('Radiant Light is gained from a card, shown, then spent without touching en
   await game.startFightWith([...Array(5).fill('placeholder-block-light'), ...Array(5).fill('placeholder-light-attack')], ['enemy-b']);
   // make sure both kinds are in the hand: put them there directly, then let the scene catch up
   await game.page.evaluate(async () => {
-    const c = (await (window as any).__imp('/src/session.ts')).getCurrentCombat();
+    const c = (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat();
     const cards = await (window as any).__imp('/src/data/cards.ts');
     c.deck.addCopiesToHand(cards.getCard('placeholder-block-light'), 1);
     c.deck.addCopiesToHand(cards.getCard('placeholder-light-attack'), 1);
@@ -113,7 +113,7 @@ test('Radiant Light is gained from a card, shown, then spent without touching en
   const hpBefore = (await game.combatTruth()).enemies[0].hp;
   // not enough Light yet: the Light card cannot be played
   const canPlayEarly = await game.page.evaluate(async () => {
-    const c = (await (window as any).__imp('/src/session.ts')).getCurrentCombat();
+    const c = (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat();
     return c.canPlay(c.deck.hand.find((x: any) => x.definition.id === 'placeholder-light-attack'));
   });
   expect(canPlayEarly).toBe(false);

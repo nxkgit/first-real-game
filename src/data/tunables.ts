@@ -3,7 +3,7 @@
 // starts. Card and enemy numbers live with their definitions in cards.ts / enemies.ts.
 
 // ---- combat ----
-/** Energy per turn for the Mage (heroes set their own in data/heroes.ts; this is the Mage's value). */
+/** Energy per turn for the Mage (heroes set their own in data/heroes/; this is the Mage's value). */
 export const MAX_ENERGY = 4;
 export const HAND_SIZE = 5;
 /** Most cards the hand can hold. A card drawn into a full hand goes straight to the discard pile (as in StS). PROVISIONAL. */
@@ -43,7 +43,7 @@ export const STARTER_DECK_SIZE = 10;
 export const STARTER_DRAFT_OFFER_SIZE = 3;
 
 // ---- run ----
-/** Max HP of the Mage (heroes set their own in data/heroes.ts; this is the Mage's value). */
+/** Max HP of the Mage (heroes set their own in data/heroes/; this is the Mage's value). */
 export const PLAYER_MAX_HP = 60;
 /** Paladin (placeholder stats, user 2026-10-09, to test heroes with different numbers): max HP is this fraction of the Mage's. */
 export const PALADIN_MAX_HP_FACTOR = 0.9;

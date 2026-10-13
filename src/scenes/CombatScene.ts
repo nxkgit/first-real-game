@@ -2,11 +2,11 @@ import Phaser from 'phaser';
 import { CombatState } from '../game/CombatState';
 import type { CombatEventMap } from '../game/CombatState';
 import type { FightTier, RunState } from '../game/RunState';
-import type { CardInstance, Effect, EnemyDefinition } from '../game/types';
-import { PLAYER_ID } from '../game/types';
+import type { CardInstance, Effect, EnemyDefinition } from '../model';
+import { PLAYER_ID } from '../model';
 import { Sfx } from '../audio/Sfx';
-import { useLayoutCamera } from '../display';
-import { setCurrentCombat, takePendingScenario } from '../session';
+import { useLayoutCamera } from '../app/display';
+import { setCurrentCombat, takePendingScenario } from '../app/session';
 import { restoreScenario } from '../game/scenario';
 import { STATUSES } from '../data/statuses';
 import { heroPowerText } from '../game/describe';
@@ -28,7 +28,7 @@ import {
   toggleCardView,
   toggleDeckView,
 } from './ui';
-import { addBackdrop } from './art';
+import { addBackdrop } from './artLoader';
 import { backgroundFor } from '../data/art';
 import { EnemyView } from './combat/EnemyView';
 import { PlayerView } from './combat/PlayerView';
@@ -814,7 +814,7 @@ export class CombatScene extends Phaser.Scene {
     this.playerView.setBlock(c.player.block);
     this.playerView.setEnergy(c.energy, c.maxEnergy);
     this.playerView.statusRow.set(c.player.statuses);
-    // a hero's own resource is declared by the hero (data/heroes.ts), not guessed from having a hero power
+    // a hero's own resource is declared by the hero (data/heroes/), not guessed from having a hero power
     this.playerView.setTemperature(this.run.hero.resource === 'temperature' ? c.temperature : undefined);
     this.playerView.setRadiantLight(this.run.hero.resource === 'radiantLight' ? c.radiantLight : undefined);
     for (const view of this.enemyViews) view.syncFrom();

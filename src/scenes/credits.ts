@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { CREDITS } from '../data/credits';
 import { CREDITS_AREA, CREDITS_COLUMN_GAP, CREDITS_MAX_COLUMNS, CREDITS_ROW_GAP, packCredits } from './creditsLayout';
-import { onKeyPress } from './ui';
+import { onKeyPress } from './ui/widgets';
 
 // The Credits overlay: who made the art. Opens over any scene; click anywhere or press Esc to close.
 

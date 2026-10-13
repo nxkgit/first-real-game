@@ -8,8 +8,8 @@ import { isRunOver, pickOne, stepRun } from './invariantHarness';
 // the mutation fuzz runs tens of thousands of restores; with many test files running in parallel it
 // can pass the 5 s default, so this file gets a generous limit (the fuzz itself is deterministic)
 vi.setConfig({ testTimeout: 60_000 });
-import { RUN_WORLD, newRun, restoreSavedRun } from '../data/run';
-import { clearSavedRun, loadReportHistory, loadSavedRun, recordFinishedRun, saveRun } from '../storage';
+import { RUN_WORLD, newRun, restoreSavedRun } from './newRun';
+import { clearSavedRun, loadReportHistory, loadSavedRun, recordFinishedRun, saveRun } from '../app/storage';
 
 // Garbage in, graceful discard out. Nothing here may throw; a bad save is dropped, never a crash.
 

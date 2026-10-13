@@ -1,14 +1,14 @@
 import { describeEffect, describeOutcome, relicText } from '../game/describe';
-import type { EnemyMove } from '../game/types';
+import type { EnemyMove } from '../model';
 import { DEFAULT_MAP_PARAMS } from '../game/actMap';
 import { baseCards, upgradedVersion } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';
 import { RELICS, RELIC_POOL } from '../data/relics';
-import { ACT_CONTENT } from '../data/run';
+import { ACT_CONTENT } from '../game/newRun';
 import { STATUSES } from '../data/statuses';
 import * as tunables from '../data/tunables';
-import { copyToClipboard } from '../storage';
+import { copyToClipboard } from '../app/storage';
 import {
   CARD_HEADERS,
   NO_FILTERS,

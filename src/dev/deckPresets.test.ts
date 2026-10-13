@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { DECK_PRESETS } from './deckPresets';
-import { CARDS, MAGE } from '../data/cards';
-import { DRUID } from '../data/druidCards';
-import { MAGE_CARDS } from '../data/mageCards';
+import { CARDS } from '../data/cards';
+import { MAGE_CARDS } from '../data/heroes/mage/cards';
+import { DRUID, MAGE } from '../data/heroes/ids';
 
 describe('dev deck presets', () => {
   it('every card id is real and owned by the hero the preset is for (or neutral)', () => {

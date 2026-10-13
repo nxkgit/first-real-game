@@ -1,5 +1,5 @@
 import { cardText, describeEffect, describeOutcome, relicText } from '../game/describe';
-import { FORMS } from '../data/forms';
+import { FORMS } from '../data/heroes/druid/forms';
 import type { MapContent } from '../game/actMap';
 import type {
   CardDefinition,
@@ -12,7 +12,7 @@ import type {
   RunEffect,
   StatusDefinition,
   Trigger,
-} from '../game/types';
+} from '../model';
 import { RADIANT_LIGHT_MAX } from '../data/tunables';
 import { EFFECT_KINDS, SCALE_SOURCES, TRIGGER_EVENTS } from './vocabulary';
 
@@ -91,7 +91,7 @@ export const EXTREME_LOW = 1 / 3;
 /** Cohorts smaller than this are not compared (too little to say what is normal). */
 export const MIN_COHORT = 4;
 
-const FILE = { card: 'src/data/cards.ts', relic: 'src/data/relics.ts', enemy: 'src/data/enemies.ts', event: 'src/data/events.ts', status: 'src/data/statuses.ts', act: 'src/data/run.ts' } as const;
+const FILE = { card: 'the card file (src/data/heroes/<hero>/cards.ts or src/data/neutral/)', relic: 'src/data/relics.ts', enemy: 'src/data/enemies.ts', event: 'src/data/events.ts', status: 'src/data/statuses.ts', act: 'src/game/newRun.ts' } as const;
 
 export function median(values: number[]): number {
   if (values.length === 0) return 0;
@@ -168,7 +168,7 @@ function checkEffect(effect: Effect, ctx: EffectCtx): void {
 
   if (effect.kind === 'enterForm') {
     if (!FORMS[effect.form]) {
-      out.add('error', kind, id, 'unknown-form', `${where}: form "${String(effect.form)}" does not exist.`, `Use one of: ${Object.keys(FORMS).join(', ')}, or add the form in src/data/forms.ts.`);
+      out.add('error', kind, id, 'unknown-form', `${where}: form "${String(effect.form)}" does not exist.`, `Use one of: ${Object.keys(FORMS).join(', ')}, or add the form in src/data/heroes/druid/forms.ts.`);
     }
     // the effects that happen on entering, or when already in the form, are checked like any other effect
     for (const nested of [...(effect.onEnter ?? []), ...(effect.ifAlready ?? [])]) checkEffect(nested, { ...ctx, where: `${where} (in enterForm)` });
@@ -303,7 +303,7 @@ function checkCards(world: ContentWorld, out: Collector): void {
       }
     } else if (card.cost > energyCapFor(world, card)) {
       const cap = energyCapFor(world, card);
-      out.add('error', 'card', id, 'unplayable-cost', `Costs ${card.cost} but the player only ever has ${cap} energy, so it can never be played.`, `Lower the cost to ${cap} or less, or raise the hero's energy in src/data/heroes.ts (Mage: MAX_ENERGY in src/data/tunables.ts).`);
+      out.add('error', 'card', id, 'unplayable-cost', `Costs ${card.cost} but the player only ever has ${cap} energy, so it can never be played.`, `Lower the cost to ${cap} or less, or raise the hero's energy in src/data/heroes/<hero>/hero.ts (Mage: MAX_ENERGY in src/data/tunables.ts).`);
     }
 
     // a colorless card is playable by every hero, so it must not need one hero's own resource or status
@@ -602,9 +602,9 @@ function checkHeroes(world: ContentWorld, out: Collector): void {
   for (const { hero, rewardPool, starterPool } of world.heroes ?? []) {
     if (rewardPool.length < 3) out.add('warning', 'hero', hero.id, 'small-pool', `${hero.name}'s reward pool has ${rewardPool.length} cards; rewards offer 3 to choose from.`, 'Add cards owned by this hero or colorless ones with inRewardPool: true.');
     if (starterPool.length < 3) out.add('warning', 'hero', hero.id, 'small-starter-pool', `${hero.name}'s starter-draft pool has ${starterPool.length} cards; each draft round offers 3 to choose from.`, 'Add cards with inStarterPool: true.');
-    if (!hero.heroPower || hero.heroPower.effects.length === 0) out.add('error', 'hero', hero.id, 'no-hero-power', `${hero.name} has no usable hero power; every hero needs one.`, 'Give the hero a heroPower with at least one effect in src/data/heroes.ts.');
-    if (!Number.isInteger(hero.maxHp) || hero.maxHp < 1) out.add('error', 'hero', hero.id, 'bad-hp', `${hero.name}'s max HP ${String(hero.maxHp)} is not a whole number of 1 or more.`, 'Set maxHp in src/data/heroes.ts.');
-    if (!Number.isInteger(hero.energy) || hero.energy < 1) out.add('error', 'hero', hero.id, 'bad-energy', `${hero.name}'s energy ${String(hero.energy)} is not a whole number of 1 or more.`, 'Set energy in src/data/heroes.ts.');
+    if (!hero.heroPower || hero.heroPower.effects.length === 0) out.add('error', 'hero', hero.id, 'no-hero-power', `${hero.name} has no usable hero power; every hero needs one.`, 'Give the hero a heroPower with at least one effect in src/data/heroes/<hero>/hero.ts.');
+    if (!Number.isInteger(hero.maxHp) || hero.maxHp < 1) out.add('error', 'hero', hero.id, 'bad-hp', `${hero.name}'s max HP ${String(hero.maxHp)} is not a whole number of 1 or more.`, 'Set maxHp in src/data/heroes/<hero>/hero.ts.');
+    if (!Number.isInteger(hero.energy) || hero.energy < 1) out.add('error', 'hero', hero.id, 'bad-energy', `${hero.name}'s energy ${String(hero.energy)} is not a whole number of 1 or more.`, 'Set energy in src/data/heroes/<hero>/hero.ts.');
     const usesLight = [...rewardPool, ...starterPool].some((c) => c.costResource === 'radiantLight' || allEffectsOf(c).some((e) => e.kind === 'gainRadiantLight'));
     if (usesLight && hero.resource !== 'radiantLight') out.add('warning', 'hero', hero.id, 'resource-undeclared', `${hero.name}'s pools hold Radiant Light cards but the hero does not declare the resource, so the fight screen would not show it.`, "Set resource: 'radiantLight' on the hero.");
   }

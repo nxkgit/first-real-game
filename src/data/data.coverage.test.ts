@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import * as T from './tunables';
-import { CARDS, MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, starterPoolFor, upgradedVersion } from './cards';
+import { CARDS, baseCards, buildStarterDeck, getCard, rewardPoolFor, starterPoolFor, upgradedVersion } from './cards';
 import { ENEMIES, getEnemy } from './enemies';
 import { EVENTS, getEvent } from './events';
 import { RELICS, RELIC_POOL, getRelic } from './relics';
 import { STATUSES, STATUS_ORDER } from './statuses';
-import { ACT_CONTENT, RUN_WORLD, newPlayableRun, newRun } from './run';
-import { KEYWORD_CARDS } from './keywordCards';
+import { ACT_CONTENT, RUN_WORLD, newPlayableRun, newRun } from '../game/newRun';
+import { KEYWORD_CARDS } from './neutral/keyword';
 import { generateActMap } from '../game/actMap';
 import { Rng } from '../game/rng';
-import type { Effect } from '../game/types';
+import type { Effect } from '../model';
+import { MAGE } from './heroes/ids';
 
 const effectsOf = (c: { effects?: Effect[]; onTurnStartEffect?: Effect }): Effect[] => [
   ...(c.effects ?? []),
@@ -282,7 +283,7 @@ describe('enemies, relics, events, statuses', () => {
   });
 });
 
-describe('the act (data/run.ts)', () => {
+describe('the act (game/newRun.ts)', () => {
   it('every enemy id and event id the act uses exists', () => {
     const lists = [ACT_CONTENT.earlyEncounters, ACT_CONTENT.encounters, ACT_CONTENT.lateEncounters ?? [], ACT_CONTENT.elites, ACT_CONTENT.bosses];
     for (const list of lists) {

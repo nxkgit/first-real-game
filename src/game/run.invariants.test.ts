@@ -5,9 +5,9 @@ import { Rng } from './rng';
 import { buildRunReport } from './runReport';
 import { parseSavedRun } from './save';
 import { isRunOver, playWholeRun, stepRun } from './invariantHarness';
-import { newRun, restoreSavedRun } from '../data/run';
-import { playBotTurn } from '../sim/bot';
-import { playFight, playRun } from '../sim/simulate';
+import { newRun, restoreSavedRun } from './newRun';
+import { playBotTurn } from '../../sim/bot';
+import { playFight, playRun } from '../../sim/simulate';
 
 const SEEDS = 150;
 const stepSeed = (seed: number, i: number): number => (seed * 7919 + i * 104729) >>> 0;

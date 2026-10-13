@@ -3,12 +3,12 @@ import { CombatState } from './CombatState';
 import type { CombatEventMap } from './CombatState';
 import { cardText, describeEffect, describeTrigger, relicText } from './describe';
 import { Rng } from './rng';
-import type { CardDefinition, EnemyDefinition, Effect, RelicDefinition, Trigger } from './types';
+import type { CardDefinition, EnemyDefinition, Effect, RelicDefinition, Trigger } from '../model';
 import { CARDS, allDraftableCards, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
-import { SYNERGY_CARDS } from '../data/synergyCards';
-import { MAGE_CARDS } from '../data/mageCards';
-import { newPlayableRun, newRun, restoreSavedRun } from '../data/run';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
+import { MAGE_CARDS } from '../data/heroes/mage/cards';
+import { newPlayableRun, newRun, restoreSavedRun } from './newRun';
 import { MAX_TRIGGER_DEPTH } from '../data/tunables';
 
 const mk = (id: string, extra: Partial<CardDefinition> = {}): CardDefinition => ({

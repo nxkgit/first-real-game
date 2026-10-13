@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
-import type { CardDefinition, EnemyDefinition, EnemyMove } from './types';
+import type { CardDefinition, EnemyDefinition, EnemyMove } from '../model';
 
 const HIT: CardDefinition = {
   id: 'hit',

@@ -1,13 +1,13 @@
 import Phaser from 'phaser';
 import type { CombatState } from '../../game/CombatState';
-import type { FormId, HeroDefinition } from '../../game/types';
-import { FORMS, describeForm, formLabel } from '../../data/forms';
+import type { FormId, HeroDefinition } from '../../model';
+import { FORMS, describeForm, formLabel } from '../../data/heroes/druid/forms';
 import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { PLAYER_X, PLAYER_Y } from './layout';
-import { addIcon, buildHeroSprite } from '../art';
-import type { HeroSprite } from '../art';
+import { addIcon, buildHeroSprite } from '../artLoader';
+import type { HeroSprite } from '../artLoader';
 import { addIdleBob, buildMageCharacter, buildPlaceholderHero } from './drawings';
 
 const STAT_Y = 360;

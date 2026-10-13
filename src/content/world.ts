@@ -3,10 +3,10 @@ import { HEROES } from '../data/heroes';
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';
 import { RELICS, RELIC_POOL, SYNERGY_RELICS } from '../data/relics';
-import { ACT_CONTENT } from '../data/run';
+import { ACT_CONTENT } from '../game/newRun';
 import { STATUSES } from '../data/statuses';
-import { SYNERGY_CARDS } from '../data/synergyCards';
-import { KEYWORD_CARDS } from '../data/keywordCards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
+import { KEYWORD_CARDS } from '../data/neutral/keyword';
 import { MAX_ENERGY, PLAYER_MAX_HP } from '../data/tunables';
 import type { ContentWorld } from './validate';
 

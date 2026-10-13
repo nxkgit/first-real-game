@@ -1,6 +1,6 @@
 import type { ActMap, MapNode, MapNodeKind } from './actMap';
 import type { RunWorld } from './RunState';
-import type { CardDefinition, EnemyDefinition, EventDefinition, HeroDefinition, RelicDefinition } from './types';
+import type { CardDefinition, EnemyDefinition, EventDefinition, HeroDefinition, RelicDefinition } from '../model';
 import { PLAYER_MAX_HP, MAX_ENERGY } from '../data/tunables';
 
 // Small builders for tests, so run tests don't depend on the placeholder game content.

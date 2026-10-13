@@ -4,15 +4,15 @@ import { captureScenario, formatScenario, parseScenarioText } from '../game/scen
 import { CARDS, getCard } from '../data/cards';
 import { ENEMIES, getEnemy } from '../data/enemies';
 import { RELICS, getRelic } from '../data/relics';
-import { newRun, restoreSavedRun } from '../data/run';
+import { newRun, restoreSavedRun } from '../game/newRun';
 import { HEROES } from '../data/heroes';
 import { BUILD_ID } from '../qa/buildInfo';
 import { REPORT_URL } from '../qa/reportConfig';
 import { readSnapshot } from '../qa/snapshot';
 import { DECK_PRESETS } from './deckPresets';
 import { enterCurrentNode } from '../scenes/ui';
-import { getCurrentCombat, getCurrentRun, setPendingScenario } from '../session';
-import { copyToClipboard, loadReportHistory } from '../storage';
+import { getCurrentCombat, getCurrentRun, setPendingScenario } from '../app/session';
+import { copyToClipboard, loadReportHistory } from '../app/storage';
 
 /**
  * A developer panel for getting the game into any state quickly, for testing. It is only loaded

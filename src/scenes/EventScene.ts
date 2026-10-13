@@ -2,9 +2,9 @@ import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { describeOutcome } from '../game/describe';
 import { Sfx } from '../audio/Sfx';
-import { addScreenBackdrop } from './art';
-import { useLayoutCamera } from '../display';
-import { saveRun } from '../storage';
+import { addScreenBackdrop } from './artLoader';
+import { useLayoutCamera } from '../app/display';
+import { saveRun } from '../app/storage';
 import {
   addButton,
   addDeckButton,

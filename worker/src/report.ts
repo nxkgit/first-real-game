@@ -1,4 +1,4 @@
-import { LIMITS } from './config.ts';
+import { LIMITS } from './config';
 
 export interface ReportInput {
   text: string;

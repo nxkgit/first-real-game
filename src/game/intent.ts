@@ -1,5 +1,5 @@
 import { intentIconOf } from './effects';
-import type { EnemyMove } from './types';
+import type { EnemyMove } from '../model';
 
 /**
  * What the player is told about an enemy's next move, StS style: the kind of thing it will do,

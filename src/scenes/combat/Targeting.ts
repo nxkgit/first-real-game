@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { CardInstance } from '../../game/types';
+import type { CardInstance } from '../../model';
 import { CARD_HEIGHT } from '../ui';
 import type { EnemyView } from './EnemyView';
 import { HAND_Y } from './layout';

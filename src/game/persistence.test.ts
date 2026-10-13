@@ -6,7 +6,7 @@ import { buildRunReport, formatRunReport } from './runReport';
 import { parseSavedRun, restoreRun } from './save';
 import { STARTER, TEST_EVENT, FOE, card, chainMap, world } from './testHelpers';
 import type { MapNodeKind } from './actMap';
-import type { RelicDefinition } from './types';
+import type { RelicDefinition } from '../model';
 
 const RELIC: RelicDefinition = { id: 'r1', name: 'R1', onPickup: [{ kind: 'maxHp', value: 10 }] };
 const KINDS: MapNodeKind[] = ['combat', 'shop', 'rest', 'event', 'elite', 'boss'];

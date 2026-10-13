@@ -2,7 +2,7 @@
 
 How to add and change cards, enemies, relics, events and statuses. Written for the person authoring the content, not for a programmer: you edit data files, you do not write game logic. Every name and number in the examples below is a **placeholder**.
 
-The lists marked `names:` are checked by a test (`src/content/guide.test.ts`) against the real types in `src/game/types.ts`. If the code gains or loses an effect kind, status, trigger event, scaling source or field and this guide is not updated, `npm test` fails. The test is also the quickest way to see what changed.
+The lists marked `names:` are checked by a test (`src/content/guide.test.ts`) against the real types in `src/model/`. If the code gains or loses an effect kind, status, trigger event, scaling source or field and this guide is not updated, `npm test` fails. The test is also the quickest way to see what changed.
 
 ## The one-minute version
 
@@ -16,16 +16,16 @@ The lists marked `names:` are checked by a test (`src/content/guide.test.ts`) ag
 | What | File | Note |
 |---|---|---|
 | Cards, upgrades, starter deck | `src/data/cards.ts` | Define the card, then add it to `ALL_CARDS` at the bottom. Upgrades are generated from the card's `upgrade` block. |
-| Engine test cards | `src/data/synergyCards.ts` | 20 placeholders that exercise the engine. **They are in the reward pool** (as of 2026-10-07 the user wants every placeholder offered to testers); flip `inRewardPool` in the file's `base` object to take them out. Real cards go in `cards.ts`. |
+| Engine test cards | `src/data/neutral/synergy.ts` | 20 placeholders that exercise the engine. **They are in the reward pool** (as of 2026-10-07 the user wants every placeholder offered to testers); flip `inRewardPool` in the file's `base` object to take them out. Real cards go in `cards.ts`. |
 | Enemies | `src/data/enemies.ts` | Add to `ALL_ENEMIES`. |
-| Which fights fill the act | `src/data/run.ts` (`ACT_CONTENT`) | Lists of enemy ids per fight: `earlyEncounters` (floors 1-3), `encounters` (the middle), `lateEncounters` (floor 9 up), `elites`, `bosses`. An enemy that is in no list never appears. |
+| Which fights fill the act | `src/game/newRun.ts` (`ACT_CONTENT`) | Lists of enemy ids per fight: `earlyEncounters` (floors 1-3), `encounters` (the middle), `lateEncounters` (floor 9 up), `elites`, `bosses`. An enemy that is in no list never appears. |
 | Relics | `src/data/relics.ts` | Add to `ALL_RELICS` (then it is in the relic pool and elites can drop it). |
 | Events | `src/data/events.ts` | Add to `ALL_EVENTS`. All events are automatically in the act. |
 | Art: which picture stands in for which enemy, relic, stop or screen | `src/data/art.ts` | Placeholder pairings. How pictures get into the game: `docs/ART.md`. |
-| Statuses | `src/data/statuses.ts` and the `StatusId` type in `src/game/types.ts` | New statuses with new behaviour need code. |
+| Statuses | `src/data/statuses.ts` and the `StatusId` type in `src/model/` | New statuses with new behaviour need code. |
 | **Every balance number that is not one card/enemy value** | `src/data/tunables.ts` | Energy, hand size, player HP, Weak/Vulnerable/Empowered multipliers, rest heal, reward counts and gold, shop, map shape. |
 | Numbers on a specific card, enemy, relic, event | with that item | Damage, block, cost, HP, move values, gold in an event. |
-| The simulator's target bands | `src/sim/targets.ts` | What "healthy" fights look like (`docs/BALANCE.md`). |
+| The simulator's target bands | `sim/targets.ts` | What "healthy" fights look like (`docs/BALANCE.md`). |
 
 Rule of thumb: **if the number describes one thing, it is next to that thing; if it describes how the game works for everything, it is in `tunables.ts`.** For example `Weak` hits for 25% less because of `WEAK_DAMAGE_MULT`, not because of any card.
 
@@ -250,7 +250,7 @@ export const EXAMPLE_ENEMY: EnemyDefinition = {
 - Enemies can only use `damage`, `block` and `applyStatus` (see the effect table). Anything else is ignored in a fight, and the check says so.
 - In a move, `to: 'target'` means **the player** and `to: 'self'` means the enemy.
 - The intent shown above the enemy is derived from the effects: damage shows a sword and the damage, block a shield, `applyStatus` to self a buff arrow, to target a debuff arrow. It never says which status. A move none of whose effects produce an icon is an error ("intent shows nothing").
-- To make an enemy appear: add it to `ALL_ENEMIES`, then put its id in a fight in `ACT_CONTENT` (`src/data/run.ts`): `earlyEncounters`, `encounters`, `elites`, `bosses`. (`lateEncounters` is used from floor 9 up: `MAP_LATE_FLOORS_FROM`.) A fight is a list of ids (up to 3). Test one alone first: `npm run balance -- ladder --fights your-enemy+enemy-d`.
+- To make an enemy appear: add it to `ALL_ENEMIES`, then put its id in a fight in `ACT_CONTENT` (`src/game/newRun.ts`): `earlyEncounters`, `encounters`, `elites`, `bosses`. (`lateEncounters` is used from floor 9 up: `MAP_LATE_FLOORS_FROM`.) A fight is a list of ids (up to 3). Test one alone first: `npm run balance -- ladder --fights your-enemy+enemy-d`.
 - Checklist: `npm run content:check`, look at it in the browser, `npm run balance -- ladder --skills all`, compare to the tier bands in `docs/BALANCE.md`.
 
 ## Relics
@@ -334,7 +334,7 @@ Add it to `ALL_EVENTS`; it then appears in the act automatically. Open question 
 
 ## Statuses
 
-A status is stacks on a fighter. Each has a `kind`: `duration` stacks drop by 1 at the end of the round; `intensity` stacks stay. The hooks add or multiply damage (see the comment on `StatusDefinition` in `src/game/types.ts` for the exact order).
+A status is stacks on a fighter. Each has a `kind`: `duration` stacks drop by 1 at the end of the round; `intensity` stacks stay. The hooks add or multiply damage (see the comment on `StatusDefinition` in `src/model/` for the exact order).
 
 <!-- names:status -->
 | Field | Meaning |
@@ -380,7 +380,7 @@ The existing statuses (a status id must be one of these; adding one needs a code
 ## Keyword mechanics (StS-style, engine-only as of 2026-10-08)
 
 Built at the user's request, mirroring Slay the Spire's own keyword vocabulary. Not applied to any
-real card yet — demonstrated only by `src/data/keywordCards.ts`'s "Test: ..." cards, reachable via
+real card yet — demonstrated only by `src/data/neutral/keyword.ts`'s "Test: ..." cards, reachable via
 the `?dev` panel's "Add card" dropdown, never offered as rewards. Adding one to a real card is just
 setting the field (`innate`/`retain`/`ethereal`/`unplayable` on the card; `frail`/`intangible`/`buffer`
 via `applyStatus`) — no further plumbing needed.
@@ -451,7 +451,7 @@ In `content.html`, click a card. If `balance/reports/sample.json` (from `npm run
 
 ## Druid forms (built 2026-10-13)
 
-A form is an effect that adds or removes Strength and Dexterity and swaps the hero's picture; there is no separate "tortoise object". Forms are data in `src/data/forms.ts` (`FORMS`: `stats` and an optional `drawBonus`; numbers in `tunables.ts`). A card enters one with an `enterForm` effect:
+A form is an effect that adds or removes Strength and Dexterity and swaps the hero's picture; there is no separate "tortoise object". Forms are data in `src/data/heroes/druid/forms.ts` (`FORMS`: `stats` and an optional `drawBonus`; numbers in `tunables.ts`). A card enters one with an `enterForm` effect:
 
 ```ts
 { kind: 'enterForm', form: 'tortoise', onEnter: [{ kind: 'block', value: 8 }], ifAlready: [{ kind: 'block', value: 10 }] }
@@ -460,5 +460,16 @@ A form is an effect that adds or removes Strength and Dexterity and swaps the he
 - One form at a time. Entering another form first takes back exactly the stats the old one gave. A form ends at the start of the player's next turn (before the draw). Forms never carry between fights.
 - Entering the form you are already in changes no stats and resolves `ifAlready` instead of `onEnter`. The card still costs energy.
 - Form B's `drawBonus` adds cards to every `draw` effect resolved by a played card or the hero power. Triggers, relics and a power's turn-start effect do not get it.
-- To add a form: add its id to `FormId` in `types.ts`, an entry in `FORMS`, tunables, and (optionally) art in `HERO_ART[hero].forms` in `src/data/art.ts` (a `sheet` for its own picture, or a `tint`; see `docs/ART.md`). The content check rejects an unknown form id.
-- Cards: `src/data/druidCards.ts` (placeholders). `?dev` presets: `druid-forms`, `druid-form-b-draw`.
+- To add a form: add its id to `FormId` in `src/model/`, an entry in `FORMS`, tunables, and (optionally) art in `HERO_ART[hero].forms` in `src/data/art.ts` (a `sheet` for its own picture, or a `tint`; see `docs/ART.md`). The content check rejects an unknown form id.
+- Cards: `src/data/heroes/druid/cards.ts` (placeholders). `?dev` presets: `druid-forms`, `druid-form-b-draw`.
+
+## Adding a hero (folder layout, 2026-10-13)
+
+A hero is a folder under `src/data/heroes/<hero>/`. Copy an existing hero's folder (the Paladin's is the plainest) and:
+
+1. `src/data/heroes/ids.ts`: add the id constant.
+2. `power.ts`: the hero power (`HeroPowerDefinition`, `owner` is the id). `hero.ts`: the `HeroDefinition` (stats, `resource` if it has one). `cards.ts`: the cards (`owner` is the id; export an array). `art.ts`: the picture pairing (`HeroArt`; file built by `tools/prepareAssets.py`, see `docs/ART.md`). Anything only this hero has (the Druid's `forms.ts`) goes in its folder too.
+3. Register it in three places: `HEROES` in `src/data/heroes/index.ts`, the card array in `ALL_CARDS` in `src/data/cards.ts`, and the art in `HERO_ART` in `src/data/art.ts`.
+4. A `?dev` deck preset in `src/dev/deckPresets.ts`, a credits row for new pictures, and `npm run content:check`.
+
+Cards that belong to no hero go in `src/data/neutral/` with `owner: 'neutral'`; they must not use one hero's own mechanic (the content check enforces it).

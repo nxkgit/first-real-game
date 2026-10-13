@@ -1,4 +1,4 @@
-import type { CardDefinition, Effect, EventOutcome, HeroPowerDefinition, RelicDefinition, RunEffect, ScaleSource, Trigger } from './types';
+import type { CardDefinition, Effect, EventOutcome, HeroPowerDefinition, RelicDefinition, RunEffect, ScaleSource, Trigger } from '../model';
 import { acceptsScaling, describeEffectWith } from './effects';
 import type { DescribeOpts } from './effects';
 import { getCard } from '../data/cards';

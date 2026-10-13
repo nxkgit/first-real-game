@@ -8,7 +8,7 @@
 // - noise(): filtered noise bursts (whooshes, impacts, card flicks)
 // Everything feeds a master bus with a dry path and a reverb send.
 
-import { effectiveVolume, onSettingsChange } from '../settings';
+import { effectiveVolume, onSettingsChange } from '../app/settings';
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { LIMITS } from './config.ts';
-import { handleRequest } from './handler.ts';
-import { buildIssue, fenceFor, inlineCode, parseReport } from './report.ts';
-import type { Deps, Env } from './types.ts';
+import { LIMITS } from './config';
+import { handleRequest } from './handler';
+import { buildIssue, fenceFor, inlineCode, parseReport } from './report';
+import type { Deps, Env } from './types';
 
 function makeKv() {
   const data = new Map<string, string>();

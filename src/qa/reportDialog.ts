@@ -1,4 +1,4 @@
-import { copyToClipboard } from '../storage';
+import { copyToClipboard } from '../app/storage';
 import { REPORT_NAME_LIMIT, REPORT_SECRET, REPORT_TEXT_LIMIT, REPORT_URL } from './reportConfig';
 import type { ReportSnapshot, SnapshotEnvironment } from './snapshot';
 import { checkDraft, reportAsText, submitReport } from './submit';
@@ -151,9 +151,4 @@ export function openReportDialog(options: ReportDialogOptions): void {
   document.body.appendChild(backdrop);
   open = backdrop;
   text.focus();
-}
-
-/** True while the window is up (the scenes' hotkeys already ignore typing in it). */
-export function isReportDialogOpen(): boolean {
-  return open !== null;
 }

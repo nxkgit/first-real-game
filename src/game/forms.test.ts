@@ -3,10 +3,10 @@ import { CombatState } from './CombatState';
 import { captureScenario, restoreScenario } from './scenario';
 import { Rng } from './rng';
 import { cardText } from './describe';
-import type { CardDefinition, EnemyDefinition, HeroPowerDefinition } from './types';
-import { FORMS } from '../data/forms';
+import type { CardDefinition, EnemyDefinition, HeroPowerDefinition } from '../model';
+import { FORMS } from '../data/heroes/druid/forms';
 import { DRUID_HERO } from '../data/heroes';
-import { PLACEHOLDER_FORM_A, PLACEHOLDER_FORM_B, PLACEHOLDER_TORTOISE_FORM } from '../data/druidCards';
+import { PLACEHOLDER_FORM_A, PLACEHOLDER_FORM_B, PLACEHOLDER_TORTOISE_FORM } from '../data/heroes/druid/cards';
 
 // Druid forms (user, 2026-10-13): an effect that adds/removes Strength and Dexterity and swaps the picture.
 // One form at a time; it ends at the start of the player's next turn or when another form is entered.

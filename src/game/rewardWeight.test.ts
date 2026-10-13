@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { newRun } from '../data/run';
+import { newRun } from './newRun';
 import { HERO_CARD_WEIGHT } from '../data/tunables';
-import { rewardPoolFor, MAGE } from '../data/cards';
+import { rewardPoolFor } from '../data/cards';
+import { MAGE } from '../data/heroes/ids';
 
 // User, 2026-10-08: Mage cards should be offered about 1.5x as often as neutral ones.
 describe('reward weighting', () => {

@@ -3,11 +3,11 @@ import { cardText, describeEffect, describeOutcome, describeRunEffect, relicText
 import { intentIcons } from './intent';
 import type { IntentIcon } from './intent';
 import { buildRunReport, formatRunReport } from './runReport';
-import type { CardDefinition, Effect, EnemyMove, EventOutcome, RelicDefinition, RunEffect } from './types';
+import type { CardDefinition, Effect, EnemyMove, EventOutcome, RelicDefinition, RunEffect } from '../model';
 import { CARDS } from '../data/cards';
 import { RELICS } from '../data/relics';
 import { EVENTS } from '../data/events';
-import { newPlayableRun } from '../data/run';
+import { newPlayableRun } from './newRun';
 
 const card = (extra: Partial<CardDefinition>): CardDefinition => ({
   id: 'x',
