@@ -12,7 +12,7 @@ Poor fits: anything judged by feel (needs a human playing it), hero/card/enemy/a
 
 ## Rules for an unattended session
 
-1. **Work on a branch named `auto/<topic>`.** Never push to `main` (a push to `main` deploys the live site). `gh` is not installed in cloud sessions: don't try to open a PR. Push the branch, and put what would have been the PR description in `docs/progress-<topic>.md` on the branch (kept up to date as you go). The orchestrating session merges branches itself.
+1. **Work on a branch named `auto/<topic>`.** Never push to `main` (a push to `main` deploys the live site). `gh` is not installed in cloud sessions: don't try to open a PR. Push the branch, and put what would have been the PR description in `docs/archive/progress-<topic>.md` on the branch (kept up to date as you go). The orchestrating session merges branches itself.
    Commit and push **often** (after each working piece), so an interrupted session loses little. Branch from the latest `main`.
 2. **No questions: decide, and write the decision down.** Where `implementationplan.md`, `DESIGN_LOG.md`, `HANDOFF.md` and `CLAUDE.md` don't settle something, pick the option most consistent with them and the existing code, then record it in the PR description under **Decisions I made** (what, why, and how to reverse it). Prefer the smaller, more reversible choice.
 3. **Placeholders stay placeholders.** Numbers are provisional and live in `src/data/tunables.ts` (or the data file they belong to). Card/enemy/relic names are plain and descriptive ("Jab", "Heavy Hit", "Enemy A"), never flavorful or lore-bearing. No hero identity, story, art or aesthetic decisions.
