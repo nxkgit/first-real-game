@@ -78,7 +78,8 @@ describe('enemy art manifest', () => {
         for (const frame of def.frames) expect(frame, `${name} ${kind} frame`).toBeLessThan(count);
         expect(def.frameRate, `${name} ${kind} rate`).toBeGreaterThan(0);
       }
-      expect(Number.isInteger(sheet.scale), `${name} scale keeps pixels square`).toBe(true);
+      // the lava dino is drawn 1.2x on purpose (user, 2026-10-13: "about 20% larger"), so its pixels are slightly uneven
+      if (name !== 'lava-dino') expect(Number.isInteger(sheet.scale), `${name} scale keeps pixels square`).toBe(true);
     }
   });
 });

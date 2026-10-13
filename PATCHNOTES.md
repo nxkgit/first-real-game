@@ -2,6 +2,33 @@
 
 What changed in each batch of fixes, newest first. Written so playtesters can read them; issue numbers are for the maintainer. The procedure that produces these is `docs/QA_FIX_WORKFLOW.md`.
 
+## 2026-10-13 (character sizes)
+
+### Changed
+- The Paladin and the final boss (the lava dino) are drawn about 20% larger, and the Keeper of the Wild (including its tortoise form) about 20% smaller. The dino now reaches the right edge of the fight area, and its pixels are slightly uneven because the size is not a whole-number zoom.
+
+### Not fixed
+- Nothing was a bug fix in this batch.
+
+### Checked
+- Typecheck, unit tests and the build pass. Played in a real browser: a Paladin against the boss, and the Keeper as a tortoise against the boss; the dino stays inside the fight area.
+- Not checked: touch screens, other window sizes.
+
+## 2026-10-13 (Keeper of the Wild)
+
+### Added
+- A third hero, the **Keeper of the Wild**, on the hero select screen. It has the Mage's health and energy, a placeholder hero power (1 energy: gain 3 block) and ten placeholder cards.
+- **Animal forms.** Three of the Keeper's cards put it into a form. The form lasts until your next turn, or until you enter another form, and it changes the hero's picture. **Tortoise**: +3 Dexterity, -2 Strength. **Form A** (placeholder name): +3 Strength, -2 Dexterity. **Form B** (placeholder name): every card and your hero power draws 1 more card. Playing the form you are already in does not stack; the card does a different effect instead (Tortoise Form gives 8 block on entering, 10 if you were already a tortoise).
+- **Dexterity**: every block you gain is increased by it. Strength and Dexterity can now go below zero (block and damage never go below zero).
+- New pictures: the Paladin is now the black knight, and the Mage uses the Paladin's old picture. The Keeper has its own picture and an animated tortoise.
+
+### Not fixed
+- Nothing was a bug fix in this batch. Forms B and A look like a recoloured Keeper until they get real pictures.
+
+### Checked
+- Typecheck, unit tests and the build pass. Played in a real browser: a Keeper fight with Form B (a 2-card draw drew 3), Tortoise (picture swapped, +3 Dexterity and -2 Strength badges, live card numbers changed, the enemy's 11 damage was absorbed by 11 block) and the form ending at the start of the next turn.
+- Not checked: touch screens, the Keeper's hero select portrait on small windows, sound.
+
 ## 2026-10-10 (fix commit 0be7c4a)
 
 ### Fixed
