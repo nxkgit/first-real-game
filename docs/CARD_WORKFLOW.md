@@ -1,99 +1,117 @@
 # Card workflow
 
-**DRAFT for the user's review.** This file covers a card's *functionality*; card *pictures* are a separate step (see "Card art" at the end). The process for turning a card you design into a card in the game. The *what* (fields, effects, scaling, triggers) is in `CONTENT_GUIDE.md`; this file is the *how we work*. You design the card; Claude writes the data object and proves it works.
+How a card you design becomes a tested card in the game. Rewritten 2026-10-13 around the cards table (`DB.md`) and **card build mode**.
 
-## The split
+**What is built and what is planned.** Parts marked *(planned)* do not exist yet and arrive in the next two steps; this document describes the process they make possible. Until then, card build mode is not usable.
 
-- **You decide:** the name, the cost, the numbers, what the card does, what it is for. Anything creative or mechanical (`CLAUDE.md`, "Creative boundary").
-- **Claude does:** translates it into a `CardDefinition`, registers it, tests it, reports what was and was not verified.
-- **Claude does not:** invent a name, flavour, a missing number or a missing rule. If the hand-off leaves something out, Claude asks. If a placeholder is unavoidable (an unspecified "X"), it is labelled provisional in a comment and in the report, like the Mage batch in `heroes/mage/cards.ts`.
+| Piece | State |
+|---|---|
+| The `cards` table, `db:*` commands, seed file | built (`DB.md`) |
+| `status` column with `draft / ready / built / blocked` | *(planned)* next step |
+| `db:backfill` (fill the table from the existing cards) and `db:compare` (table versus built cards, plus the patch-notes card table) | *(planned)* next step |
+| Loading the 81 existing cards into the table | *(planned)* the step after |
+| The phrase "card build mode" as a mode in `CLAUDE.md` | *(planned)* a reflecting-mode session, after the above |
 
-## 1. Hand-off template
+The *what* (fields, effects, scaling, triggers, statuses) is in `CONTENT_GUIDE.md`; this file is the *how we work*.
 
-Give each card in this shape. Anything you leave out, Claude asks about instead of guessing.
+## The idea
 
-```
-Name:
-Hero / owner:        (mage, or neutral)
-Type:                (attack / skill / power)
-Cost:
-Target:              (an enemy you aim at / all enemies / self-only)
-Effects, in order:   (plain words with the numbers: "deal 6, then +1 Temperature")
-Keywords/tags:       (exhaust, innate, retain, ethereal, unplayable, tags such as "fire")
-Upgrade:             (what changes; "nothing" is allowed but means no upgrade at the rest stop)
-Where it appears:    (reward pool / starter draft pool / neither; archetype and rarity if you have them)
-Edge cases you care about: (e.g. "second attack in a turn counts the first")
-```
+You write card designs as rows in the cards table. When you say **"card build mode"**, Claude builds every row marked `ready` into TypeScript, proves it works, marks the row `built`, and opens a draft PR. **The TypeScript is the source of truth for the game** (the browser loads it); the table is the input and the record of what you asked for.
 
-Cards can be sent one at a time or as a list. A card whose mechanic does not exist yet is *not* sent here; see step 2.
+## Who does what
 
-## 2. Check the engine can express it
+- **You decide** the name, cost, numbers, what the card does, what it is for, and when a row is final (`ready`). Names, flavour and art are yours (`CLAUDE.md`, "Creative boundary"); flavour and art are not part of this process yet.
+- **Claude** translates `ready` rows into `CardDefinition`s, registers and tests them, reports what was and was not verified, and sets only the `status` column (`built` or `blocked`). It never edits your other columns.
+- **Claude never invents** a name, a number, a rule or an effect. A row that leaves something out is skipped and reported (see "Skipped rows").
 
-Claude maps each effect to the vocabulary in `CONTENT_GUIDE.md` (effect kinds, scaling sources, trigger events, statuses, keywords).
+## Writing a row
 
-- **Everything fits:** go to step 3.
-- **Something does not** (a new effect kind, trigger event, scaling source, status behaviour): **stop and go back to planning.** Claude says what is missing and what it would take, and we settle the mechanic (as with Temperature, Freeze and Heating Up) before any card using it is written. No improvising a near-match in the card data, no hand-written `description` to paper over it. Engine work is its own planned task, with its own tests.
+See `DB.md` for the columns. The ones you always fill in: `name`, `type`, `cost`, `owner`, `effects_words`, `upgrade_words`, and `status`. Everything else has a default (not in a pool, no keywords, no tags, energy cost, plays on click).
 
-This is the rule that keeps card building mechanical: by the time a card is handed over, the design questions are already answered.
+- `effects_words`: what the card does, **in order, with the numbers**, in plain words. Example: "Enter Tortoise form. Gain 8 block. If already in Tortoise form, gain 10 block instead."
+- `upgrade_words`: what the upgrade changes. Write `none` for no upgrade. A cost-only upgrade says so ("costs 0 instead of 1").
+- `target`: `enemy` if you aim it at one enemy; leave empty for cards that play on click or hit every enemy ("all enemies" in your words is enough).
+- `notes`: edge cases you care about ("a second attack in the same turn counts the first").
+- `slug` is created from the name when you insert the row and never changes (it is the game's id).
 
-## 3. Write the card
+### Status
 
-1. Add the `CardDefinition` in the owner's file: Mage cards in `src/data/heroes/mage/cards.ts` (add to `MAGE_CARDS`), neutral originals in `src/data/cards.ts` (add to `ALL_CARDS`), engine test cards in `neutral/synergy.ts` / `neutral/keyword.ts`. The `id` is lowercase-with-dashes and never changes afterwards.
+| Status | Meaning | Who sets it |
+|---|---|---|
+| `draft` | still being designed; Claude ignores it | you |
+| `ready` | final: build it | you |
+| `built` | the TypeScript card exists and matches the row | Claude, after the build passes |
+| `blocked` | Claude could not build it; the run report says why | Claude |
+
+To change an existing card, edit its row (name, numbers, words) and set it back to `ready`. To retry a `blocked` row after fixing the cause, set it back to `ready`.
+
+## Card build mode *(planned trigger)*
+
+Runs like QA mode: **autonomous, no questions mid-run.** Anything unclear is skipped, marked `blocked`, and listed at the end.
+
+1. Fetch and branch from `origin/main` (`cards/<date>`). Read the table (`npm run db:status`, then the `ready` rows). If the database is not running, say so and stop (Claude cannot start Docker Desktop; you run `npm run db:up`).
+2. No `ready` rows: report that and stop.
+3. For each row, check it can be built (see "Skipped rows"). Build what can be built.
+4. Write or update the card (next section), add it to a deck preset, and test it (tiers below).
+5. Run `npm run verify`. A row whose card passes is set to `built`; one that does not stays `ready` and is reported.
+6. Export the seed (`npm run db:export`), commit, push, and open a draft PR with the report. You merge.
+
+### Skipped rows (set to `blocked`, listed in the report)
+
+- **No precedent.** The card needs a mechanic the game does not have (an effect kind, scaling source, trigger, status or keyword that does not exist). It is **not implemented**; the report says the row contains a card with no precedent. Settle the mechanic in planning mode first (as with Temperature, Freeze, Heating Up and forms), then set the row back to `ready`. No near-match in the card data, no hand-written `description`.
+- **The owner has no hero.** The row's `owner` is not `neutral` and not a hero that exists (`mage`, `paladin`, `druid`). Adding a hero is its own piece of work. Keep cards for a future hero as `draft` until the hero exists.
+- **Missing or contradictory information.** A number, cost, type or rule the words do not settle, or words that disagree with the other columns. The report lists the question for each.
+
+## Writing the card
+
+1. Put it in the owner's file: a hero's cards in `src/data/heroes/<hero>/cards.ts` (add to that hero's array, e.g. `MAGE_CARDS`), designed neutral cards in `src/data/neutral/basics.ts` (`BASIC_CARDS`). `neutral/synergy.ts` and `neutral/keyword.ts` hold engine test cards, not designs. The card's `id` is the row's `slug` and never changes afterwards.
 2. Never write `description`; text is generated.
-3. Give it an `upgrade` block (it replaces the **whole** effect list; repeat unchanged effects). If the upgrade changes only the cost, say so.
-4. Mark any value you were not given with a comment: `// PLACEHOLDER: not specified`.
+3. Give it an `upgrade` block (it replaces the **whole** effect list: repeat unchanged effects). A cost-only upgrade changes only `cost`.
+4. Mark any value you were not given with a comment `// PLACEHOLDER: not specified`. (In card build mode a missing value is a skipped row, so this is for cases the row left open on purpose.)
+5. Pools: set `inRewardPool` and `inStarterPool` from the row. Check the pool counts a test pins (`synergy.test.ts` keeps a `REMOVED_FROM_POOL` list for cards deliberately out of the pool).
+6. Presets (`CLAUDE.md`, "Dev-panel presets"): add the card to a deck preset in `src/dev/deckPresets.ts` that exercises it.
+7. A rename: only the card's `name` changes in TypeScript; the id never does.
 
-## 4. Test, in tiers
+## Testing, in tiers
 
-Every card gets Tier 1. A card gets Tier 2 as well if it has any of: scaling, triggers, a status, randomness, a new interaction with Temperature/Freeze, a keyword, or an effect that depends on turn order.
+Every card gets **Tier 1**. A card also gets **Tier 2** if it has any of: scaling, triggers, a status, randomness, a hero's own resource or mechanic (Temperature, Freeze, Radiant Light, forms), a keyword, or an effect that depends on turn order.
 
 **Tier 1 (all cards):**
 - `npm run content:check`: no errors, and read each warning about the new card.
-- Read its generated text and the base/upgraded pair in `content.html`. Is the sentence what you meant?
-- A unit test with a small fight (see `src/game/synergy.test.ts`: `fight(deck)` builder, then `playCard`): play it and assert the numbers on both the base and the `+` version, including the cost.
-- `npm test`.
+- Read the generated text of the base and upgraded card (`content.html`, or the summary table from `db:compare` *(planned)*). Is the sentence what the row says?
+- `npm run verify`.
+- A simple card (a plain number of damage or block) needs no test of its own: the smoke fight that plays every card in the registry and the fuzz tests already cover it.
 
 **Tier 2 (cards with moving parts), in addition:**
-- Unit tests for the interactions it claims (the exact sequence, e.g. 1st/2nd/3rd attack for a chain; a Freeze stun threshold crossing; a trigger firing once).
-- **Played in a real browser** through a scenario (`docs/SCENARIOS.md`: hand-write the hand, piles, enemy statuses and Temperature, load it from the `?dev` panel) or an e2e test (`e2e/synergy.e2e.ts` is the pattern). Check the live number on the card face, the readouts and the log.
-- Where the scenario is worth keeping, commit it to `scenarios/`.
+- Unit tests for the interactions it claims (the exact sequence; a threshold crossing; a trigger firing once) using the `fight(deck)` pattern in `src/game/synergy.test.ts`; assert the numbers on the base and the `+` version, including the cost.
+- **Played in a real browser** through a scenario (`SCENARIOS.md`: hand-write the hand, piles, statuses and resource, load it from the `?dev` panel) or an e2e test (`e2e/synergy.e2e.ts` is the pattern). Check the live number on the card face, the readouts and the log.
+- A scenario is committed to `scenarios/` **only when you ask**. Otherwise the browser check is described in the PR.
 
 The report always says which tier ran and separates **played in a browser** from **only unit-tested** (`CLAUDE.md`, "Testing discipline").
 
-## 5. Wire it in
+## The report and the PR
 
-- Reward pool / starter draft: the card's `inRewardPool` / `inStarterPool` flags. Check the pool counts a test pins (`synergy.test.ts` keeps a `REMOVED_FROM_POOL` list for cards deliberately out of the pool).
-- Deck presets (`src/dev/deckPresets.ts`) if you want it in a playtest deck. Not automatic.
-- If a card is new to the pool, the balance baseline moves: `npm run balance:baseline` (we are not tuning, only keeping `balance:check` meaningful).
+The draft PR description holds:
+- **What was built:** each card, with its tier.
+- **What was skipped, and why** (`blocked` rows, with the question or the missing mechanic or hero).
+- **Checked:** what was played in a browser and what was only tested.
+- **A `## Patch notes` section** (the rule in `CLAUDE.md`, "Patch notes") with a **card table showing only what a player sees**, from `db:compare --table` *(planned)*:
 
-## 6. Wrap up
+| Card | Hero | Type | Cost | Effect | Upgraded | Keywords |
+|---|---|---|---|---|---|---|
+| Tortoise Form | Keeper of the Wild | Skill | 1 | (the generated card text) | (the generated upgraded text) | |
 
-1. `npm run verify` (typecheck, tests, build). A test that pins a content number failing after you changed the number means the test needs updating, not that the engine broke; update it on purpose.
-2. Append a `DESIGN_LOG.md` entry if a nontrivial design decision was made or changed during the work. Update `HANDOFF.md` at the end of the session.
-3. Commit with a message naming the cards. Push only when you say so.
+The PR does not edit `PATCHNOTES.md` or the root `README.md`. It does include the exported seed (`db/seed/cards.csv`): the seed is exported only in card-build PRs and when you ask, so two PRs rarely touch it.
 
-## Changing a number yourself
+## Changing an existing card
 
-You can edit a card's file directly; this is the checklist so nothing goes stale.
+Preferred: edit the row's columns (and words) and set it back to `ready`; card build mode applies it. You may also edit the TypeScript directly; then `npm run db:compare` *(planned)* shows the difference between the table and the code, and the row is corrected afterwards. Either way:
 
-1. Edit the value in the card's own file (`heroes/mage/cards.ts`, `cards.ts`, `neutral/synergy.ts`). Tunables that apply to everything are in `tunables.ts`, not on cards.
-2. **Check the `upgrade` block.** It replaces the whole list, so it may restate the number you just changed.
-3. `npm run content:check`, then `npm test`.
-4. Expect some of these to need a deliberate refresh, not a bug fix: golden hashes (`effects.golden.test.ts`), e2e tests with hardcoded numbers, unit tests that pin that card's values, and the balance baseline (`npm run balance:baseline`).
-5. Tell Claude what you changed so the design log and handoff stay current.
+1. Check the `upgrade` block: it replaces the whole list, so it may restate the number you changed.
+2. Expect some tests to need a deliberate refresh, not a bug fix: golden hashes (`effects.golden.test.ts`), e2e tests with hardcoded numbers, unit tests that pin that card's values, and the balance baseline (`npm run balance:baseline`).
 
-## Card art
+## Not covered yet
 
-A card can ship without art: it shows the default picture. Your own art goes in `public/assets/cards/<card-id>.png` (2:1, 320x160) and its id is added to `CARD_ART_IDS`; the full rules are in `ART.md`, "Card pictures".
-
-## Open questions for review
-
-- Is the template missing a field you think about when designing (flavour text? art id?). Flavour and art are yours; today there is no field for them.
-- Should Tier 2 browser checks always be committed as scenarios, or only when you ask?
-- A tiny helper that prints a card's base and upgraded numbers was offered and not decided.
-
-## Temporary: long-text cards drop the placeholder picture
-
-While every card shows the shared placeholder picture (`public/assets/cards/default.png`), the picture window leaves about 63 px for the card text instead of 80. A card whose text does not fit in that space (Heating Up's wording is the one so far) is drawn **without** the picture, in the layout cards had before pictures: `descriptionFitsBesidePlaceholder` in `src/scenes/ui/`. A card with its **own** picture (`hasOwnCardArt`, a file listed in `CARD_ART_IDS`) always keeps it, so the rule fades out as real art is added.
-
-**Remove it** (the function, the `showArt` check in `buildCardFace`, the second test in `e2e/cardart.e2e.ts`, and this section) once real card art exists and the layout has room for the longest card text. Decided by the user on 2026-10-09; see `DESIGN_LOG.md`.
+- **Flavour text and card art** (yours; no columns, no steps). A card without art shows the default picture; your own art goes in `public/assets/cards/<card-id>.png` (2:1, 320x160) with its id added to `CARD_ART_IDS`; the rules are in `ART.md`, "Card pictures".
+- **New heroes** (stats, power, art, the select screen, the registry).
+- **Structured effect columns**, and a generator from the table to TypeScript (`DB.md`, "Later"). Today the table holds words and Claude does the translation.
