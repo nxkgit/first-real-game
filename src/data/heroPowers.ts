@@ -1,5 +1,6 @@
 import type { HeroPowerDefinition } from '../game/types';
 import { MAGE } from './cards';
+import { DRUID } from './druidCards';
 import { PALADIN } from './paladinCards';
 import { HERO_POWER_ENERGIZED_TURNS } from './tunables';
 
@@ -24,4 +25,14 @@ export const PALADIN_HERO_POWER: HeroPowerDefinition = {
   owner: PALADIN,
   cost: 1,
   effects: [{ kind: 'draw', value: 1 }],
+};
+
+// PLACEHOLDER (user, 2026-10-13: "a placeholder hero power that just gives 3 block for 1 cost"). Not the Druid's
+// real power; the name and effect are the user's to author.
+export const DRUID_HERO_POWER: HeroPowerDefinition = {
+  id: 'druid-hero-power',
+  name: 'Hero Power',
+  owner: DRUID,
+  cost: 1,
+  effects: [{ kind: 'block', value: 3 }],
 };

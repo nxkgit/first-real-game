@@ -19,7 +19,7 @@ const effectsOf = (c: { effects?: Effect[]; onTurnStartEffect?: Effect }): Effec
 describe('tunables sanity', () => {
   // TEMPERATURE_MIN is the lower bound of a signed range (Mage's Temperature mechanic); it is
   // meant to be negative.
-  const SIGNED_TUNABLES = ['TEMPERATURE_MIN'];
+  const SIGNED_TUNABLES = ['TEMPERATURE_MIN', 'TORTOISE_STRENGTH', 'FORM_A_DEXTERITY']; // a form can take a stat away
 
   it('every numeric tunable is a finite number, non-negative unless signed on purpose', () => {
     for (const [name, value] of Object.entries(T)) {

@@ -431,3 +431,12 @@ Planned with the user in an explicit planning session; reasoning in `DESIGN_LOG.
 7. Turn loop: player turn → enemy turn → win/loss check.
 8. Win/loss screen (placeholder).
 9. Manual playtest pass in-browser; iterate on feel before moving to MVP 2.
+
+## Druid and animal forms (planned and built 2026-10-13)
+
+The third hero, **Keeper of the Wild** (id `druid`): Mage numbers, no resource, hero power "1 energy: gain 3 block" (placeholder), 10 placeholder cards (`src/data/druidCards.ts`). The hero's mechanic is **animal forms**, a learning-purposes build the user may or may not keep. Reasoning and every decision: `DESIGN_LOG.md` Session 5; how to add a form: `docs/CONTENT_GUIDE.md` "Druid forms".
+
+- A form is an effect (`enterForm {form, onEnter, ifAlready}`) that adds or removes Strength and Dexterity (data in `src/data/forms.ts`, numbers in `tunables.ts`) and swaps the hero picture (`HERO_ART.druid.forms`). One at a time, entered only by cards, ended at the start of the player's next turn or when another form is entered. Entering the form you are in changes nothing and resolves `ifAlready`.
+- Forms: Tortoise (+3 Dexterity, -2 Strength), Form A (+3 Strength, -2 Dexterity), Form B (card and hero-power draws draw 1 more). Tortoise has its own animated picture; A and B are tinted stand-ins.
+- New engine surface: the Dexterity status (`blockAdd`), `allowNegative` on Strength and Dexterity (negative stacks; block and damage floored at 0), `CombatState.form`, the `formChanged` event, `form` in scenarios and snapshots.
+- Not built: a scaling source for "in a form", a form-related hero power, real art or animals for A and B.

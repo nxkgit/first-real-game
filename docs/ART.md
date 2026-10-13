@@ -60,6 +60,12 @@ Phaser cannot play a GIF, so every GIF goes through `tools/prepareAssets.py`, wh
 
 Keep the GIF itself in the repo (it is small and is the source the strip is rebuilt from) or in the git-ignored `assets/`; the game only ever loads the built PNGs.
 
+## Hero pictures and forms
+
+- Raw hero GIFs live in the git-ignored `assets/heroes/`. `python tools/prepareAssets.py <mage|paladin|druid|tortoise>` builds one hero strip from its GIF (`HERO_STRIPS` in the script lists word, label, GIF, output file and the tallest frame; the tallest frame keeps a 1600 px GIF from making a strip wider than a graphics card can load) and prints the numbers `HERO_ART` needs. Do not leave raw GIFs in `public/assets/`: that folder is published.
+- Who wears which picture (user, 2026-10-13): Paladin = the black knight (`Paladin_1.gif`), Mage = the old Paladin picture (`mage_model.gif`), Keeper of the Wild = `Druid_1.gif`. The dark-elf witch (`hero/hero.png`) is no longer used.
+- **Form pictures (Druid):** `HERO_ART[hero].forms[formId]` is either `{ sheet }` (its own strip and animation, e.g. Tortoise: `hero/druid_tortoise.png`, texture `hero-druid-tortoise`) or `{ tint }` (the base picture, coloured: the stand-in for Form A and Form B). The fight swaps pictures when the `formChanged` event is replayed (`PlayerView.setForm`, `HeroSprite.setForm`) and swaps back when the form ends at the start of the next turn.
+
 ## Swapping a picture
 
 1. **Same slot, different file from a pack you already have:** change the dictionary in `tools/prepareAssets.py` (for example `MAP_ICONS = {'shop': 'chest', ...}`), run the script, reload. No code change.

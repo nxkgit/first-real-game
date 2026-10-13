@@ -118,6 +118,41 @@ export const DECK_PRESETS: Record<string, DeckPreset> = {
       'arctic-strike',
     ],
   },
+  // Druid presets (user, 2026-10-13): start a Keeper of the Wild run (the dev panel's new-run hero dropdown), load one, fight.
+  'druid-forms': {
+    label: 'Druid: one of everything, forms doubled',
+    cardIds: [
+      'placeholder-tortoise-form',
+      'placeholder-tortoise-form',
+      'placeholder-form-a',
+      'placeholder-form-a',
+      'placeholder-form-b',
+      'placeholder-form-b',
+      'placeholder-druid-attack',
+      'placeholder-druid-heavy',
+      'placeholder-druid-sweep',
+      'placeholder-druid-debuff',
+      'placeholder-druid-block',
+      'placeholder-druid-big-block',
+      'placeholder-druid-draw',
+    ],
+  },
+  'druid-form-b-draw': {
+    // Form B makes every card and hero-power draw one bigger: play Form B first, then the draws.
+    label: 'Druid: Form B drawing engine',
+    cardIds: [
+      'placeholder-form-b',
+      'placeholder-form-b',
+      'placeholder-druid-draw',
+      'placeholder-druid-draw',
+      'placeholder-druid-draw',
+      'placeholder-druid-attack',
+      'placeholder-druid-attack',
+      'placeholder-druid-block',
+      'placeholder-druid-block',
+      'quick-draw',
+    ],
+  },
 };
 
 // Fail fast on a typo'd id, the same way cards.ts fails fast on a duplicate one.

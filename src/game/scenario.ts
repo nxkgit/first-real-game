@@ -1,10 +1,11 @@
 import { CombatState } from './CombatState';
 import type { CombatSnapshot, CombatStats } from './CombatState';
-import type { CardDefinition, EnemyDefinition, HeroPowerDefinition, RelicDefinition, StatusId, Statuses } from './types';
+import type { CardDefinition, FormId, EnemyDefinition, HeroPowerDefinition, RelicDefinition, StatusId, Statuses } from './types';
 import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
 import { STATUSES, STATUS_ORDER } from '../data/statuses';
+import { FORMS } from '../data/forms';
 import { MAX_ENERGY, MAX_HAND_SIZE, PLAYER_MAX_HP, RADIANT_LIGHT_MAX, TEMPERATURE_MAX, TEMPERATURE_MIN } from '../data/tunables';
 
 // A scenario is an exact fight state as plain JSON: capture one from a running fight, or write one
@@ -41,6 +42,8 @@ export interface Scenario {
   temperature?: number;
   /** Paladin-only. */
   radiantLight?: number;
+  /** Druid-only: the form the player is in (its Strength/Dexterity are already in `player.statuses`). */
+  form?: FormId;
   energizedTurnsRemaining?: number;
   heroPowerUsedThisTurn?: boolean;
 }
@@ -74,6 +77,7 @@ const TOP_KEYS = [
   'triggersFired',
   'temperature',
   'radiantLight',
+  'form',
   'energizedTurnsRemaining',
   'heroPowerUsedThisTurn',
 ];
@@ -133,7 +137,7 @@ function statuses(v: unknown, where: string): Statuses {
   if (!isRecord(v)) return bad(`${where}: expected an object like {"weak": 2}`);
   const out: Statuses = {};
   for (const id of STATUS_ORDER) {
-    if (v[id] !== undefined) out[id] = int(v[id], `${where}.${id}`, 1, 999);
+    if (v[id] !== undefined) out[id] = int(v[id], `${where}.${id}`, STATUSES[id].allowNegative ? -999 : 1, 999);
   }
   for (const key of Object.keys(v)) {
     if (!(key in STATUSES)) bad(`${where}: unknown status "${key}" (known: ${STATUS_ORDER.join(', ')})`);
@@ -273,6 +277,10 @@ function readScenario(raw: unknown, world: ScenarioWorld): Scenario {
   if (typeof raw.note === 'string') scenario.note = raw.note;
   if (raw.temperature !== undefined) scenario.temperature = int(raw.temperature, 'temperature', TEMPERATURE_MIN, TEMPERATURE_MAX);
   if (raw.radiantLight !== undefined) scenario.radiantLight = int(raw.radiantLight, 'radiantLight', 0, RADIANT_LIGHT_MAX);
+  if (raw.form !== undefined) {
+    if (typeof raw.form !== 'string' || !(raw.form in FORMS)) bad(`form: unknown form ${JSON.stringify(raw.form)} (known: ${Object.keys(FORMS).join(', ')})`);
+    scenario.form = raw.form as FormId;
+  }
   if (raw.energizedTurnsRemaining !== undefined) {
     scenario.energizedTurnsRemaining = int(raw.energizedTurnsRemaining, 'energizedTurnsRemaining', 0, 1000);
   }
@@ -336,6 +344,7 @@ export function scenarioToSnapshot(scenario: Scenario, world: ScenarioWorld = GA
     triggersFired: [...scenario.triggersFired],
     temperature: scenario.temperature ?? 0,
     radiantLight: scenario.radiantLight ?? 0,
+    ...(scenario.form ? { form: scenario.form } : {}),
     energizedTurnsRemaining: scenario.energizedTurnsRemaining ?? 0,
     heroPowerUsedThisTurn: scenario.heroPowerUsedThisTurn ?? false,
   };
@@ -343,7 +352,7 @@ export function scenarioToSnapshot(scenario: Scenario, world: ScenarioWorld = GA
 
 const orderedStatuses = (s: Statuses): Statuses => {
   const out: Statuses = {};
-  for (const id of STATUS_ORDER) if ((s[id as StatusId] ?? 0) > 0) out[id] = s[id];
+  for (const id of STATUS_ORDER) if ((s[id as StatusId] ?? 0) > 0 || (STATUSES[id as StatusId].allowNegative && (s[id as StatusId] ?? 0) < 0)) out[id] = s[id];
   return out;
 };
 
@@ -381,6 +390,7 @@ export function snapshotToScenario(snapshot: CombatSnapshot, meta: { name?: stri
   if (meta.note) scenario.note = meta.note;
   if (snapshot.temperature) scenario.temperature = snapshot.temperature;
   if (snapshot.radiantLight) scenario.radiantLight = snapshot.radiantLight;
+  if (snapshot.form) scenario.form = snapshot.form;
   if (snapshot.energizedTurnsRemaining) scenario.energizedTurnsRemaining = snapshot.energizedTurnsRemaining;
   if (snapshot.heroPowerUsedThisTurn) scenario.heroPowerUsedThisTurn = snapshot.heroPowerUsedThisTurn;
   return scenario;

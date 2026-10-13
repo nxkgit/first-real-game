@@ -1,16 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { DECK_PRESETS } from './deckPresets';
 import { CARDS, MAGE } from '../data/cards';
+import { DRUID } from '../data/druidCards';
 import { MAGE_CARDS } from '../data/mageCards';
 
 describe('dev deck presets', () => {
-  it('every card id is real and owned by the Mage (or neutral)', () => {
+  it('every card id is real and owned by the hero the preset is for (or neutral)', () => {
     for (const [key, preset] of Object.entries(DECK_PRESETS)) {
       expect(preset.cardIds.length, key).toBeGreaterThan(0);
       for (const id of preset.cardIds) {
         const card = CARDS[id];
         expect(card, `${key}: ${id}`).toBeDefined();
-        expect([MAGE, 'neutral'], `${key}: ${id} owner`).toContain(card.owner);
+        expect([key.startsWith('druid') ? DRUID : MAGE, 'neutral'], `${key}: ${id} owner`).toContain(card.owner);
       }
     }
   });

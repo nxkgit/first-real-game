@@ -7,17 +7,20 @@ A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built w
 The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
 
 <!-- patchnotes:start -->
-## 2026-10-09 (card picture slot)
+## 2026-10-13 (Keeper of the Wild)
 
 ### Added
-- Cards now have a picture window along the top, showing a plain placeholder picture until real card art is made (each card can get its own picture later). A card whose text is too long to fit beside the picture (Heating Up) is drawn without it so the text stays readable; this is temporary and goes away once real card art exists.
+- A third hero, the **Keeper of the Wild**, on the hero select screen. It has the Mage's health and energy, a placeholder hero power (1 energy: gain 3 block) and ten placeholder cards.
+- **Animal forms.** Three of the Keeper's cards put it into a form. The form lasts until your next turn, or until you enter another form, and it changes the hero's picture. **Tortoise**: +3 Dexterity, -2 Strength. **Form A** (placeholder name): +3 Strength, -2 Dexterity. **Form B** (placeholder name): every card and your hero power draws 1 more card. Playing the form you are already in does not stack; the card does a different effect instead (Tortoise Form gives 8 block on entering, 10 if you were already a tortoise).
+- **Dexterity**: every block you gain is increased by it. Strength and Dexterity can now go below zero (block and damage never go below zero).
+- New pictures: the Paladin is now the black knight, and the Mage uses the Paladin's old picture. The Keeper has its own picture and an animated tortoise.
 
 ### Not fixed
-- Nothing was a bug fix in this batch.
+- Nothing was a bug fix in this batch. Forms B and A look like a recoloured Keeper until they get real pictures.
 
 ### Checked
-- Typecheck, unit tests and the build pass. Played in a real browser: a hand of cards with and without the picture, and Heating Up's text staying inside its card.
-- Not checked: touch screens, the deck and reward screens' card layouts beyond the hand.
+- Typecheck, unit tests and the build pass. Played in a real browser: a Keeper fight with Form B (a 2-card draw drew 3), Tortoise (picture swapped, +3 Dexterity and -2 Strength badges, live card numbers changed, the enemy's 11 damage was absorbed by 11 block) and the form ending at the start of the next turn.
+- Not checked: touch screens, the Keeper's hero select portrait on small windows, sound.
 <!-- patchnotes:end -->
 
 Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.

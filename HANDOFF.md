@@ -170,6 +170,16 @@ Planned in planning mode, then built; plan in `implementationplan.md` "Multiple 
 - **Left alone on purpose:** the simulator (still Mage-only, uses `RUN_WORLD`), the balance baseline (not regenerated; moving cards to colorless and the 2:1 weight change reward odds), relics (shared), touch.
 - **Open:** Radiant Light's cap (placeholder) and whether a card may cost both resources (assumed one); real Paladin name/blurb/art/power are the user's. `PATCHNOTES.md` has an entry already (README synced).
 
+## Keeper of the Wild (Druid) and animal forms (built 2026-10-13, uncommitted when written)
+
+Planned then built in one session; decisions in `DESIGN_LOG.md` Session 5, plan in `implementationplan.md` "Druid and animal forms", how-to in `docs/CONTENT_GUIDE.md` "Druid forms" and `docs/ART.md` "Hero pictures and forms".
+
+- **Hero:** `druid`, display name "Keeper of the Wild", Mage numbers, no resource, placeholder hero power (1 energy: 3 block), 10 placeholder cards (`druidCards.ts`). Dev presets `druid-forms` and `druid-form-b-draw`; start one with the dev panel's new-run hero dropdown or `?hero=druid`.
+- **Forms** (`src/data/forms.ts`, numbers in `tunables.ts`): Tortoise (+3 Dexterity, -2 Strength), Form A (+3 Strength, -2 Dexterity), Form B (card and hero-power draws +1). A form is an `enterForm {form, onEnter, ifAlready}` effect: real Strength/Dexterity stacks added and removed exactly, one form at a time, ended at the start of the next player turn. New: Dexterity status, negative stacks (`allowNegative`), `CombatState.form`, `formChanged` event, `form` in scenarios/snapshots.
+- **Art:** Paladin is now the black knight, Mage uses the old Paladin picture, the witch is unused (`hero/hero.png` still in the repo). Strips are built by `python tools/prepareAssets.py <mage|paladin|druid|tortoise>` from GIFs in the git-ignored `assets/heroes/` (moved there from `public/assets/hero/`, which is published). `HERO_ART.druid.forms`: Tortoise has its own sheet, A/B are tinted stand-ins. Credits rows for all four pictures say author/licence unconfirmed: ask the user.
+- **Verified:** `npm run verify` (974 tests), e2e hero select/hero power/combat (select test now expects 3 heroes). Played in a real browser: Form B drawing 3 off a 2-card draw, Tortoise (picture swap, badges S -2 / D 3, live card numbers, 11 block absorbing an 11-damage hit), the form ending next turn, the 3-hero select screen. **Not done:** a Druid e2e test, touch, the whole e2e suite rerun, the old `paladin_model.gif` deletion is staged-by-me (`git rm --cached`) and nothing is committed.
+- **Open:** real names/art for Forms A and B; whether forms stay in the game (the user called it a learning build); a hero power tied to forms.
+
 ## Enemy art manifest and witch hero (2026-10-09, branch `worktree-enemy-art-manifest`)
 
 - **Manifest:** `src/data/enemyArt.ts` lists every enemy picture (painted still, pixel still, animated sheet); `ENEMY_ART` in `src/data/art.ts` maps enemy id to an entry name. Adding art = file in `public/assets/`, one manifest entry, one pairing line (details in `docs/ART.md`, "2b"). `art.test.ts` checks files and pairings.

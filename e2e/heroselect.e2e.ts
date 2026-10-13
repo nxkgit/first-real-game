@@ -18,7 +18,7 @@ test('a new run opens the hero select screen with the stats of each hero, then t
   expect(await game.hasText('Resource: Temperature')).toBe(true);
   expect(await game.hasText('Resource: Radiant Light')).toBe(true);
   // the blurb is the literal placeholder, once per hero
-  expect((await readLabels(game)).filter((t) => t === 'placeholder blurb')).toHaveLength(2);
+  expect((await readLabels(game)).filter((t) => t === 'placeholder blurb')).toHaveLength(3);
   expect((await readLabels(game)).some((t) => /Hero power \(1 energy\)/.test(t))).toBe(true);
 
   await game.clickText('Play Paladin');

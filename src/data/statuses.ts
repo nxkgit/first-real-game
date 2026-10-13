@@ -34,9 +34,20 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
     id: 'strength',
     name: 'Strength',
     kind: 'intensity',
-    describe: (n) => `Strength ${n}: attacks deal ${n} more damage. Lasts the whole fight.`,
+    allowNegative: true,
+    describe: (n) => (n < 0 ? `Strength ${n}: attacks deal ${-n} less damage (never below 0).` : `Strength ${n}: attacks deal ${n} more damage. Lasts the whole fight.`),
     outgoingDamageAdd: (n) => n,
     badge: { symbol: 'S', color: 0xd9544f },
+  },
+  // Druid forms (user, 2026-10-13): the block counterpart of Strength. Tortoise form grants it; Form A takes it away.
+  dexterity: {
+    id: 'dexterity',
+    name: 'Dexterity',
+    kind: 'intensity',
+    allowNegative: true,
+    describe: (n) => (n < 0 ? `Dexterity ${n}: gain ${-n} less block from every source (never below 0).` : `Dexterity ${n}: gain ${n} more block from every source. Lasts the whole fight.`),
+    blockAdd: (n) => n,
+    badge: { symbol: 'D', color: 0x4fa3d9 },
   },
   empowered: {
     id: 'empowered',
@@ -115,4 +126,4 @@ export const STATUSES: Record<StatusId, StatusDefinition> = {
 };
 
 /** Display order for badges. */
-export const STATUS_ORDER: StatusId[] = ['strength', 'empowered', 'weak', 'vulnerable', 'freeze', 'frail', 'intangible', 'buffer', 'fuming', 'ignite'];
+export const STATUS_ORDER: StatusId[] = ['strength', 'dexterity', 'empowered', 'weak', 'vulnerable', 'freeze', 'frail', 'intangible', 'buffer', 'fuming', 'ignite'];

@@ -1,9 +1,10 @@
 ﻿import type { Deck } from './Deck';
 import type { CombatEventMap, DamageResult } from './CombatState';
 import type { IntentIcon } from './intent';
-import type { CardDefinition, CardInstance, Combatant, Effect, EffectKind, EnemyState, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
+import type { CardDefinition, CardInstance, Combatant, Effect, EffectKind, EnemyState, FormId, Scaling, ScaleSource, StatusId, TriggerOn } from './types';
 import { STATUSES } from '../data/statuses';
 import { getCard } from '../data/cards';
+import { FORMS, describeForm, formLabel } from '../data/forms';
 
 /**
  * The effect registry: ONE entry per effect kind, bundling everything the game knows about it.
@@ -58,6 +59,12 @@ export interface EffectHost {
    *  there (the rest went to the discard pile, as with a draw into a full hand). Counted so the total
    *  card count is no longer assumed fixed (see invariantHarness.ts's `cardsAddedThisCombat` escape hatch). */
   addCardsToHand(definition: CardDefinition, count: number): number;
+  /** Druid-only: the form the player is in right now, or null. */
+  currentForm(): FormId | null;
+  /** Druid-only: enters `form` (ending any other first); false and no change if already in it. */
+  enterForm(form: FormId): boolean;
+  /** Extra cards a draw effect draws right now (Form B's bonus, only while a card or the hero power resolves). */
+  drawBonus(): number;
   /** `base` block for `who`, after Frail (a keyword status) multiplies it down. */
   calcBlock(base: number, who: Combatant): number;
   /** Buffer (a keyword status): if `target` has any stacks, consumes one and returns true, meaning
@@ -75,7 +82,7 @@ export interface EnemyMoveOutcome {
 }
 
 /** The slice of the fight a preview may read (a subset of EffectHost, so previews cannot change anything). */
-export interface PreviewHost extends Pick<EffectHost, 'player' | 'calcDamage' | 'calcBlock' | 'scaledValue'> {
+export interface PreviewHost extends Pick<EffectHost, 'player' | 'calcDamage' | 'calcBlock' | 'scaledValue' | 'drawBonus'> {
   /** How many of `count` cards a draw would really put into the hand right now (hand cap and pile sizes included). */
   previewDraw(count: number): number;
 }
@@ -202,12 +209,12 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
 
   draw: {
     resolvePlayer(effect, h, target) {
-      h.deck.draw(h.scaledValue(effect, target));
+      h.deck.draw(h.scaledValue(effect, target) + h.drawBonus());
       h.emitHandChanged();
     },
     describe: (_e, n, opts) => (opts.atTurnStart ? `Draw ${n} additional ${n === 1 ? 'card' : 'cards'}.` : `Draw ${plural(n, 'card')}.`),
     scales: ALL_SCALE_SOURCES,
-    preview: (e, h, target) => h.previewDraw(h.scaledValue(e, target)),
+    preview: (e, h, target) => h.previewDraw(h.scaledValue(e, target) + h.drawBonus()),
   },
 
   applyStatus: {
@@ -335,6 +342,28 @@ export const EFFECTS: { [K in EffectKind]: EffectDefinition<OfKind<K>> } = {
       h.emit('radiantLightChanged', h.gainRadiantLight(effect.value));
     },
     describe: (_e, n) => `Gain ${n} Radiant Light.`,
+    scales: [],
+  },
+
+  // Druid-only (user, 2026-10-13): a form is an effect that adds/removes stats and swaps the picture, not an object.
+  enterForm: {
+    resolvePlayer(effect, h, target) {
+      // already in the form: it does not stack, and the card's `ifAlready` effects happen instead of entering
+      const follow = h.enterForm(effect.form) ? effect.onEnter : effect.ifAlready;
+      for (const e of follow ?? []) resolvePlayerEffect(e, h, target, false);
+    },
+    describe(effect, _n, opts) {
+      const form = FORMS[effect.form];
+      const list = (effects: Effect[]): string => effects.map((e) => describeEffectWith(e, 'value' in e ? e.value : 0, opts)).join(' ');
+      const stats = describeForm(form);
+      const parts = [`Enter ${formLabel(form)}${stats ? ` (${stats})` : ''}.`];
+      if (effect.onEnter?.length) parts.push(list(effect.onEnter));
+      if (effect.ifAlready?.length) {
+        const text = list(effect.ifAlready);
+        parts.push(`If already in ${formLabel(form)}: ${text.charAt(0).toLowerCase()}${text.slice(1)}`);
+      }
+      return parts.join(' ');
+    },
     scales: [],
   },
 

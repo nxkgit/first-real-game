@@ -72,15 +72,14 @@ def build_ashlands() -> None:
     print(f'ashlands: {gif.n_frames} frames of {gif.size[0]}x{gif.size[1]}, frame time(s) in ms: {sorted(durations)} (ASHLANDS in src/data/art.ts must match)')
 
 
-def build_paladin() -> None:
-    """The Paladin hero: assets/heroes/paladin_model.gif (an 800x800 animated GIF with transparency)
-    becomes one horizontal strip, hero/paladin_model.png (named after the GIF), every frame cropped to the same box around the
-    figure so it does not jitter. src/data/art.ts HERO_ART.paladin must match the printed numbers."""
-    # the GIF may sit in assets/heroes/ (git-ignored raw folder) or where the project owner dropped it, public/assets/hero/
-    candidates = [os.path.join(RAW, 'heroes', 'paladin_model.gif'), os.path.join(OUT, 'hero', 'paladin_model.gif')]
+def build_hero_strip(label: str, gif_name: str, out_name: str, max_height: int | None = None) -> None:
+    """One animated hero GIF becomes one horizontal strip, hero/<out_name>.png, every frame cropped to the same
+    box around the figure so it does not jitter. The GIF may sit in assets/heroes/ (git-ignored raw folder) or
+    where the project owner dropped it, public/assets/hero/. src/data/art.ts HERO_ART must match the printed numbers."""
+    candidates = [os.path.join(RAW, 'heroes', gif_name), os.path.join(OUT, 'hero', gif_name)]
     path = next((p for p in candidates if os.path.exists(p)), None)
     if path is None:
-        print('skipped paladin: no paladin_model.gif in assets/heroes/ or public/assets/hero/')
+        print(f'skipped {label}: no {gif_name} in assets/heroes/ or public/assets/hero/')
         return
     gif = Image.open(path)
     frames = []
@@ -92,7 +91,7 @@ def build_paladin() -> None:
         b = frame.getbbox()
         if b:
             box = b if box is None else (min(box[0], b[0]), min(box[1], b[1]), max(box[2], b[2]), max(box[3], b[3]))
-    assert box is not None, 'the paladin GIF is empty'
+    assert box is not None, f'the {label} GIF is empty'
     pad = 4
     box = (max(0, box[0] - pad), max(0, box[1] - pad), min(gif.size[0], box[2] + pad), min(gif.size[1], box[3] + pad))
     width, height = box[2] - box[0], box[3] - box[1]
@@ -100,8 +99,29 @@ def build_paladin() -> None:
     for i, frame in enumerate(frames):
         strip.paste(frame.crop(box), (i * width, 0))
     durations = sorted({(gif.seek(i), gif.info.get('duration'))[1] for i in range(gif.n_frames)})
-    save(strip, 'hero', 'paladin_model.png')
-    print(f'paladin: {len(frames)} frames of {width}x{height}, frame time(s) in ms: {durations} (HERO_ART.paladin in src/data/art.ts must match)')
+    if max_height and height > max_height:  # a 1600px GIF would make a strip wider than a graphics card can load
+        w = round(width * max_height / height)
+        strip = Image.new('RGBA', (w * len(frames), max_height), (0, 0, 0, 0))
+        for i, frame in enumerate(frames):
+            strip.paste(frame.crop(box).resize((w, max_height), Image.LANCZOS), (i * w, 0))
+        width, height = w, max_height
+    save(strip, 'hero', out_name)
+    print(f'{label}: {len(frames)} frames of {width}x{height}, frame time(s) in ms: {durations} (HERO_ART in src/data/art.ts must match)')
+
+
+# (command-line word, label, source GIF, output strip, tallest frame in pixels). Who wears which picture is set in src/data/art.ts HERO_ART.
+HERO_STRIPS = [
+    ('mage', 'mage', 'mage_model.gif', 'mage_model.png', None),
+    ('paladin', 'paladin', 'Paladin_1.gif', 'paladin.png', 290),
+    ('druid', 'druid', 'Druid_1.gif', 'druid.png', 230),
+    ('tortoise', 'druid tortoise form', 'tortoise_form.gif', 'druid_tortoise.png', 150),
+]
+
+
+def build_heroes(only: str | None = None) -> None:
+    for word, label, gif_name, out_name, max_height in HERO_STRIPS:
+        if only in (None, word):
+            build_hero_strip(label, gif_name, out_name, max_height)
 
 
 def build_lava_dino() -> None:
@@ -156,9 +176,10 @@ def main() -> None:
     if 'campfire' in sys.argv[1:]:  # only the campfire (rest stop picture and map icon)
         build_campfire()
         return
-    if 'paladin' in sys.argv[1:]:  # only the Paladin, when the other raw packs are not at hand
-        build_paladin()
-        return
+    for word, *_ in HERO_STRIPS:  # only one hero's picture (mage, paladin, druid, tortoise), when the other raw packs are not at hand
+        if word in sys.argv[1:]:
+            build_heroes(word)
+            return
     if 'ashlands' in sys.argv[1:]:  # only the animated backdrop, when the other raw packs are not at hand
         build_ashlands()
         return
@@ -174,7 +195,7 @@ def main() -> None:
     for name, file in BACKGROUNDS.items():
         save(zip_image('kenney_background-elements-remastered.zip', f'Backgrounds/{file}.png').convert('RGB'), 'backgrounds', f'{name}.png')
     build_ashlands()
-    build_paladin()
+    build_heroes()
     build_lava_dino()
     build_campfire()  # after the map icons above: overwrites the pack's rest icon
 

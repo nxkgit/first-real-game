@@ -42,7 +42,7 @@ export class StatusRow {
     this.container.removeAll(true);
     this.shown = STATUS_ORDER.flatMap((id): [StatusId, number][] => {
       const stacks = statuses[id] ?? 0;
-      return stacks > 0 ? [[id, stacks]] : [];
+      return stacks > 0 || (stacks < 0 && STATUSES[id].allowNegative) ? [[id, stacks]] : [];
     });
     this.container.setX(this.slotX(0));
     this.shown.forEach(([id, stacks], i) => {

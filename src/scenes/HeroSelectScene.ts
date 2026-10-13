@@ -13,8 +13,8 @@ const RESOURCE_NAME: Record<NonNullable<HeroDefinition['resource']>, string> = {
   radiantLight: 'Radiant Light',
 };
 
-const PANEL_WIDTH = 250;
-const PANEL_GAP = 24;
+const PANEL_WIDTH = 236;
+const PANEL_GAP = 16;
 
 /**
  * Shown on a new run only (never when continuing a saved run, which already has its hero).
@@ -48,7 +48,8 @@ export class HeroSelectScene extends Phaser.Scene {
 
   private buildPanel(hero: HeroDefinition, x: number): void {
     this.add.rectangle(x, 320, PANEL_WIDTH, 440, 0x1f1f2c, 0.92).setStrokeStyle(2, 0x45455a);
-    this.add.text(x, 120, hero.name, { fontSize: '24px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    const name = this.add.text(x, 120, hero.name, { fontSize: '24px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    if (name.width > PANEL_WIDTH - 16) name.setScale((PANEL_WIDTH - 16) / name.width); // a long name shrinks to fit the panel
     addHeroPortrait(this, hero, x, 215, 120);
     this.add
       .text(x, 300, `Max HP ${hero.maxHp}    Energy ${hero.energy}`, { fontSize: '15px', color: '#e8e8f4', fontStyle: 'bold' })
@@ -69,8 +70,10 @@ export class HeroSelectScene extends Phaser.Scene {
     this.add
       .text(x, 440, hero.blurb, { fontSize: '13px', color: '#8a8a9e', align: 'center', fontStyle: 'italic', wordWrap: { width: PANEL_WIDTH - 30 } })
       .setOrigin(0.5);
-    addButton(this, x, 500, `Play ${hero.name}`, () => {
+    // the label keeps the hero's name; a long one gets a smaller font so it stays inside the button
+    const label = `Play ${hero.name}`;
+    addButton(this, x, 500, label, () => {
       enterCurrentNode(this, newRun(this.useUrlSeed ? seedFromUrl() : undefined, hero.id));
-    }, { width: 190, height: 40 });
+    }, { width: PANEL_WIDTH - 24, height: 40, fontSize: label.length > 16 ? 13 : 16 });
   }
 }

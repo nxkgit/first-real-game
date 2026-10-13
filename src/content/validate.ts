@@ -1,4 +1,5 @@
 import { cardText, describeEffect, describeOutcome, relicText } from '../game/describe';
+import { FORMS } from '../data/forms';
 import type { MapContent } from '../game/actMap';
 import type {
   CardDefinition,
@@ -64,11 +65,16 @@ export interface ContentWorld {
 }
 
 /** Effects and statuses that only make sense for one hero: a colorless card must not rely on them. */
-const HERO_ONLY_EFFECTS = new Set<string>(['gainRadiantLight', 'adjustTemperature', 'addCardToHand']);
+const HERO_ONLY_EFFECTS = new Set<string>(['gainRadiantLight', 'adjustTemperature', 'addCardToHand', 'enterForm']);
 const HERO_ONLY_SCALING = new Set<string>(['temperature', 'targetFreeze']);
 
+/** The effect and, for a form card's `enterForm`, the effects nested in its `onEnter` and `ifAlready`. */
+function withNested(effect: Effect): Effect[] {
+  return effect.kind === 'enterForm' ? [effect, ...[...(effect.onEnter ?? []), ...(effect.ifAlready ?? [])].flatMap(withNested)] : [effect];
+}
+
 function allEffectsOf(card: CardDefinition): Effect[] {
-  return [...(card.effects ?? []), ...(card.onTurnStartEffect ? [card.onTurnStartEffect] : []), ...(card.triggers ?? []).flatMap((t) => t.effects)];
+  return [...(card.effects ?? []), ...(card.onTurnStartEffect ? [card.onTurnStartEffect] : []), ...(card.triggers ?? []).flatMap((t) => t.effects)].flatMap(withNested);
 }
 
 /** The most energy a player of this card's owner ever has: the owner's own, or for a colorless card the lowest of any hero. */
@@ -158,6 +164,14 @@ function checkEffect(effect: Effect, ctx: EffectCtx): void {
   }
   if (effect.kind === 'multiplyStatus' && effect.factor === 1) {
     out.add('warning', kind, id, 'noop-multiply', `${where}: multiplyStatus factor 1 changes nothing.`, 'Use a factor other than 1.');
+  }
+
+  if (effect.kind === 'enterForm') {
+    if (!FORMS[effect.form]) {
+      out.add('error', kind, id, 'unknown-form', `${where}: form "${String(effect.form)}" does not exist.`, `Use one of: ${Object.keys(FORMS).join(', ')}, or add the form in src/data/forms.ts.`);
+    }
+    // the effects that happen on entering, or when already in the form, are checked like any other effect
+    for (const nested of [...(effect.onEnter ?? []), ...(effect.ifAlready ?? [])]) checkEffect(nested, { ...ctx, where: `${where} (in enterForm)` });
   }
 
   // scaling
