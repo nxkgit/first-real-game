@@ -1,3 +1,5 @@
+> **RETIRED 2026-10-13.** The unattended / parallel-agent workflow described here is no longer used (the maintainer dropped it). It is kept as history only: do not follow it. Current rules are in `CLAUDE.md`; why it was retired is in `REFLECTION_LOG.md`. QA mode's single-session autonomous run (`docs/QA_FIX_WORKFLOW.md`) is a different thing and stays.
+
 # Unattended work (cloud sessions)
 
 How to hand a block of work to an autonomous Claude Code session and get back something reviewable. Written 2026-10-07, when the process was first set up; refined after the first wave (five sessions: all finished, all mergeable, the main friction was generic tests written against yesterday's effect shapes).
