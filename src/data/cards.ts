@@ -4,6 +4,7 @@ import { MAGE_CARDS } from './mageCards';
 import { KEYWORD_CARDS } from './keywordCards';
 import { PALADIN_CARDS } from './paladinCards';
 import { DRUID_CARDS } from './druidCards';
+import { createRegistry } from './registry';
 
 // PLACEHOLDER content. Names/numbers here are functional stand-ins to exercise the game's
 // systems — final card design, naming, and flavor are the user's to author (see CLAUDE.md).
@@ -263,11 +264,8 @@ function buildUpgraded(card: CardDefinition): CardDefinition | undefined {
 
 const UPGRADED_CARDS: CardDefinition[] = ALL_CARDS.flatMap((card) => buildUpgraded(card) ?? []);
 
-export const CARDS: Readonly<Record<string, CardDefinition>> = Object.fromEntries(
-  [...ALL_CARDS, ...UPGRADED_CARDS].map((card): [string, CardDefinition] => [card.id, card])
-);
-
-if (Object.keys(CARDS).length !== ALL_CARDS.length + UPGRADED_CARDS.length) throw new Error('duplicate card id');
+const cardTable = createRegistry('card', [...ALL_CARDS, ...UPGRADED_CARDS]);
+export const CARDS: Readonly<Record<string, CardDefinition>> = cardTable.byId;
 
 /** The upgraded version of `card`, or undefined if it can't be upgraded (already upgraded, or no upgrade defined). */
 export function upgradedVersion(card: CardDefinition): CardDefinition | undefined {
@@ -279,11 +277,7 @@ export function baseCards(): CardDefinition[] {
   return ALL_CARDS;
 }
 
-export function getCard(id: string): CardDefinition {
-  const card = CARDS[id];
-  if (!card) throw new Error(`unknown card id: ${id}`);
-  return card;
-}
+export const getCard = cardTable.get;
 
 /** Cards a hero can be offered as rewards or in a shop: their own plus the neutral ones. */
 export function rewardPoolFor(heroId: string): CardDefinition[] {

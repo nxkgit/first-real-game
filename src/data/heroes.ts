@@ -4,6 +4,7 @@ import { DRUID } from './druidCards';
 import { DRUID_HERO_POWER, MAGE_HERO_POWER, PALADIN_HERO_POWER } from './heroPowers';
 import { PALADIN } from './paladinCards';
 import { MAX_ENERGY, PALADIN_ENERGY, PALADIN_MAX_HP_FACTOR, PLAYER_MAX_HP } from './tunables';
+import { createRegistry } from './registry';
 
 // The playable heroes. Hero identity (names, blurbs, art) is the user's to author; the blurbs are
 // the literal placeholder text until they write them. Stats are PROVISIONAL and deliberately
@@ -51,12 +52,6 @@ export const HEROES: readonly HeroDefinition[] = [MAGE_HERO, PALADIN_HERO, DRUID
 /** The hero used when none is chosen (tests and tools). */
 export const DEFAULT_HERO_ID = MAGE;
 
-export function getHero(id: string): HeroDefinition {
-  const hero = HEROES.find((h) => h.id === id);
-  if (!hero) throw new Error(`unknown hero id: ${id}`);
-  return hero;
-}
-
-export function findHero(id: unknown): HeroDefinition | undefined {
-  return HEROES.find((h) => h.id === id);
-}
+const heroTable = createRegistry('hero', HEROES);
+export const getHero = heroTable.get;
+export const findHero = heroTable.find;
