@@ -1,6 +1,7 @@
 import type { HeroDefinition } from '../game/types';
 import { MAGE } from './cards';
-import { MAGE_HERO_POWER, PALADIN_HERO_POWER } from './heroPowers';
+import { DRUID } from './druidCards';
+import { DRUID_HERO_POWER, MAGE_HERO_POWER, PALADIN_HERO_POWER } from './heroPowers';
 import { PALADIN } from './paladinCards';
 import { MAX_ENERGY, PALADIN_ENERGY, PALADIN_MAX_HP_FACTOR, PLAYER_MAX_HP } from './tunables';
 
@@ -33,8 +34,19 @@ export const PALADIN_HERO: HeroDefinition = {
   placeholderColor: 0xe0b84a,
 };
 
+// Name given by the user (2026-10-13); the blurb is still placeholder text. Mage numbers (user: "default to mage numbers").
+export const DRUID_HERO: HeroDefinition = {
+  id: DRUID,
+  name: 'Keeper of the Wild',
+  maxHp: PLAYER_MAX_HP,
+  energy: MAX_ENERGY,
+  heroPower: DRUID_HERO_POWER,
+  blurb: PLACEHOLDER_BLURB,
+  placeholderColor: 0x4f9a4f,
+};
+
 /** Every playable hero, in the order the select screen shows them. */
-export const HEROES: readonly HeroDefinition[] = [MAGE_HERO, PALADIN_HERO];
+export const HEROES: readonly HeroDefinition[] = [MAGE_HERO, PALADIN_HERO, DRUID_HERO];
 
 /** The hero used when none is chosen (tests and tools). */
 export const DEFAULT_HERO_ID = MAGE;

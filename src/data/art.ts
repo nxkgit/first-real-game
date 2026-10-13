@@ -3,6 +3,7 @@
 // Files live in public/assets (built by tools/prepareAssets.py; sources in public/assets/CREDITS.md).
 
 import type { MapNodeKind } from '../game/actMap';
+import type { FormId } from '../game/types';
 import type { FightTier } from '../game/RunState';
 import { MAP_EARLY_FLOORS, MAP_LATE_FLOORS_FROM } from './tunables';
 
@@ -61,29 +62,52 @@ export interface HeroSheet {
 /** A hero's picture sheet plus where its file is (under public/assets). */
 export interface HeroArt extends HeroSheet {
   file: string;
+  /** Pictures shown while the hero is in a form (Druid). A form with a `sheet` swaps to that picture; one with only a
+   *  `tint` keeps the base picture, coloured (a stand-in until the form has art). A form with neither looks like the base. */
+  forms?: Partial<Record<FormId, { sheet?: HeroSheetFile; tint?: number }>>;
+}
+/** A picture sheet and where its file is. */
+export interface HeroSheetFile extends HeroSheet {
+  file: string;
 }
 
 /**
- * Hero id -> picture sheet. Adding a hero's art = the file in public/assets/hero/ and one entry here.
- * A hero with no entry (the Paladin until the user supplies one) is drawn as a flat-colour stand-in.
+ * Hero id -> picture sheet. Adding a hero's art = the GIF in assets/heroes/, a line in `HERO_STRIPS` in
+ * tools/prepareAssets.py, and one entry here (docs/ART.md, "Adding an animated GIF"). A hero with no entry is
+ * drawn as a flat-colour stand-in. The files are built by `python tools/prepareAssets.py <mage|paladin|druid|tortoise>`
+ * (it prints the numbers below). User, 2026-10-13: the black knight is the Paladin, the old Paladin picture is the Mage.
+ * All pixel art shown at a non-whole zoom, so drawn smoothed (no crisp-edge flag). Idle only: lunge and tip-over are drawn in code.
  */
 export const HERO_ART: Readonly<Record<string, HeroArt>> = {
   mage: {
-    file: 'hero/hero.png',
-    frameWidth: 119,
-    frameHeight: 288,
-    idle: { start: 0, end: 3, frameRate: 3 },
-    scale: 0.5, // half size is not a whole-number zoom, so no crisp-edge flag: she is drawn smoothed
-  },
-  // The user's animated GIF (2026-10-09), built into a 6-frame strip by `python tools/prepareAssets.py paladin`
-  // (numbers printed by the script). Pixel art shown at about 0.31x, so drawn smoothed like the witch,
-  // not with crisp edges (a non-whole zoom would make uneven pixels). Idle only: lunge and tip-over are drawn in code.
-  paladin: {
-    file: 'hero/paladin_model.png',
+    file: 'hero/mage_model.png',
     frameWidth: 416,
     frameHeight: 464,
     idle: { start: 0, end: 5, frameRate: 4 },
     scale: 0.31,
+  },
+  paladin: {
+    file: 'hero/paladin.png',
+    frameWidth: 211,
+    frameHeight: 290,
+    idle: { start: 0, end: 11, frameRate: 6 }, // the GIF's 170 ms a frame
+    scale: 0.5,
+  },
+  // The Keeper of the Wild (Druid), a deer-centaur. Forms: Tortoise has its own animated picture; Form A and Form B
+  // are placeholders (tinted copies of the base picture) until the animals are chosen.
+  druid: {
+    file: 'hero/druid.png',
+    frameWidth: 301,
+    frameHeight: 230,
+    idle: { start: 0, end: 11, frameRate: 6 },
+    scale: 0.65,
+    forms: {
+      tortoise: {
+        sheet: { file: 'hero/druid_tortoise.png', frameWidth: 285, frameHeight: 150, idle: { start: 0, end: 6, frameRate: 3 }, scale: 0.8 },
+      },
+      formA: { tint: 0xff9a8a },
+      formB: { tint: 0x8ac4ff },
+    },
   },
 };
 

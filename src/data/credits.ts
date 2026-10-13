@@ -15,13 +15,6 @@ export interface Credit {
 
 export const CREDITS: readonly Credit[] = [
   {
-    usedFor: 'Hero (dark-elf witch portraits)',
-    source: 'Free Dark Elf Pixel Art Asset Pack',
-    url: 'https://craftpix.net/freebies/free-dark-elf-pixel-art-asset-pack/',
-    author: 'CraftPix.net 2D Game Assets',
-    licence: 'CraftPix free licence (exact terms unconfirmed)',
-  },
-  {
     usedFor: 'Pixel enemies (seven still pictures)',
     source: 'OpenGameArt.org pack (files named *Instagram_last.png)',
     url: 'https://opengameart.org/',
@@ -80,8 +73,32 @@ export const CREDITS: readonly Credit[] = [
     licence: 'Licence not yet confirmed',
   },
   {
-    usedFor: 'Paladin hero (animated)',
-    source: 'Paladin model (animated GIF)',
+    usedFor: 'Paladin hero (animated black knight)',
+    source: 'Paladin_1 (animated GIF)',
+    // PROVISIONAL: the user supplied the picture; its author, source page and licence are not known yet.
+    url: '',
+    author: 'Unknown (supplied by the project owner)',
+    licence: 'Licence not yet confirmed',
+  },
+  {
+    usedFor: 'Mage hero (animated)',
+    source: 'Mage model (animated GIF)',
+    // PROVISIONAL: the user supplied the picture; its author, source page and licence are not known yet.
+    url: '',
+    author: 'Unknown (supplied by the project owner)',
+    licence: 'Licence not yet confirmed',
+  },
+  {
+    usedFor: 'Keeper of the Wild hero (animated)',
+    source: 'Druid_1 (animated GIF)',
+    // PROVISIONAL: the user supplied the picture; its author, source page and licence are not known yet.
+    url: '',
+    author: 'Unknown (supplied by the project owner)',
+    licence: 'Licence not yet confirmed',
+  },
+  {
+    usedFor: 'Keeper of the Wild tortoise form (animated)',
+    source: 'Tortoise form (animated GIF)',
     // PROVISIONAL: the user supplied the picture; its author, source page and licence are not known yet.
     url: '',
     author: 'Unknown (supplied by the project owner)',

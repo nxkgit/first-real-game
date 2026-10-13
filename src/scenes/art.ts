@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { ASHLANDS, BACKGROUNDS, CARD_ART_IDS, ENEMY_ART, SCREEN_BACKDROPS, ENEMY_DISPLAY_HEIGHT, HERO_ART, ICON_FILES, MAP_ICON_KINDS } from '../data/art';
-import type { BackgroundName } from '../data/art';
+import type { BackgroundName, HeroSheet } from '../data/art';
 import { ENEMY_ART_ENTRIES, sheetOf } from '../data/enemyArt';
 import type { EnemySheet } from '../data/enemyArt';
-import type { EnemyDefinition, HeroDefinition } from '../game/types';
+import type { EnemyDefinition, FormId, HeroDefinition } from '../game/types';
 import { buildGoblinCharacter } from './combat/drawings';
 
 // Loading and building the picture-based visuals (hero, enemies, map icons, icons, card border).
@@ -12,7 +12,12 @@ import { buildGoblinCharacter } from './combat/drawings';
 /** Queues every art file. Call from a scene's preload(). */
 export function preloadArt(scene: Phaser.Scene): void {
   scene.load.setPath(`${import.meta.env.BASE_URL}assets/`);
-  for (const [id, art] of Object.entries(HERO_ART)) scene.load.spritesheet(`hero-${id}`, art.file, { frameWidth: art.frameWidth, frameHeight: art.frameHeight });
+  for (const [id, art] of Object.entries(HERO_ART)) {
+    scene.load.spritesheet(`hero-${id}`, art.file, { frameWidth: art.frameWidth, frameHeight: art.frameHeight });
+    for (const [form, formArt] of Object.entries(art.forms ?? {})) {
+      if (formArt.sheet) scene.load.spritesheet(`hero-${id}-${form}`, formArt.sheet.file, { frameWidth: formArt.sheet.frameWidth, frameHeight: formArt.sheet.frameHeight });
+    }
+  }
   for (const [name, entry] of Object.entries(ENEMY_ART_ENTRIES)) {
     if (entry.kind === 'still') scene.load.image(`enemy-${name}`, `${entry.still.dir}/${name}.png`);
     else scene.load.spritesheet(`pixel-${name}`, `pixel/${name}.png`, { frameWidth: entry.sheet.frameWidth, frameHeight: entry.sheet.frameHeight });
@@ -26,24 +31,34 @@ export function preloadArt(scene: Phaser.Scene): void {
   for (let i = 0; i < ASHLANDS.frames; i++) scene.load.image(`bg-${ASHLANDS.name}-${i}`, `backgrounds/${ASHLANDS.name}-${i}.png`);
 }
 
-/** Registers a hero's animations once (they are global to the game). */
-export function createArtAnimations(scene: Phaser.Scene, heroId: string): void {
-  const art = HERO_ART[heroId];
-  if (!art || !scene.textures.exists(`hero-${heroId}`) || scene.anims.exists(`hero-${heroId}-idle`)) return;
-  const make = (key: 'idle' | 'attack' | 'death'): void => {
-    const def = art[key];
+/** Registers one hero sheet's animations once (they are global to the game). `key` is the texture key
+ *  (`hero-<id>`, or `hero-<id>-<form>` for a form's own sheet); the animations are `<key>-idle` and so on. */
+function createSheetAnims(scene: Phaser.Scene, key: string, art: HeroSheet): void {
+  if (!scene.textures.exists(key) || scene.anims.exists(`${key}-idle`)) return;
+  const make = (kind: 'idle' | 'attack' | 'death'): void => {
+    const def = art[kind];
     if (!def) return; // no frames for this one: buildHeroSprite draws it in code
     const { start, end, frameRate } = def;
     scene.anims.create({
-      key: `hero-${heroId}-${key}`,
-      frames: scene.anims.generateFrameNumbers(`hero-${heroId}`, { start, end }),
+      key: `${key}-${kind}`,
+      frames: scene.anims.generateFrameNumbers(key, { start, end }),
       frameRate,
-      repeat: key === 'idle' ? -1 : 0,
+      repeat: kind === 'idle' ? -1 : 0,
     });
   };
   make('idle');
   make('attack');
   make('death');
+}
+
+/** Registers a hero's animations once, for the base picture and every form picture. */
+export function createArtAnimations(scene: Phaser.Scene, heroId: string): void {
+  const art = HERO_ART[heroId];
+  if (!art) return;
+  createSheetAnims(scene, `hero-${heroId}`, art);
+  for (const [form, formArt] of Object.entries(art.forms ?? {})) {
+    if (formArt.sheet) createSheetAnims(scene, `hero-${heroId}-${form}`, formArt.sheet);
+  }
 }
 
 export interface HeroSprite {
@@ -52,31 +67,37 @@ export interface HeroSprite {
   attack(): void;
   /** Plays the death animation and stays on its last frame. */
   die(): void;
+  /** Swaps the picture for a form (Druid), or back to the base picture with null. Does nothing for a hero with no form art. */
+  setForm(form: FormId | null): void;
 }
 
 /** The hero as a picture (animated), or null if the sheet did not load. Stands on the container's
  *  origin like the drawn hero did: feet near y = 70. */
 export function buildHeroSprite(scene: Phaser.Scene, heroId: string): HeroSprite | null {
-  const art = HERO_ART[heroId];
-  if (!art || !scene.textures.exists(`hero-${heroId}`)) return null;
+  const base = HERO_ART[heroId];
+  if (!base || !scene.textures.exists(`hero-${heroId}`)) return null;
   createArtAnimations(scene, heroId);
-  const sprite = scene.add.sprite(0, 0, `hero-${heroId}`, 0).setScale(art.scale).setOrigin(0.5, 1);
+  // the picture on screen right now: the base sheet, or a form's own sheet (its texture key and numbers)
+  let key = `hero-${heroId}`;
+  let art: HeroSheet = base;
+  const sprite = scene.add.sprite(0, 0, key, 0).setScale(art.scale).setOrigin(0.5, 1);
   sprite.setY(78);
-  sprite.play(`hero-${heroId}-idle`);
+  sprite.play(`${key}-idle`);
   const container = scene.add.container(0, 0, [sprite]);
   let dead = false;
   return {
     container,
     attack: () => {
-      if (dead || sprite.anims.currentAnim?.key === `hero-${heroId}-death`) return;
+      if (dead || sprite.anims.currentAnim?.key === `${key}-death`) return;
       if (!art.attack) {
         // no attack frames: a quick lunge toward the enemies and back
         scene.tweens.add({ targets: sprite, x: 28, duration: 90, yoyo: true, ease: 'Quad.easeOut' });
         return;
       }
-      sprite.play(`hero-${heroId}-attack`);
+      const playing = key;
+      sprite.play(`${playing}-attack`);
       sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        if (sprite.anims.currentAnim?.key === `hero-${heroId}-attack`) sprite.play(`hero-${heroId}-idle`);
+        if (sprite.anims.currentAnim?.key === `${playing}-attack`) sprite.play(`${playing}-idle`);
       });
     },
     die: () => {
@@ -88,7 +109,18 @@ export function buildHeroSprite(scene: Phaser.Scene, heroId: string): HeroSprite
         scene.tweens.add({ targets: sprite, alpha: 0.5, duration: 600 });
         return;
       }
-      sprite.play(`hero-${heroId}-death`);
+      sprite.play(`${key}-death`);
+    },
+    setForm: (form) => {
+      if (dead) return;
+      const formArt = form ? base.forms?.[form] : undefined;
+      const sheet = form && formArt?.sheet && scene.textures.exists(`hero-${heroId}-${form}`) ? formArt.sheet : undefined;
+      key = sheet ? `hero-${heroId}-${form}` : `hero-${heroId}`;
+      art = sheet ?? base;
+      sprite.setTexture(key, 0).setScale(art.scale);
+      if (formArt?.tint !== undefined && !sheet) sprite.setTint(formArt.tint);
+      else sprite.clearTint();
+      sprite.play(`${key}-idle`);
     },
   };
 }

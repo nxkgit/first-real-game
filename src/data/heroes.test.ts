@@ -11,13 +11,13 @@ import { realWorld } from '../content/world';
 // Multiple heroes (implementationplan.md "Multiple heroes and hero selection", 2026-10-09).
 
 describe('heroes', () => {
-  it('has the Mage and the Paladin, each with a hero power, and the Mage is the default', () => {
-    expect(HEROES.map((h) => h.id)).toEqual([MAGE, PALADIN]);
+  it('has the Mage, the Paladin and the Druid, each with a hero power, and the Mage is the default', () => {
+    expect(HEROES.map((h) => h.id)).toEqual([MAGE, PALADIN, 'druid']);
     expect(DEFAULT_HERO_ID).toBe(MAGE);
     for (const h of HEROES) {
       expect(h.heroPower.effects.length, h.id).toBeGreaterThan(0);
       expect(h.heroPower.owner, h.id).toBe(h.id);
-      expect(h.resource, h.id).toBeDefined();
+      if (h.id !== 'druid') expect(h.resource, h.id).toBeDefined(); // the Druid's mechanic is forms, which need no resource readout
     }
     expect(() => getHero('nobody')).toThrow();
   });

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { CombatState } from '../../game/CombatState';
-import type { HeroDefinition } from '../../game/types';
+import type { FormId, HeroDefinition } from '../../game/types';
+import { FORMS, describeForm, formLabel } from '../../data/forms';
 import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
@@ -30,6 +31,9 @@ export class PlayerView {
   private readonly temperatureText: Phaser.GameObjects.Text;
   /** Paladin-only "Radiant Light" readout (placeholder resource); hidden for a hero without it. */
   private readonly radiantLightText: Phaser.GameObjects.Text;
+  /** Druid-only: the form the hero is shown in, under the hero's name; empty when in no form. */
+  private readonly formText: Phaser.GameObjects.Text;
+  private shownForm: FormId | null = null;
   /** Block currently shown, which can lag the live value while animations replay. */
   private shownBlock = 0;
 
@@ -41,6 +45,8 @@ export class PlayerView {
     if (!this.hero) addIdleBob(scene, this.container, PLAYER_Y);
 
     scene.add.text(PLAYER_X, 130, hero.name.toUpperCase(), { fontSize: '18px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    this.formText = scene.add.text(PLAYER_X, 152, '', { fontSize: '14px', color: '#9be08f', fontStyle: 'bold' }).setOrigin(0.5);
+    tooltips.add(PLAYER_X, 152, 160, 22, () => (this.shownForm ? `${formLabel(FORMS[this.shownForm])}: ${describeForm(FORMS[this.shownForm])}. Lasts until your next turn, or until you enter another form.` : null));
 
     const heartIcon = addIcon(scene, 'heart', 34);
     if (heartIcon) {
@@ -118,6 +124,14 @@ export class PlayerView {
 
   setEnergy(energy: number, maxEnergy: number): void {
     this.energyText.setText(`${energy}/${maxEnergy}`);
+  }
+
+  /** Druid-only: shows the form (the label and, if the hero has form art, the picture), or none with null. Use the event's
+   *  own form, not the live one (the scene replays animations later). */
+  setForm(form: FormId | null): void {
+    this.shownForm = form;
+    this.formText.setText(form ? `Form: ${FORMS[form].name}` : '');
+    this.hero?.setForm(form);
   }
 
   /** `undefined` hides the readout (a hero with no Temperature mechanic). */

@@ -51,6 +51,13 @@ export const PALADIN_MAX_HP_FACTOR = 0.9;
 export const PALADIN_ENERGY = 3;
 /** Radiant Light (the Paladin's placeholder resource) can't go above this. No cap was specified; PROVISIONAL. */
 export const RADIANT_LIGHT_MAX = 10;
+/** Druid forms (PROVISIONAL numbers, user 2026-10-13: "these numbers are fine"). Stacks of Strength/Dexterity a form adds while active. */
+export const TORTOISE_DEXTERITY = 3;
+export const TORTOISE_STRENGTH = -2;
+export const FORM_A_STRENGTH = 3;
+export const FORM_A_DEXTERITY = -2;
+/** Extra cards every card or hero-power draw effect draws while in Form B. */
+export const FORM_B_DRAW_BONUS = 1;
 /** Fraction of max HP restored at a rest stop. */
 export const REST_HEAL_FRACTION = 0.3;
 /** How many cards the post-combat reward offers to pick from. */

@@ -14,6 +14,8 @@ import type {
   EnemyDefinition,
   EnemyMove,
   EnemyState,
+  FormDefinition,
+  FormId,
   HeroPowerDefinition,
   RelicDefinition,
   Scaling,
@@ -23,6 +25,7 @@ import type {
   TriggerOn,
 } from './types';
 import { STATUSES } from '../data/statuses';
+import { FORMS, formLabel } from '../data/forms';
 import {
   FREEZE_STUN_THRESHOLD,
   HAND_SIZE,
@@ -99,6 +102,8 @@ export interface CombatSnapshot {
   heroPowerUsedThisTurn?: boolean;
   /** Paladin-only mechanic (optional so older snapshots/scenarios still load as 0). */
   radiantLight?: number;
+  /** Druid-only: the form the player is in (its Strength/Dexterity are already in `player.statuses`). */
+  form?: FormId;
 }
 
 export type CombatPhase = 'playerTurn' | 'enemyTurn' | 'won' | 'lost';
@@ -142,6 +147,8 @@ export interface CombatEventMap {
   temperatureChanged: { temperature: number; delta: number };
   /** Paladin-only: Radiant Light changed (a card gained it, or paid for a card). `radiantLight` is the new total. */
   radiantLightChanged: { radiantLight: number; delta: number };
+  /** Druid-only: the player entered a form, or left it (`form` null; at the start of the next turn). */
+  formChanged: { form: FormId | null };
   /** The hero power was used. */
   heroPowerUsed: Record<string, never>;
   /** Mage-only: an enemy's Freeze stacks crossed FREEZE_STUN_THRESHOLD and it owes a stunned move. */
@@ -175,6 +182,12 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   /** Paladin-only placeholder resource: starts at 0, carries between turns, gained from cards, spent to play
    *  cards with `costResource: 'radiantLight'`. Clamped to [0, RADIANT_LIGHT_MAX]. */
   radiantLight = 0;
+  /** Druid-only: the form the player is in, if any. Its stat changes are real Strength/Dexterity stacks,
+   *  taken off exactly when the form ends (start of the next turn, or another form is entered). */
+  form: FormId | null = null;
+  /** True while a played card's or the hero power's effects resolve (not triggers or turn-start effects):
+   *  only those draws get Form B's bonus. */
+  private resolvingCardEffects = false;
   /** The hero's once-per-turn active ability, if they have one. */
   readonly heroPower?: HeroPowerDefinition;
   heroPowerUsedThisTurn = false;
@@ -248,6 +261,9 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       adjustTemperature: (delta) => this.adjustTemperature(delta),
       gainEnergizedTurns: (turns) => (this.energizedTurnsRemaining += turns),
       gainRadiantLight: (amount) => this.gainRadiantLight(amount),
+      currentForm: () => this.form,
+      enterForm: (form) => this.enterForm(form),
+      drawBonus: () => (this.resolvingCardEffects ? this.formDrawBonus : 0),
       addCardsToHand: (definition, count) => this.addCardsToHand(definition, count),
       calcBlock: (base, who) => this.calcBlock(base, who),
       consumeBufferIfPresent: (target) => this.consumeBufferIfPresent(target),
@@ -272,6 +288,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     });
     this.temperature = s.temperature ?? 0;
     this.radiantLight = s.radiantLight ?? 0;
+    this.form = s.form ?? null;
     this.energizedTurnsRemaining = s.energizedTurnsRemaining ?? 0;
     this.heroPowerUsedThisTurn = s.heroPowerUsedThisTurn ?? false;
     this.stats.cardsPlayedThisTurn = s.stats.cardsPlayedThisTurn;
@@ -313,6 +330,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       relics: [...this.relics],
       temperature: this.temperature,
       radiantLight: this.radiantLight,
+      ...(this.form ? { form: this.form } : {}),
       energizedTurnsRemaining: this.energizedTurnsRemaining,
       heroPowerUsedThisTurn: this.heroPowerUsedThisTurn,
       piles: {
@@ -399,7 +417,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     // a played card has already left the hand when its effects resolve, so don't count it in "hand size"
     this.previewHandOffset = this.deck.hand.some((c) => c.definition === card) ? 1 : 0;
     try {
-      const host = { ...this.host, previewDraw: (count: number) => this.previewDraw(count, card) };
+      const host = { ...this.host, drawBonus: () => this.formDrawBonus, previewDraw: (count: number) => this.previewDraw(count, card) };
       return previewEffectValue(effect, host, target, card.type === 'attack');
     } finally {
       this.previewHandOffset = 0;
@@ -465,7 +483,12 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     const power = this.heroPower;
     this.energy -= power.cost;
     this.heroPowerUsedThisTurn = true;
-    for (const effect of power.effects) this.applyCardEffect(effect, this.livingEnemies[0]);
+    this.resolvingCardEffects = true;
+    try {
+      for (const effect of power.effects) this.applyCardEffect(effect, this.livingEnemies[0]);
+    } finally {
+      this.resolvingCardEffects = false;
+    }
     this.pushLog(`Used ${power.name}.`);
     this.emit('energyChanged', { energy: this.energy, delta: -power.cost });
     this.emit('heroPowerUsed', {});
@@ -495,8 +518,13 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 
     const definition = handCard.definition;
     const isAttack = definition.type === 'attack';
-    for (const effect of definition.effects ?? []) {
-      this.applyCardEffect(effect, target, isAttack);
+    this.resolvingCardEffects = true;
+    try {
+      for (const effect of definition.effects ?? []) {
+        this.applyCardEffect(effect, target, isAttack);
+      }
+    } finally {
+      this.resolvingCardEffects = false;
     }
 
     // After the effects, so "earlier this turn" counts never include the card itself.
@@ -553,6 +581,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     if (!isFirstTurn) this.player.block = 0;
     this.energy = this.maxEnergy;
     this.heroPowerUsedThisTurn = false;
+    this.exitForm(); // a form lasts until the start of the player's next turn
     if (this.energizedTurnsRemaining > 0) {
       this.energizedTurnsRemaining -= 1;
       this.energy += 1;
@@ -706,6 +735,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     if (this.phase === 'won' || this.phase === 'lost') return;
     if (this.triggerDepth >= MAX_TRIGGER_DEPTH) return;
     this.triggerDepth += 1;
+    const wasResolvingCard = this.resolvingCardEffects;
+    this.resolvingCardEffects = false; // a trigger's draw is not a card's draw (Form B)
     try {
       for (const active of [...this.triggers]) {
         const { trigger } = active;
@@ -720,6 +751,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       }
     } finally {
       this.triggerDepth -= 1;
+      this.resolvingCardEffects = wasResolvingCard;
     }
   }
 
@@ -747,10 +779,13 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return true;
   }
 
-  /** `base` block, after Frail (a keyword status, see types.ts) multiplies it down; same shape as
-   *  calcDamage's multiply stage, floored once. */
+  /** `base` block, plus Dexterity, then Frail (keyword statuses, see types.ts) multiplies it; same shape as
+   *  calcDamage (add, then multiply), floored once and never below 0. */
   private calcBlock(base: number, who: Combatant): number {
     let amount = base;
+    for (const [id, stacks] of activeStatuses(who)) {
+      amount += STATUSES[id].blockAdd?.(stacks) ?? 0;
+    }
     for (const [id, stacks] of activeStatuses(who)) {
       amount *= STATUSES[id].blockMult?.(stacks) ?? 1;
     }
@@ -761,7 +796,8 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   private addStatus(target: Combatant, id: StatusId, stacks: number): CombatEventMap['statusChanged'] {
     const before = target.statuses[id] ?? 0;
     target.statuses[id] = Math.min(STATUSES[id].maxStacks ?? Infinity, before + stacks);
-    const delta = target.statuses[id]! - before; // less than `stacks` when a cap (Fuming's 1) trimmed it
+    if (target.statuses[id] === 0 && STATUSES[id].allowNegative) delete target.statuses[id]; // back to exactly 0: gone
+    const delta = (target.statuses[id] ?? 0) - before; // less than `stacks` when a cap (Fuming's 1) trimmed it
     if (id === 'freeze' && stacks > 0) this.checkFreezeStun(target);
     return { target: target.id, status: id, delta, statuses: { ...target.statuses } };
   }
@@ -778,6 +814,38 @@ export class CombatState extends EventEmitter<CombatEventMap> {
       enemy.stunnedTurns = (enemy.stunnedTurns ?? 0) + 1;
       this.pushLog(`${enemy.name} is frozen solid!`);
       this.emit('enemyStunned', { enemyId: enemy.id });
+    }
+  }
+
+  /** Extra cards a card's or the hero power's draw effects draw in the current form (Form B). */
+  private get formDrawBonus(): number {
+    return this.form ? (FORMS[this.form].drawBonus ?? 0) : 0;
+  }
+
+  /** Druid-only: enters `form`, ending any other form first. Returns false (nothing changes) if already in it. */
+  private enterForm(form: FormId): boolean {
+    if (this.form === form) return false;
+    this.exitForm();
+    this.applyFormStats(FORMS[form], 1);
+    this.form = form;
+    this.pushLog(`Entered ${formLabel(FORMS[form])}.`);
+    this.emit('formChanged', { form });
+    return true;
+  }
+
+  /** Ends the current form (if any), taking back exactly the stats it gave. */
+  private exitForm(): void {
+    if (!this.form) return;
+    this.applyFormStats(FORMS[this.form], -1);
+    this.form = null;
+    this.emit('formChanged', { form: null });
+  }
+
+  /** Adds (sign 1) or removes (sign -1) a form's Strength and Dexterity, announcing each as a status change. */
+  private applyFormStats(def: FormDefinition, sign: 1 | -1): void {
+    for (const id of ['strength', 'dexterity'] as const) {
+      const amount = (def.stats[id] ?? 0) * sign;
+      if (amount !== 0) this.emit('statusChanged', this.addStatus(this.player, id, amount));
     }
   }
 
@@ -852,5 +920,5 @@ export class CombatState extends EventEmitter<CombatEventMap> {
 }
 
 function activeStatuses(who: Combatant): [StatusId, number][] {
-  return (Object.entries(who.statuses) as [StatusId, number][]).filter(([, stacks]) => stacks > 0);
+  return (Object.entries(who.statuses) as [StatusId, number][]).filter(([id, stacks]) => stacks > 0 || (stacks < 0 && STATUSES[id].allowNegative === true));
 }

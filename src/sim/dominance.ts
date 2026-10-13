@@ -22,7 +22,7 @@ function componentsOf(card: CardDefinition): Components | null {
   const out: Components = new Map();
   const add = (key: string, v: number): void => void out.set(key, (out.get(key) ?? 0) + v);
   const read = (e: Effect, prefix: string): boolean => {
-    if (e.kind === 'multiplyStatus' || e.kind === 'exhaustRandom' || e.kind === 'loseHp') return false;
+    if (e.kind === 'multiplyStatus' || e.kind === 'exhaustRandom' || e.kind === 'loseHp' || e.kind === 'enterForm') return false;
     if ('scaling' in e && e.scaling) return false;
     if (e.kind === 'applyStatus') add(`${prefix}${e.to}:${e.status}`, e.value);
     else add(`${prefix}${e.kind}`, e.value);

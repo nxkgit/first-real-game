@@ -232,6 +232,7 @@ const EVENT_NAMES: Record<keyof CombatEventMap, true> = {
   enemyDied: true,
   combatEnded: true,
   temperatureChanged: true,
+  formChanged: true,
   heroPowerUsed: true,
   enemyStunned: true,
   enemyTurnSkipped: true,
@@ -378,8 +379,8 @@ describe('effect golden event logs', () => {
     expect(results).toContain('lost');
     expect(results.size).toBeGreaterThanOrEqual(2);
     const seen = new Set(records.flatMap((r) => r.seenEvents));
-    // the golden pool is pinned (adding a card would move every hash), so Radiant Light's event is covered in radiantLight.test.ts instead
-    for (const name of Object.keys(EVENT_NAMES).filter((n) => n !== 'radiantLightChanged')) expect(seen, `event ${name} never fired`).toContain(name);
+    // the golden pool is pinned (adding a card would move every hash), so Radiant Light's and forms' events are covered in radiantLight.test.ts and forms.test.ts instead
+    for (const name of Object.keys(EVENT_NAMES).filter((n) => n !== 'radiantLightChanged' && n !== 'formChanged')) expect(seen, `event ${name} never fired`).toContain(name);
     expect(records.reduce((sum, r) => sum + r.events, 0)).toBeGreaterThan(20000);
   });
 

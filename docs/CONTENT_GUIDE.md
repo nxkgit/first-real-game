@@ -106,6 +106,7 @@ An effect is `{ kind: '...', ... }`. Cards, relics and enemy moves all use the s
 | `addCardToHand` | `cardId`, `value` | Put that many copies of a specific card straight into the hand (overflow discards, like a draw into a full hand). | yes | no |
 | `gainEnergizedTurns` | `value` | Gain 1 extra energy at the start of your turn for that many of your next turns (this turn not counted). | no | no |
 | `gainRadiantLight` | `value` | Paladin only: gain Radiant Light (capped at `RADIANT_LIGHT_MAX`), the resource some cards cost instead of energy. | no | no |
+| `enterForm` | `form`, `onEnter`, `ifAlready` | Druid only: enter a form (see "Druid forms" below), then resolve the `onEnter` effects; if already in that form, nothing changes and the `ifAlready` effects resolve instead. | no | no |
 <!-- /names -->
 
 "Target" is the enemy the card was aimed at (for a trigger: the first living enemy). "Self" is whoever plays it. Triggered effects are not card plays: they do not count towards "cards played this turn".
@@ -345,6 +346,8 @@ A status is stacks on a fighter. Each has a `kind`: `duration` stacks drop by 1 
 | `outgoingDamageAdd` | Flat damage the holder adds (Strength). |
 | `outgoingDamageMult` | Multiplier on damage the holder deals (Weak, Empowered). |
 | `incomingDamageMult` | Multiplier on damage the holder takes (Vulnerable). |
+| `blockAdd` | Flat block the holder adds to every block it gains, before `blockMult` (Dexterity). |
+| `allowNegative` | Stacks may go below 0 (Strength, Dexterity); a status that returns to exactly 0 is removed. |
 | `blockMult` | Multiplier on block the holder gains (Frail). |
 | `incomingDamageCap` | Caps all damage the holder takes at this amount, applied last (Intangible). |
 | `consumedByAttack` | Loses one stack after each attack card the holder plays (Empowered). |
@@ -363,7 +366,8 @@ The existing statuses (a status id must be one of these; adding one needs a code
 |---|---|
 | `weak` | Duration. The holder deals less attack damage. |
 | `vulnerable` | Duration. The holder takes more attack damage. |
-| `strength` | Intensity. The holder's attacks deal N more damage for the whole fight. |
+| `strength` | Intensity. The holder's attacks deal N more damage for the whole fight. Can go negative (a Druid form), never below 0 damage. |
+| `dexterity` | Intensity. The holder gains N more block from every source for the whole fight. Can go negative (a Druid form), never below 0 block. |
 | `empowered` | Intensity. The next attack card(s) deal a damage multiple; one stack per attack card. |
 | `freeze` | Intensity, Mage only. Never counts down on its own; every `FREEZE_STUN_THRESHOLD` stacks stuns the holder for one move and removes those stacks. |
 | `frail` | Duration, StS-style keyword (engine-only, see "Keyword mechanics" below). The holder gains less block. |
@@ -444,3 +448,17 @@ Errors (the command exits non-zero) mean broken or inert content. Warnings mean 
 ## Reading the browser's simulation panel
 
 In `content.html`, click a card. If `balance/reports/sample.json` (from `npm run balance:report`) or `balance/baselines/baseline.json` (from `npm run balance:baseline`) existed when the page was built, the panel shows the card's effect on win rate, HP lost and turns with 95% intervals, and its best synergy partners. Without those files it says so. The page reads them at build time, so regenerate and rebuild (or restart `npm run dev`) after a balance run.
+
+## Druid forms (built 2026-10-13)
+
+A form is an effect that adds or removes Strength and Dexterity and swaps the hero's picture; there is no separate "tortoise object". Forms are data in `src/data/forms.ts` (`FORMS`: `stats` and an optional `drawBonus`; numbers in `tunables.ts`). A card enters one with an `enterForm` effect:
+
+```ts
+{ kind: 'enterForm', form: 'tortoise', onEnter: [{ kind: 'block', value: 8 }], ifAlready: [{ kind: 'block', value: 10 }] }
+```
+
+- One form at a time. Entering another form first takes back exactly the stats the old one gave. A form ends at the start of the player's next turn (before the draw). Forms never carry between fights.
+- Entering the form you are already in changes no stats and resolves `ifAlready` instead of `onEnter`. The card still costs energy.
+- Form B's `drawBonus` adds cards to every `draw` effect resolved by a played card or the hero power. Triggers, relics and a power's turn-start effect do not get it.
+- To add a form: add its id to `FormId` in `types.ts`, an entry in `FORMS`, tunables, and (optionally) art in `HERO_ART[hero].forms` in `src/data/art.ts` (a `sheet` for its own picture, or a `tint`; see `docs/ART.md`). The content check rejects an unknown form id.
+- Cards: `src/data/druidCards.ts` (placeholders). `?dev` presets: `druid-forms`, `druid-form-b-draw`.

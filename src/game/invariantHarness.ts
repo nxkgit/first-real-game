@@ -77,7 +77,7 @@ export function checkCombatInvariants(c: CombatState, expectedCards: number): vo
     if (m.block < 0) fail(`${m.id} block ${m.block} < 0`);
     for (const [id, stacks] of Object.entries(m.statuses)) {
       if (!(id in STATUSES)) fail(`${m.id} has unknown status ${id}`);
-      if (!Number.isInteger(stacks) || (stacks as number) <= 0) fail(`${m.id} status ${id} has stacks ${stacks}`);
+      if (!Number.isInteger(stacks) || (stacks as number) === 0 || ((stacks as number) < 0 && !STATUSES[id as keyof typeof STATUSES]?.allowNegative)) fail(`${m.id} status ${id} has stacks ${stacks}`);
     }
   }
   for (const e of c.enemies) if (!Number.isInteger(e.moveIndex) || e.moveIndex < 0) fail(`${e.id} moveIndex ${e.moveIndex}`);
@@ -167,7 +167,7 @@ export function fuzzFight(o: FightFuzzOptions): FightFuzzResult {
   });
   combat.on('statusChanged', (e) => {
     for (const [id, stacks] of Object.entries(e.statuses)) {
-      if (!Number.isInteger(stacks) || (stacks as number) <= 0) throw new Error(`statusChanged snapshot has ${id}=${stacks}`);
+      if (!Number.isInteger(stacks) || (stacks as number) === 0 || ((stacks as number) < 0 && !STATUSES[id as keyof typeof STATUSES]?.allowNegative)) throw new Error(`statusChanged snapshot has ${id}=${stacks}`);
     }
     if (!Number.isFinite(e.delta) || e.delta === 0) throw new Error(`statusChanged delta ${e.delta}`);
   });

@@ -11,7 +11,7 @@ export const PLAYER_ID: CombatantId = 'player';
  *  mechanic (Mage-only): Heating Up gives Fuming for the rest of the turn, each attack card played
  *  while Fuming grants 1 Ignite, and Ignite multiplies outgoing damage by 2^stacks (so 1x, 2x, 4x...);
  *  see StatusDefinition.clearAtTurnEnd / grantsOnAttack and DESIGN_LOG.md. */
-export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered' | 'freeze' | 'frail' | 'intangible' | 'buffer' | 'ignite' | 'fuming';
+export type StatusId = 'weak' | 'vulnerable' | 'strength' | 'empowered' | 'freeze' | 'frail' | 'intangible' | 'buffer' | 'ignite' | 'fuming' | 'dexterity';
 
 /** Stacks per status currently on one combatant. Absent (or 0) means not affected. */
 export type Statuses = Partial<Record<StatusId, number>>;
@@ -40,6 +40,11 @@ export interface StatusDefinition {
   outgoingDamageAdd?(stacks: number): number;
   outgoingDamageMult?(stacks: number, ctx: DamageMultContext): number;
   incomingDamageMult?(stacks: number): number;
+  /** Flat block added to every block the holder gains, before Frail multiplies (Dexterity); can be negative. */
+  blockAdd?(stacks: number): number;
+  /** Stacks may go below 0 (Strength and Dexterity, which Druid forms can lower); a status that returns
+   *  to exactly 0 is removed. Every other status ignores 0 or fewer stacks. */
+  allowNegative?: boolean;
   /** Multiplies block the holder gains (Frail). Applied the same way as the damage-mult stage,
    *  in CombatState.calcBlock. */
   blockMult?(stacks: number): number;
@@ -132,7 +137,23 @@ export type Effect =
   | { kind: 'gainEnergizedTurns'; value: number }
   /** Player cards only, Paladin-only mechanic (placeholder, see implementationplan.md "Multiple heroes
    *  and hero selection"). Gains `value` Radiant Light, up to RADIANT_LIGHT_MAX. */
-  | { kind: 'gainRadiantLight'; value: number };
+  | { kind: 'gainRadiantLight'; value: number }
+  /** Player cards only, Druid-only mechanic. Enters `form` (replacing any other form; see FormDefinition) and
+   *  then resolves `onEnter`. If the Druid is already in `form` nothing changes and `ifAlready` resolves instead. */
+  | { kind: 'enterForm'; form: FormId; onEnter?: Effect[]; ifAlready?: Effect[] };
+
+/** The Druid's forms (PLACEHOLDER names except Tortoise): at most one is active; it ends at the start of the
+ *  player's next turn, or when another form is entered. */
+export type FormId = 'tortoise' | 'formA' | 'formB';
+
+export interface FormDefinition {
+  id: FormId;
+  name: string;
+  /** Stacks of Strength and Dexterity the form adds while active (negative takes them away). Removed exactly on leaving. */
+  stats: { strength?: number; dexterity?: number };
+  /** Extra cards drawn by every card or hero-power draw effect while in the form. */
+  drawBonus?: number;
+}
 
 /** Every effect kind. Each one has exactly one entry in the effect registry (effects.ts). */
 export type EffectKind = Effect['kind'];

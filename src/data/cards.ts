@@ -3,6 +3,7 @@ import { SYNERGY_CARDS } from './synergyCards';
 import { MAGE_CARDS } from './mageCards';
 import { KEYWORD_CARDS } from './keywordCards';
 import { PALADIN_CARDS } from './paladinCards';
+import { DRUID_CARDS } from './druidCards';
 
 // PLACEHOLDER content. Names/numbers here are functional stand-ins to exercise the game's
 // systems — final card design, naming, and flavor are the user's to author (see CLAUDE.md).
@@ -235,6 +236,8 @@ const ALL_CARDS: CardDefinition[] = [
   ...MAGE_CARDS,
   // the Paladin's PLACEHOLDER cards, including the Radiant Light ones (see paladinCards.ts)
   ...PALADIN_CARDS,
+  // the Druid's PLACEHOLDER cards, including the form cards (see druidCards.ts)
+  ...DRUID_CARDS,
   // StS-style keyword demo cards (innate/retain/ethereal/unplayable/frail/intangible/buffer):
   // engine-only, never offered as rewards (see keywordCards.ts)
   ...KEYWORD_CARDS,

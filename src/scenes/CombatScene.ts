@@ -152,6 +152,7 @@ export class CombatScene extends Phaser.Scene {
     this.enemyViews = this.combat.enemies.map(
       (enemy, i) => new EnemyView(this, enemy, slots[i], crowded, this.combat, this.tooltips)
     );
+    this.playerView.setForm(this.combat.form); // a scenario can start in a form
     this.buildPileTooltips();
     this.buildHandArea();
     this.targeting = new Targeting(this, this.enemyViews, this.handContainer, (card, enemyId) =>
@@ -382,6 +383,7 @@ export class CombatScene extends Phaser.Scene {
       if (payload.target === PLAYER_ID) this.queue(() => this.animatePlayerBlockGain(payload.amount));
     });
     this.combat.on('statusChanged', (payload) => this.queue(() => this.animateStatusChange(payload)));
+    this.combat.on('formChanged', ({ form }) => this.queue(async () => this.playerView.setForm(form)));
     // Synergy events: update the readouts from the event's own snapshot (not live state).
     this.combat.on('energyChanged', ({ energy }) =>
       this.queue(async () => this.playerView.setEnergy(energy, this.combat.maxEnergy))
@@ -735,11 +737,12 @@ export class CombatScene extends Phaser.Scene {
     const { target, status, delta, statuses } = payload;
     const view = target === PLAYER_ID ? undefined : this.viewFor(target);
     (view ?? this.playerView).statusRow.set(statuses);
-    if (delta <= 0) return; // a tick down just updates the badges
     const def = STATUSES[status];
+    // a tick down just updates the badges; a stat that can go negative (a form's -2 Strength) says so
+    if (delta === 0 || (delta < 0 && !def.allowNegative)) return;
     const x = view ? view.x : PLAYER_X;
     const y = (view ? view.y : PLAYER_Y) - 40;
-    this.spawnFloatingText(x, y, `+${delta} ${def.name}`, `#${def.badge.color.toString(16).padStart(6, '0')}`);
+    this.spawnFloatingText(x, y, `${delta > 0 ? '+' : ''}${delta} ${def.name}`, `#${def.badge.color.toString(16).padStart(6, '0')}`);
     await this.delay(160);
   }
 
