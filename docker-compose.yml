@@ -4,3 +4,27 @@ services:
     ports:
       - "8080:80"
     restart: unless-stopped
+
+  # The cards table (docs/DB.md): card designs written down before they are built. Not part of the game;
+  # `docker compose up` for the game does not start it (the profile), `npm run db:up` does.
+  db:
+    image: postgres:17-alpine
+    profiles: ["db"]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-deckbuilder}
+      POSTGRES_DB: ${POSTGRES_DB:-deckbuilder}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}   # set in the untracked .env (see .env.example); `npm run db:up` checks it
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"   # this machine only
+    volumes:
+      - db-data:/var/lib/postgresql/data          # the live data lives here, on this machine, not in git
+      - ./db/init:/docker-entrypoint-initdb.d:ro  # table definition, run once on an empty volume
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  db-data:
