@@ -3,3 +3,5 @@ dist
 .git
 *.md
 .DS_Store
+.env
+db

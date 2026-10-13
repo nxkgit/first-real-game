@@ -21,6 +21,12 @@
     "patchnotes:sync": "vite build --ssr src/content/patchNotesCli.ts --outDir .sim/patchnotes --emptyOutDir --logLevel warn && node .sim/patchnotes/patchNotesCli.js",
     "patchnotes:check": "vite build --ssr src/content/patchNotesCli.ts --outDir .sim/patchnotes --emptyOutDir --logLevel warn && node .sim/patchnotes/patchNotesCli.js --check",
     "content:check": "vite build --ssr src/content/checkCli.ts --outDir .sim/content --emptyOutDir --logLevel warn && node .sim/content/checkCli.js",
+    "db:up": "node db/db.mjs up",
+    "db:down": "node db/db.mjs down",
+    "db:psql": "node db/db.mjs psql",
+    "db:status": "node db/db.mjs status",
+    "db:export": "node db/db.mjs export",
+    "db:seed": "node db/db.mjs seed",
     "e2e": "playwright test",
     "e2e:install": "playwright install --with-deps chromium",
     "e2e:typecheck": "tsc -p e2e/tsconfig.json"

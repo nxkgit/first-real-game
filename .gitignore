@@ -14,3 +14,6 @@ playwright-report
 
 # raw downloaded art packs; only the files we use get copied into the project
 /assets/
+
+# local settings for the cards database (see .env.example)
+.env
