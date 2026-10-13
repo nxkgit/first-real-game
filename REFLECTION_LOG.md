@@ -40,3 +40,22 @@ Entry format: **Observed** / **Decision** (or **REJECTED**, with the reason) / *
 
 - **Decision:** REJECTED. Session start only.
 - **Why:** Over-checking adds noise; the observed failure happened at session start.
+
+## Session 2026-10-13
+
+### Patch notes live in the PR description; the files are written once, after merges
+
+- **Observed:** The user was resolving merge conflicts in GitHub ("current / incoming / both") on `PATCHNOTES.md` and `README.md` on nearly every PR. The cause was the rule that every PR add an entry to the top of `PATCHNOTES.md` and rewrite the README block (a copy of the newest entry): every PR edits the same lines. Seen directly: PR #53 (stacked on #50) was marked conflicting right after following the rule, and a conflict resolution when merging `main` into #50's branch silently dropped #50's entry, so it merged with no patch notes. `PATCHNOTES.md` has 13 commits and `README.md` 18; about a dozen recent merges are main-into-branch or batch merges.
+- **Decision:** Replaced the `CLAUDE.md` "Patch notes" rule. PRs no longer edit `PATCHNOTES.md` or `README.md`; a player-visible PR carries a `## Patch notes` section in its description in the final format. When the user says "patch notes", Claude writes one entry from the merged PRs' descriptions, runs `npm run patchnotes:sync`, and opens a docs-only PR from `main`. QA-mode batches are unchanged (the batch branch already writes one entry; `docs/QA_FIX_WORKFLOW.md` needed no change). The live site may be ahead of its notes until the user triggers the step; the user accepted that.
+- **Why:** The two files then only change in one PR at a time, so feature PRs cannot conflict on them. Writing the "Checked" lines into the PR description keeps them written by whoever played the build.
+- **Known risk:** An entry can be forgotten and nothing checks for it (the README sync test only checks that the README matches `PATCHNOTES.md`). Not addressed; revisit if it happens.
+
+### REJECTED: a fifth "patch notes mode" that refreshes all internal docs
+
+- **Decision:** REJECTED. The only trigger is the plain phrase "patch notes", and it only covers `PATCHNOTES.md` and the README block.
+- **Why:** The user found the larger design too complex for the problem (conflict clicking). No evidence of conflicts in `DESIGN_LOG.md` or `HANDOFF.md` was observed, only circumstantial.
+
+### REJECTED: one file per PR under `patchnotes/`, assembled by the build
+
+- **Decision:** REJECTED for now.
+- **Why:** Conflict-free and public per PR, but it needs changes to the content site's reader, the sync command and its test (building work), and the README block would still need a separate refresh. Too much for the observed problem.
