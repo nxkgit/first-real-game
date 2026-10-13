@@ -7,17 +7,17 @@ A browser-based, turn-based deckbuilder roguelike (think Slay the Spire) built w
 The newest batch of fixes. Every batch is in [`PATCHNOTES.md`](PATCHNOTES.md) and on the [content site](https://nxkgit.github.io/first-real-game/content.html#patchnotes). (This block is written by `npm run patchnotes:sync`; edit `PATCHNOTES.md`, not this block.)
 
 <!-- patchnotes:start -->
-## 2026-10-10 (fix commit 0be7c4a)
+## 2026-10-13 (character sizes)
 
-### Fixed
-- #44 (minor fix): a big hand no longer piles up on itself. With 9 or 10 cards in hand, the cards used to overlap and their names and text were cut off. Now every card shrinks just enough to sit side by side, and the card under your mouse grows back to a readable size. Hands of 5 or fewer look exactly as before.
+### Changed
+- The Paladin and the final boss (the lava dino) are drawn about 20% larger, and the Keeper of the Wild (including its tortoise form) about 20% smaller. The dino now reaches the right edge of the fight area, and its pixels are slightly uneven because the size is not a whole-number zoom.
 
 ### Not fixed
-- #46: could not reproduce. Tried: the rest stop screen on the current build in a real browser. The backdrop, the campfire picture and both buttons show, with no white screen. If it happens again, note which browser and device it was on.
+- Nothing was a bug fix in this batch.
 
 ### Checked
-- Typecheck, 962 unit tests and the build pass, and a new test fails on the old hand layout and passes now. Played in a real browser: a full 10-card hand, hovering a card, and playing a card from it.
-- Not checked: touch screens. At 10 cards the small cards are hard to read until you point at one.
+- Typecheck, unit tests and the build pass. Played in a real browser: a Paladin against the boss, and the Keeper as a tortoise against the boss; the dino stays inside the fight area.
+- Not checked: touch screens, other window sizes.
 <!-- patchnotes:end -->
 
 Currently building **MVP 2**: a short run of chained fights — three fights and a rest stop, with your HP, deck, and gold carrying between them, and a choice after each win between adding a card to your deck or taking gold. (MVP 1, a single fully playable combat, is done.) All content and numbers are placeholders for now. See [`implementationplan.md`](implementationplan.md) for current scope and what's intentionally deferred, and [`DESIGN_LOG.md`](DESIGN_LOG.md) for the reasoning behind the design decisions made so far.
