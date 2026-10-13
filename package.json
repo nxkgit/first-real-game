@@ -25,8 +25,11 @@
     "db:down": "node db/db.mjs down",
     "db:psql": "node db/db.mjs psql",
     "db:status": "node db/db.mjs status",
+    "db:migrate": "node db/db.mjs migrate",
     "db:export": "node db/db.mjs export",
     "db:seed": "node db/db.mjs seed",
+    "db:backfill": "vite build --ssr db/cardsCli.ts --outDir .sim/db --emptyOutDir --logLevel warn && node .sim/db/cardsCli.js backfill",
+    "db:compare": "vite build --ssr db/cardsCli.ts --outDir .sim/db --emptyOutDir --logLevel warn && node .sim/db/cardsCli.js compare",
     "e2e": "playwright test",
     "e2e:install": "playwright install --with-deps chromium",
     "e2e:typecheck": "tsc -p e2e/tsconfig.json"

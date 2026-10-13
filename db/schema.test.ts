@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { getCard } from '../src/data/cards';
+import { CARD_COLUMNS } from './cardRow';
 
 // The cards table mirrors CardDefinition (docs/DB.md). This keeps the two honest without needing a running database:
 // a new simple field on CardDefinition must either get a column or be listed below with the reason it has none.
@@ -57,6 +58,7 @@ describe('the cards table mirrors CardDefinition', () => {
     const exported = [...list[1].matchAll(/'([a-z_]+)'/g)].map((m) => m[1]);
     const expected = tableColumns().filter((c) => c !== 'id' && c !== 'created_at');
     expect(exported).toEqual(expected);
+    expect([...CARD_COLUMNS]).toEqual(expected); // the TypeScript side (cardRow.ts) agrees too
   });
 
   it('uses the same slug pattern as the game ids it will be turned into (lowercase words joined by hyphens)', () => {

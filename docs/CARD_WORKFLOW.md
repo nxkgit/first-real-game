@@ -2,14 +2,14 @@
 
 How a card you design becomes a tested card in the game. Rewritten 2026-10-13 around the cards table (`DB.md`) and **card build mode**.
 
-**What is built and what is planned.** Parts marked *(planned)* do not exist yet and arrive in the next two steps; this document describes the process they make possible. Until then, card build mode is not usable.
+**What is built and what is planned.** Parts marked *(planned)* do not exist yet; this document describes the process they make possible. Until the existing cards are loaded into the table and the trigger is added to `CLAUDE.md`, card build mode is not usable.
 
 | Piece | State |
 |---|---|
 | The `cards` table, `db:*` commands, seed file | built (`DB.md`) |
-| `status` column with `draft / ready / built / blocked` | *(planned)* next step |
-| `db:backfill` (fill the table from the existing cards) and `db:compare` (table versus built cards, plus the patch-notes card table) | *(planned)* next step |
-| Loading the 81 existing cards into the table | *(planned)* the step after |
+| `status` column with `draft / ready / built / blocked` | built (with `db/migrations/`) |
+| `db:backfill` (fill the table from the existing cards) and `db:compare` (table versus built cards, plus the patch-notes card table) | built |
+| Loading the 81 existing cards into the table | *(planned)* the next step |
 | The phrase "card build mode" as a mode in `CLAUDE.md` | *(planned)* a reflecting-mode session, after the above |
 
 The *what* (fields, effects, scaling, triggers, statuses) is in `CONTENT_GUIDE.md`; this file is the *how we work*.
@@ -78,7 +78,7 @@ Every card gets **Tier 1**. A card also gets **Tier 2** if it has any of: scalin
 
 **Tier 1 (all cards):**
 - `npm run content:check`: no errors, and read each warning about the new card.
-- Read the generated text of the base and upgraded card (`content.html`, or the summary table from `db:compare` *(planned)*). Is the sentence what the row says?
+- Read the generated text of the base and upgraded card (`content.html`, or the card table from `npm run db:compare -- --table <slug...>`). Is the sentence what the row says?
 - `npm run verify`.
 - A simple card (a plain number of damage or block) needs no test of its own: the smoke fight that plays every card in the registry and the fuzz tests already cover it.
 
@@ -95,7 +95,7 @@ The draft PR description holds:
 - **What was built:** each card, with its tier.
 - **What was skipped, and why** (`blocked` rows, with the question or the missing mechanic or hero).
 - **Checked:** what was played in a browser and what was only tested.
-- **A `## Patch notes` section** (the rule in `CLAUDE.md`, "Patch notes") with a **card table showing only what a player sees**, from `db:compare --table` *(planned)*:
+- **A `## Patch notes` section** (the rule in `CLAUDE.md`, "Patch notes") with a **card table showing only what a player sees**, from `npm run db:compare -- --table <slug...>`:
 
 | Card | Hero | Type | Cost | Effect | Upgraded | Keywords |
 |---|---|---|---|---|---|---|
@@ -105,7 +105,7 @@ The PR does not edit `PATCHNOTES.md` or the root `README.md`. It does include th
 
 ## Changing an existing card
 
-Preferred: edit the row's columns (and words) and set it back to `ready`; card build mode applies it. You may also edit the TypeScript directly; then `npm run db:compare` *(planned)* shows the difference between the table and the code, and the row is corrected afterwards. Either way:
+Preferred: edit the row's columns (and words) and set it back to `ready`; card build mode applies it. You may also edit the TypeScript directly; then `npm run db:compare` shows the difference between the table and the code, and the row is corrected afterwards. Either way:
 
 1. Check the `upgrade` block: it replaces the whole list, so it may restate the number you changed.
 2. Expect some tests to need a deliberate refresh, not a bug fix: golden hashes (`effects.golden.test.ts`), e2e tests with hardcoded numbers, unit tests that pin that card's values, and the balance baseline (`npm run balance:baseline`).
