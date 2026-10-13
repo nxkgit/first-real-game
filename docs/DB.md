@@ -65,4 +65,4 @@ Edit `db/init/01-cards.sql` (what a fresh database gets) **and** add an idempote
 ## Later
 
 - **Structured effect columns** (the card's effects as data) are the natural next step and would let a generator write the TypeScript from the table (the "intake parser" option in `docs/CARD_WORKFLOW.md`). Not built: the schema work is planned for once there is more experience with Postgres.
-- Loading the 81 existing cards into the table (`db:backfill`, then `db:seed`, then `db:compare` should report 0 differences) is the next step.
+- The 81 existing cards were loaded on 2026-10-13 with `db:backfill`, `db:seed` and `db:compare` (0 differences), and `db/seed/cards.csv` holds them. A second machine gets them with `git pull`, then `npm run db:up` and `npm run db:seed`.
