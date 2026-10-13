@@ -59,3 +59,26 @@ Entry format: **Observed** / **Decision** (or **REJECTED**, with the reason) / *
 
 - **Decision:** REJECTED for now.
 - **Why:** Conflict-free and public per PR, but it needs changes to the content site's reader, the sync command and its test (building work), and the README block would still need a separate refresh. Too much for the observed problem.
+
+### Retired the unattended / parallel-agent workflow
+
+- **Observed:** A review of the guidance files (2026-10-13) found it contradicted itself. The memory file said not to run background agent waves while the user is active and to ask before launching agents, while `HANDOFF.md` told Claude to hand any task over about 2 minutes to a background agent by default. `docs/AUTOMATION.md` said `gh` was not installed and not to open PRs, which no recent session matched. In practice (the Druid build and the restructure) long builds ran inline anyway, and the user got repeated "hasn't heard from you" notices.
+- **Decision (user, 2026-10-13: "lets forget agentic workflow and remove mention of it but document the removal"):** The workflow is retired. `docs/AUTOMATION.md` moved to `docs/archive/AUTOMATION.md` with a RETIRED banner (history only). Its index rows in `docs/README.md` were removed or pointed at `CLAUDE.md`; `HANDOFF.md`'s playbook, orchestrator and "hand off over 2 minutes" notes were replaced with the current working style; `CLAUDE.md`'s reflecting-mode topic list no longer names it, and a rule says long builds run in the session with a one-line status as you go. **Kept on purpose:** QA mode's single-session autonomous run (it is not an agent workflow) and the memory file `no-autonomous-loops-while-active` (a harmless "don't"). Historical text (`DESIGN_LOG.md`, `docs/archive/progress-*.md`, the audits) is not rewritten.
+- **Why:** One consistent rule beats two opposite ones, and the user does not use the agent workflow. The CI triggers for `auto/**` and `integration/**` branches in `.github/` were left alone (config, not guidance); revisit separately if wanted.
+
+### Git flow: never push to `main`; Claude opens draft PRs, the user merges
+
+- **Observed:** `HANDOFF.md` said "commit to `main` and push" was fine; `CLAUDE.md` (pipeline-failure section), the QA docs and `AUTOMATION.md` said never push to `main`. After the Druid work was built Claude did not open a PR until the user asked ("wheres the pr"). No rule said to open one.
+- **Decision (user: "dont push to main unless i explicitly say so" / "you open drafts and i merge"):** New `CLAUDE.md` section "Git and pull requests": never push to `main` or merge unless explicitly told; work on a branch; when built and verified, open a draft PR without being asked and report its URL and check state; leave the user's untracked files out of commits. `HANDOFF.md`'s "relaxed gitflow" notes were replaced.
+- **Why:** Removes the contradiction and the missing step. The user prefers to merge every PR themselves.
+
+### REJECTED: moving procedures into skills
+
+- **Decision:** REJECTED for now. Procedures stay as docs with a pointer in `CLAUDE.md`.
+- **Why:** The failures found came from missing pointers and contradictions, not from docs being the wrong format, and a skill adds another file to keep in step. The user: "i dont think we need to use skills if there isnt a clear significant advantage". Revisit if a pointer demonstrably fails to get followed.
+
+### Deferred, by the user
+
+- **`docs/CARD_WORKFLOW.md`:** to be refined in planning mode and then adopted properly in a later reflecting-mode session. Not touched here.
+- **Decisions should each have one home:** agreed in principle (user: "i do think decisions should have a home"); the ownership scheme is not yet settled and nothing was changed.
+- **Process note:** the reflecting-mode edit allowlist was widened for this one change (user: "widen the allowlist") to cover `docs/AUTOMATION.md`, `docs/README.md` and `HANDOFF.md`; `docs/REFLECTING_MODE.md` itself was not changed, so the allowlist is back to normal.
