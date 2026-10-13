@@ -8,7 +8,7 @@ test('a full hand of 10 cards: no card overlaps its neighbour, and playing one s
   await game.waitForScene('MapScene');
   await game.startFightWith(['strike', 'defend', 'heating-up', 'scorching-wind', 'glaciate', 'strike', 'defend', 'strike', 'defend', 'strike', 'defend', 'strike'], ['enemy-a']);
   await game.page.evaluate(async () => {
-    const c = (await (window as any).__imp('/src/session.ts')).getCurrentCombat();
+    const c = (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat();
     const cards = await (window as any).__imp('/src/data/cards.ts');
     for (const id of ['heating-up', 'glaciate', 'scorching-wind', 'strike', 'defend']) c.deck.addCopiesToHand(cards.getCard(id), 1);
     c.emitHandChanged();

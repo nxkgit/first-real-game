@@ -6,8 +6,8 @@ import { STATUS_ORDER } from '../../data/statuses';
 import { STATUS_SLOT_WIDTH, StatusRow } from './StatusRow';
 import { Tooltips } from './Tooltips';
 import { PLAYER_X, PLAYER_Y } from './layout';
-import { addIcon, buildHeroSprite } from '../art';
-import type { HeroSprite } from '../art';
+import { addIcon, buildHeroSprite } from '../artLoader';
+import type { HeroSprite } from '../artLoader';
 import { addIdleBob, buildMageCharacter, buildPlaceholderHero } from './drawings';
 
 const STAT_Y = 360;

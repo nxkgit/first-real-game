@@ -1,4 +1,4 @@
-import { copyToClipboard } from '../storage';
+import { copyToClipboard } from '../app/storage';
 import { REPORT_NAME_LIMIT, REPORT_SECRET, REPORT_TEXT_LIMIT, REPORT_URL } from './reportConfig';
 import type { ReportSnapshot, SnapshotEnvironment } from './snapshot';
 import { checkDraft, reportAsText, submitReport } from './submit';

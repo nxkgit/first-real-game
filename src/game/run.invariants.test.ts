@@ -5,7 +5,7 @@ import { Rng } from './rng';
 import { buildRunReport } from './runReport';
 import { parseSavedRun } from './save';
 import { isRunOver, playWholeRun, stepRun } from './invariantHarness';
-import { newRun, restoreSavedRun } from '../data/run';
+import { newRun, restoreSavedRun } from './newRun';
 import { playBotTurn } from '../sim/bot';
 import { playFight, playRun } from '../sim/simulate';
 

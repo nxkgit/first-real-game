@@ -15,9 +15,9 @@ test('Heating Up: attacks deal 1x, 2x, 4x...; Scorching Wind ignores Ignite but 
   });
   await game.startFightWith(['heating-up', 'scorching-wind', 'strike', 'strike', 'strike'], ['enemy-a']);
 
-  const hp = () => game.page.evaluate(async () => (await (window as any).__imp('/src/session.ts')).getCurrentCombat().enemies[0].hp as number);
+  const hp = () => game.page.evaluate(async () => (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat().enemies[0].hp as number);
   const player = (id: string) =>
-    game.page.evaluate(async (s) => ((await (window as any).__imp('/src/session.ts')).getCurrentCombat().player.statuses[s] as number | undefined) ?? 0, id);
+    game.page.evaluate(async (s) => ((await (window as any).__imp('/src/app/session.ts')).getCurrentCombat().player.statuses[s] as number | undefined) ?? 0, id);
 
   // the card says what it does (the user's wording)
   expect(await game.hasText(/For the rest of your turn, your attacks grant you 1 Ignite\./)).toBe(true);

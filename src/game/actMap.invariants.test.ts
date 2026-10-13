@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { DEFAULT_MAP_PARAMS, encounterPoolFor, generateActMap } from './actMap';
 import type { ActMap, MapContent, MapNode, MapParams } from './actMap';
 import { Rng } from './rng';
-import { ACT_CONTENT } from '../data/run';
+import { ACT_CONTENT } from './newRun';
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';
 import { MAP_EARLY_FLOORS, MAP_FIRST_FLOOR, MAP_FLOORS, MAP_LANES } from '../data/tunables';

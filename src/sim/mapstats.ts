@@ -1,7 +1,7 @@
 import { DEFAULT_MAP_PARAMS, generateActMap } from '../game/actMap';
 import type { ActMap, MapNodeKind, MapParams } from '../game/actMap';
 import { Rng } from '../game/rng';
-import { ACT_CONTENT } from '../data/run';
+import { ACT_CONTENT } from '../game/newRun';
 import { meanCI } from './stats';
 import type { Interval } from './stats';
 

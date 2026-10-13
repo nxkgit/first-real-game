@@ -1,7 +1,7 @@
-import { findHero } from './data/heroes';
-import type { CombatState } from './game/CombatState';
-import type { RunState } from './game/RunState';
-import type { Scenario } from './game/scenario';
+import { findHero } from '../data/heroes';
+import type { CombatState } from '../game/CombatState';
+import type { RunState } from '../game/RunState';
+import type { Scenario } from '../game/scenario';
 
 /** The run being played right now, so tools outside the scenes (the dev panel) can find it. */
 let current: RunState | null = null;

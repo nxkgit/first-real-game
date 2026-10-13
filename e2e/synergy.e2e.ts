@@ -35,7 +35,7 @@ async function play(game: Harness, name: string) {
 
 async function playerStatus(game: Harness, status: string): Promise<number> {
   return game.page.evaluate(async (id) => {
-    const combat = (await (window as any).__imp('/src/session.ts')).getCurrentCombat();
+    const combat = (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat();
     return (combat.player.statuses[id] as number | undefined) ?? 0;
   }, status);
 }

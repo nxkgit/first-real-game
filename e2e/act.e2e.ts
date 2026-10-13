@@ -31,7 +31,7 @@ async function playFightTurns(game: Harness): Promise<void> {
       if (truth.phase !== 'playerTurn') return;
       // choose a card: defend first while the announced attacks would get through, else attack, else anything
       const slot: number = await game.page.evaluate(async () => {
-        const combat = (await (window as any).__imp('/src/session.ts')).getCurrentCombat();
+        const combat = (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat();
         const incoming = combat.livingEnemies.reduce((sum: number, e: any) => sum + (combat.intentDamage(e) ?? 0), 0);
         const exposed = incoming > combat.player.block;
         const options = combat.deck.hand
@@ -72,7 +72,7 @@ async function playStop(game: Harness): Promise<void> {
         // a stand-in for the dev panel's "Heal full": the map offers few rests, and this test is
         // about the screens working all the way to the end, not about the policy surviving
         await game.page.evaluate(async () => {
-          const r = (await (window as any).__imp('/src/session.ts')).getCurrentRun();
+          const r = (await (window as any).__imp('/src/app/session.ts')).getCurrentRun();
           r.hp = r.maxHp;
         });
         healed++;

@@ -10,7 +10,7 @@ import { ENEMIES, getEnemy } from '../data/enemies';
 import { EVENTS, getEvent } from '../data/events';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
 import { STATUSES } from '../data/statuses';
-import { ACT_CONTENT, RUN_WORLD } from '../data/run';
+import { ACT_CONTENT, RUN_WORLD } from './newRun';
 import { REWARD_CARD_CHOICES } from '../data/tunables';
 import type { CardDefinition, Effect, EnemyDefinition } from '../model';
 import { MAGE } from '../data/heroes/ids';

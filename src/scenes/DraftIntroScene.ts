@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
 import { STARTER_DECK_SIZE } from '../data/tunables';
-import { addScreenBackdrop } from './art';
-import { useLayoutCamera } from '../display';
+import { addScreenBackdrop } from './artLoader';
+import { useLayoutCamera } from '../app/display';
 import { addButton, addReportButton, addSettingsButton, enterCurrentNode } from './ui';
 
 /**

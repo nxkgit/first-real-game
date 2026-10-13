@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, test } from './harness';
 
-// Card pictures and the TEMPORARY fallback (src/scenes/ui.ts, descriptionFitsBesidePlaceholder): while
+// Card pictures and the TEMPORARY fallback (src/scenes/ui/cardFace.ts, descriptionFitsBesidePlaceholder): while
 // every card shows the shared placeholder picture, a card whose text cannot fit beside it (Heating Up's
 // long wording) is drawn without the picture. A card with its own picture keeps it. Delete the fallback
 // part of this test together with the fallback once real card art exists.

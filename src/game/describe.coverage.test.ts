@@ -7,7 +7,7 @@ import type { CardDefinition, Effect, EnemyMove, EventOutcome, RelicDefinition, 
 import { CARDS } from '../data/cards';
 import { RELICS } from '../data/relics';
 import { EVENTS } from '../data/events';
-import { newPlayableRun } from '../data/run';
+import { newPlayableRun } from './newRun';
 
 const card = (extra: Partial<CardDefinition>): CardDefinition => ({
   id: 'x',

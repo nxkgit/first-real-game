@@ -22,7 +22,7 @@ test('(b) plays a whole fight with the real mouse; readouts match CombatState af
       truth = await game.combatTruth();
       if (truth.phase !== 'playerTurn') break;
       const costs: Record<string, number> = await game.page.evaluate(async () => {
-        const combat = (await (window as any).__imp('/src/session.ts')).getCurrentCombat();
+        const combat = (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat();
         return Object.fromEntries(combat.deck.hand.map((c: any) => [c.definition.name, c.definition.cost]));
       });
       const playable = truth.hand.find((name) => costs[name] <= truth.energy);
@@ -47,7 +47,7 @@ test('(b) plays a whole fight with the real mouse; readouts match CombatState af
 
     // the enemy's announced attack is what lands (less block); then it is our turn again
     const incoming: number = await game.page.evaluate(async () => {
-      const combat = (await (window as any).__imp('/src/session.ts')).getCurrentCombat();
+      const combat = (await (window as any).__imp('/src/app/session.ts')).getCurrentCombat();
       return combat.livingEnemies.reduce((sum: number, e: any) => sum + (combat.intentDamage(e) ?? 0), 0);
     });
     await game.endTurn();

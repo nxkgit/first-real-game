@@ -31,7 +31,7 @@ async function load() {
   vi.resetModules();
   return {
     storage: await import('./storage'),
-    run: await import('./data/run'),
+    run: await import('../game/newRun'),
     settings: await import('./settings'),
     session: await import('./session'),
   };

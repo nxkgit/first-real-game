@@ -6,7 +6,7 @@ import { CARDS, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../da
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
-import { ACT_CONTENT } from '../data/run';
+import { ACT_CONTENT } from './newRun';
 import { MAGE } from '../data/heroes/ids';
 
 const FOE: EnemyDefinition = {

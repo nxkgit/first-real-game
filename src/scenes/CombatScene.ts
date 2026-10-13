@@ -5,8 +5,8 @@ import type { FightTier, RunState } from '../game/RunState';
 import type { CardInstance, Effect, EnemyDefinition } from '../model';
 import { PLAYER_ID } from '../model';
 import { Sfx } from '../audio/Sfx';
-import { useLayoutCamera } from '../display';
-import { setCurrentCombat, takePendingScenario } from '../session';
+import { useLayoutCamera } from '../app/display';
+import { setCurrentCombat, takePendingScenario } from '../app/session';
 import { restoreScenario } from '../game/scenario';
 import { STATUSES } from '../data/statuses';
 import { heroPowerText } from '../game/describe';
@@ -28,7 +28,7 @@ import {
   toggleCardView,
   toggleDeckView,
 } from './ui';
-import { addBackdrop } from './art';
+import { addBackdrop } from './artLoader';
 import { backgroundFor } from '../data/art';
 import { EnemyView } from './combat/EnemyView';
 import { PlayerView } from './combat/PlayerView';

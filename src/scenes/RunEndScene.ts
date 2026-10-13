@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import type { RunState } from '../game/RunState';
-import { useLayoutCamera } from '../display';
+import { useLayoutCamera } from '../app/display';
 import { buildRunReport, formatRunReport } from '../game/runReport';
-import { copyToClipboard } from '../storage';
-import { addScreenBackdrop } from './art';
+import { copyToClipboard } from '../app/storage';
+import { addScreenBackdrop } from './artLoader';
 import { toggleCredits } from './credits';
 import { addButton, addReportButton, addSettingsButton, startNewRun } from './ui';
 

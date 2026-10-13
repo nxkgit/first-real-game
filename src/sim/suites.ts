@@ -2,7 +2,7 @@ import type { CardDefinition } from '../model';
 import { Rng } from '../game/rng';
 import { baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { SYNERGY_CARDS } from '../data/neutral/synergy';
-import { ACT_CONTENT } from '../data/run';
+import { ACT_CONTENT } from '../game/newRun';
 import { MAGE } from '../data/heroes/ids';
 
 /**

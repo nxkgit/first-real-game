@@ -1,7 +1,7 @@
-import type { RunState } from './game/RunState';
-import { buildRunReport } from './game/runReport';
-import type { RunReport } from './game/runReport';
-import { restoreSavedRun } from './data/run';
+import type { RunState } from '../game/RunState';
+import { buildRunReport } from '../game/runReport';
+import type { RunReport } from '../game/runReport';
+import { restoreSavedRun } from '../game/newRun';
 
 // Browser storage for the current run and for finished-run reports. Every access is wrapped:
 // storage can be missing, full, or blocked (private windows), and the game must still play.

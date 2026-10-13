@@ -2,8 +2,8 @@ import Phaser from 'phaser';
 import type { MapNode, MapNodeKind } from '../game/actMap';
 import type { RunState } from '../game/RunState';
 import { Sfx } from '../audio/Sfx';
-import { useLayoutCamera } from '../display';
-import { addMapIcon, addScreenBackdrop } from './art';
+import { useLayoutCamera } from '../app/display';
+import { addMapIcon, addScreenBackdrop } from './artLoader';
 import { mapLayout } from './mapLayout';
 import {
   addDeckButton,

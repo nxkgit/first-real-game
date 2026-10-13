@@ -5,7 +5,7 @@ import { ENEMIES, getEnemy } from './enemies';
 import { EVENTS, getEvent } from './events';
 import { RELICS, RELIC_POOL, getRelic } from './relics';
 import { STATUSES, STATUS_ORDER } from './statuses';
-import { ACT_CONTENT, RUN_WORLD, newPlayableRun, newRun } from './run';
+import { ACT_CONTENT, RUN_WORLD, newPlayableRun, newRun } from '../game/newRun';
 import { KEYWORD_CARDS } from './neutral/keyword';
 import { generateActMap } from '../game/actMap';
 import { Rng } from '../game/rng';

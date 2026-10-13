@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseSavedRun, restoreRun } from './save';
-import { RUN_WORLD, newRun } from '../data/run';
+import { RUN_WORLD, newRun } from './newRun';
 
 const saved = (setup: (s: Record<string, any>) => void): unknown => {
   const s = JSON.parse(JSON.stringify(newRun(11).toSaved()));

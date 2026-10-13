@@ -1,6 +1,6 @@
 import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
-import { ACT_CONTENT } from '../data/run';
+import { ACT_CONTENT } from '../game/newRun';
 import { RELIC_POOL } from '../data/relics';
 import * as tunables from '../data/tunables';
 import { Evaluator, METRIC_IDS, METRICS } from './engine';

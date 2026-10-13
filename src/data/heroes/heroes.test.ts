@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { baseCards, getCard, rewardPoolFor, starterPoolFor } from '../cards';
 import { DEFAULT_HERO_ID, HEROES, getHero } from '.';
-import { ACT_CONTENT, newPlayableRun, newRun, restoreSavedRun, streamSeedFor, worldFor } from '../run';
+import { ACT_CONTENT, newPlayableRun, newRun, restoreSavedRun, streamSeedFor, worldFor } from '../../game/newRun';
 import { PLAYER_MAX_HP } from '../tunables';
 import { restoreRun } from '../../game/save';
 import { validateContent } from '../../content/validate';

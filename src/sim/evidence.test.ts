@@ -5,7 +5,7 @@ import { DEFAULT_MAP_PARAMS } from '../game/actMap';
 import { buildStarterDeck, getCard } from '../data/cards';
 import { SYNERGY_CARDS } from '../data/neutral/synergy';
 import { getEnemy } from '../data/enemies';
-import { ACT_CONTENT, newRun } from '../data/run';
+import { ACT_CONTENT, newRun } from '../game/newRun';
 import * as tunables from '../data/tunables';
 import { runEvidenceCommand } from './evidenceCommands';
 import { compareRuns } from './evidenceRuns';

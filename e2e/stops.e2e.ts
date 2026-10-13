@@ -23,7 +23,7 @@ test('(d) rest stop: upgrading a card with the picker and preview', async ({ gam
   expect(after.deck).toHaveLength(before.deck.length);
   expect(after.hp).toBe(before.hp); // upgrading is instead of resting
   const upgraded = await game.page.evaluate(async () => {
-    const run = (await (window as any).__imp('/src/session.ts')).getCurrentRun();
+    const run = (await (window as any).__imp('/src/app/session.ts')).getCurrentRun();
     return run.deck.filter((c: any) => c.upgradeOf).map((c: any) => c.upgradeOf as string);
   });
   expect(upgraded, 'exactly one card is now an upgraded version').toEqual(['strike']);
@@ -56,7 +56,7 @@ test('(d) reward screen: picking a card adds it to the deck', async ({ game }) =
   await game.waitForScene('RewardScene');
 
   const offered: string[] = await game.page.evaluate(async () => {
-    const run = (await (window as any).__imp('/src/session.ts')).getCurrentRun();
+    const run = (await (window as any).__imp('/src/app/session.ts')).getCurrentRun();
     return run.pendingReward.cards.map((c: any) => c.name);
   });
   expect(offered.length).toBe(3);

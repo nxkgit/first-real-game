@@ -5,7 +5,7 @@ import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model'
 import { PLAYER_MAX_HP, SHOP_CARD_PRICE } from '../data/tunables';
 import { buildStarterDeck } from '../data/cards';
 import { getEnemy } from '../data/enemies';
-import { ACT_CONTENT, newPlayableRun } from '../data/run';
+import { ACT_CONTENT, newPlayableRun } from '../game/newRun';
 import { runFight } from './fight';
 import { rngStartOf } from './fightCore';
 import type { SkillLevel } from './skills';

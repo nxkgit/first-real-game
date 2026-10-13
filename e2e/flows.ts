@@ -56,7 +56,7 @@ export async function devWinFight(game: Harness): Promise<void> {
 /** The first choice of the event on screen that does not start a fight: its index and label. */
 export async function firstPeacefulEventChoice(game: Harness): Promise<{ index: number; label: string; outcomes: any[] }> {
   return game.page.evaluate(async () => {
-    const run = (await (window as any).__imp('/src/session.ts')).getCurrentRun();
+    const run = (await (window as any).__imp('/src/app/session.ts')).getCurrentRun();
     const index = run.event.choices.findIndex((c: any) => !c.outcomes.some((o: any) => o.kind === 'fight'));
     const choice = run.event.choices[index];
     return { index, label: choice.label as string, outcomes: choice.outcomes as any[] };

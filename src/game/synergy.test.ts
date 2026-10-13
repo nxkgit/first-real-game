@@ -8,7 +8,7 @@ import { CARDS, allDraftableCards, baseCards, getCard, rewardPoolFor, upgradedVe
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
 import { SYNERGY_CARDS } from '../data/neutral/synergy';
 import { MAGE_CARDS } from '../data/heroes/mage/cards';
-import { newPlayableRun, newRun, restoreSavedRun } from '../data/run';
+import { newPlayableRun, newRun, restoreSavedRun } from './newRun';
 import { MAX_TRIGGER_DEPTH } from '../data/tunables';
 
 const mk = (id: string, extra: Partial<CardDefinition> = {}): CardDefinition => ({

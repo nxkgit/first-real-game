@@ -5,7 +5,7 @@
 
 import type Phaser from 'phaser';
 import { MUSIC_FADE_IN_MS } from '../data/tunables';
-import { effectiveMusicVolume, onSettingsChange } from '../settings';
+import { effectiveMusicVolume, onSettingsChange } from '../app/settings';
 
 const MUSIC_KEY = 'music-main-theme';
 const MUSIC_FILE = 'audio/main_theme_alex089.mp3';

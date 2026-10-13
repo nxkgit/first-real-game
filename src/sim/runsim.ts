@@ -6,7 +6,7 @@ import { Rng } from '../game/rng';
 import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
 import { allDraftableCards, buildStarterDeck, getCard } from '../data/cards';
 import { getEnemy } from '../data/enemies';
-import { ACT_CONTENT, RUN_WORLD } from '../data/run';
+import { ACT_CONTENT, RUN_WORLD } from '../game/newRun';
 import { getRelic } from '../data/relics';
 import { unitSeed } from './engine';
 import { runFight } from './fight';

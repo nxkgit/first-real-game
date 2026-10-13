@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parseSavedRun, restoreRun } from './save';
-import { RUN_WORLD, newPlayableRun, restoreSavedRun } from '../data/run';
+import { RUN_WORLD, newPlayableRun, restoreSavedRun } from './newRun';
 import type { RunState } from './RunState';
 
 // A real saved run, round-tripped through JSON like localStorage would.
