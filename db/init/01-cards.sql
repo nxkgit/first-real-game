@@ -4,7 +4,8 @@
 -- behaviour (effects, triggers, upgrade) is written in plain words, because the structured form is
 -- built into TypeScript from them. Structured columns can come later with the schema work.
 --
--- Runs once, the first time the container starts with an empty volume.
+-- Runs once, the first time the container starts with an empty volume. A later change to the table goes here AND in a new
+-- idempotent file in db/migrations/ (which `npm run db:up` applies to a database that already exists).
 
 CREATE TABLE cards (
   id              integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,   -- database-only key; query by name or slug
@@ -32,6 +33,8 @@ CREATE TABLE cards (
   effects_words   text    NOT NULL CHECK (length(trim(effects_words)) > 0),   -- what the card does, in order, with the numbers
   upgrade_words   text    NOT NULL CHECK (length(trim(upgrade_words)) > 0),   -- what the upgrade changes (write "none" if it has no upgrade)
   notes           text,                                                       -- anything unusual (edge cases, doubts)
+  status          text    NOT NULL DEFAULT 'draft'                            -- see docs/CARD_WORKFLOW.md
+                  CHECK (status IN ('draft', 'ready', 'built', 'blocked')),   --   draft: still designing; ready: build it; built / blocked: set by Claude
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 

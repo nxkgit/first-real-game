@@ -8,12 +8,13 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SEED = path.join(ROOT, 'db', 'seed', 'cards.csv');
+const MIGRATIONS = path.join(ROOT, 'db', 'migrations');
 
 // The columns that travel in the seed file: everything except `id` (database-only, handed out again on reload) and `created_at`.
 const COLUMNS = [
   'slug', 'name', 'type', 'cost', 'cost_resource', 'owner', 'target',
   'in_reward_pool', 'in_starter_pool', 'exhaust', 'innate', 'retain', 'ethereal', 'unplayable',
-  'tags', 'archetype', 'rarity', 'effects_words', 'upgrade_words', 'notes',
+  'tags', 'archetype', 'rarity', 'effects_words', 'upgrade_words', 'notes', 'status',
 ];
 
 const fail = (message) => {
@@ -55,6 +56,14 @@ function envValue(key) {
   return '';
 }
 
+/** Applies every db/migrations/*.sql, in name order. They are idempotent, so this is safe on a fresh or an old database. */
+function migrate() {
+  if (!fs.existsSync(MIGRATIONS)) return;
+  for (const file of fs.readdirSync(MIGRATIONS).filter((f) => f.endsWith('.sql')).sort()) {
+    psql([], fs.readFileSync(path.join(MIGRATIONS, file), 'utf8'));
+  }
+}
+
 const rowCount = () => Number(psql(['-At', '-c', 'SELECT count(*) FROM cards']).trim());
 
 const commands = {
@@ -64,6 +73,7 @@ const commands = {
     }
     const r = compose(['up', '-d', '--wait', 'db'], { stdio: 'inherit' });
     if (r.status !== 0) process.exit(r.status ?? 1);
+    migrate();
     const port = envValue('POSTGRES_PORT') || '5433';
     console.log(`\nThe cards database is up: host 127.0.0.1, port ${port}, user ${envValue('POSTGRES_USER') || 'deckbuilder'}, database ${envValue('POSTGRES_DB') || 'deckbuilder'}.`);
     console.log('Open a SQL prompt with: npm run db:psql   (rows: npm run db:status)');
@@ -83,7 +93,21 @@ const commands = {
   status() {
     const ps = compose(['ps', '--format', '{{.Service}}: {{.State}} ({{.Status}})', 'db']);
     console.log((ps.stdout || '').trim() || 'db: not created yet (npm run db:up)');
-    if (/running/i.test(ps.stdout || '')) console.log(`cards: ${rowCount()} rows; seed file: ${fs.existsSync(SEED) ? SEED.replace(ROOT + path.sep, '') : 'none yet'}`);
+    if (/running/i.test(ps.stdout || '')) {
+      const byStatus = psql(['-At', '-F', ' ', '-c', 'SELECT status, count(*) FROM cards GROUP BY status ORDER BY status']).trim().split('\n').filter(Boolean).map((l) => l.split(' ').reverse().join(' '));
+      console.log(`cards: ${rowCount()} rows${byStatus.length ? ` (${byStatus.join(', ')})` : ''}; seed file: ${fs.existsSync(SEED) ? SEED.replace(ROOT + path.sep, '') : 'none yet'}`);
+    }
+  },
+
+  /** Applies the idempotent changes in db/migrations/ to the database (`db:up` does this too). */
+  migrate() {
+    migrate();
+    console.log('Migrations applied.');
+  },
+
+  /** Prints every row as CSV (the same text export writes to the seed file). Used by `db:compare`. */
+  dump() {
+    process.stdout.write(psql(['-c', `COPY (SELECT ${COLUMNS.join(', ')} FROM cards ORDER BY slug) TO STDOUT WITH (FORMAT csv, HEADER true)`]).replace(/\r\n/g, '\n'));
   },
 
   /** Writes every row to db/seed/cards.csv (sorted by slug, so the file diffs cleanly in git). */

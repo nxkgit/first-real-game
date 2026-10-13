@@ -18,7 +18,7 @@ Git carries the recipe and the snapshot, not the running database. To move betwe
 
 1. Start Docker Desktop.
 2. Copy `.env.example` to `.env` and put a password after `POSTGRES_PASSWORD=` (stays on this machine; never paste it into chat).
-3. `npm run db:up` (creates the table the first time).
+3. `npm run db:up` (creates the table the first time, and applies any newer changes from `db/migrations/` to an older one).
 4. If a `db/seed/cards.csv` exists: `npm run db:seed` loads it.
 
 ## Everyday commands
@@ -29,6 +29,10 @@ Git carries the recipe and the snapshot, not the running database. To move betwe
 | `npm run db:psql` | A SQL prompt. One-off query: `npm run db:psql -- -c "SELECT name, cost FROM cards"`. |
 | `npm run db:status` | Whether it is running, and how many rows. |
 | `npm run db:export` | Write every row to `db/seed/cards.csv` (sorted by slug, so it diffs cleanly). |
+| `npm run db:migrate` | Apply the idempotent changes in `db/migrations/` to a database that already exists (`db:up` does this for you). |
+| `npm run db:backfill` | Write `db/seed/cards.csv` from the cards the game has built (status `built`). Refuses to overwrite an existing seed file unless you add `-- --replace`. Then load it with `db:seed`. |
+| `npm run db:compare` | Compare the table with the built cards. Every row marked `built` must match its card on all 16 structured columns (the words, notes and status are not compared); lists rows that are `ready`, `blocked` or `draft`, rows built in code but missing from the table, and rows marked `built` with no card. Exit code 1 on a difference. Needs the database running. |
+| `npm run db:compare -- --table <slug...>` | Print the patch-notes card table (only what a player sees) for those cards, straight from the code; no database needed. |
 | `npm run db:seed` | Replace the table's rows with `db/seed/cards.csv`. Refuses if the table already has rows unless you add `-- --replace` (anything not exported is lost). |
 
 You can also connect any SQL client (DBeaver, pgAdmin, TablePlus) to host `127.0.0.1`, port `5433` (or `POSTGRES_PORT`), with the user, database and password from `.env`.
@@ -48,12 +52,17 @@ One row per card. Columns mirror the simple fields of `CardDefinition` (`src/mod
 | `effects_words` | What the card does, in order, with the numbers, in plain words ("deal 6 damage, then gain 1 Temperature"). Required. |
 | `upgrade_words` | What the upgrade changes. Required; write `none` if it has no upgrade. |
 | `notes` | Anything unusual: edge cases, doubts. |
+| `status` | `draft` (still designing; the default for a new row), `ready` (final: build it), `built` or `blocked` (set by Claude; see `CARD_WORKFLOW.md`). |
 
 Not in the table, and why: the structured `effects`, `onTurnStartEffect`, `triggers` and `upgrade` (they are built into TypeScript from the words), `description` (card text is generated, never written by hand) and `upgradeOf` (set on the generated upgraded card). Structured columns are a later step (see "Later").
 
 Adding a card: `INSERT INTO cards (name, type, cost, owner, effects_words, upgrade_words) VALUES (...)` is enough; the rest has defaults. Postgres rejects a bad type, a negative cost, a malformed slug or owner, or a duplicate name.
 
+## Changing the table
+
+Edit `db/init/01-cards.sql` (what a fresh database gets) **and** add an idempotent file to `db/migrations/` (for example `ALTER TABLE cards ADD COLUMN IF NOT EXISTS ...`), numbered in order; `npm run db:up` and `npm run db:migrate` apply every file, so an old and a new database end up the same. Add the column to `COLUMNS` in `db/db.mjs` and `CARD_COLUMNS` in `db/cardRow.ts`; `db/schema.test.ts` fails if the lists, the SQL and `CardDefinition` drift apart.
+
 ## Later
 
 - **Structured effect columns** (the card's effects as data) are the natural next step and would let a generator write the TypeScript from the table (the "intake parser" option in `docs/CARD_WORKFLOW.md`). Not built: the schema work is planned for once there is more experience with Postgres.
-- A command that prints the built cards in these same columns, to compare a row with what was built, and a patch-notes card table from it, are the next planned pieces.
+- Loading the 81 existing cards into the table (`db:backfill`, then `db:seed`, then `db:compare` should report 0 differences) is the next step.
