@@ -1,0 +1,82 @@
+slug,name,type,cost,cost_resource,owner,target,in_reward_pool,in_starter_pool,exhaust,innate,retain,ethereal,unplayable,tags,archetype,rarity,effects_words,upgrade_words,notes,status
+absolute-zero,Absolute Zero,skill,3,,mage,,t,t,f,f,f,f,f,{frost},,,Cool down by 4.,Costs 2 instead of 3; effect unchanged.,,built
+apocalyptic-flame,Apocalyptic Flame,attack,3,,mage,enemy,t,t,f,f,f,f,f,{fire},,,Deal 30 damage. Heat up by 2.,Deal 40 damage. Heat up by 2.,,built
+arctic-strike,Arctic Strike,attack,1,,mage,enemy,t,t,f,f,f,f,f,{frost},,,Deal 2 damage. +3 for each stack of Freeze on the target.,Deal 4 damage. +3 for each stack of Freeze on the target.,,built
+attack-echo,Attack Echo,power,1,,neutral,,f,t,f,f,f,f,f,{},,,"Whenever you play an attack, gain 2 block.","Whenever you play an attack, gain 3 block.",,built
+big-block,Big Block,skill,2,,neutral,,t,t,f,f,f,f,f,{},,,Gain 13 block.,Gain 18 block.,,built
+block-slam,Block Slam,attack,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 1 damage for each point of your block.,Deal 3 damage. +1 for each point of your block.,,built
+block-spark,Block Spark,power,1,,neutral,,f,t,f,f,f,f,f,{},,,"Whenever you gain block, deal 3 damage. Once per turn.","Whenever you gain block, deal 5 damage. Once per turn.",,built
+blood-strike,Blood Strike,attack,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Lose 3 HP. Deal 14 damage.,Lose 3 HP. Deal 18 damage.,,built
+bolt,Bolt,attack,2,,neutral,enemy,f,t,f,f,f,f,f,{},,,Deal 12 damage.,Deal 16 damage.,,built
+cauterize,Cauterize,skill,1,,mage,,t,t,f,f,f,f,f,{fire},,,Gain 6 block. Heat up by 1.,Gain 9 block. Heat up by 1.,,built
+combo-strike,Combo Strike,attack,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 4 damage. +3 for each card played earlier this turn.,Deal 5 damage. +4 for each card played earlier this turn.,,built
+crippling-heat,Crippling Heat,attack,1,,mage,enemy,t,t,f,f,f,f,f,{fire},,,Deal 4 damage. Apply 1 Weak. Heat up by 1.,Deal 6 damage. Apply 2 Weak. Heat up by 1.,,built
+cryofreeze,Cryofreeze,power,2,,mage,,t,t,f,f,f,f,f,{frost},,,"Cool down by 1. At the start of each turn, gain 5 block.","Cool down by 1. At the start of each turn, gain 7 block.",,built
+cull,Cull,skill,0,,neutral,,t,t,t,f,f,f,f,{},,,Exhaust 1 random card from your hand. Gain 1 energy. Exhaust.,Exhaust 1 random card from your hand. Gain 2 energy. Exhaust.,,built
+defend,Defend,skill,1,,neutral,,t,t,f,f,f,f,f,{},,,Gain 5 block.,Gain 8 block.,,built
+double-strength,Double Strength,skill,1,,neutral,,t,t,t,f,f,f,f,{},,,Double your Strength. Exhaust.,Costs 0 instead of 1; effect unchanged.,,built
+end-guard,End Guard,power,1,,neutral,,t,t,f,f,f,f,f,{},,,"At the end of your turn, before you discard, gain 4 block.","At the end of your turn, before you discard, gain 6 block.",,built
+endless-winter,Endless Winter,power,1,,mage,,t,t,f,f,f,f,f,{frost},,,"Cool down by 1. At the start of each turn, apply 1 Freeze.",Costs 0 instead of 1; effect unchanged.,,built
+exhaust-engine,Exhaust Engine,power,1,,neutral,,t,t,f,f,f,f,f,{},,,"Whenever a card is exhausted, draw 1 card.",Costs 0 instead of 1; effect unchanged.,,built
+exhaust-payoff,Exhaust Payoff,attack,1,,neutral,enemy,f,t,f,f,f,f,f,{},,,Deal 2 damage. +3 for each card exhausted this combat.,Deal 3 damage. +4 for each card exhausted this combat.,,built
+expose,Expose,skill,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Apply 2 Vulnerable.,Apply 3 Vulnerable.,,built
+focus,Focus,power,1,,neutral,,t,t,f,f,f,f,f,{},,,"At the start of each turn, draw 1 additional card.",Costs 0 instead of 1; effect unchanged.,,built
+fortify,Fortify,power,2,,neutral,,t,t,f,f,f,f,f,{},,,"At the start of each turn, gain 4 block.","At the start of each turn, gain 6 block.",,built
+frozen-shield,Frozen Shield,skill,1,,mage,enemy,t,t,f,f,f,f,f,{frost},,,Gain 6 block. Apply 1 Freeze. Cool down by 1.,Gain 9 block. Apply 1 Freeze. Cool down by 1.,,built
+glacial-spike,Glacial Spike,skill,1,,mage,enemy,t,t,f,f,f,f,f,{frost},,,Apply 1 Freeze. Cool down by 1.,Apply 2 Freeze. Cool down by 1.,,built
+glaciate,Glaciate,attack,2,,mage,enemy,t,t,f,f,f,f,f,{frost},,,Deal 8 damage. 3x against a frozen target.,Deal 11 damage. 3x against a frozen target.,,built
+guarded-strike,Guarded Strike,attack,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 5 damage. Gain 5 block.,Deal 7 damage. Gain 7 block.,,built
+hand-strike,Hand Strike,attack,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 2 damage. +2 for each card in your hand.,Deal 3 damage. +3 for each card in your hand.,,built
+heat-flash,Heat Flash,attack,0,,mage,enemy,t,t,f,f,f,f,f,{fire},,,Deal 3 damage. Apply 1 Weak. Heat up by 1.,Deal 5 damage. Apply 1 Weak. Heat up by 1.,,built
+heat-warning,Heat Warning,attack,1,,mage,enemy,t,t,f,f,f,f,f,{fire},,,Deal 4 damage. Apply 2 Vulnerable. Heat up by 1.,Deal 6 damage. Apply 2 Vulnerable. Heat up by 1.,,built
+heating-up,Heating Up,skill,1,,mage,,t,t,f,f,f,f,f,{fire},,,"For the rest of your turn, your attacks grant you 1 Ignite. (This effect does not apply to Scorching Wind's damage.) Heat up by 1.",Costs 0 instead of 1; effect unchanged.,,built
+heavy-hit,Heavy Hit,attack,3,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 24 damage.,Deal 32 damage.,,built
+hungering-cold,Hungering Cold,power,1,,mage,,t,t,f,f,f,f,f,{frost},,,"At the start of each turn, cool down by 1.",Costs 0 instead of 1; effect unchanged.,,built
+hypothermia,Hypothermia,skill,1,,mage,enemy,t,t,f,f,f,f,f,{frost},,,Apply 1 Freeze. Cool down by 1.,Apply 2 Freeze. Cool down by 1.,,built
+ice-barrier,Ice Barrier,skill,1,,mage,,t,t,f,f,f,f,f,{frost},,,Discard 2 random cards from your hand. Gain 10 block. Cool down by 1.,Discard 2 random cards from your hand. Gain 14 block. Cool down by 1.,,built
+ice-block,Ice Block,skill,3,,mage,,t,t,f,f,f,f,f,{frost},,,Gain 36 block. Cool down by 1.,Costs 2 instead of 3; effect unchanged.,,built
+jab,Jab,attack,0,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 3 damage.,Deal 5 damage.,,built
+kill-reward,Kill Reward,power,1,,neutral,,t,t,f,f,f,f,f,{},,,"Whenever an enemy dies, gain 1 energy.","Whenever an enemy dies, gain 1 energy. draw 1 card.",,built
+meteor-shower,Meteor Shower,attack,2,,mage,,t,t,f,f,f,f,f,{fire},,,Deal 8 damage to all enemies. Heat up by 1.,Deal 11 damage to all enemies. Heat up by 1.,,built
+molten-core,Molten Core,skill,2,,mage,,t,t,f,f,f,f,f,{fire},,,Add 1 Scorching Wind to your hand for each point of Temperature.,Add 1 Scorching Wind to your hand. +1 for each point of Temperature.,,built
+opening-spark,Opening Spark,power,1,,neutral,,t,t,f,f,f,f,f,{},,,"At the start of your turn, deal 3 damage.","At the start of your turn, deal 5 damage.",,built
+opportunist,Opportunist,attack,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 4 damage. +4 for each stack of Vulnerable on the target.,Deal 5 damage. +5 for each stack of Vulnerable on the target.,,built
+pain-engine,Pain Engine,power,1,,neutral,,t,t,f,f,f,f,f,{},,,"Whenever you lose HP, gain 1 Strength.","Whenever you lose HP, gain 2 Strength.",,built
+placeholder-attack-light,Attack + Light,attack,1,,paladin,enemy,t,t,f,f,f,f,f,{},,,Deal 5 damage. Gain 1 Radiant Light.,Deal 7 damage. Gain 2 Radiant Light.,,built
+placeholder-block-light,Block + Light,skill,1,,paladin,,t,t,f,f,f,f,f,{},,,Gain 6 block. Gain 2 Radiant Light.,Gain 8 block. Gain 3 Radiant Light.,,built
+placeholder-druid-attack,Druid Attack,attack,1,,druid,enemy,t,t,f,f,f,f,f,{},,,Deal 7 damage.,Deal 10 damage.,,built
+placeholder-druid-big-block,Druid Big Block,skill,2,,druid,,t,t,f,f,f,f,f,{},,,Gain 12 block.,Gain 16 block.,,built
+placeholder-druid-block,Druid Block,skill,1,,druid,,t,t,f,f,f,f,f,{},,,Gain 6 block.,Gain 9 block.,,built
+placeholder-druid-debuff,Druid Debuff,attack,1,,druid,enemy,t,t,f,f,f,f,f,{},,,Deal 4 damage. Apply 1 Weak.,Deal 6 damage. Apply 2 Weak.,,built
+placeholder-druid-draw,Druid Draw,skill,1,,druid,,t,t,f,f,f,f,f,{},,,Draw 2 cards.,Draw 3 cards.,,built
+placeholder-druid-heavy,Druid Heavy Attack,attack,2,,druid,enemy,t,t,f,f,f,f,f,{},,,Deal 14 damage.,Deal 18 damage.,,built
+placeholder-druid-sweep,Druid Sweep,attack,1,,druid,,t,t,f,f,f,f,f,{},,,Deal 5 damage to all enemies.,Deal 8 damage to all enemies.,,built
+placeholder-form-a,Form A,skill,1,,druid,,t,t,f,f,f,f,f,{},,,"Enter Form A (+3 Strength, -2 Dexterity). Gain 5 block. If already in Form A: gain 1 energy.","Enter Form A (+3 Strength, -2 Dexterity). Gain 8 block. If already in Form A: gain 1 energy.",,built
+placeholder-form-b,Form B,skill,1,,druid,,t,t,f,f,f,f,f,{},,,Enter Form B (your card and hero power draws draw 1 more). Gain 5 block. If already in Form B: draw 1 card.,Enter Form B (your card and hero power draws draw 1 more). Gain 8 block. If already in Form B: draw 2 cards.,,built
+placeholder-light-attack,Light Attack,attack,2,radiantLight,paladin,enemy,t,t,f,f,f,f,f,{},,,Deal 14 damage.,Deal 18 damage.,,built
+placeholder-light-block,Light Block,skill,2,radiantLight,paladin,,t,t,f,f,f,f,f,{},,,Gain 14 block.,Gain 18 block.,,built
+placeholder-light-burst,Light Burst,attack,5,radiantLight,paladin,enemy,t,t,t,f,f,f,f,{},,,Deal 36 damage. Exhaust.,Deal 48 damage. Exhaust.,,built
+placeholder-light-debuff,Light Debuff,attack,1,radiantLight,paladin,enemy,t,t,f,f,f,f,f,{},,,Deal 4 damage. Apply 1 Weak.,Deal 6 damage. Apply 2 Weak.,,built
+placeholder-light-draw,Light Draw,skill,1,radiantLight,paladin,,t,t,f,f,f,f,f,{},,,Draw 2 cards.,Draw 3 cards.,,built
+placeholder-light-engine,Light Engine,power,2,,paladin,,t,t,f,f,f,f,f,{},,,"At the start of each turn, gain 1 Radiant Light.","At the start of each turn, gain 2 Radiant Light.",,built
+placeholder-light-gain,Light Gain,skill,1,,paladin,,t,t,f,f,f,f,f,{},,,Gain 3 Radiant Light.,Gain 5 Radiant Light.,,built
+placeholder-plain-attack,Plain Attack,attack,2,,paladin,enemy,t,t,f,f,f,f,f,{},,,Deal 12 damage.,Deal 16 damage.,,built
+placeholder-tortoise-form,Tortoise Form,skill,1,,druid,,t,t,f,f,f,f,f,{},,,"Enter Tortoise form (+3 Dexterity, -2 Strength). Gain 8 block. If already in Tortoise form: gain 10 block.","Enter Tortoise form (+3 Dexterity, -2 Strength). Gain 11 block. If already in Tortoise form: gain 14 block.",,built
+power-up,Power Up,skill,1,,neutral,,t,t,f,f,f,f,f,{},,,Gain 1 Empowered.,Costs 0 instead of 1; effect unchanged.,,built
+prime-a,Prime A,skill,0,,neutral,,f,t,f,f,f,f,f,{tag-a},,,Gain 3 block.,Gain 5 block.,,built
+quick-draw,Quick Draw,skill,1,,neutral,,t,t,f,f,f,f,f,{},,,Draw 2 cards.,Draw 3 cards.,,built
+scorching-wind,Scorching Wind,attack,0,,mage,enemy,t,t,f,f,f,f,f,{fire},,,Deal 2 damage. Heat up by 1.,Deal 4 damage. Heat up by 1.,,built
+single-use-strike,Single Use Strike,attack,1,,neutral,enemy,f,t,t,f,f,f,f,{},,,Deal 10 damage. Exhaust.,Deal 14 damage. Exhaust.,,built
+strengthen,Strengthen,power,1,,neutral,,t,t,f,f,f,f,f,{},,,Gain 2 Strength.,Gain 3 Strength.,,built
+strike,Strike,attack,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 6 damage.,Deal 9 damage.,,built
+sunder,Sunder,attack,2,,neutral,enemy,t,t,f,f,f,f,f,{},,,Deal 8 damage. Apply 2 Vulnerable.,Deal 11 damage. Apply 3 Vulnerable.,,built
+tag-a-echo,Tag A Echo,power,1,,neutral,,f,t,f,f,f,f,f,{},,,"Whenever you play a tag-a card, draw 1 card. Once per turn.",Costs 0 instead of 1; effect unchanged.,,built
+tag-a-payoff,Tag A Payoff,attack,1,,neutral,enemy,f,t,f,f,f,f,f,{},,,Deal 3 damage. +5 for each tag-a card played earlier this turn.,Deal 4 damage. +6 for each tag-a card played earlier this turn.,,built
+test-buffer,Test: Buffer,skill,1,,neutral,,f,f,f,f,f,f,f,{},,,Gain 2 Buffer.,Gain 3 Buffer.,,built
+test-ethereal,Test: Ethereal,attack,1,,neutral,enemy,f,f,f,f,f,t,f,{},,,Deal 8 damage.,Deal 12 damage.,,built
+test-frail,Test: Frail,skill,1,,neutral,enemy,f,f,f,f,f,f,f,{},,,Apply 2 Frail.,Apply 3 Frail.,,built
+test-innate,Test: Innate,skill,0,,neutral,,f,f,f,t,f,f,f,{},,,Gain 3 block.,Gain 5 block.,,built
+test-intangible,Test: Intangible,skill,1,,neutral,,f,f,f,f,f,f,f,{},,,Gain 1 Intangible.,Gain 2 Intangible.,,built
+test-retain,Test: Retain,skill,1,,neutral,,f,f,f,f,t,f,f,{},,,Gain 5 block.,Gain 8 block.,,built
+test-unplayable,Test: Unplayable,skill,0,,neutral,,f,f,f,f,f,f,t,{},,,Gain 5 block.,Gain 7 block.,,built
+weaken,Weaken,skill,1,,neutral,enemy,t,t,f,f,f,f,f,{},,,Apply 2 Weak.,Apply 3 Weak.,,built

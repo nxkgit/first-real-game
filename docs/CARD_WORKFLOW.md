@@ -2,14 +2,14 @@
 
 How a card you design becomes a tested card in the game. Rewritten 2026-10-13 around the cards table (`DB.md`) and **card build mode**.
 
-**What is built and what is planned.** Parts marked *(planned)* do not exist yet; this document describes the process they make possible. Until the existing cards are loaded into the table and the trigger is added to `CLAUDE.md`, card build mode is not usable.
+**What is built and what is planned.** Parts marked *(planned)* do not exist yet; this document describes the process they make possible. Until the trigger is added to `CLAUDE.md` (a reflecting-mode session), card build mode is not usable.
 
 | Piece | State |
 |---|---|
 | The `cards` table, `db:*` commands, seed file | built (`DB.md`) |
 | `status` column with `draft / ready / built / blocked` | built (with `db/migrations/`) |
 | `db:backfill` (fill the table from the existing cards) and `db:compare` (table versus built cards, plus the patch-notes card table) | built |
-| Loading the 81 existing cards into the table | *(planned)* the next step |
+| Loading the 81 existing cards into the table | built (2026-10-13: all 81 loaded as `built`; `db:compare` reports 0 differences) |
 | The phrase "card build mode" as a mode in `CLAUDE.md` | *(planned)* a reflecting-mode session, after the above |
 
 The *what* (fields, effects, scaling, triggers, statuses) is in `CONTENT_GUIDE.md`; this file is the *how we work*.
