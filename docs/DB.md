@@ -1,6 +1,6 @@
 # The cards database
 
-A local Postgres table where card designs are written down before they are built. Added 2026-10-14. It is the **input** side of the card workflow: you write cards here, Claude reads the rows and builds the TypeScript cards from them. It is **not** wired into the game: the browser loads TypeScript (`src/data/`), and that stays the source of truth. A card exists in the game only when it exists there.
+A local Postgres table where card designs are written down before they are built. Added 2026-10-13. It is the **input** side of the card workflow: you write cards here, Claude reads the rows and builds the TypeScript cards from them. It is **not** wired into the game: the browser loads TypeScript (`src/data/`), and that stays the source of truth. A card exists in the game only when it exists there.
 
 ## What lives where
 
