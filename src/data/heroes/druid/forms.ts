@@ -12,8 +12,6 @@ export const FORMS: Readonly<Record<FormId, FormDefinition>> = {
   formB: { id: 'formB', name: 'Form B', stats: {}, drawBonus: FORM_B_DRAW_BONUS },
 };
 
-export const FORM_IDS = Object.keys(FORMS) as FormId[];
-
 /** The form's name as a phrase: "Tortoise form", but "Form A" (not "Form A form"). */
 export const formLabel = (form: FormDefinition): string => (/form/i.test(form.name) ? form.name : `${form.name} form`);
 

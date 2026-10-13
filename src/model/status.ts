@@ -1,7 +1,7 @@
 /** 'freeze' is unique to the Mage: stacks never count down, and every FREEZE_STUN_THRESHOLD stacks
  *  stuns the holder for its next move (see CombatState). 'frail', 'intangible' and 'buffer' are
  *  generic StS-style keyword statuses (engine-only for now: no real card uses them yet, see
- *  src/data/keywordCards.ts and implementationplan.md). 'fuming' and 'ignite' are Heating Up's real
+ *  src/data/neutral/keyword.ts and implementationplan.md). 'fuming' and 'ignite' are Heating Up's real
  *  mechanic (Mage-only): Heating Up gives Fuming for the rest of the turn, each attack card played
  *  while Fuming grants 1 Ignite, and Ignite multiplies outgoing damage by 2^stacks (so 1x, 2x, 4x...);
  *  see StatusDefinition.clearAtTurnEnd / grantsOnAttack and DESIGN_LOG.md. */

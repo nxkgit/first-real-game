@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 
 // Shared driver for the browser tests. See docs/E2E.md.
 //
-// Everything here goes through the page's `?e2e` hook (src/main.ts): `window.__game` (the Phaser
+// Everything here goes through the page's `?e2e` hook (src/app/main.ts): `window.__game` (the Phaser
 // game) and `window.__step(frames, dtMs)` (run frames on a virtual clock). The real render loop is
 // stopped, so the game only moves when a test steps it. Game modules are reached with dynamic
 // imports of /src/... through the Vite dev server (the same module instances the game uses).

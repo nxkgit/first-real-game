@@ -18,16 +18,16 @@ import { BASIC_CARDS, BOLT, DEFEND, FOCUS, STRIKE } from './neutral/basics';
 
 const ALL_CARDS: CardDefinition[] = [
   ...BASIC_CARDS,
-  // placeholder synergy-test cards: registered, but never offered as rewards (see synergyCards.ts)
+  // placeholder synergy-test cards: registered, but never offered as rewards (see neutral/synergy.ts)
   ...SYNERGY_CARDS,
-  // the Mage's fire/frost/Freeze cards (user's design, see mageCards.ts): in the reward pool
+  // the Mage's fire/frost/Freeze cards (user's design, see heroes/mage/cards.ts): in the reward pool
   ...MAGE_CARDS,
-  // the Paladin's PLACEHOLDER cards, including the Radiant Light ones (see paladinCards.ts)
+  // the Paladin's PLACEHOLDER cards, including the Radiant Light ones (see heroes/paladin/cards.ts)
   ...PALADIN_CARDS,
-  // the Druid's PLACEHOLDER cards, including the form cards (see druidCards.ts)
+  // the Druid's PLACEHOLDER cards, including the form cards (see heroes/druid/cards.ts)
   ...DRUID_CARDS,
   // StS-style keyword demo cards (innate/retain/ethereal/unplayable/frail/intangible/buffer):
-  // engine-only, never offered as rewards (see keywordCards.ts)
+  // engine-only, never offered as rewards (see neutral/keyword.ts)
   ...KEYWORD_CARDS,
 ];
 
@@ -97,7 +97,7 @@ export function allDraftableCards(heroId: string = MAGE): CardDefinition[] {
 /**
  * Placeholder reference starter deck (mirrors StS's starter-deck shape): every card type, and the
  * cost/energy system. Used by the simulator/balance toolkit as its baseline deck, and by tests that
- * want an ordinary ready-to-play deck (see `newPlayableRun` in data/run.ts). The live game no longer
+ * want an ordinary ready-to-play deck (see `newPlayableRun` in game/newRun.ts). The live game no longer
  * uses this directly — since 2026-10-08 the player builds their own starting deck via the starter
  * draft (DESIGN_LOG.md "Starter deck draft"); this function is kept as the simulator's stand-in.
  */

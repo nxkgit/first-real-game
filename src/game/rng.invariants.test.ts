@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Rng } from './rng';
 
 // Gameplay and data source text, as raw strings (Vite feature; no filesystem access needed).
-const SOURCES = import.meta.glob(['/src/game/**/*.ts', '/src/data/**/*.ts', '/src/sim/**/*.ts'], {
+const SOURCES = import.meta.glob(['/src/game/**/*.ts', '/src/data/**/*.ts', '/sim/**/*.ts'], {
   query: '?raw',
   import: 'default',
   eager: true,

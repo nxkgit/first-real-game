@@ -86,9 +86,9 @@ export interface EventFight {
 /** A run in a form that can be stored and restored (content by id). Bump `version` if this changes. */
 export interface SavedRun {
   version: 4;
-  /** The hero being played (see data/heroes.ts). */
+  /** The hero being played (see data/heroes/). */
   heroId: string;
-  /** The seed the stream actually runs on (a hero other than the Mage mixes its id in; see data/run.ts). */
+  /** The seed the stream actually runs on (a hero other than the Mage mixes its id in; see game/newRun.ts). */
   seed: number;
   /** The seed the player sees and types (`?seed=`); equals `seed` for the Mage. */
   baseSeed: number;
@@ -463,7 +463,7 @@ export class RunState {
   /** Dev/tooling bypass: completes the starter-deck draft instantly with a given deck, without
    *  rolling any offers (so it never touches the rng stream, unlike a real draft pick) — for
    *  callers that don't care about the draft mechanic itself (the simulator, most tests). The live
-   *  game always drafts for real; see `data/run.ts`'s `newPlayableRun` for the common case. */
+   *  game always drafts for real; see `game/newRun.ts`'s `newPlayableRun` for the common case. */
   skipDraftWith(deck: CardDefinition[]): void {
     if (this.phase !== 'draft') throw new Error(`can't skip the draft while ${this.phase}`);
     this.deck = [...deck];

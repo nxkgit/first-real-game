@@ -134,11 +134,6 @@ export function unitsNeeded(unitSd: number, halfWidth: number): number {
   return Math.max(2, Math.ceil(((Z95 * unitSd) / halfWidth) ** 2));
 }
 
-/** Seeds needed to pin a rate near `p` down to +-halfWidth. */
-export function unitsNeededForRate(p: number, halfWidth: number): number {
-  return unitsNeeded(Math.sqrt(Math.max(p * (1 - p), 0.01)), halfWidth);
-}
-
 // ---------- order statistics and outliers ----------
 
 /** Linear-interpolated quantile, q in [0, 1]. */

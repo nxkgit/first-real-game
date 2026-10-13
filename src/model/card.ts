@@ -52,7 +52,7 @@ export interface CardDefinition {
   tags?: string[];
   /** The card leaves the deck for the rest of this combat after it is played. */
   exhaust?: boolean;
-  /** StS-style keyword (engine-only for now, see src/data/keywordCards.ts): always starts in the
+  /** StS-style keyword (engine-only for now, see src/data/neutral/keyword.ts): always starts in the
    *  opening hand of combat, never subject to the shuffle. Deck's constructor only; a mid-fight
    *  reshuffle of the discard pile does not re-apply this. */
   innate?: boolean;

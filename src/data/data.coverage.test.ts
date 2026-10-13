@@ -283,7 +283,7 @@ describe('enemies, relics, events, statuses', () => {
   });
 });
 
-describe('the act (data/run.ts)', () => {
+describe('the act (game/newRun.ts)', () => {
   it('every enemy id and event id the act uses exists', () => {
     const lists = [ACT_CONTENT.earlyEncounters, ACT_CONTENT.encounters, ACT_CONTENT.lateEncounters ?? [], ACT_CONTENT.elites, ACT_CONTENT.bosses];
     for (const list of lists) {

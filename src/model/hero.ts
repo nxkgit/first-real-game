@@ -15,7 +15,7 @@ export interface HeroPowerDefinition {
 }
 
 /**
- * A playable hero (data, see src/data/heroes.ts). Cards point at their hero through `owner`; this
+ * A playable hero (data, see src/data/heroes/index.ts). Cards point at their hero through `owner`; this
  * record holds what is about the hero itself. Every hero has a hero power. `resource` names the
  * hero's own extra mechanic, which decides what the fight screen shows (a hero's resource is
  * declared here, never inferred from having a hero power).

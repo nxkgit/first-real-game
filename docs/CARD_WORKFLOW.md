@@ -6,7 +6,7 @@
 
 - **You decide:** the name, the cost, the numbers, what the card does, what it is for. Anything creative or mechanical (`CLAUDE.md`, "Creative boundary").
 - **Claude does:** translates it into a `CardDefinition`, registers it, tests it, reports what was and was not verified.
-- **Claude does not:** invent a name, flavour, a missing number or a missing rule. If the hand-off leaves something out, Claude asks. If a placeholder is unavoidable (an unspecified "X"), it is labelled provisional in a comment and in the report, like the Mage batch in `mageCards.ts`.
+- **Claude does not:** invent a name, flavour, a missing number or a missing rule. If the hand-off leaves something out, Claude asks. If a placeholder is unavoidable (an unspecified "X"), it is labelled provisional in a comment and in the report, like the Mage batch in `heroes/mage/cards.ts`.
 
 ## 1. Hand-off template
 
@@ -38,7 +38,7 @@ This is the rule that keeps card building mechanical: by the time a card is hand
 
 ## 3. Write the card
 
-1. Add the `CardDefinition` in the owner's file: Mage cards in `src/data/mageCards.ts` (add to `MAGE_CARDS`), neutral originals in `src/data/cards.ts` (add to `ALL_CARDS`), engine test cards in `synergyCards.ts` / `keywordCards.ts`. The `id` is lowercase-with-dashes and never changes afterwards.
+1. Add the `CardDefinition` in the owner's file: Mage cards in `src/data/heroes/mage/cards.ts` (add to `MAGE_CARDS`), neutral originals in `src/data/cards.ts` (add to `ALL_CARDS`), engine test cards in `neutral/synergy.ts` / `neutral/keyword.ts`. The `id` is lowercase-with-dashes and never changes afterwards.
 2. Never write `description`; text is generated.
 3. Give it an `upgrade` block (it replaces the **whole** effect list; repeat unchanged effects). If the upgrade changes only the cost, say so.
 4. Mark any value you were not given with a comment: `// PLACEHOLDER: not specified`.
@@ -76,7 +76,7 @@ The report always says which tier ran and separates **played in a browser** from
 
 You can edit a card's file directly; this is the checklist so nothing goes stale.
 
-1. Edit the value in the card's own file (`mageCards.ts`, `cards.ts`, `synergyCards.ts`). Tunables that apply to everything are in `tunables.ts`, not on cards.
+1. Edit the value in the card's own file (`heroes/mage/cards.ts`, `cards.ts`, `neutral/synergy.ts`). Tunables that apply to everything are in `tunables.ts`, not on cards.
 2. **Check the `upgrade` block.** It replaces the whole list, so it may restate the number you just changed.
 3. `npm run content:check`, then `npm test`.
 4. Expect some of these to need a deliberate refresh, not a bug fix: golden hashes (`effects.golden.test.ts`), e2e tests with hardcoded numbers, unit tests that pin that card's values, and the balance baseline (`npm run balance:baseline`).
@@ -94,6 +94,6 @@ A card can ship without art: it shows the default picture. Your own art goes in 
 
 ## Temporary: long-text cards drop the placeholder picture
 
-While every card shows the shared placeholder picture (`public/assets/cards/default.png`), the picture window leaves about 63 px for the card text instead of 80. A card whose text does not fit in that space (Heating Up's wording is the one so far) is drawn **without** the picture, in the layout cards had before pictures: `descriptionFitsBesidePlaceholder` in `src/scenes/ui.ts`. A card with its **own** picture (`hasOwnCardArt`, a file listed in `CARD_ART_IDS`) always keeps it, so the rule fades out as real art is added.
+While every card shows the shared placeholder picture (`public/assets/cards/default.png`), the picture window leaves about 63 px for the card text instead of 80. A card whose text does not fit in that space (Heating Up's wording is the one so far) is drawn **without** the picture, in the layout cards had before pictures: `descriptionFitsBesidePlaceholder` in `src/scenes/ui/`. A card with its **own** picture (`hasOwnCardArt`, a file listed in `CARD_ART_IDS`) always keeps it, so the rule fades out as real art is added.
 
 **Remove it** (the function, the `showArt` check in `buildCardFace`, the second test in `e2e/cardart.e2e.ts`, and this section) once real card art exists and the layout has room for the longest card text. Decided by the user on 2026-10-09; see `DESIGN_LOG.md`.

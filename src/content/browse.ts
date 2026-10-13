@@ -1,4 +1,4 @@
-import { cardText, describeEffect, describeTrigger } from '../game/describe';
+import { cardText, describeTrigger } from '../game/describe';
 import type { CardDefinition, Effect } from '../model';
 import { SCALE_SOURCES } from './vocabulary';
 
@@ -167,9 +167,6 @@ export function upgradeComparison(c: CardRecord): { label: string; before: strin
     { label: 'Text', before: c.text, after: after ?? '(cannot upgrade)', changed: after !== undefined && after !== c.text },
   ];
 }
-
-/** A one-effect summary, for tooltips and the enemy tables. */
-export const effectsText = (effects: readonly Effect[]): string => effects.map((e) => describeEffect(e)).join(' ');
 
 // ---------- simulation stats (balance/reports and balance/baselines) ----------
 

@@ -113,7 +113,7 @@ export function deckFromSpec(spec: string[]): CardDefinition[] {
 }
 
 /**
- * Hand-built reference decks, one per synergy family of src/data/synergyCards.ts (about 13-15 cards:
+ * Hand-built reference decks, one per synergy family of src/data/neutral/synergy.ts (about 13-15 cards:
  * a basic frame plus the family). They are NOT meant to be balanced or realistic: each shows whether
  * its family can carry a deck, and how fast it ends fights. Existing sets keep their seeds, so old
  * results stay comparable. The mixed set samples 8 synergy cards on top of the starter deck.

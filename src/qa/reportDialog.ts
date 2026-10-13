@@ -152,8 +152,3 @@ export function openReportDialog(options: ReportDialogOptions): void {
   open = backdrop;
   text.focus();
 }
-
-/** True while the window is up (the scenes' hotkeys already ignore typing in it). */
-export function isReportDialogOpen(): boolean {
-  return open !== null;
-}

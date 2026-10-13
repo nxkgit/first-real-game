@@ -814,7 +814,7 @@ export class CombatScene extends Phaser.Scene {
     this.playerView.setBlock(c.player.block);
     this.playerView.setEnergy(c.energy, c.maxEnergy);
     this.playerView.statusRow.set(c.player.statuses);
-    // a hero's own resource is declared by the hero (data/heroes.ts), not guessed from having a hero power
+    // a hero's own resource is declared by the hero (data/heroes/), not guessed from having a hero power
     this.playerView.setTemperature(this.run.hero.resource === 'temperature' ? c.temperature : undefined);
     this.playerView.setRadiantLight(this.run.hero.resource === 'radiantLight' ? c.radiantLight : undefined);
     for (const view of this.enemyViews) view.syncFrom();

@@ -568,7 +568,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     this.fireTriggers('turnEnd'); // before the hand is discarded, so hand-size scaling still sees it
     this.checkWinLoss();
     if (this.phase !== 'playerTurn') return;
-    // Ethereal cards (a keyword, see types.ts) exhaust here instead of discarding; Retain cards stay.
+    // Ethereal cards (a keyword, see src/model/) exhaust here instead of discarding; Retain cards stay.
     for (const card of this.deck.discardHand()) this.noteExhausted(card);
     this.emitHandChanged();
     this.runEnemyTurn();
@@ -756,7 +756,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
   }
 
   /** Applies damage through block and returns what happened. The caller announces it. Buffer (a
-   *  keyword status, see types.ts) can cancel the HP loss that would follow block, consuming one
+   *  keyword status, see src/model/) can cancel the HP loss that would follow block, consuming one
    *  stack; `amount`/`absorbed` still reflect the real hit and block absorption. */
   private dealDamage(target: Combatant, amount: number): DamageResult {
     const absorbed = Math.min(target.block, amount);
@@ -768,7 +768,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return { amount, absorbed, remainingHp: target.hp };
   }
 
-  /** Buffer (a keyword status, see types.ts): if `target` has any stacks, consumes one and returns
+  /** Buffer (a keyword status, see src/model/): if `target` has any stacks, consumes one and returns
    *  true (the caller then skips reducing HP for this hit/loss). Independent of block. */
   private consumeBufferIfPresent(target: Combatant): boolean {
     const stacks = target.statuses.buffer ?? 0;
@@ -779,7 +779,7 @@ export class CombatState extends EventEmitter<CombatEventMap> {
     return true;
   }
 
-  /** `base` block, plus Dexterity, then Frail (keyword statuses, see types.ts) multiplies it; same shape as
+  /** `base` block, plus Dexterity, then Frail (keyword statuses, see src/model/) multiplies it; same shape as
    *  calcDamage (add, then multiply), floored once and never below 0. */
   private calcBlock(base: number, who: Combatant): number {
     let amount = base;

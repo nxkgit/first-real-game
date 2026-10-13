@@ -131,7 +131,7 @@ export interface Comparison {
 const metricOf = (key: string): MetricId => key.slice(key.lastIndexOf('/') + 1) as MetricId;
 
 /**
- * Tolerance rules (all in src/sim/targets.ts):
+ * Tolerance rules (all in sim/targets.ts):
  *  - "moved": |z| >= Z_MOVED (3) AND |change| >= the metric's tolerance (win 3 pts, HP lost 1.5, turns 0.4).
  *  - "possible": the change is at least the tolerance but not statistically clear (1.96 <= |z| < 3, or
  *    |z| < 1.96 with a change of twice the tolerance): re-run with more seeds.

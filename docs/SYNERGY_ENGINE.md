@@ -1,6 +1,6 @@
 # Synergy engine
 
-The card-to-card interaction machinery (Slay the Spire style builds). It is all data: cards and relics declare what they do; `CombatState` carries it out; `describe.ts` writes the text. Every number here is PROVISIONAL. The placeholder cards in `src/data/synergyCards.ts` are not in the reward pool, so the live game is unchanged.
+The card-to-card interaction machinery (Slay the Spire style builds). It is all data: cards and relics declare what they do; `CombatState` carries it out; `describe.ts` writes the text. Every number here is PROVISIONAL. The placeholder cards in `src/data/neutral/synergy.ts` are not in the reward pool, so the live game is unchanged.
 
 ## What exists
 
@@ -32,7 +32,7 @@ New events: `cardExhausted`, `energyChanged`, `hpLost` (direct loss only); `hand
 
 ## How to add a synergy card
 
-1. Add a `CardDefinition` in `src/data/synergyCards.ts` (copy a neighbour; `...base` sets `owner: 'neutral'`, `inRewardPool: false`) and list it in `SYNERGY_CARDS`. For a real card, put it in `cards.ts` instead and set `owner` / `inRewardPool` as usual.
+1. Add a `CardDefinition` in `src/data/neutral/synergy.ts` (copy a neighbour; `...base` sets `owner: 'neutral'`, `inRewardPool: false`) and list it in `SYNERGY_CARDS`. For a real card, put it in `cards.ts` instead and set `owner` / `inRewardPool` as usual.
 2. Write behaviour as data only:
    - scaled: `effects: [{ kind: 'damage', value: 4, scaling: { per: 'cardsPlayedThisTurn', value: 3 } }]`
    - reactive: `type: 'power'`, `triggers: [{ on: 'cardPlayed', cardType: 'attack', effects: [{ kind: 'block', value: 2 }] }]`
@@ -41,7 +41,7 @@ New events: `cardExhausted`, `energyChanged`, `hpLost` (direct loss only); `hand
 3. Any card with a `damage` effect (or `applyStatus` `to: 'target'`) needs `target: 'enemy'`; `triggers` are only valid on power cards (a test checks both).
 4. Add an `upgrade` block (it may change `cost`, `effects`, `triggers`, `tags`, `exhaust`). Never hand-write `description`.
 5. Run `npm test`. The registry-wide tests check text and upgrades for every card; add a behaviour test in `src/game/synergy.test.ts` for anything new.
-6. To add a new effect kind or trigger event: extend the unions in `types.ts`, handle it in `CombatState.applyCardEffect` / `fireTriggers` call sites, add text in `describe.ts`.
+6. To add a new effect kind or trigger event: extend the unions in `src/model/`, handle it in `CombatState.applyCardEffect` / `fireTriggers` call sites, add text in `describe.ts`.
 
 ## For the simulator
 

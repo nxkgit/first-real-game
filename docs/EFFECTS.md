@@ -16,7 +16,7 @@ Every effect kind (`damage`, `block`, `draw`, `applyStatus`, `gainEnergy`, `lose
 
 ## Adding a ninth kind
 
-1. Add its member to the `Effect` union in `src/game/types.ts` (and a doc comment saying who may use it).
+1. Add its member to the `Effect` union in `src/model/` (and a doc comment saying who may use it).
 2. Add its entry to `EFFECTS` in `src/game/effects.ts`. `EFFECTS` is typed `{ [K in EffectKind]: ... }`, so the build fails until you do. If it needs a new capability on the fight, add it to `EffectHost` and implement it in `CombatState`'s constructor.
    If the effect has a number a player would want to see change (anything that scales or meets a status), give it a `preview` that goes through `host.scaledValue` / `host.calcDamage` (never a copy of the formula). `src/game/preview.test.ts` plays each previewing kind under every scaling source and checks the preview equals what the play does; add your kind to its `KINDS` table.
 3. Add a sample of it to `SAMPLES` in `src/game/effects.test.ts` (also compile-checked), and tests for what it does.

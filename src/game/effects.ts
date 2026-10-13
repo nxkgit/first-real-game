@@ -8,7 +8,7 @@ import { FORMS, describeForm, formLabel } from '../data/heroes/druid/forms';
 
 /**
  * The effect registry: ONE entry per effect kind, bundling everything the game knows about it.
- * Adding a kind = add its member to the `Effect` union in types.ts, then add its entry to `EFFECTS`
+ * Adding a kind = add its member to the `Effect` union in src/model/, then add its entry to `EFFECTS`
  * below (the compiler refuses to build until you do), plus tests. See docs/EFFECTS.md.
  *
  * An entry says:

@@ -421,7 +421,7 @@ export function pressureExperiment(o: PressureOptions): ExperimentResult {
     );
     json.push({ policy: e.name, win: r6(win.p), floors: rows.map((r) => ({ floor: r[0], tier: r[1], fights: r[2], hpLost: r[5] })) });
   }
-  const markdown = [heading(2, 'Pressure curve: HP lost per fight by floor'), '', `${o.runs} runs per policy on seeds ${o.baseSeed}..${o.baseSeed + o.runs - 1}. Bands are the provisional ones in src/sim/targets.ts (HP bands assume 60 max HP and the mid reference deck at full HP; here HP on entering varies, so a floor can read LOW simply because the player was healthy).`, '', ...sections].join('\n');
+  const markdown = [heading(2, 'Pressure curve: HP lost per fight by floor'), '', `${o.runs} runs per policy on seeds ${o.baseSeed}..${o.baseSeed + o.runs - 1}. Bands are the provisional ones in sim/targets.ts (HP bands assume 60 max HP and the mid reference deck at full HP; here HP on entering varies, so a floor can read LOW simply because the player was healthy).`, '', ...sections].join('\n');
   return { name: 'pressure', json: { options: { runs: o.runs, baseSeed: o.baseSeed, maxHp: PLAYER_MAX_HP }, policies: json }, markdown };
 }
 

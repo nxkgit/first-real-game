@@ -115,7 +115,7 @@ const POOL: CardDefinition[] = [
   skill('exhaust2', [exhaustRandom(2), draw(1)], { cost: 0 }),
   skill('exhaust-self-blk', [blk(6), exhaustRandom(1)], { exhaust: true }),
   // Mage-only mechanics (implementationplan.md "Mage — Core Mechanics"): exercised generically
-  // here so the golden log covers them, independent of the real mageCards.ts content.
+  // here so the golden log covers them, independent of the real heroes/mage/cards.ts content.
   skill('toss', [discardRandom(1), blk(4)], { cost: 0 }),
   skill('toss2', [discardRandom(2)], { cost: 0 }),
   skill('heat-up', [adjustTemp(2)], { cost: 0 }),
@@ -151,7 +151,7 @@ const POOL: CardDefinition[] = [
   }),
   mk('power-loop', { type: 'power', cost: 0, triggers: [{ on: 'hpLost', effects: [loseHp(1)] }] }),
   // StS-style keyword mechanics (implementationplan.md "Keyword mechanics"): exercised generically
-  // here too, independent of the real keywordCards.ts demo content.
+  // here too, independent of the real neutral/keyword.ts demo content.
   skill('innate-test', [blk(3)], { cost: 0, innate: true }),
   skill('retain-test', [blk(4)], { cost: 1, retain: true }),
   atk('ethereal-test', [dmg(6)], { cost: 1, ethereal: true }),

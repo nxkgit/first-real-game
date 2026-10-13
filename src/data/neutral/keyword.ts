@@ -5,7 +5,7 @@ import type { CardDefinition } from '../../model';
 // 2026-10-08 at the user's request — see implementationplan.md's "Keyword mechanics" section and
 // DESIGN_LOG.md. Engine-only: these are NOT in the reward pool and no real Mage card uses any of
 // these keywords yet, on purpose. Reachable via the `?dev` panel's "Add card" dropdown and the
-// scenario system. Same pattern as synergyCards.ts, upgrade blocks included for the same reason
+// scenario system. Same pattern as neutral/synergy.ts, upgrade blocks included for the same reason
 // (the content checker expects every registered card to have one).
 
 const base = { owner: 'neutral', inRewardPool: false } as const;

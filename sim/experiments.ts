@@ -359,7 +359,7 @@ export function ladderExperiment(ev: Evaluator, opts: { skills: SkillLevel[]; se
     heading(2, 'Fight difficulty ladder'),
     '',
     `Win rate (Wilson 95% interval), HP lost in fights that were won (mean with 95% CI) and turns (mean with 95% CI), at full starting HP, for each reference deck set: ${sets.map((s) => `${s.name} (${s.description}, ${s.decks.length} deck${s.decks.length > 1 ? 's' : ''})`).join('; ')}. ${describeSetup(ev)}`,
-    `Flags compare the ${TARGET_DECK_SET} deck set to the PROVISIONAL target bands in src/sim/targets.ts (LOW / HIGH = outside the band; "ok" = inside). Per-fight numbers vary in how hard the individual fight is; the tier rollup is the better first read.`,
+    `Flags compare the ${TARGET_DECK_SET} deck set to the PROVISIONAL target bands in sim/targets.ts (LOW / HIGH = outside the band; "ok" = inside). Per-fight numbers vary in how hard the individual fight is; the tier rollup is the better first read.`,
     '',
   ];
   for (const skill of opts.skills) {

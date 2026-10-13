@@ -4,7 +4,7 @@ import { ENEMIES } from '../src/data/enemies';
 
 const ENEMY_A_HP = ENEMIES['enemy-a'].maxHp;
 
-// (e) One small fight per synergy mechanic (cards from src/data/synergyCards.ts). Each deck has at
+// (e) One small fight per synergy mechanic (cards from src/data/neutral/synergy.ts). Each deck has at
 // most five cards, so the whole deck is the opening hand and nothing depends on shuffling. Expected
 // numbers are worked out by hand from the card data (noted per test) and are provisional like the
 // cards themselves; the readouts are also compared with CombatState after every play.

@@ -1,5 +1,5 @@
 import { Rng } from '../src/game/rng';
-import { createFight, rngStartFromSeed, startingHp } from './fightCore';
+import { createFight, startingHp } from './fightCore';
 import type { FightSpec, RngStart } from './fightCore';
 import { BOTS, endTurn } from './skills';
 import type { FightContext, SkillLevel } from './skills';
@@ -53,4 +53,3 @@ export function runFight(spec: FightSpec, start: RngStart, skill: SkillLevel, ma
   };
 }
 
-export const fightSeed = (seed: number): RngStart => rngStartFromSeed(seed);

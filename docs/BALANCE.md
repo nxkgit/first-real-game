@@ -2,7 +2,7 @@
 
 > **What is current and what is not (noted 2026-10-07).** `balance/baselines/baseline.json` and `balance/reports/sample.*` are per-fight measurements and **were regenerated for the 31-card reward pool** (the 20 synergy cards joined the pool that day); `npm run balance:check` reports nothing moved. The **whole-act and map numbers are old**: everything under `balance/reports/design-evidence/` and `docs/design/EVIDENCE.md` was measured on the earlier map and the 11-card pool, before route themes, late-floor fights and the every-route-has-an-elite rule (the simulator's acts now meet more elites). They were deliberately not regenerated: the owner said balance is not a concern until real content exists. The target bands below are still provisional.
 
-How to find out whether a number, a card or an enemy is balanced, with simulation, and how to read the answer. Written 2026-10-07 while all content was placeholder: this is the **method**, not a tuning of the numbers. The tooling reads whatever the registries contain (`CARDS` via `baseCards()`, `ENEMIES`, the act lists in `src/data/run.ts`), so new content is picked up without code changes.
+How to find out whether a number, a card or an enemy is balanced, with simulation, and how to read the answer. Written 2026-10-07 while all content was placeholder: this is the **method**, not a tuning of the numbers. The tooling reads whatever the registries contain (`CARDS` via `baseCards()`, `ENEMIES`, the act lists in `src/game/newRun.ts`), so new content is picked up without code changes.
 
 The simulator **measures; it does not decide**. Every threshold below is a provisional placeholder (see "Target bands") for the designer to replace.
 
@@ -83,7 +83,7 @@ Lookahead reshuffles the draw pile with a hypothetical seed before simulating, s
 
 ## Target bands (PROVISIONAL, for the designer to set)
 
-Chosen by the tooling session from Slay the Spire conventions and the plan's "avoid dominant or dominated choices" principle. They live in `src/sim/targets.ts`; change them there. They apply to the **mid** reference deck (starter + 5 sampled cards) at full HP, 60 max HP.
+Chosen by the tooling session from Slay the Spire conventions and the plan's "avoid dominant or dominated choices" principle. They live in `sim/targets.ts`; change them there. They apply to the **mid** reference deck (starter + 5 sampled cards) at full HP, 60 max HP.
 
 | tier | turns per fight | HP lost when won (of max HP) |
 |---|---|---|
@@ -122,7 +122,7 @@ Run the checklist below. The card is picked up automatically from `baseCards()`.
 6. `balance:check`, then `balance:baseline` if you accept the movement.
 
 ### Checklist: new enemy or encounter
-1. Add it to the act lists in `src/data/run.ts` (or test it alone with `ladder --fights new-enemy+enemy-d`). Fights not in the act can be named directly.
+1. Add it to the act lists in `src/game/newRun.ts` (or test it alone with `ladder --fights new-enemy+enemy-d`). Fights not in the act can be named directly.
 2. `ladder --skills all`: win rate, HP lost when won and turns by deck set, against its tier's bands.
 3. `lengths`: is the turn distribution tight? A long right tail means some decks stall against it.
 4. Does it make some card strictly better or worse? `outliers` (enemy fights are compared inside their tier).
@@ -136,11 +136,11 @@ Run the checklist below. The card is picked up automatically from `baseCards()`.
 2. `ablate --sets synergy` (add a deck for the family to `synergyDeckSets` in `suites.ts`): does the card help the deck built for it? `cards --context syn-<family>` shows the single-card effect there. Pairs are the wrong tool for payoff cards.
 3. `combos --goal speed --fights boss-a --cardset all` and `--goal damage`: how fast can a search-built deck win, and which cards are in every top deck? An engine-sized result (a 12-card deck killing the boss in 4 turns against 9 for a normal deck) is a design question, not a bug; a deck that never needs to stop is a bug. Read the confirmed column (fresh seeds), not the search score.
 4. Before proposing a number change, measure it: `tweak --card <id> --set path=value`, or `--tweak "card:path=value;card2:path=value"` on any command (nothing on disk changes). Re-run `loops` under the tweak when it touches cost, draw or energy.
-5. The `smart` bot treats any effect kind it has no rule for as setup. If a card's value depends on sequencing, add the rule to `smart.ts` (see "Extending the tooling") and a constructed-deck test like those in `src/sim/smart.test.ts` (a hand that is exactly the deck: a 5-card deck is the opening hand, so the turn is deterministic).
+5. The `smart` bot treats any effect kind it has no rule for as setup. If a card's value depends on sequencing, add the rule to `smart.ts` (see "Extending the tooling") and a constructed-deck test like those in `sim/smart.test.ts` (a hand that is exactly the deck: a 5-card deck is the opening hand, so the turn is deterministic).
 
 ## Design-evidence commands (whole acts, shops, relics, events, maps)
 
-Added 2026-10-07 for the decisions the owner has not made yet (`docs/design/EVIDENCE.md` is the briefing built from them). They measure what a decision *does*; they never edit `src/data` or `src/game`. Every knob is an in-memory parameter of the simulator (`src/sim/runsim.ts`): shop price and stock size, a card-removal service, gold per reward, rest heal fraction, map shape (any `MapParams` field: floors, lanes, climbs, kind weights, first floors), starting relics/gold/max HP, and the draft pool. `RunState` is driven through its public API only (the shop's `price` and the reward's `gold` are plain fields the simulator sets).
+Added 2026-10-07 for the decisions the owner has not made yet (`docs/design/EVIDENCE.md` is the briefing built from them). They measure what a decision *does*; they never edit `src/data` or `src/game`. Every knob is an in-memory parameter of the simulator (`sim/runsim.ts`): shop price and stock size, a card-removal service, gold per reward, rest heal fraction, map shape (any `MapParams` field: floors, lanes, climbs, kind weights, first floors), starting relics/gold/max HP, and the draft pool. `RunState` is driven through its public API only (the shop's `price` and the reward's `gold` are plain fields the simulator sets).
 
 ```
 npm run balance -- gold --runs 300            # card vs gold: price grid, reward-gold grid, price x shop frequency
@@ -167,7 +167,7 @@ How they differ from the older experiments:
 - **Paired by run seed.** Rows are compared with the first row on the same seeds, with paired 95% intervals. Map-shape rows change the map itself, so their pairing is loose; read those as comparisons between rows' own intervals.
 - **Skill matters a lot at run level.** On the placeholder content the `greedy` bot loses far fewer HP than `smart` on ordinary decks (see "smart trades HP for speed" above), so run win rates differ by tens of points between them. The evidence document is built on `smart` and repeats the tables for `greedy` to say which findings hold for both.
 - **The `expert` bot has a stored-value term** (`storedValue` in `skills.ts`): Strength and Empowered it holds are worth HP-equivalents in its position value (`STORED_VALUE_WEIGHT`, a bot knob; 0 switches it off). On the placeholder synergy decks the change was within noise (the one deck it applies to, `syn-mult`, moved 34.9 to 35.3 HP lost to the boss); `expert` is still worse than `smart` on the exhaust and block-trigger decks, so it is still not a proven upper bound there.
-- Maps: `src/sim/mapstats.ts` (static path statistics: kinds per path, best and worst path counts, number of paths; overrides merge with the defaults: `mergeMapParams`). To switch a stop kind off set its first floor beyond the map or its weight to 0.
+- Maps: `sim/mapstats.ts` (static path statistics: kinds per path, best and worst path counts, number of paths; overrides merge with the defaults: `mergeMapParams`). To switch a stop kind off set its first floor beyond the map or its weight to 0.
 
 ## How many runs?
 
@@ -223,21 +223,21 @@ Not findings about the real game; examples of the kind of thing the tools surfac
 
 | path | role |
 |---|---|
-| `src/sim/stats.ts` | CIs, Wilson, paired and Welch differences, verdicts, outlier flags |
-| `src/sim/fightCore.ts` | `FightSpec`, replay-based reconstruction |
-| `src/sim/skills.ts` | the four bot skill levels (random, greedy, smart's driver, expert) |
-| `src/sim/smart.ts` | the `smart` bot's per-step ranking (`smartChoices`), including the synergy mechanics |
-| `src/sim/combos.ts` | `deck` (fixed deck), `combos` (adversarial search), the Dummy enemy |
-| `src/sim/loops.ts` | `loops`: exhaustive search of tiny decks for free-play loops |
-| `src/sim/ablate.ts` | `ablate`: a card's contribution inside a built deck |
-| `src/sim/tweak.ts` | `tweak` and the global `--tweak` flag: in-memory card changes |
-| `src/sim/dominance.ts` | `dominance`: static strict-dominance check |
-| `src/sim/engine.ts` | paired `Evaluator`, metrics, seeds |
-| `src/sim/suites.ts` | fight suites and reference decks (core: starter, mid, late; synergy: syn-tag, syn-exhaust, syn-trigger, syn-mult, syn-combo, syn-mixed), derived from the registries or hand-listed by card id |
-| `src/sim/targets.ts` | PROVISIONAL bands and check tolerances |
-| `src/sim/experiments.ts`, `drafts.ts` | the experiments |
-| `src/sim/snapshot.ts` | baseline and `check` |
-| `src/sim/commands.ts`, `balanceCli.ts` | command line |
+| `sim/stats.ts` | CIs, Wilson, paired and Welch differences, verdicts, outlier flags |
+| `sim/fightCore.ts` | `FightSpec`, replay-based reconstruction |
+| `sim/skills.ts` | the four bot skill levels (random, greedy, smart's driver, expert) |
+| `sim/smart.ts` | the `smart` bot's per-step ranking (`smartChoices`), including the synergy mechanics |
+| `sim/combos.ts` | `deck` (fixed deck), `combos` (adversarial search), the Dummy enemy |
+| `sim/loops.ts` | `loops`: exhaustive search of tiny decks for free-play loops |
+| `sim/ablate.ts` | `ablate`: a card's contribution inside a built deck |
+| `sim/tweak.ts` | `tweak` and the global `--tweak` flag: in-memory card changes |
+| `sim/dominance.ts` | `dominance`: static strict-dominance check |
+| `sim/engine.ts` | paired `Evaluator`, metrics, seeds |
+| `sim/suites.ts` | fight suites and reference decks (core: starter, mid, late; synergy: syn-tag, syn-exhaust, syn-trigger, syn-mult, syn-combo, syn-mixed), derived from the registries or hand-listed by card id |
+| `sim/targets.ts` | PROVISIONAL bands and check tolerances |
+| `sim/experiments.ts`, `drafts.ts` | the experiments |
+| `sim/snapshot.ts` | baseline and `check` |
+| `sim/commands.ts`, `balanceCli.ts` | command line |
 | `balance/baselines/baseline.json` | committed baseline (regenerate with `npm run balance:baseline`; the stored `note` says date, commit and that the content is placeholder: pass `-- --note "..."` to the CLI to set it) |
 | `balance/reports/sample.md`, `.json` | sample report from the placeholder content (ladder includes the synergy decks) |
 | `docs/balance/synergy-findings-2026-10.md` | the first real analysis (synergy content): findings, adversarial search, proposed tweaks |

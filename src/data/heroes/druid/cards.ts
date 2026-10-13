@@ -2,7 +2,7 @@ import type { CardDefinition } from '../../../model';
 import { DRUID } from '../ids';
 
 // PURELY PLACEHOLDER cards (user, 2026-10-13: "make some placeholder druid cards"). They exist to prove the
-// form mechanic (src/data/forms.ts): three cards enter the forms, the rest give Strength, Dexterity and
+// form mechanic (src/data/heroes/druid/forms.ts): three cards enter the forms, the rest give Strength, Dexterity and
 // Form B's bonus draw something to act on. Names are generic on purpose; every name and number is a
 // provisional stand-in, real Druid design is the user's. Text is generated from `effects` (game/describe.ts).
 
