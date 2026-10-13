@@ -82,3 +82,19 @@ Entry format: **Observed** / **Decision** (or **REJECTED**, with the reason) / *
 - **`docs/CARD_WORKFLOW.md`:** to be refined in planning mode and then adopted properly in a later reflecting-mode session. Not touched here.
 - **Decisions should each have one home:** agreed in principle (user: "i do think decisions should have a home"); the ownership scheme is not yet settled and nothing was changed.
 - **Process note:** the reflecting-mode edit allowlist was widened for this one change (user: "widen the allowlist") to cover `docs/AUTOMATION.md`, `docs/README.md` and `HANDOFF.md`; `docs/REFLECTING_MODE.md` itself was not changed, so the allowlist is back to normal.
+
+### Added "card build mode" as a fifth working mode
+
+- **Observed:** Cards reached me as one sentence ("make some placeholder druid cards") or a pasted list, with no fixed shape, so each hand-off cost questions and guesses. `docs/CARD_WORKFLOW.md` existed as an unlinked draft nobody had followed (the guidance review found it referenced nowhere and out of step with how the Mage and Druid cards were really built). Over this session the user and Claude settled a process in planning mode: card designs are rows in a local Postgres table (`docs/DB.md`), the TypeScript stays the game's source of truth, and a trigger phrase builds every `ready` row. The table, the `status` column, `db:backfill` / `db:compare` and the 81 existing cards (0 differences) were built and checked first.
+- **Decision (user: "add card build mode to claude.md"):** `CLAUDE.md` gains one bullet, in the same shape as QA mode: entered only by the phrase "card build mode"; follow `docs/CARD_WORKFLOW.md` exactly; read the `ready` rows, build each into its owner's folder, test in tiers, set `built` only after `npm run verify` passes, export the seed, open one draft PR (report plus a player-visible card table in its patch-notes section); autonomous like QA mode with no mid-run questions; a row with no precedent mechanic, an owner with no hero, or missing or contradictory information is set to `blocked`, explained in the report, and the rest continues; Claude changes only the `status` column and never invents a name, number or rule; the mode ends when the report is delivered. The section title and the count ("four" to "five modes") were updated. All detail stays in the doc, per the size rule.
+- **Audit of existing guidance (done before editing):** no rule conflicts. "When a mechanic is genuinely undecided, ask the user" (Scope discipline) is overridden inside this mode by the same no-questions rule QA mode already uses, which the new bullet states. The creative boundary, "Git and pull requests" (draft PR, user merges), "Testing discipline" (browser check for moving parts), the dev-preset rule, and the "Patch notes" rule (notes in the PR description, no edits to `PATCHNOTES.md` or the README) all agree with the workflow. No duplication: the procedure is only in `docs/CARD_WORKFLOW.md`.
+- **Why:** The same pattern as QA mode (a trigger phrase, a short pointer, the procedure in a doc) keeps `CLAUDE.md` small and makes the process something the user can start with one phrase.
+
+### REJECTED: starting card builds automatically whenever a row is `ready`
+
+- **Decision:** REJECTED. Only the phrase starts a build.
+- **Why:** The user wants to choose when a build run happens, and a build changes code and opens a PR; the trigger phrase matches how QA mode and reflecting mode already work.
+
+### Left for the user to decide (outside this session's allowlist)
+
+- Two lines are now stale and sit in files reflecting mode may not edit: the "built and planned" table in `docs/CARD_WORKFLOW.md` (it still lists the `CLAUDE.md` mode as planned) and `HANDOFF.md`'s "Card workflow and the cards table" paragraph (it lists this step as still to do). Neither was changed here.
