@@ -230,3 +230,33 @@ Each step uses `git mv` so file history survives.
 - **Import graph** (`tools/audit/importGraph.mjs`): a regex scan of every `import`/`export … from` in `src/`, type-only imports excluded from runtime edges; strongly connected components for cycles; exports not imported by another file by name.
 - **Code shape** (`tools/audit/codeShape.mjs`): the TypeScript compiler API walks each production file for function length, a branch-count complexity, class sizes, casts and escape hatches.
 - **Limits:** the scanners read text, so a re-export or a dynamic `import()` can hide a use (the dev panel and e2e load files by path); every "unused" result was cross-checked by hand in the table above. Branch counts are a rough proxy for complexity, not a formal measure.
+
+## Outcome: what the restructuring PR did (2026-10-13)
+
+Built from this report, structure only. The layout above was followed with these notes:
+
+| Finding | Result |
+|---|---|
+| F1 hero content scattered | Done. `src/data/heroes/<hero>/` holds `hero.ts`, `power.ts`, `cards.ts`, `art.ts` (the Druid also `forms.ts`); `src/data/neutral/` holds `basics.ts`, `synergy.ts`, `keyword.ts`; `heroes/index.ts` is the `HEROES` registry. Steps to add a hero are in `docs/CONTENT_GUIDE.md`. |
+| F2 hero id has no home | Done. `src/data/heroes/ids.ts`; the circular-import comments and the duplicate `MAGE` are gone. |
+| F3 data and game import each other | Done for the runtime edges: `data/run.ts` moved to `game/newRun.ts`, so `data/` no longer imports `game/` at runtime. The types moved to `model/`. Handing the content to the rules by injection was **not** done (a behaviour-level change). |
+| F4 `types.ts` dumping ground | Done. `src/model/` has one type-only file per entity (`card`, `effect`, `status`, `trigger`, `hero`, `enemy`, `relic`, `event`, `form`, `combat`) and an `index.ts`. |
+| F5 large classes and functions | Not done on purpose (behaviour-adjacent). Still the top follow-up. |
+| F6 unread fields | Not touched: `archetype`, `rarity` and `HeroPowerDefinition.owner` stay (decision for you). |
+| F7 repeated registry code | Done. `src/data/registry.ts` (`createRegistry`) is used by cards, enemies, events, relics and heroes. The `const base = {…}` shorthand in four card files stays. |
+| F8 vocabulary in three copies | Unchanged (guarded by tests). `guide.test.ts` now reads the schema from all of `src/model/`. |
+| F9 art side tables | Partly done: each hero's picture pairing moved into its folder; `HERO_ART` collects them. `ENEMY_ART`, `RELIC_ICON` and credits stay as they were. `scenes/art.ts` is now `scenes/artLoader.ts`. |
+| F10 loose `src/` files, `ui.ts` | Done. `src/app/` holds `main`, `display`, `session`, `settings`, `storage`. `scenes/ui.ts` became `scenes/ui/` (`cardFace`, `widgets`, `cardViews`, `hud`, `settingsPanel`, `navigation`, `index`); the runtime import cycle is gone (the graph script reports none). |
+| F11 simulator in `src/` | Done as recommended: top-level `sim/`; scripts, `tsconfig` and the coverage command updated. |
+| F12 root and docs clutter | The 12 progress reports are in `docs/archive/`. The Docker files were left alone (question still open). |
+| F13 test layout | Left as is; tests moved with their code. |
+| F14 unused exports | Deleted six after checking each by hand (`effectsText`, `FORM_IDS`, `isReportDialogOpen`, `unitsNeededForRate`, `fightSeed`, `Command`). `installDevPanel` stays (it is loaded by name from `main.ts`); the Node stubs in `sim/node.d.ts` stay. `tsconfig.json` now says `"strict": true`. |
+| F15 hero mechanics in the core | Not done on purpose; the hero folders are the prerequisite. |
+
+Decisions I took because the report left them open (reverse any with a follow-up): `sim/` to the top level; `content/` keeps its name; the dead fields stay; the Docker files stay; tests stay beside the code.
+
+### Evidence that behaviour did not change
+- `npm run verify` (typecheck, 977 tests, build) green; the golden event-log hashes unchanged.
+- `npm run sim -- --runs 120` output **byte-identical** before and after; `npm run balance:report` JSON and Markdown **byte-identical**; `npm run balance:check` and `npm run content:check` output identical apart from the command line that echoes the new script path.
+- No card, enemy, relic, event, status or hero id was renamed (saves store ids).
+- The browser suite was run against the restructured tree (see the PR for the result).
