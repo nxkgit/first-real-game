@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { MAGE, baseCards, getCard, rewardPoolFor, starterPoolFor } from './cards';
-import { DEFAULT_HERO_ID, HEROES, getHero } from './heroes';
-import { PALADIN } from './paladinCards';
-import { ACT_CONTENT, newPlayableRun, newRun, restoreSavedRun, streamSeedFor, worldFor } from './run';
-import { PLAYER_MAX_HP } from './tunables';
-import { restoreRun } from '../game/save';
-import { validateContent } from '../content/validate';
-import { realWorld } from '../content/world';
+import { baseCards, getCard, rewardPoolFor, starterPoolFor } from '../cards';
+import { DEFAULT_HERO_ID, HEROES, getHero } from '.';
+import { ACT_CONTENT, newPlayableRun, newRun, restoreSavedRun, streamSeedFor, worldFor } from '../run';
+import { PLAYER_MAX_HP } from '../tunables';
+import { restoreRun } from '../../game/save';
+import { validateContent } from '../../content/validate';
+import { realWorld } from '../../content/world';
+import { MAGE, PALADIN } from './ids';
 
 // Multiple heroes (implementationplan.md "Multiple heroes and hero selection", 2026-10-09).
 

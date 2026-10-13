@@ -4,7 +4,7 @@ import type { IntentIcon } from './intent';
 import type { CardDefinition, CardInstance, Combatant, Effect, EffectKind, EnemyState, FormId, Scaling, ScaleSource, StatusId, TriggerOn } from '../model';
 import { STATUSES } from '../data/statuses';
 import { getCard } from '../data/cards';
-import { FORMS, describeForm, formLabel } from '../data/forms';
+import { FORMS, describeForm, formLabel } from '../data/heroes/druid/forms';
 
 /**
  * The effect registry: ONE entry per effect kind, bundling everything the game knows about it.

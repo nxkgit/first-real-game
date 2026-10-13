@@ -6,8 +6,8 @@ import { Rng } from './rng';
 import type { CardDefinition, EnemyDefinition, Effect, RelicDefinition, Trigger } from '../model';
 import { CARDS, allDraftableCards, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
-import { SYNERGY_CARDS } from '../data/synergyCards';
-import { MAGE_CARDS } from '../data/mageCards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
+import { MAGE_CARDS } from '../data/heroes/mage/cards';
 import { newPlayableRun, newRun, restoreSavedRun } from '../data/run';
 import { MAX_TRIGGER_DEPTH } from '../data/tunables';
 

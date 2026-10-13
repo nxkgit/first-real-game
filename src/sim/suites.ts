@@ -1,8 +1,9 @@
 import type { CardDefinition } from '../model';
 import { Rng } from '../game/rng';
-import { MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
-import { SYNERGY_CARDS } from '../data/synergyCards';
+import { baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
 import { ACT_CONTENT } from '../data/run';
+import { MAGE } from '../data/heroes/ids';
 
 /**
  * Fight suites and reference decks, derived from the registries (CARDS via baseCards(), the act's

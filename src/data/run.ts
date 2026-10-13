@@ -4,11 +4,12 @@ import { generateActMap } from '../game/actMap';
 import type { MapContent } from '../game/actMap';
 import { Rng, randomSeed } from '../game/rng';
 import { parseSavedRun, restoreRun } from '../game/save';
-import { MAGE, buildStarterDeck, getCard, rewardPoolFor, starterPoolFor } from './cards';
+import { buildStarterDeck, getCard, rewardPoolFor, starterPoolFor } from './cards';
 import { DEFAULT_HERO_ID, findHero, getHero } from './heroes';
 import { getEnemy } from './enemies';
 import { EVENTS, getEvent } from './events';
 import { RELIC_POOL, getRelic } from './relics';
+import { MAGE } from './heroes/ids';
 
 // PLACEHOLDER act: which fights, elites, boss and events fill the map. The lists are rough
 // stand-ins to build the shape of an act (a map of fights, elites, rests, shops and events leading

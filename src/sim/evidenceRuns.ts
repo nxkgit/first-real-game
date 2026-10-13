@@ -6,7 +6,7 @@ import { PLAYER_MAX_HP } from '../data/tunables';
 import { heading, r6, table } from './report';
 import type { ExperimentResult } from './report';
 import { getCard } from '../data/cards';
-import { SYNERGY_CARDS } from '../data/synergyCards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
 import { DEFAULT_RUN_POLICY, mechanismsOf, playRuns, withPolicy } from './runsim';
 import type { RunPolicy, RunRecord } from './runsim';
 import { KINDS, fightsRemainingByFloor, shapeStats } from './mapstats';

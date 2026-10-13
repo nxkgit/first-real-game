@@ -1,5 +1,5 @@
 import { baseCards, upgradedVersion } from '../data/cards';
-import { SYNERGY_CARDS } from '../data/synergyCards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
 import { Rng } from '../game/rng';
 import type { CardDefinition } from '../model';
 import { Evaluator, METRICS, METRIC_IDS } from './engine';

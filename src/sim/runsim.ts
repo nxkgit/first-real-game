@@ -4,7 +4,7 @@ import { generateActMap } from '../game/actMap';
 import type { MapNode, MapNodeKind, MapParams } from '../game/actMap';
 import { Rng } from '../game/rng';
 import type { CardDefinition, EnemyDefinition, RelicDefinition } from '../model';
-import { MAGE, allDraftableCards, buildStarterDeck, getCard } from '../data/cards';
+import { allDraftableCards, buildStarterDeck, getCard } from '../data/cards';
 import { getEnemy } from '../data/enemies';
 import { ACT_CONTENT, RUN_WORLD } from '../data/run';
 import { getRelic } from '../data/relics';
@@ -13,6 +13,7 @@ import { runFight } from './fight';
 import { rngStartFromSeed, rngStartOf } from './fightCore';
 import { mergeMapParams } from './mapstats';
 import type { SkillLevel } from './skills';
+import { MAGE } from '../data/heroes/ids';
 
 /**
  * The configurable whole-act simulator (the evidence toolkit's run model).

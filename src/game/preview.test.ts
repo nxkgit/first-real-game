@@ -4,7 +4,7 @@ import { cardTagsText, cardText } from './describe';
 import { ALL_SCALE_SOURCES, lowerIsBetterFor } from './effects';
 import { Rng } from './rng';
 import type { CardDefinition, Effect, EffectKind, EnemyDefinition, ScaleSource } from '../model';
-import { SYNERGY_CARDS } from '../data/synergyCards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
 
 // The live numbers on card faces come from CombatState.previewCardEffect, which goes through the
 // effect registry. The property tested here: what a card face says it will do is what playing it does.

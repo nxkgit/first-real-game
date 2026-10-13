@@ -1,6 +1,6 @@
 import type { CardDefinition, RelicDefinition } from '../model';
 import { Rng } from '../game/rng';
-import { MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
+import { baseCards, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { getEnemy } from '../data/enemies';
 import { RELIC_POOL, SYNERGY_RELICS, getRelic } from '../data/relics';
 import { PLAYER_MAX_HP } from '../data/tunables';
@@ -14,6 +14,7 @@ import { fix, fmtCI, fmtDiff, meanCI, pairedDiff, pct } from './stats';
 import type { Interval } from './stats';
 import { actFights, referenceDeckSets, starterIds } from './suites';
 import type { DeckSet, FightDef } from './suites';
+import { MAGE } from '../data/heroes/ids';
 
 /**
  * Fight-level evidence: what a card pick, a shop buy, a removal, a relic, a deck size or an upgrade

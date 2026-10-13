@@ -4,6 +4,10 @@
 
 import type { MapNodeKind } from '../game/actMap';
 import type { FormId } from '../model';
+import { DRUID_ART } from './heroes/druid/art';
+import { MAGE, PALADIN, DRUID } from './heroes/ids';
+import { MAGE_ART } from './heroes/mage/art';
+import { PALADIN_ART } from './heroes/paladin/art';
 import type { FightTier } from '../game/RunState';
 import { MAP_EARLY_FLOORS, MAP_LATE_FLOORS_FROM } from './tunables';
 
@@ -72,44 +76,12 @@ export interface HeroSheetFile extends HeroSheet {
 }
 
 /**
- * Hero id -> picture sheet. Adding a hero's art = the GIF in assets/heroes/, a line in `HERO_STRIPS` in
- * tools/prepareAssets.py, and one entry here (docs/ART.md, "Adding an animated GIF"). A hero with no entry is
- * drawn as a flat-colour stand-in. The files are built by `python tools/prepareAssets.py <mage|paladin|druid|tortoise>`
- * (it prints the numbers below). User, 2026-10-13: the black knight is the Paladin, the old Paladin picture is the Mage.
- * All pixel art shown at a non-whole zoom, so drawn smoothed (no crisp-edge flag). Idle only: lunge and tip-over are drawn in code.
+ * Hero id -> picture sheet. The pairing for each hero lives in its folder (`data/heroes/<hero>/art.ts`); this just collects them.
+ * Adding a hero's art = the GIF in assets/heroes/, a line in `HERO_STRIPS` in tools/prepareAssets.py, and that hero's art.ts
+ * (docs/ART.md, "Adding an animated GIF"). A hero with no entry is drawn as a flat-colour stand-in. The files are built by
+ * `python tools/prepareAssets.py <mage|paladin|druid|tortoise>` (it prints the numbers the art.ts files need).
  */
-export const HERO_ART: Readonly<Record<string, HeroArt>> = {
-  mage: {
-    file: 'hero/mage_model.png',
-    frameWidth: 416,
-    frameHeight: 464,
-    idle: { start: 0, end: 5, frameRate: 4 },
-    scale: 0.31,
-  },
-  paladin: {
-    file: 'hero/paladin.png',
-    frameWidth: 211,
-    frameHeight: 290,
-    idle: { start: 0, end: 11, frameRate: 6 }, // the GIF's 170 ms a frame
-    scale: 0.6, // 20% larger than the first 0.5 (user, 2026-10-13)
-  },
-  // The Keeper of the Wild (Druid), a deer-centaur. Forms: Tortoise has its own animated picture; Form A and Form B
-  // are placeholders (tinted copies of the base picture) until the animals are chosen.
-  druid: {
-    file: 'hero/druid.png',
-    frameWidth: 301,
-    frameHeight: 230,
-    idle: { start: 0, end: 11, frameRate: 6 },
-    scale: 0.52, // 20% smaller than the first 0.65 (user, 2026-10-13)
-    forms: {
-      tortoise: {
-        sheet: { file: 'hero/druid_tortoise.png', frameWidth: 285, frameHeight: 150, idle: { start: 0, end: 6, frameRate: 3 }, scale: 0.64 },
-      },
-      formA: { tint: 0xff9a8a },
-      formB: { tint: 0x8ac4ff },
-    },
-  },
-};
+export const HERO_ART: Readonly<Record<string, HeroArt>> = { [MAGE]: MAGE_ART, [PALADIN]: PALADIN_ART, [DRUID]: DRUID_ART };
 
 export const BACKGROUNDS = ['grass', 'forest', 'fall', 'desert', 'castles'] as const;
 

@@ -1,7 +1,5 @@
-import type { CardDefinition } from '../model';
-
-// 'paladin' is not imported from cards.ts (circular import): same pattern as mageCards.ts.
-export const PALADIN = 'paladin';
+import type { CardDefinition } from '../../../model';
+import { PALADIN } from '../ids';
 
 // PURELY PLACEHOLDER cards (user, 2026-10-09: "purely placeholder cards, no paladin inspired card
 // names"). They exist to prove the second-hero plumbing and to exercise Radiant Light, the Paladin's

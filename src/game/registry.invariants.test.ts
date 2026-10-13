@@ -5,7 +5,7 @@ import { Rng } from './rng';
 import { cardText, describeEffect, describeOutcome, relicText } from './describe';
 import { chainMap } from './testHelpers';
 import { checkCombatInvariants } from './invariantHarness';
-import { CARDS, MAGE, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
+import { CARDS, buildStarterDeck, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { ENEMIES, getEnemy } from '../data/enemies';
 import { EVENTS, getEvent } from '../data/events';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
@@ -13,6 +13,7 @@ import { STATUSES } from '../data/statuses';
 import { ACT_CONTENT, RUN_WORLD } from '../data/run';
 import { REWARD_CARD_CHOICES } from '../data/tunables';
 import type { CardDefinition, Effect, EnemyDefinition } from '../model';
+import { MAGE } from '../data/heroes/ids';
 
 // Registry-wide property tests. Everything iterates the registries, so new content is covered
 // the moment it is registered.

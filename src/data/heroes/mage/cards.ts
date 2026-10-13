@@ -1,7 +1,5 @@
-import type { CardDefinition } from '../model';
-
-// 'mage' is not imported from cards.ts (circular import): see synergyCards.ts for the same pattern.
-const MAGE = 'mage';
+import type { CardDefinition } from '../../../model';
+import { MAGE } from '../ids';
 
 // PLACEHOLDER numbers throughout this file, per CLAUDE.md: the user designed these 20 cards' names,
 // types and mechanics (DESIGN_LOG.md, "Mage — Core Mechanics" session); where they used "X" for a

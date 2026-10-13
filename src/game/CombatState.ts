@@ -25,7 +25,7 @@ import type {
   TriggerOn,
 } from '../model';
 import { STATUSES } from '../data/statuses';
-import { FORMS, formLabel } from '../data/forms';
+import { FORMS, formLabel } from '../data/heroes/druid/forms';
 import {
   FREEZE_STUN_THRESHOLD,
   HAND_SIZE,

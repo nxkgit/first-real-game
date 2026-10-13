@@ -1,4 +1,4 @@
-import type { CardDefinition } from '../model';
+import type { CardDefinition } from '../../model';
 
 // PLACEHOLDER keyword-demo cards. They exist only to exercise the StS-style card-property keywords
 // (innate, retain, ethereal, unplayable) and keyword statuses (frail, intangible, buffer) built

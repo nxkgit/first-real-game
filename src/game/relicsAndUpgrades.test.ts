@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { CombatState } from './CombatState';
 import { cardText, describeOutcome, relicText } from './describe';
 import type { CardDefinition, EnemyDefinition } from '../model';
-import { CARDS, MAGE, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
+import { CARDS, baseCards, getCard, rewardPoolFor, upgradedVersion } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { EVENTS } from '../data/events';
 import { RELICS, RELIC_POOL, getRelic } from '../data/relics';
 import { ACT_CONTENT } from '../data/run';
+import { MAGE } from '../data/heroes/ids';
 
 const FOE: EnemyDefinition = {
   id: 'f',

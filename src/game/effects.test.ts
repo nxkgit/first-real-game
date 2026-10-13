@@ -7,7 +7,7 @@ import type { Effect, EffectKind, EnemyDefinition } from '../model';
 import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
-import { SYNERGY_CARDS } from '../data/synergyCards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
 import { PLAYER_MAX_HP } from '../data/tunables';
 
 /**

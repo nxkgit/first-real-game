@@ -5,7 +5,7 @@ import { CARDS } from '../data/cards';
 import { ENEMIES } from '../data/enemies';
 import { RELICS } from '../data/relics';
 import { STATUSES, STATUS_ORDER } from '../data/statuses';
-import { FORMS } from '../data/forms';
+import { FORMS } from '../data/heroes/druid/forms';
 import { MAX_ENERGY, MAX_HAND_SIZE, PLAYER_MAX_HP, RADIANT_LIGHT_MAX, TEMPERATURE_MAX, TEMPERATURE_MIN } from '../data/tunables';
 
 // A scenario is an exact fight state as plain JSON: capture one from a running fight, or write one

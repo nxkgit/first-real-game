@@ -1,5 +1,5 @@
 import { baseCards } from '../data/cards';
-import { SYNERGY_CARDS } from '../data/synergyCards';
+import { SYNERGY_CARDS } from '../data/neutral/synergy';
 import { getEnemy } from '../data/enemies';
 import { PLAYER_MAX_HP } from '../data/tunables';
 import { Rng } from '../game/rng';

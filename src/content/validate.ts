@@ -1,5 +1,5 @@
 import { cardText, describeEffect, describeOutcome, relicText } from '../game/describe';
-import { FORMS } from '../data/forms';
+import { FORMS } from '../data/heroes/druid/forms';
 import type { MapContent } from '../game/actMap';
 import type {
   CardDefinition,

@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import * as T from './tunables';
-import { CARDS, MAGE, baseCards, buildStarterDeck, getCard, rewardPoolFor, starterPoolFor, upgradedVersion } from './cards';
+import { CARDS, baseCards, buildStarterDeck, getCard, rewardPoolFor, starterPoolFor, upgradedVersion } from './cards';
 import { ENEMIES, getEnemy } from './enemies';
 import { EVENTS, getEvent } from './events';
 import { RELICS, RELIC_POOL, getRelic } from './relics';
 import { STATUSES, STATUS_ORDER } from './statuses';
 import { ACT_CONTENT, RUN_WORLD, newPlayableRun, newRun } from './run';
-import { KEYWORD_CARDS } from './keywordCards';
+import { KEYWORD_CARDS } from './neutral/keyword';
 import { generateActMap } from '../game/actMap';
 import { Rng } from '../game/rng';
 import type { Effect } from '../model';
+import { MAGE } from './heroes/ids';
 
 const effectsOf = (c: { effects?: Effect[]; onTurnStartEffect?: Effect }): Effect[] => [
   ...(c.effects ?? []),

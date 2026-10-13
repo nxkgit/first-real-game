@@ -1,7 +1,5 @@
-import type { CardDefinition } from '../model';
-
-// 'druid' is not imported from cards.ts (circular import): same pattern as paladinCards.ts.
-export const DRUID = 'druid';
+import type { CardDefinition } from '../../../model';
+import { DRUID } from '../ids';
 
 // PURELY PLACEHOLDER cards (user, 2026-10-13: "make some placeholder druid cards"). They exist to prove the
 // form mechanic (src/data/forms.ts): three cards enter the forms, the rest give Strength, Dexterity and
